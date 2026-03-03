@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import React, { useState } from 'react';
+import './App.css'; // ఈ లైన్ యాడ్ చెయ్
 
 // ఒక చిన్న Helper Component క్రియేట్ చేద్దాం
 function AppContent() {
