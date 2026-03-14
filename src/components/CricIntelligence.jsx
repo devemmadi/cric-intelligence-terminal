@@ -5,9 +5,10 @@ const STRIPE_PK = "pk_test_51T7nucBCZG94uH6ZX1dEhm8Ee8FWFEgFi6OlrzUEMtMVp5vzQOQ6
 const CRIC_KEY = "3ea4f87d-7450-48af-8839-9dee74b28087";
 
 const C = {
-    bg: "#F9F9F9", surface: "#FFFFFF", border: "#E8E8E8",
-    text: "#0A0A0A", muted: "#6B7280", accent: "#006AFF",
+    bg: "#F4F6FA", surface: "#FFFFFF", border: "#E2E8F0",
+    text: "#0A0A0A", muted: "#64748B", accent: "#006AFF",
     green: "#00B894", red: "#E53E3E", amber: "#F59E0B", gold: "#C8961E",
+    navy: "#0A1628", navyMid: "#132240", navyLight: "#1E3A5F",
 };
 
 const MOCK_MATCHES = [
@@ -186,12 +187,12 @@ export default function CricIntelligence() {
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
     .fade { animation: fadeUp .4s ease forwards; }
     .card { background: ${C.surface}; border: 1px solid ${C.border}; border-radius: 16px; transition: box-shadow .2s; }
-    .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+    .card:hover { box-shadow: 0 4px 24px rgba(10,22,40,0.08); }
     .match-pill { transition: all .2s; cursor: pointer; border-radius: 12px; border: 1.5px solid ${C.border}; padding: 12px 14px; background: ${C.surface}; margin-bottom: 8px; }
     .match-pill:hover { border-color: ${C.accent}60; }
     .match-pill.sel { border-color: ${C.accent}; background: #F0F7FF; }
-    .tab-btn { background: none; border: none; cursor: pointer; padding: 8px 16px; border-radius: 8px; font-family: Inter, system-ui; font-size: 13px; font-weight: 500; transition: all .2s; color: ${C.muted}; }
-    .tab-btn.on { background: ${C.text}; color: #fff; }
+    .tab-btn { background: none; border: none; cursor: pointer; padding: 8px 16px; border-radius: 8px; font-family: Inter, system-ui; font-size: 13px; font-weight: 500; transition: all .2s; color: rgba(255,255,255,0.55); }
+    .tab-btn.on { background: rgba(255,255,255,0.15); color: #fff; }
     .over-card { border-radius: 14px; border: 1.5px solid ${C.border}; padding: 14px 10px; text-align: center; background: ${C.surface}; transition: all .2s; cursor: pointer; position: relative; overflow: hidden; }
     .over-card:hover { border-color: ${C.accent}60; transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
     .over-card.sel { border-color: ${C.accent}; background: #F0F7FF; }
@@ -208,66 +209,89 @@ export default function CricIntelligence() {
         .mc { padding: 16px !important; padding-bottom: 80px !important; }
         .hn { font-size: 30px !important; }
     }
-    .mn { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: ${C.surface}; border-top: 1px solid ${C.border}; padding: 8px 0 18px; z-index: 200; }
+    .mn { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: ${C.navy}; border-top: 1px solid ${C.navyLight}; padding: 8px 0 18px; z-index: 200; }
     .mt { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0; font-family: Inter, system-ui; }
     `;
 
     // ── LANDING ───────────────────────────────────────────────────────────────
     if (showLanding) return (
-        <div style={{ minHeight: "100vh", background: "#fff", fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
+        <div style={{ minHeight: "100vh", background: "#F9F9F9", fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
-            <nav style={{ padding: "18px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${C.border}` }}>
-                <div style={{ fontWeight: 700, fontSize: 17, letterSpacing: -0.5 }}>CricIntelligence</div>
-                <button onClick={() => { localStorage.setItem("ci_v2", "1"); setShowLanding(false); }}
-                    style={{ background: C.text, color: "#fff", border: "none", borderRadius: 8, padding: "10px 20px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-                    Open App →
-                </button>
-            </nav>
-            <div style={{ maxWidth: 900, margin: "0 auto", padding: "72px 24px 40px", textAlign: "center" }}>
-                <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#F0F7FF", border: `1px solid ${C.accent}30`, borderRadius: 20, padding: "5px 14px", marginBottom: 28 }}>
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.green, animation: "pulse 2s infinite" }} />
-                    <span style={{ fontSize: 12, fontWeight: 600, color: C.accent, letterSpacing: 0.5 }}>LIVE · IPL 2025 READY</span>
-                </div>
-                <h1 style={{ fontSize: "clamp(36px, 6vw, 68px)", fontWeight: 800, letterSpacing: -2, lineHeight: 1.05, marginBottom: 18 }}>
-                    Know who wins<br /><span style={{ color: C.accent }}>before the over ends.</span>
-                </h1>
-                <p style={{ fontSize: "clamp(15px, 2vw, 18px)", color: C.muted, lineHeight: 1.6, maxWidth: 480, margin: "0 auto 40px", fontWeight: 400 }}>
-                    AI predictions built on 1.7M data points across 877 venues. Over-by-over accuracy at 78.2%.
-                </p>
-                <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap", marginBottom: 14 }}>
-                    <input type="email" placeholder="Email for IPL alerts (optional)"
-                        onChange={e => setEmailInput(e.target.value)}
-                        style={{ padding: "13px 18px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, outline: "none", width: 260, fontFamily: "Inter, system-ui" }} />
-                    <button onClick={() => { if (emailInput) localStorage.setItem("cricintel_email", emailInput); localStorage.setItem("ci_v2", "1"); setShowLanding(false); }}
-                        style={{ background: C.text, color: "#fff", border: "none", borderRadius: 10, padding: "13px 24px", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
-                        Get Free Predictions →
+
+            {/* Hero — Blue with pitch texture */}
+            <div style={{ background: "#354D97", position: "relative", overflow: "hidden" }}>
+                {/* Cricket pitch SVG texture */}
+                <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.07, pointerEvents: "none" }} viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+                    <rect x="330" y="10" width="140" height="480" fill="none" stroke="#fff" strokeWidth="1.5" />
+                    <line x1="300" y1="70" x2="500" y2="70" stroke="#fff" strokeWidth="1" />
+                    <line x1="300" y1="430" x2="500" y2="430" stroke="#fff" strokeWidth="1" />
+                    <ellipse cx="400" cy="250" rx="380" ry="240" fill="none" stroke="#fff" strokeWidth="0.8" />
+                    <line x1="385" y1="60" x2="385" y2="85" stroke="#C8961E" strokeWidth="2.5" />
+                    <line x1="400" y1="60" x2="400" y2="85" stroke="#C8961E" strokeWidth="2.5" />
+                    <line x1="415" y1="60" x2="415" y2="85" stroke="#C8961E" strokeWidth="2.5" />
+                    <line x1="385" y1="415" x2="385" y2="440" stroke="#C8961E" strokeWidth="2.5" />
+                    <line x1="400" y1="415" x2="400" y2="440" stroke="#C8961E" strokeWidth="2.5" />
+                    <line x1="415" y1="415" x2="415" y2="440" stroke="#C8961E" strokeWidth="2.5" />
+                </svg>
+
+                <nav style={{ padding: "18px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
+                    <div style={{ fontWeight: 700, fontSize: 17, color: "#fff", letterSpacing: -0.5 }}>CricIntelligence</div>
+                    <button onClick={() => { localStorage.setItem("ci_v2", "1"); setShowLanding(false); }}
+                        style={{ background: "#C8961E", color: "#000", border: "none", borderRadius: 8, padding: "10px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
+                        Open App →
                     </button>
+                </nav>
+
+                <div style={{ maxWidth: 700, margin: "0 auto", padding: "50px 32px 60px", position: "relative" }}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(200,150,30,0.15)", border: "1px solid rgba(200,150,30,0.4)", borderRadius: 20, padding: "5px 14px", marginBottom: 24 }}>
+                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22C55E", animation: "pulse 2s infinite" }} />
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "#C8961E", letterSpacing: 0.5 }}>LIVE · IPL 2025 READY</span>
+                    </div>
+                    <h1 style={{ fontSize: "clamp(34px, 5.5vw, 60px)", fontWeight: 800, letterSpacing: -2, lineHeight: 1.05, marginBottom: 16, color: "#fff" }}>
+                        Know who wins<br />
+                        <span style={{ color: "#C8961E" }}>before the over ends.</span>
+                    </h1>
+                    <p style={{ fontSize: 16, color: "rgba(255,255,255,0.65)", lineHeight: 1.7, maxWidth: 460, marginBottom: 28 }}>
+                        AI predictions built on 1.7M data points across 877 venues. Over-by-over accuracy at 78.2%.
+                    </p>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
+                        <input type="email" placeholder="Email for IPL alerts (optional)"
+                            onChange={e => setEmailInput(e.target.value)}
+                            style={{ flex: 1, minWidth: 220, padding: "12px 16px", borderRadius: 8, border: "1.5px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.1)", outline: "none", color: "#fff", fontSize: 14, fontFamily: "Inter, system-ui" }} />
+                        <button onClick={() => { if (emailInput) localStorage.setItem("cricintel_email", emailInput); localStorage.setItem("ci_v2", "1"); setShowLanding(false); }}
+                            style={{ background: "#C8961E", color: "#000", border: "none", borderRadius: 8, padding: "12px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
+                            Get Free Predictions →
+                        </button>
+                    </div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>Free · No credit card · Cancel anytime</div>
                 </div>
-                <div style={{ fontSize: 12, color: C.muted }}>Free · No credit card · Cancel anytime</div>
             </div>
-            <div style={{ maxWidth: 680, margin: "0 auto 60px", padding: "0 24px", display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
-                {[["78.2%", "Model Accuracy"], ["1.7M", "Data Points"], ["877", "Venues"]].map(([v, l]) => (
-                    <div key={l} className="card" style={{ padding: "20px 16px", textAlign: "center" }}>
-                        <div style={{ fontSize: 28, fontWeight: 800, letterSpacing: -1 }}>{v}</div>
-                        <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>{l}</div>
+
+            {/* Stats + Preview — White */}
+            <div style={{ maxWidth: 700, margin: "0 auto", padding: "32px 24px 60px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 24 }}>
+                    {[["78.2%", "Model Accuracy", false], ["1.7M", "Data Points", true], ["877", "Venues", false]].map(([v, l, accent]) => (
+                        <div key={l} style={{ background: accent ? "#354D97" : "#fff", border: accent ? "none" : "1px solid #E8E8E8", borderRadius: 12, padding: "18px 14px", textAlign: "center" }}>
+                            <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: -1, color: accent ? "#C8961E" : "#354D97" }}>{v}</div>
+                            <div style={{ fontSize: 12, color: accent ? "rgba(255,255,255,0.6)" : "#888", marginTop: 4 }}>{l}</div>
+                        </div>
+                    ))}
+                </div>
+
+                <div style={{ background: "#fff", border: "1px solid #E8E8E8", borderRadius: 16, padding: 22 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: "#aaa", letterSpacing: 1 }}>LIVE PREVIEW</span>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "#22C55E" }}>India winning</span>
                     </div>
-                ))}
-            </div>
-            <div style={{ maxWidth: 440, margin: "0 auto 80px", padding: "0 24px" }}>
-                <div className="card" style={{ padding: 22, boxShadow: "0 4px 24px rgba(0,0,0,0.06)" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14 }}>
-                        <span style={{ fontSize: 11, fontWeight: 600, color: C.muted, letterSpacing: 1 }}>LIVE PREVIEW</span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: C.green }}>🟢 INDIA WINNING</span>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: "#0A0A0A", marginBottom: 6 }}>India vs Australia</div>
+                    <div style={{ fontSize: 14, color: "#666", lineHeight: 1.6, marginBottom: 14 }}>
+                        Our AI gives <strong style={{ color: "#354D97" }}>India a 72% chance</strong> of winning based on current conditions and 1.7M historical matches.
                     </div>
-                    <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>India vs Australia</div>
-                    <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6, marginBottom: 14 }}>
-                        Our AI gives <strong style={{ color: C.text }}>India a 72% chance of winning</strong> based on current conditions and 1.7M records.
-                    </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                        {[["Next over", "9–11 runs"], ["Wicket risk", "Low · 22%"], ["Confidence", "High · 85%"]].map(([k, v]) => (
-                            <div key={k} style={{ background: C.bg, borderRadius: 8, padding: "10px 6px", textAlign: "center" }}>
-                                <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>{k}</div>
-                                <div style={{ fontSize: 12, fontWeight: 600 }}>{v}</div>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
+                        {[["Next over", "9–11 runs", "#0A0A0A"], ["Wicket risk", "Low · 22%", "#22C55E"], ["Confidence", "High · 85%", "#C8961E"]].map(([k, v, color]) => (
+                            <div key={k} style={{ background: "#F4F6FA", borderRadius: 10, padding: "10px 8px", textAlign: "center" }}>
+                                <div style={{ fontSize: 10, color: "#aaa", marginBottom: 3 }}>{k}</div>
+                                <div style={{ fontSize: 13, fontWeight: 700, color }}>{v}</div>
                             </div>
                         ))}
                     </div>
@@ -282,19 +306,19 @@ export default function CricIntelligence() {
             <style>{CSS}</style>
 
             {/* NAV */}
-            <nav style={{ background: C.surface, borderBottom: `1px solid ${C.border}`, padding: "0 20px", height: 54, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
-                <div style={{ fontWeight: 700, fontSize: 15, letterSpacing: -0.5 }}>CricIntelligence</div>
+            <nav style={{ background: C.navy, borderBottom: `1px solid ${C.navyLight}`, padding: "0 20px", height: 54, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
+                <div style={{ fontWeight: 700, fontSize: 15, letterSpacing: -0.5, color: "#fff" }}>CricIntelligence</div>
                 <div style={{ display: "flex", gap: 4 }}>
                     {[["predict", "Predictions"], ["matches", "Matches"], ["media", "Media"]].map(([k, l]) => (
-                        <button key={k} className={`tab-btn ${activeTab === k ? "on" : ""}`} onClick={() => setActiveTab(k)}>{l}</button>
+                        <button key={k} className={`tab-btn ${activeTab === k ? "on" : ""}`} onClick={() => setActiveTab(k)} style={{ color: activeTab === k ? "#fff" : "rgba(255,255,255,0.55)" }}>{l}</button>
                     ))}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                         <div style={{ width: 6, height: 6, borderRadius: "50%", background: liveStatus === "live" ? C.green : C.amber, animation: "pulse 2s infinite" }} />
-                        <span style={{ fontSize: 11, color: C.muted }}>{liveTime.toLocaleTimeString("en-GB")}</span>
+                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>{liveTime.toLocaleTimeString("en-GB")}</span>
                     </div>
-                    {!isPremium && <button onClick={() => setShowPaywall(true)} style={{ background: C.text, color: "#fff", border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Upgrade</button>}
+                    {!isPremium && <button onClick={() => setShowPaywall(true)} style={{ background: C.gold, color: C.navy, border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Upgrade ⚡</button>}
                 </div>
             </nav>
 
@@ -304,7 +328,7 @@ export default function CricIntelligence() {
 
                     {/* LEFT */}
                     <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, padding: "18px 14px", overflowY: "auto", background: C.surface }}>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.5, marginBottom: 12 }}>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: C.navy, letterSpacing: 1.5, marginBottom: 12, padding: "6px 10px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
                             {liveStatus === "live" ? "🟢 LIVE DATA" : "● MATCHES"}
                         </div>
                         {liveMatches.map(m => (
@@ -555,7 +579,7 @@ export default function CricIntelligence() {
                     <button key={key} className="mt" onClick={() => key === "up" ? setShowPaywall(true) : setActiveTab(key)}
                         style={{ opacity: activeTab === key ? 1 : 0.4 }}>
                         <span style={{ fontSize: 22 }}>{icon}</span>
-                        <span style={{ fontSize: 10, fontWeight: 600, color: C.text }}>{label}</span>
+                        <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>{label}</span>
                     </button>
                 ))}
             </nav>
