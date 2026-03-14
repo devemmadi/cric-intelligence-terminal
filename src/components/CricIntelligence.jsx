@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect, useCallback } from "react";
 
-const API_BASE = "https://web-production-b53b1.up.railway.app";
+const API_BASE = "https://cricintel-backend-production.up.railway.app";
 const STRIPE_PK = "pk_test_51T7nucBCZG94uH6ZX1dEhm8Ee8FWFEgFi6OlrzUEMtMVp5vzQOQ67NdmdoPGzLaJyrAQaAfssLE2BXoUB24Cqna200AKM4scTU";
 const C_API = "http://localhost:5145/api/Prediction";
 const CRIC_KEY = "ce928481-ed4b-453e-bf54-a51eb747ad08";
@@ -386,12 +386,27 @@ export default function CricIntelligence() {
                         ))}
                     </div>
 
-                    {/* CTA */}
-                    <button className="land-btn" onClick={() => { localStorage.setItem("cricintel_visited", "1"); setShowLanding(false); }}
-                        style={{ background: MUSTARD, color: BLK, border: "none", borderRadius: "12px", padding: "18px 48px", fontFamily: "'Bebas Neue', sans-serif", fontSize: "22px", letterSpacing: "3px", cursor: "pointer", marginBottom: "14px", display: "block", width: "100%" }}>
-                        VIEW LIVE PREDICTIONS →
-                    </button>
-                    <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>Free to use · No sign up required</div>
+                    {/* Email capture + CTA */}
+                    <div style={{ marginBottom: "14px" }}>
+                        <div style={{ display: "flex", gap: "8px", marginBottom: "10px" }}>
+                            <input
+                                type="email"
+                                placeholder="Enter your email for IPL alerts"
+                                id="landing-email"
+                                style={{ flex: 1, padding: "14px 18px", borderRadius: "10px", border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.1)", color: "white", fontFamily: "monospace", fontSize: "13px", outline: "none" }}
+                            />
+                        </div>
+                        <button className="land-btn" onClick={() => {
+                            const email = document.getElementById("landing-email")?.value;
+                            if (email) localStorage.setItem("cricintel_email", email);
+                            localStorage.setItem("cricintel_visited", "1");
+                            setShowLanding(false);
+                        }}
+                            style={{ background: MUSTARD, color: BLK, border: "none", borderRadius: "12px", padding: "18px 48px", fontFamily: "'Bebas Neue', sans-serif", fontSize: "22px", letterSpacing: "3px", cursor: "pointer", display: "block", width: "100%" }}>
+                            VIEW LIVE PREDICTIONS →
+                        </button>
+                    </div>
+                    <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>Free to use · No sign up required · Get IPL alerts</div>
                 </div>
 
                 {/* Sample prediction card */}
