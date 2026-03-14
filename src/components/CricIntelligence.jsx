@@ -64,7 +64,7 @@ const TEAM_LOGOS = {
     "sl":           BASE_LOGO + "/340500/340505.png",
     "west indies":  BASE_LOGO + "/381800/381891.png",
     "wi":           BASE_LOGO + "/381800/381891.png",
-    "bangladesh":   BASE_LOGO + "/381800/381857.png",
+    "bangladesh":   BASE_LOGO + "/382700/382731.png",
     "afghanistan":  BASE_LOGO + "/381800/381893.png",
     "ireland":      BASE_LOGO + "/349300/349350.png",
     "zimbabwe":     BASE_LOGO + "/340000/340047.png",
