@@ -284,29 +284,28 @@ export default function CricIntelligence() {
     // ── CricketData.org live matches ─────────────────────────────────────────
     const fetchLiveMatches = useCallback(async () => {
         try {
-            const r = await fetch(`${C_API}/current-matches`);
+            const r = await fetch(`${API_BASE}/matches`);
             const d = await r.json();
-            if (d.data?.length) {
+            const list = Array.isArray(d) ? d : d.data || [];
+            if (list.length) {
                 setLoading(false);
-                const mapped = d.data.slice(0, 6).map((m, i) => ({
+                const mapped = list.slice(0, 6).map((m, i) => ({
                     id: m.id || i,
-                    t1: cleanTeam(m.teams?.[0] || "TBD"),
-                    t2: cleanTeam(m.teams?.[1] || "TBD"),
-                    t1Full: m.teams?.[0] || "",
-                    t2Full: m.teams?.[1] || "",
-                    status: m.matchStarted && !m.matchEnded ? "LIVE" : m.matchEnded ? "ENDED" : "UPCOMING",
+                    t1: cleanTeam(m.team1 || m.teams?.[0] || "TBD"),
+                    t2: cleanTeam(m.team2 || m.teams?.[1] || "TBD"),
+                    t1Full: m.team1 || m.teams?.[0] || "",
+                    t2Full: m.team2 || m.teams?.[1] || "",
+                    status: m.status?.includes("won") ? "ENDED" : m.matchStarted && !m.matchEnded ? "LIVE" : "UPCOMING",
                     day: m.matchType?.toUpperCase() || "T20",
                     detail: m.name || "",
                     t1Score: m.score?.[0]?.r ?? null,
                     t2Score: m.score?.[1]?.r ?? null,
                     t1Wkts: m.score?.[0]?.w ?? null,
                     t2Wkts: m.score?.[1]?.w ?? null,
-                    t1Ovs: m.score?.[0]?.o ?? null,
                     matchId: m.id,
                 }));
                 setLiveMatches(mapped);
                 setLiveDataStatus("live");
-                // Auto-select first live match
                 const liveOne = mapped.find(m => m.status === "LIVE");
                 if (liveOne) setSelectedMatch(liveOne);
             }
@@ -348,6 +347,13 @@ export default function CricIntelligence() {
     // Fetch scorecard when match changes
     useEffect(() => {
         if (selectedMatch?.matchId) fetchMatchScore(selectedMatch.matchId);
+        // Also fetch fresh prediction for this match venue
+        if (selectedMatch?.detail) {
+            fetch(`${API_BASE}/predict?venue=${encodeURIComponent(selectedMatch.detail)}`)
+                .then(r => r.ok ? r.json() : null)
+                .then(d => { if (d && !d.error) setPred(d); })
+                .catch(() => { });
+        }
     }, [selectedMatch, fetchMatchScore]);
 
     const prob = pred.aiProbability || 68;
