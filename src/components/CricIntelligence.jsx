@@ -436,7 +436,7 @@ export default function CricIntelligence() {
     }
 
     return (
-        <div style={{ minHeight: "100vh", fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif", color: BLK, overflowX: "hidden" }}>
+        <div style={{ minHeight: "100vh", fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif", color: BLK, overflowX: "hidden", paddingBottom: "env(safe-area-inset-bottom)" }}>
             <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700;800&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -540,6 +540,28 @@ export default function CricIntelligence() {
         .card-in:nth-child(2){animation-delay:.1s}
         .card-in:nth-child(3){animation-delay:.2s}
         .card-in:nth-child(4){animation-delay:.3s}
+
+        /* ── MOBILE RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .desktop-grid { display: flex !important; flex-direction: column !important; }
+            .left-sidebar { display: none !important; }
+            .right-sidebar { display: none !important; }
+            .main-blue { padding: 16px !important; overflow-y: visible !important; }
+            .nav-mustard { padding: 0 16px !important; height: 52px !important; }
+            .nav-mustard h1 { font-size: 16px !important; }
+            .nav-tab { font-size: 11px !important; }
+            .mobile-bottom-nav { display: flex !important; }
+            .over-cards-grid { grid-template-columns: repeat(2, 1fr) !important; }
+            .match-hero h1 { font-size: 28px !important; }
+            .cards-2col { grid-template-columns: 1fr !important; }
+        }
+        .mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; 
+            background: ${MUSTARD}; z-index: 200; border-top: 2px solid rgba(0,0,0,0.15);
+            padding: 8px 0 12px; }
+        .mob-tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px;
+            background: none; border: none; cursor: pointer; padding: 0; }
+        .mob-tab span { font-family: monospace; font-size: 8px; letter-spacing: 1px; color: ${BLK}; font-weight: 700; }
+        .mob-tab.active { opacity: 1; } .mob-tab:not(.active) { opacity: 0.5; }
       `}</style>
 
             {/* ── TICKER — BLUE ─────────────────────────────────────────────────── */}
@@ -572,10 +594,10 @@ export default function CricIntelligence() {
 
             {/* ══ ANALYTICS TAB ══════════════════════════════════════════════════ */}
             {activeTab === "analytics" && (
-                <div className="fade-up" style={{ display: "grid", gridTemplateColumns: "272px 1fr 280px", minHeight: "calc(100vh - 94px)" }}>
+                <div className="fade-up desktop-grid" style={{ display: "grid", gridTemplateColumns: "272px 1fr 280px", minHeight: "calc(100vh - 94px)" }}>
 
                     {/* LEFT SIDEBAR — MUSTARD */}
-                    <aside className="sidebar-mustard" style={{ padding: "24px 18px", overflowY: "auto" }}>
+                    <aside className="sidebar-mustard left-sidebar" style={{ padding: "24px 18px", overflowY: "auto" }}>
                         <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK, letterSpacing: "4px", marginBottom: "16px", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                             LIVE MATCHES
                             <span style={{ fontSize: "7px", letterSpacing: "1px", color: liveDataStatus === "live" ? "#2ecc71" : liveDataStatus === "connecting" ? MUSTARD : "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", gap: "4px" }}>
@@ -667,7 +689,7 @@ export default function CricIntelligence() {
                         </div>
 
                         {/* 2-col cards */}
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px" }}>
+                        <div className="cards-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px" }}>
 
                             {/* Score Engine */}
                             <div className="card-on-blue card-in" style={{ padding: "28px", position: "relative", overflow: "hidden" }}>
@@ -764,7 +786,7 @@ export default function CricIntelligence() {
                                 </div>
                             </div>
 
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: "10px", marginBottom: "18px" }}>
+                            <div className="over-cards-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: "10px", marginBottom: "18px" }}>
                                 {(pred.nextOvers || []).map((ov, i) => {
                                     const runsMsg = ov.expectedRuns >= 10 ? "High scoring" : ov.expectedRuns >= 8 ? "Good scoring" : "Steady over";
                                     const wicketMsg = ov.wicketProb > 40 ? "⚠️ Wicket likely" : ov.wicketProb > 25 ? "Wicket possible" : "Safe batting";
@@ -898,7 +920,7 @@ export default function CricIntelligence() {
                     </main>
 
                     {/* RIGHT SIDEBAR — MUSTARD */}
-                    <aside className="sidebar-right-mustard" style={{ padding: "24px 18px", overflowY: "auto", display: "flex", flexDirection: "column" }}>
+                    <aside className="sidebar-right-mustard right-sidebar" style={{ padding: "24px 18px", overflowY: "auto", display: "flex", flexDirection: "column" }}>
                         <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK, letterSpacing: "3px", marginBottom: "18px", fontWeight: "700" }}>AI MODEL METRICS</div>
                         {[
                             ["MODEL ACCURACY", 78, "78.2%", "Backtested on 1.7M historical records"],
@@ -1157,6 +1179,17 @@ export default function CricIntelligence() {
                     </div>
                 </div>
             )}
+
+            {/* ── MOBILE BOTTOM NAV ── */}
+            <nav className="mobile-bottom-nav">
+                {[["🏏", "MATCHES", "matches"], ["📊", "PREDICT", "analytics"], ["📺", "MEDIA", "media"], ["⚡", "SIGNAL", "signal"]].map(([icon, label, tab]) => (
+                    <button key={tab} className={`mob-tab ${activeTab === tab ? "active" : ""}`}
+                        onClick={() => tab === "signal" ? setShowPaywall(true) : setActiveTab(tab === "matches" ? "analytics" : tab)}>
+                        <span style={{ fontSize: "20px" }}>{icon}</span>
+                        <span>{label}</span>
+                    </button>
+                ))}
+            </nav>
         </div>
     );
 }
