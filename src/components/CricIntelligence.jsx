@@ -50,25 +50,7 @@ function cleanTeam(name) {
     return n.toUpperCase();
 }
 
-const BASE_LOGO = "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_160,q_50/lsci/db/PICTURES/CMS";
-const TEAM_LOGOS = {
-    "india":        BASE_LOGO + "/381800/381895.png",
-    "australia":    BASE_LOGO + "/382700/382733.png",
-    "england":      BASE_LOGO + "/382700/382728.png",
-    "pakistan":     BASE_LOGO + "/382700/382730.png",
-    "new zealand":  BASE_LOGO + "/340500/340503.png",
-    "nz":           BASE_LOGO + "/340500/340503.png",
-    "south africa": BASE_LOGO + "/340400/340493.png",
-    "sa":           BASE_LOGO + "/340400/340493.png",
-    "sri lanka":    BASE_LOGO + "/340500/340505.png",
-    "sl":           BASE_LOGO + "/340500/340505.png",
-    "west indies":  BASE_LOGO + "/381800/381891.png",
-    "wi":           BASE_LOGO + "/381800/381891.png",
-    "bangladesh":   BASE_LOGO + "/382700/382731.png",
-    "afghanistan":  BASE_LOGO + "/381800/381893.png",
-    "ireland":      BASE_LOGO + "/349300/349350.png",
-    "zimbabwe":     BASE_LOGO + "/340000/340047.png",
-};
+const TEAM_FLAGS = {"india": "????", "australia": "????", "england": "??????????????", "pakistan": "????", "new zealand": "????", "nz": "????", "south africa": "????", "sa": "????", "sri lanka": "????", "sl": "????", "west indies": "??", "wi": "??", "bangladesh": "????", "afghanistan": "????", "dolphins": "??", "north west": "??", "nor": "??"};
 
 function TeamLogo({ name, size = 32 }) {
     const [err, setErr] = useState(false);
@@ -650,3 +632,4 @@ export default function CricIntelligence() {
         </div>
     );
 }
+
