@@ -3,6 +3,8 @@
 const API_BASE = "https://web-production-b53b1.up.railway.app";
 const STRIPE_PK = "pk_test_51T7nucBCZG94uH6ZX1dEhm8Ee8FWFEgFi6OlrzUEMtMVp5vzQOQ67NdmdoPGzLaJyrAQaAfssLE2BXoUB24Cqna200AKM4scTU";
 const C_API = "http://localhost:5145/api/Prediction";
+const CRIC_KEY = "ce928481-ed4b-453e-bf54-a51eb747ad08";
+const CRIC_BASE = "https://cricketdata.org/api";
 
 const MUSTARD = "#c8961e";
 const BLUE = "#354d97";
@@ -172,6 +174,28 @@ const WEATHER_CFG = {
     OVERCAST: { bg: `linear-gradient(135deg, ${CARD_BG2}, ${CARD_BG})`, icon: "☁️", label: "OVERCAST" },
 };
 
+
+// ── Tooltip ───────────────────────────────────────────────────────────────────
+function Tip({ text, children }) {
+    return (
+        <span className="tip-wrap">
+            {children}
+            <span className="tip">{text}</span>
+        </span>
+    );
+}
+
+// ── Loading Skeleton ──────────────────────────────────────────────────────────
+function SkeletonCard() {
+    return (
+        <div style={{ background: "rgba(220,232,255,0.7)", borderRadius: "16px", padding: "28px" }}>
+            <div className="skeleton" style={{ height: "10px", width: "40%", marginBottom: "20px" }} />
+            <div className="skeleton" style={{ height: "56px", width: "60%", marginBottom: "12px" }} />
+            <div className="skeleton" style={{ height: "10px", width: "80%" }} />
+        </div>
+    );
+}
+
 function WeatherBox({ condition, temp, pitch }) {
     const cfg = WEATHER_CFG[(condition || "").toUpperCase()] || WEATHER_CFG.SUNNY;
     return (
@@ -197,8 +221,12 @@ function WeatherBox({ condition, temp, pitch }) {
 // ══════════════════════════════════════════════════════════════════════════════
 export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("analytics");
+    const [showLanding, setShowLanding] = useState(() => !localStorage.getItem("cricintel_visited"));
+    const [liveMatches, setLiveMatches] = useState(MOCK_MATCHES);
     const [selectedMatch, setSelectedMatch] = useState(MOCK_MATCHES[0]);
     const [pred, setPred] = useState(MOCK_PREDICTION);
+    const [liveDataStatus, setLiveDataStatus] = useState("connecting"); // connecting | live | mock
+    const [loading, setLoading] = useState(true);
     const [mediaSubTab, setMediaSubTab] = useState("videos");
     const [signalModal, setSignalModal] = useState(false);
     const [ticker, setTicker] = useState(0);
@@ -253,7 +281,138 @@ export default function CricIntelligence() {
     }, []);
     useEffect(() => { fetchPred(); }, [fetchPred, ticker]);
 
+    // ── CricketData.org live matches ─────────────────────────────────────────
+    const fetchLiveMatches = useCallback(async () => {
+        try {
+            const r = await fetch(`${C_API}/current-matches`);
+            const d = await r.json();
+            if (d.data?.length) {
+                setLoading(false);
+                const mapped = d.data.slice(0, 6).map((m, i) => ({
+                    id: m.id || i,
+                    t1: cleanTeam(m.teams?.[0] || "TBD"),
+                    t2: cleanTeam(m.teams?.[1] || "TBD"),
+                    t1Full: m.teams?.[0] || "",
+                    t2Full: m.teams?.[1] || "",
+                    status: m.matchStarted && !m.matchEnded ? "LIVE" : m.matchEnded ? "ENDED" : "UPCOMING",
+                    day: m.matchType?.toUpperCase() || "T20",
+                    detail: m.name || "",
+                    t1Score: m.score?.[0]?.r ?? null,
+                    t2Score: m.score?.[1]?.r ?? null,
+                    t1Wkts: m.score?.[0]?.w ?? null,
+                    t2Wkts: m.score?.[1]?.w ?? null,
+                    t1Ovs: m.score?.[0]?.o ?? null,
+                    matchId: m.id,
+                }));
+                setLiveMatches(mapped);
+                setLiveDataStatus("live");
+                // Auto-select first live match
+                const liveOne = mapped.find(m => m.status === "LIVE");
+                if (liveOne) setSelectedMatch(liveOne);
+            }
+        } catch { setLiveDataStatus("mock"); setLoading(false); }
+    }, []);
+
+    // ── Fetch scorecard for selected match ──────────────────────────────────
+    const fetchMatchScore = useCallback(async (matchId) => {
+        if (!matchId) return;
+        try {
+            const r = await fetch(`${C_API}/scorecard/${matchId}`);
+            const d = await r.json();
+            if (d.status === "success" && d.data) {
+                const md = d.data;
+                const t1 = md.teams?.[0] || "";
+                const t2 = md.teams?.[1] || "";
+                const s0 = md.scorecard?.[0];
+                const s1 = md.scorecard?.[1];
+                setPred(p => ({
+                    ...p,
+                    team1: t1, team2: t2,
+                    score: s0?.innings?.runs ?? p.score,
+                    wickets: s0?.innings?.wickets ?? p.wickets,
+                    overs: s0?.innings?.overs ?? p.overs,
+                    displayScore: s0 ? `${s0.innings.runs}/${s0.innings.wickets} (${s0.innings.overs} ov)` : p.displayScore,
+                    venue: md.venue || p.venue,
+                    matchType: md.matchType || p.matchType,
+                }));
+            }
+        } catch { }
+    }, []);
+
+    useEffect(() => { fetchLiveMatches(); }, [fetchLiveMatches]);
+    // Refresh every 5 minutes
+    useEffect(() => {
+        const t = setInterval(() => { fetchLiveMatches(); }, 5 * 60 * 1000);
+        return () => clearInterval(t);
+    }, [fetchLiveMatches]);
+    // Fetch scorecard when match changes
+    useEffect(() => {
+        if (selectedMatch?.matchId) fetchMatchScore(selectedMatch.matchId);
+    }, [selectedMatch, fetchMatchScore]);
+
     const prob = pred.aiProbability || 68;
+
+    // ── Landing Page ──────────────────────────────────────────────────────────
+    if (showLanding) {
+        return (
+            <div style={{ minHeight: "100vh", background: BLUE, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "40px 24px", fontFamily: "'Barlow Condensed', sans-serif" }}>
+                <style>{`@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&display=swap');
+                @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+                .land-btn{transition:all .2s;} .land-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
+                `}</style>
+
+                {/* Logo */}
+                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "18px", letterSpacing: "4px", color: MUSTARD, marginBottom: "40px", animation: "fadeUp .5s ease" }}>
+                    CRIC<span style={{ color: "white" }}>INTELLIGENCE</span>
+                </div>
+
+                {/* Hero */}
+                <div style={{ textAlign: "center", maxWidth: "560px", animation: "fadeUp .6s ease" }}>
+                    <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(42px, 8vw, 72px)", color: "white", lineHeight: 1.05, marginBottom: "20px" }}>
+                        KNOW WHO WINS<br />
+                        <span style={{ color: MUSTARD }}>BEFORE THE OVER ENDS</span>
+                    </div>
+                    <div style={{ fontSize: "16px", color: "rgba(255,255,255,0.7)", lineHeight: 1.6, marginBottom: "40px" }}>
+                        AI-powered over-by-over predictions for every live cricket match.
+                        Built on 1.7M data points across 877 venues worldwide.
+                    </div>
+
+                    {/* Trust badges */}
+                    <div style={{ display: "flex", gap: "12px", justifyContent: "center", flexWrap: "wrap", marginBottom: "40px" }}>
+                        {[["🎯", "78.2% Accuracy"], ["📊", "1.7M Data Points"], ["⚡", "Real-time Updates"], ["🌍", "877 Venues"]].map(([icon, label]) => (
+                            <div key={label} style={{ background: "rgba(255,255,255,0.1)", border: "1px solid rgba(255,255,255,0.15)", borderRadius: "20px", padding: "8px 16px", fontSize: "13px", color: "white", display: "flex", gap: "6px", alignItems: "center" }}>
+                                <span>{icon}</span><span>{label}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* CTA */}
+                    <button className="land-btn" onClick={() => { localStorage.setItem("cricintel_visited", "1"); setShowLanding(false); }}
+                        style={{ background: MUSTARD, color: BLK, border: "none", borderRadius: "12px", padding: "18px 48px", fontFamily: "'Bebas Neue', sans-serif", fontSize: "22px", letterSpacing: "3px", cursor: "pointer", marginBottom: "14px", display: "block", width: "100%" }}>
+                        VIEW LIVE PREDICTIONS →
+                    </button>
+                    <div style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>Free to use · No sign up required</div>
+                </div>
+
+                {/* Sample prediction card */}
+                <div style={{ marginTop: "48px", background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: "16px", padding: "24px 28px", maxWidth: "400px", width: "100%", animation: "fadeUp .8s ease" }}>
+                    <div style={{ fontFamily: "monospace", fontSize: "9px", color: MUSTARD, letterSpacing: "3px", marginBottom: "12px" }}>🟢 LIVE PREDICTION EXAMPLE</div>
+                    <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "28px", color: "white", marginBottom: "8px" }}>INDIA vs AUSTRALIA</div>
+                    <div style={{ fontSize: "14px", color: "rgba(255,255,255,0.8)", lineHeight: 1.6, marginBottom: "16px" }}>
+                        Our AI gives <strong style={{ color: MUSTARD }}>India a 68% chance of winning</strong> based on current pitch conditions, scoring rate and historical head-to-head data.
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px" }}>
+                        {[["Next over", "9–11 runs"], ["Wicket risk", "Low (18%)"], ["Phase", "Death overs"]].map(([k, v]) => (
+                            <div key={k} style={{ background: "rgba(0,0,0,0.2)", borderRadius: "8px", padding: "10px 8px", textAlign: "center" }}>
+                                <div style={{ fontFamily: "monospace", fontSize: "7px", color: "rgba(255,255,255,0.4)", letterSpacing: "1px", marginBottom: "4px" }}>{k}</div>
+                                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "14px", color: "white" }}>{v}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div style={{ minHeight: "100vh", fontFamily: "'Barlow Condensed', 'Arial Narrow', sans-serif", color: BLK, overflowX: "hidden" }}>
@@ -267,10 +426,31 @@ export default function CricIntelligence() {
         @keyframes tickerMove { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
         @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
         @keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.5)} }
+        @keyframes shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+        @keyframes popIn { from{opacity:0;transform:scale(0.92)} to{opacity:1;transform:scale(1)} }
+        @keyframes glow { 0%,100%{box-shadow:0 0 8px rgba(200,150,30,0.4)} 50%{box-shadow:0 0 22px rgba(200,150,30,0.9)} }
 
         .fade-up { animation: fadeUp .45s ease forwards; }
         .ticker-inner { display:inline-block; animation: tickerMove 30s linear infinite; white-space:nowrap; }
         .ticker-inner:hover { animation-play-state:paused; }
+
+        .skeleton { background: linear-gradient(90deg, rgba(0,0,0,0.06) 25%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.06) 75%);
+            background-size: 400px 100%; animation: shimmer 1.4s infinite; border-radius: 6px; }
+
+        .tip-wrap { position:relative; display:inline-flex; align-items:center; cursor:help; }
+        .tip-wrap .tip { position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%);
+            background:#111; color:#fff; font-size:10px; font-family:monospace; letter-spacing:0.5px;
+            padding:6px 10px; border-radius:6px; white-space:nowrap; opacity:0; pointer-events:none;
+            transition:opacity .2s; z-index:999; box-shadow:0 4px 16px rgba(0,0,0,0.4); }
+        .tip-wrap .tip::after { content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+            border:5px solid transparent; border-top-color:#111; }
+        .tip-wrap:hover .tip { opacity:1; }
+
+        .over-card { transition:all .25s; border-radius:12px; padding:14px; cursor:pointer; border:1px solid rgba(0,0,0,0.06); }
+        .over-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,0,0,0.18); border-color:rgba(0,0,0,0.15); }
+
+        .premium-badge { background:linear-gradient(135deg,#c8961e,#f5c842); color:#000; font-size:8px;
+            font-family:monospace; font-weight:700; letter-spacing:2px; padding:2px 8px; border-radius:20px; }
 
         /* TICKER — blue */
         .ticker-blue { background: ${BLUE}; }
@@ -305,6 +485,40 @@ export default function CricIntelligence() {
         .media-card:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(0,0,0,0.25); }
         .news-row { transition:all .2s; border-radius:12px; cursor:pointer; }
         .news-row:hover { transform:translateX(4px); }
+
+        /* ── TOOLTIP ── */
+        .tip { position:relative; cursor:help; }
+        .tip::after { content:attr(data-tip); position:absolute; bottom:calc(100% + 8px); left:50%; transform:translateX(-50%); background:#111; color:#fff; font-family:monospace; font-size:10px; letter-spacing:.5px; white-space:nowrap; padding:5px 10px; border-radius:6px; pointer-events:none; opacity:0; transition:opacity .2s; z-index:999; }
+        .tip::before { content:''; position:absolute; bottom:calc(100% + 2px); left:50%; transform:translateX(-50%); border:5px solid transparent; border-top-color:#111; pointer-events:none; opacity:0; transition:opacity .2s; z-index:999; }
+        .tip:hover::after, .tip:hover::before { opacity:1; }
+
+        /* ── LOADING SKELETON ── */
+        @keyframes shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+        .skeleton { background:linear-gradient(90deg,rgba(255,255,255,0.1) 25%,rgba(255,255,255,0.25) 50%,rgba(255,255,255,0.1) 75%); background-size:400px 100%; animation:shimmer 1.4s infinite; border-radius:6px; }
+
+        /* ── PREMIUM GLOW ── */
+        @keyframes premiumGlow { 0%,100%{box-shadow:0 0 20px rgba(200,150,30,0.3)} 50%{box-shadow:0 0 40px rgba(200,150,30,0.7)} }
+        .premium-glow { animation:premiumGlow 2.5s ease-in-out infinite; }
+
+        /* ── OVER CARD HOVER ── */
+        .over-card { transition:all .25s; cursor:default; }
+        .over-card:hover { transform:translateY(-6px) scale(1.03); box-shadow:0 12px 32px rgba(0,0,0,0.3) !important; z-index:2; }
+
+        /* ── STAT BAR ── */
+        @keyframes barFill { from{width:0} }
+        .stat-bar-fill { animation:barFill 1.2s cubic-bezier(.4,0,.2,1) forwards; }
+
+        /* ── PULSE RING on LIVE ── */
+        @keyframes pulseRing { 0%{transform:scale(1);opacity:.8} 100%{transform:scale(2.2);opacity:0} }
+        .live-ring { position:relative; display:inline-block; }
+        .live-ring::before { content:''; position:absolute; inset:-3px; border-radius:50%; background:#e74c3c; animation:pulseRing 1.8s ease-out infinite; }
+
+        /* ── CARD ENTRANCE ── */
+        @keyframes cardIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        .card-in { animation:cardIn .5s ease forwards; }
+        .card-in:nth-child(2){animation-delay:.1s}
+        .card-in:nth-child(3){animation-delay:.2s}
+        .card-in:nth-child(4){animation-delay:.3s}
       `}</style>
 
             {/* ── TICKER — BLUE ─────────────────────────────────────────────────── */}
@@ -341,8 +555,22 @@ export default function CricIntelligence() {
 
                     {/* LEFT SIDEBAR — MUSTARD */}
                     <aside className="sidebar-mustard" style={{ padding: "24px 18px", overflowY: "auto" }}>
-                        <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK, letterSpacing: "4px", marginBottom: "16px", fontWeight: "700" }}>LIVE MATCHES</div>
-                        {MOCK_MATCHES.map(m => (
+                        <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK, letterSpacing: "4px", marginBottom: "16px", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                            LIVE MATCHES
+                            <span style={{ fontSize: "7px", letterSpacing: "1px", color: liveDataStatus === "live" ? "#2ecc71" : liveDataStatus === "connecting" ? MUSTARD : "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", gap: "4px" }}>
+                                <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: liveDataStatus === "live" ? "#2ecc71" : liveDataStatus === "connecting" ? MUSTARD : "rgba(0,0,0,0.3)", display: "inline-block" }} />
+                                {liveDataStatus === "live" ? "LIVE DATA" : liveDataStatus === "connecting" ? "LOADING" : "MOCK"}
+                            </span>
+                        </div>
+                        {liveDataStatus === "connecting" ? (
+                            [1, 2, 3].map(i => (
+                                <div key={i} className="match-row" style={{ background: "rgba(255,255,255,0.4)", marginBottom: "6px" }}>
+                                    <div className="skeleton" style={{ height: "10px", width: "60%", marginBottom: "10px" }} />
+                                    <div className="skeleton" style={{ height: "14px", width: "80%", marginBottom: "6px" }} />
+                                    <div className="skeleton" style={{ height: "14px", width: "70%" }} />
+                                </div>
+                            ))
+                        ) : liveMatches.map(m => (
                             <div key={m.id} onClick={() => setSelectedMatch(m)} className={`match-row ${selectedMatch.id === m.id ? "sel" : ""}`}
                                 style={{ background: selectedMatch.id === m.id ? "rgba(255,255,255,0.85)" : "rgba(255,255,255,0.55)" }}>
                                 {/* Header: status + format */}
@@ -357,20 +585,21 @@ export default function CricIntelligence() {
                                 </div>
                                 {/* Team rows ESPN style */}
                                 <div style={{ display: "flex", flexDirection: "column", gap: "5px" }}>
-                                    {[{ name: m.t1, score: m.t1Score, bold: true }, { name: m.t2, score: m.t2Score, bold: false }].map(({ name, score, bold }) => (
+                                    {[{ name: m.t1, score: m.t1Score, wkts: m.t1Wkts, bold: true }, { name: m.t2, score: m.t2Score, wkts: m.t2Wkts, bold: false }].map(({ name, score, wkts, bold }) => (
                                         <div key={name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: "7px" }}>
                                                 <TeamLogo name={name} size={22} />
                                                 <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "13px", letterSpacing: "0.5px", color: bold ? BLK : "rgba(0,0,0,0.5)" }}>{name}</span>
                                             </div>
                                             {score != null && (
-                                                <span style={{ fontFamily: "monospace", fontSize: "11px", fontWeight: bold ? "700" : "400", color: bold ? BLK : "rgba(0,0,0,0.4)" }}>{score}</span>
+                                                <span style={{ fontFamily: "monospace", fontSize: "11px", fontWeight: bold ? "700" : "400", color: bold ? BLK : "rgba(0,0,0,0.4)" }}>
+                                                    {wkts != null ? `${score}/${wkts}` : score}
+                                                </span>
                                             )}
                                         </div>
                                     ))}
                                 </div>
-                                {m.status === "LIVE" && <div style={{ marginTop: "6px", fontFamily: "monospace", fontSize: "8px", color: "rgba(0,0,0,0.4)", letterSpacing: "1px" }}>{m.day}</div>}
-                                {m.status !== "LIVE" && <div style={{ marginTop: "6px", fontFamily: "monospace", fontSize: "8px", color: "rgba(0,0,0,0.4)", letterSpacing: "1px" }}>{m.day}</div>}
+                                <div style={{ marginTop: "6px", fontFamily: "monospace", fontSize: "8px", color: "rgba(0,0,0,0.4)", letterSpacing: "1px" }}>{m.day}</div>
                             </div>
                         ))}
                         <div style={{ marginTop: "24px", padding: "16px", background: "rgba(0,0,0,0.1)", borderRadius: "14px", border: "1px solid rgba(0,0,0,0.12)" }}>
@@ -384,29 +613,48 @@ export default function CricIntelligence() {
 
                         {/* Match heading */}
                         <div style={{ textAlign: "center", marginBottom: "32px" }}>
-                            <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK, letterSpacing: "4px", marginBottom: "10px", fontWeight: "600" }}>NEURAL MATCH PROTOCOL ACTIVE</div>
-                            <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(24px,3.2vw,48px)", letterSpacing: "2px", lineHeight: 1.05, wordBreak: "break-word" }}>
+                            <div style={{ fontFamily: "monospace", fontSize: "8px", color: "rgba(0,0,0,0.5)", letterSpacing: "4px", marginBottom: "12px", fontWeight: "600", display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                                <span className="live-ring" style={{ width: "6px", height: "6px", background: "#2ecc71", borderRadius: "50%", display: "inline-block" }} />
+                                NEURAL MATCH PROTOCOL ACTIVE
+                            </div>
+                            <h1 style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "clamp(24px,3.2vw,52px)", letterSpacing: "2px", lineHeight: 1.05, wordBreak: "break-word" }}>
                                 <span style={{ color: BLK, display: "inline-flex", alignItems: "center", gap: "10px", verticalAlign: "middle" }}>
-                                    <TeamLogo name={(pred.team1 || "india").toLowerCase()} size={42} />
+                                    <TeamLogo name={(pred.team1 || "india").toLowerCase()} size={48} />
                                     {cleanTeam(pred.team1 || "INDIA")}
                                 </span>
-                                <span style={{ color: "rgba(0,0,0,0.2)", fontSize: "0.45em", margin: "0 20px", verticalAlign: "middle" }}>vs</span>
-                                <span style={{ color: "rgba(0,0,0,0.45)", display: "inline-flex", alignItems: "center", gap: "10px", verticalAlign: "middle" }}>
+                                <span style={{ color: "rgba(0,0,0,0.2)", fontSize: "0.4em", margin: "0 16px", verticalAlign: "middle" }}>vs</span>
+                                <span style={{ color: "rgba(0,0,0,0.4)", display: "inline-flex", alignItems: "center", gap: "10px", verticalAlign: "middle" }}>
                                     {cleanTeam(pred.team2 || "AUSTRALIA")}
-                                    <TeamLogo name={(pred.team2 || "australia").toLowerCase()} size={42} />
+                                    <TeamLogo name={(pred.team2 || "australia").toLowerCase()} size={48} />
                                 </span>
                             </h1>
-                            {pred.venue && <div style={{ marginTop: "6px", fontFamily: "monospace", fontSize: "9px", color: BLK, letterSpacing: "2px" }}>{pred.venue.toUpperCase()}</div>}
+                            {pred.venue && <div style={{ marginTop: "6px", fontFamily: "monospace", fontSize: "9px", color: "rgba(0,0,0,0.5)", letterSpacing: "2px" }}>{pred.venue.toUpperCase()}</div>}
+                            <button onClick={() => {
+                                const text = `🏏 ${cleanTeam(pred.team1 || "India")} vs ${cleanTeam(pred.team2 || "Australia")} — AI gives ${prob}% win probability to ${cleanTeam(pred.team1 || "India")}. Live predictions at CricIntelligence.`;
+                                navigator.clipboard?.writeText(text).then(() => alert("Copied! Share this prediction 🏏"));
+                            }} style={{ marginTop: "10px", background: "transparent", border: `1px solid rgba(255,255,255,0.3)`, borderRadius: "20px", padding: "5px 16px", fontFamily: "monospace", fontSize: "9px", color: "rgba(0,0,0,0.5)", cursor: "pointer", letterSpacing: "1px" }}>
+                                📤 SHARE PREDICTION
+                            </button>
+                            {/* Live score strip */}
+                            {pred.displayScore && (
+                                <div style={{ marginTop: "14px", display: "inline-flex", gap: "20px", background: "rgba(0,0,0,0.15)", borderRadius: "30px", padding: "6px 20px" }}>
+                                    <span style={{ fontFamily: "monospace", fontSize: "11px", fontWeight: "700", color: BLK, letterSpacing: "1px" }}>{pred.displayScore}</span>
+                                    <span style={{ fontFamily: "monospace", fontSize: "11px", color: "rgba(0,0,0,0.4)" }}>CRR {pred.currentRunRate || "5.1"}</span>
+                                    <span className="tip" data-tip="Runs needed per over to win" style={{ fontFamily: "monospace", fontSize: "11px", color: MUSTARD.replace("#c8", "#a0"), fontWeight: "700" }}>RRR {pred.requiredRunRate || "—"}</span>
+                                </div>
+                            )}
                         </div>
 
                         {/* 2-col cards */}
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "18px" }}>
 
                             {/* Score Engine */}
-                            <div className="card-on-blue" style={{ padding: "28px", position: "relative", overflow: "hidden" }}>
+                            <div className="card-on-blue card-in" style={{ padding: "28px", position: "relative", overflow: "hidden" }}>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                                    <div style={{ fontFamily: "monospace", fontSize: "9px", color: BLK_DIM, letterSpacing: "3px" }}>SCORE ENGINE</div>
-                                    <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "14px", color: BLK_DIM, letterSpacing: "1px" }}>{prob}% Win</div>
+                                    <div className="tip" data-tip="AI-calculated win probability based on current score, pitch & conditions" style={{ fontFamily: "monospace", fontSize: "9px", color: BLK_DIM, letterSpacing: "3px" }}>SCORE ENGINE ⓘ</div>
+                                    <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "14px", color: prob >= 65 ? "#2e7d32" : prob >= 45 ? MUSTARD : "#c0392b", letterSpacing: "1px" }}>
+                                        {prob >= 65 ? "🟢 WINNING" : prob >= 45 ? "🟡 CLOSE GAME" : "🔴 UNDER PRESSURE"}
+                                    </div>
                                 </div>
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "14px 0", gap: "4px" }}>
                                     <div style={{ textAlign: "center", flex: 1 }}>
@@ -421,11 +669,18 @@ export default function CricIntelligence() {
                                         <div style={{ fontSize: "9px", color: "rgba(0,0,0,0.35)", letterSpacing: "2px", marginTop: "4px" }}>{cleanTeam(pred.team2 || "AUSTRALIA")}</div>
                                     </div>
                                 </div>
+                                {/* Plain English summary */}
+                                <div style={{ background: "rgba(0,0,0,0.06)", borderRadius: "10px", padding: "10px 14px", marginTop: "8px" }}>
+                                    <div style={{ fontFamily: "monospace", fontSize: "10px", color: BLK, lineHeight: 1.6 }}>
+                                        Our AI gives <strong>{cleanTeam(pred.team1 || "INDIA")}</strong> a <strong>{prob}% chance of winning</strong> based on current score, pitch conditions and historical data from {pred.dataSource?.split("·")[0]?.trim() || "877 venues"}.
+                                        {prob >= 65 ? " They are in a strong position." : prob >= 45 ? " It's a closely contested match." : " They need to turn things around quickly."}
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Strategic Data Nodes */}
-                            <div className="card-on-blue" style={{ padding: "24px 28px" }}>
-                                <div style={{ fontFamily: "monospace", fontSize: "9px", color: BLK_DIM, letterSpacing: "3px", marginBottom: "18px" }}>STRATEGIC DATA NODES</div>
+                            <div className="card-on-blue card-in" style={{ padding: "24px 28px" }}>
+                                <div className="tip" data-tip="AI-detected team strengths and vulnerabilities for this match" style={{ fontFamily: "monospace", fontSize: "9px", color: BLK_DIM, letterSpacing: "3px", marginBottom: "18px", cursor: "help" }}>STRATEGIC DATA NODES ⓘ</div>
                                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
                                     <div>
                                         <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK_DIM, fontWeight: "700", letterSpacing: "2px", marginBottom: "10px", padding: "3px 10px", border: "1px solid rgba(0,0,0,0.2)", borderRadius: "4px", display: "inline-block" }}>STRENGTHS</div>
@@ -445,7 +700,7 @@ export default function CricIntelligence() {
                                     </div>
                                 </div>
                                 <button className="signal-btn" onClick={() => isPremium ? setSignalModal(true) : setShowPaywall(true)}>
-                                    GET LIVE SIGNAL £
+                                    GET PREDICTIONS — £9.99/mo
                                 </button>
                             </div>
 
@@ -489,44 +744,49 @@ export default function CricIntelligence() {
                             </div>
 
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: "10px", marginBottom: "18px" }}>
-                                {(pred.nextOvers || []).map((ov, i) => (
-                                    <div key={i} style={{
-                                        background: CARD_BG,
-                                        border: i === 0 ? `2px solid rgba(53,77,151,0.4)` : `1px solid rgba(53,77,151,0.15)`,
-                                        borderRadius: "14px", padding: "14px 12px", textAlign: "center",
-                                        transition: "all .2s", transform: i === 0 ? "translateY(-3px)" : "none",
-                                        position: "relative", overflow: "hidden",
-                                        boxShadow: i === 0 ? "0 4px 16px rgba(0,0,0,0.2)" : "0 2px 8px rgba(0,0,0,0.1)",
-                                    }}>
-                                        <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK_DIM, letterSpacing: "2px", marginBottom: "4px" }}>OVER {ov.over}</div>
-                                        <div style={{ fontFamily: "monospace", fontSize: "7px", fontWeight: "700", letterSpacing: "1px", marginBottom: "8px", color: ov.phase === "POWERPLAY" ? BLUE : ov.phase === "DEATH OVERS" ? "#c0392b" : MUSTARD }}>{ov.phaseEmoji} {ov.phase}</div>
-                                        <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "36px", color: BLK, lineHeight: 1, marginBottom: "2px" }}>{ov.expectedRuns.toFixed(0)}</div>
-                                        <div style={{ fontFamily: "monospace", fontSize: "7px", color: BLK_DIM, letterSpacing: "1px", marginBottom: "8px" }}>RUNS ({ov.runRange})</div>
-                                        <div style={{ marginBottom: "8px" }}>
-                                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
-                                                <span style={{ fontFamily: "monospace", fontSize: "7px", color: BLK_DIM, letterSpacing: "1px" }}>WKTS</span>
-                                                <span style={{ fontFamily: "monospace", fontSize: "7px", fontWeight: "700", color: ov.wicketProb > 40 ? "#c0392b" : ov.wicketProb > 25 ? MUSTARD : "#2e7d32" }}>{ov.wicketProb}%</span>
+                                {(pred.nextOvers || []).map((ov, i) => {
+                                    const runsMsg = ov.expectedRuns >= 10 ? "High scoring" : ov.expectedRuns >= 8 ? "Good scoring" : "Steady over";
+                                    const wicketMsg = ov.wicketProb > 40 ? "⚠️ Wicket likely" : ov.wicketProb > 25 ? "Wicket possible" : "Safe batting";
+                                    const wicketColor = ov.wicketProb > 40 ? "#c0392b" : ov.wicketProb > 25 ? "#c8961e" : "#2e7d32";
+                                    const confMsg = ov.confidence >= 80 ? "High confidence" : ov.confidence >= 60 ? "Moderate" : "Low confidence";
+                                    return (
+                                        <div key={i} className="over-card" style={{
+                                            background: CARD_BG,
+                                            border: i === 0 ? `2px solid rgba(53,77,151,0.5)` : `1px solid rgba(53,77,151,0.15)`,
+                                            borderRadius: "14px", padding: "14px 10px", textAlign: "center",
+                                            transform: i === 0 ? "translateY(-4px)" : "none",
+                                            position: "relative", overflow: "hidden",
+                                            boxShadow: i === 0 ? "0 6px 20px rgba(0,0,0,0.25)" : "0 2px 8px rgba(0,0,0,0.1)",
+                                        }}>
+                                            {i === 0 && <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "3px", background: `linear-gradient(90deg, ${BLUE}, ${MUSTARD})`, borderRadius: "14px 14px 0 0" }} />}
+                                            {/* Over number */}
+                                            <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK_DIM, letterSpacing: "2px", marginBottom: "2px" }}>OVER {ov.over}</div>
+                                            <div style={{ fontFamily: "monospace", fontSize: "7px", fontWeight: "700", letterSpacing: "1px", marginBottom: "10px", color: ov.phase === "POWERPLAY" ? BLUE : ov.phase === "DEATH OVERS" ? "#c0392b" : MUSTARD }}>{ov.phaseEmoji} {ov.phase}</div>
+
+                                            {/* Expected runs — big + plain */}
+                                            <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "38px", color: BLK, lineHeight: 1 }}>{ov.runRange}</div>
+                                            <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK_DIM, letterSpacing: "1px", marginBottom: "6px" }}>runs expected</div>
+                                            <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK, fontWeight: "700", marginBottom: "10px" }}>{runsMsg}</div>
+
+                                            {/* Wicket risk */}
+                                            <div style={{ background: "rgba(0,0,0,0.07)", borderRadius: "8px", padding: "6px 4px", marginBottom: "6px" }}>
+                                                <div style={{ fontFamily: "monospace", fontSize: "9px", color: wicketColor, fontWeight: "700", marginBottom: "2px" }}>{wicketMsg}</div>
+                                                <div style={{ fontFamily: "monospace", fontSize: "7px", color: BLK_DIM }}>{ov.wicketProb}% chance</div>
                                             </div>
-                                            <div style={{ background: "rgba(0,0,0,0.1)", borderRadius: "4px", height: "4px", overflow: "hidden" }}>
-                                                <div style={{ height: "100%", borderRadius: "4px", width: `${ov.wicketProb}%`, background: ov.wicketProb > 40 ? "#c0392b" : ov.wicketProb > 25 ? MUSTARD : "#2e7d32", transition: "width 1s ease" }} />
-                                            </div>
+
+                                            {/* Confidence */}
+                                            <div style={{ fontFamily: "monospace", fontSize: "7px", color: BLK_DIM }}>{confMsg} · {ov.confidence}%</div>
+
+                                            {i > 0 && !isPremium && (
+                                                <div onClick={() => setShowPaywall(true)} style={{ position: "absolute", inset: 0, borderRadius: "14px", background: `rgba(220,232,255,0.92)`, backdropFilter: "blur(4px)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", gap: "4px", zIndex: 10 }}>
+                                                    <div style={{ fontSize: "22px" }}>🔒</div>
+                                                    <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "13px", color: BLK, letterSpacing: "2px" }}>PREMIUM</div>
+                                                    <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK_DIM, letterSpacing: "1px" }}>£9.99/mo</div>
+                                                </div>
+                                            )}
                                         </div>
-                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-                                            <span style={{ fontFamily: "monospace", fontSize: "7px", color: "rgba(0,0,0,0.35)", letterSpacing: "1px" }}>PITCH</span>
-                                            <span style={{ fontFamily: "monospace", fontSize: "7px", fontWeight: "700", color: ov.pitchFactor > 1.2 ? "#c0392b" : ov.pitchFactor > 1.1 ? MUSTARD : "#2e7d32" }}>×{ov.pitchFactor}</span>
-                                        </div>
-                                        <div style={{ background: "rgba(0,0,0,0.08)", borderRadius: "6px", padding: "4px 6px" }}>
-                                            <div style={{ fontFamily: "monospace", fontSize: "7px", color: BLK_DIM, letterSpacing: "1px" }}>CONFIDENCE: <span style={{ color: BLK, fontWeight: "700" }}>{ov.confidence}%</span></div>
-                                        </div>
-                                        {i > 0 && !isPremium && (
-                                            <div onClick={() => setShowPaywall(true)} style={{ position: "absolute", inset: 0, borderRadius: "14px", background: `rgba(220,232,255,0.92)`, backdropFilter: "blur(4px)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", cursor: "pointer", gap: "4px", zIndex: 10 }}>
-                                                <div style={{ fontSize: "22px" }}>🔒</div>
-                                                <div style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "13px", color: BLK, letterSpacing: "2px" }}>PREMIUM</div>
-                                                <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK_DIM, letterSpacing: "1px" }}>£9.99/mo</div>
-                                            </div>
-                                        )}
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
 
                             {/* Strategy tips */}
@@ -536,7 +796,7 @@ export default function CricIntelligence() {
                                     <span style={{ fontSize: "18px" }}>🔒</span>
                                     <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "16px", color: BLK, letterSpacing: "2px" }}>UNLOCK STRATEGY INTEL — £9.99/mo</span>
                                 </div>}
-                                <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK_DIM, letterSpacing: "3px", marginBottom: "10px" }}>STRATEGY INTEL</div>
+                                <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK_DIM, letterSpacing: "3px", marginBottom: "10px" }}>💡 WHAT TO WATCH FOR</div>
                                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px,1fr))", gap: "8px" }}>
                                     {(pred.nextOvers || []).slice(0, 3).map((ov, i) => (
                                         <div key={i} style={{ display: "flex", gap: "8px", alignItems: "flex-start" }}>
@@ -618,38 +878,71 @@ export default function CricIntelligence() {
 
                     {/* RIGHT SIDEBAR — MUSTARD */}
                     <aside className="sidebar-right-mustard" style={{ padding: "24px 18px", overflowY: "auto", display: "flex", flexDirection: "column" }}>
-                        <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK, letterSpacing: "3px", marginBottom: "14px", fontWeight: "700" }}>AI MODEL METRICS</div>
-                        {[["MODEL ACCURACY", 78, "78.2%"], ["AI CONFIDENCE", 68, "68%"], ["DATA RECORDS", 90, "1.7M"], ["VENUES COVERED", 55, "877"]].map(([k, v, label]) => (
-                            <div key={k} style={{ marginBottom: "14px" }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "monospace", fontSize: "10px", marginBottom: "4px" }}>
-                                    <span style={{ color: BLK, letterSpacing: "0.5px" }}>{k}</span>
-                                    <span style={{ color: BLK, fontWeight: "700" }}>{label}</span>
+                        <div style={{ fontFamily: "monospace", fontSize: "8px", color: BLK, letterSpacing: "3px", marginBottom: "18px", fontWeight: "700" }}>AI MODEL METRICS</div>
+                        {[
+                            ["MODEL ACCURACY", 78, "78.2%", "Backtested on 1.7M historical records"],
+                            ["AI CONFIDENCE", 68, "68%", "Confidence for this specific match"],
+                            ["DATA RECORDS", 90, "1.7M", "Total match data points trained on"],
+                            ["VENUES COVERED", 55, "877", "Grounds with pitch & weather data"],
+                        ].map(([k, v, label, tip]) => (
+                            <div key={k} style={{ marginBottom: "16px" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "5px", alignItems: "center" }}>
+                                    <span className="tip" data-tip={tip} style={{ fontFamily: "monospace", fontSize: "9px", color: BLK, letterSpacing: "0.5px", cursor: "help" }}>{k} ⓘ</span>
+                                    <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "16px", color: BLK, fontWeight: "700" }}>{label}</span>
                                 </div>
-                                <div style={{ height: "3px", background: "rgba(0,0,0,0.15)", borderRadius: "2px", overflow: "hidden" }}>
-                                    <div style={{ height: "100%", width: `${v}%`, background: BLK, borderRadius: "2px" }} />
+                                <div style={{ height: "5px", background: "rgba(0,0,0,0.12)", borderRadius: "3px", overflow: "hidden" }}>
+                                    <div className="stat-bar-fill" style={{ height: "100%", width: `${v}%`, background: `linear-gradient(90deg, ${BLK}, rgba(0,0,0,0.6))`, borderRadius: "3px" }} />
                                 </div>
                             </div>
                         ))}
 
-                        <div style={{ borderTop: "1px solid rgba(0,0,0,0.1)", paddingTop: "20px", marginTop: "6px" }}>
-                            <button className="signal-btn" onClick={() => isPremium ? setSignalModal(true) : setShowPaywall(true)}>
-                                ⚡ GET LIVE SIGNAL
-                            </button>
-                            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "10px" }}>
-                                {["Real-time AI", "95% Accuracy", "Live Updates"].map(f => (
-                                    <span key={f} style={{ fontFamily: "monospace", fontSize: "9px", color: "rgba(0,0,0,0.5)" }}>◈ {f}</span>
+                        <div style={{ borderTop: "1px solid rgba(0,0,0,0.12)", paddingTop: "20px", marginTop: "8px" }}>
+                            {isPremium ? (
+                                <button className="signal-btn" style={{ animation: "glow 2.5s infinite" }} onClick={() => setSignalModal(true)}>
+                                    ⚡ GET LIVE SIGNAL
+                                </button>
+                            ) : (
+                                <div>
+                                    <button className="signal-btn" onClick={() => setShowPaywall(true)} style={{ fontSize: "16px", letterSpacing: "2px", background: "linear-gradient(135deg, #111, #333)" }}>
+                                        🔒 UNLOCK PREMIUM
+                                    </button>
+                                    <div style={{ marginTop: "10px", background: "rgba(0,0,0,0.07)", borderRadius: "8px", padding: "10px 12px", border: "1px solid rgba(0,0,0,0.1)" }}>
+                                        <div style={{ fontFamily: "monospace", fontSize: "7px", color: "rgba(0,0,0,0.5)", letterSpacing: "2px", marginBottom: "7px" }}>WHAT YOU GET:</div>
+                                        {[
+                                            ["⚡", "Over-by-over AI predictions"],
+                                            ["📊", "Pitch deterioration tracker"],
+                                            ["🌤", "Weather & dew impact"],
+                                            ["🎯", "Death over strategy intel"],
+                                        ].map(([icon, feat]) => (
+                                            <div key={feat} style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "5px" }}>
+                                                <span style={{ fontSize: "11px" }}>{icon}</span>
+                                                <span style={{ fontFamily: "monospace", fontSize: "8px", color: "rgba(0,0,0,0.6)" }}>{feat}</span>
+                                            </div>
+                                        ))}
+                                        <div style={{ marginTop: "8px", paddingTop: "8px", borderTop: "1px solid rgba(0,0,0,0.08)", fontFamily: "'Bebas Neue', sans-serif", fontSize: "15px", color: BLK, letterSpacing: "1px" }}>
+                                            FROM £9.99/mo
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "6px", marginTop: "12px" }}>
+                                {[["🔴", "Real-time"], ["🎯", "95% Acc."], ["🔄", "Live"]].map(([icon, label]) => (
+                                    <div key={label} style={{ background: "rgba(0,0,0,0.08)", borderRadius: "8px", padding: "6px 4px", textAlign: "center" }}>
+                                        <div style={{ fontSize: "14px", marginBottom: "2px" }}>{icon}</div>
+                                        <div style={{ fontFamily: "monospace", fontSize: "7px", color: BLK, letterSpacing: "0.5px", fontWeight: "700" }}>{label}</div>
+                                    </div>
                                 ))}
                             </div>
                         </div>
 
                         <div style={{ marginTop: "auto", paddingTop: "20px" }}>
-                            <div style={{ background: "rgba(0,0,0,0.08)", border: "1px solid rgba(0,0,0,0.12)", borderRadius: "8px", padding: "14px", display: "flex", alignItems: "flex-start", gap: "10px" }}>
-                                <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "rgba(192,57,43,0.12)", border: "1px solid rgba(192,57,43,0.3)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                                    <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "12px", fontWeight: "700", color: "#c0392b" }}>18+</span>
+                            <div style={{ background: "rgba(0,0,0,0.08)", border: "1px solid rgba(192,57,43,0.2)", borderRadius: "10px", padding: "14px", display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                                <div style={{ width: "30px", height: "30px", borderRadius: "50%", background: "rgba(192,57,43,0.1)", border: "2px solid rgba(192,57,43,0.4)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                    <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: "12px", color: "#c0392b" }}>18+</span>
                                 </div>
                                 <div>
-                                    <div style={{ fontFamily: "monospace", fontSize: "9px", color: "#c0392b", fontWeight: "700", letterSpacing: "1px", marginBottom: "3px" }}>FINANCIAL RISK WARNING</div>
-                                    <div style={{ fontFamily: "monospace", fontSize: "9px", color: "rgba(0,0,0,0.55)", lineHeight: 1.6 }}>Predictions based on 95% AI accuracy. Market conditions vary. BeGambleAware.org</div>
+                                    <div style={{ fontFamily: "monospace", fontSize: "9px", color: "#c0392b", fontWeight: "700", letterSpacing: "1px", marginBottom: "4px" }}>FINANCIAL RISK WARNING</div>
+                                    <div style={{ fontFamily: "monospace", fontSize: "8px", color: "rgba(0,0,0,0.55)", lineHeight: 1.6 }}>Predictions based on 95% AI accuracy. Market conditions vary. BeGambleAware.org</div>
                                 </div>
                             </div>
                         </div>
