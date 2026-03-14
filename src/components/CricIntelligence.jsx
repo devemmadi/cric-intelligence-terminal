@@ -6,9 +6,9 @@ const CRIC_KEY = "3ea4f87d-7450-48af-8839-9dee74b28087";
 
 const C = {
     bg: "#F4F6FA", surface: "#FFFFFF", border: "#E2E8F0",
-    text: "#0A0A0A", muted: "#64748B", accent: "#006AFF",
+    text: "#0A0A0A", muted: "#64748B", accent: "#354D97",
     green: "#00B894", red: "#E53E3E", amber: "#F59E0B", gold: "#C8961E",
-    navy: "#0A1628", navyMid: "#132240", navyLight: "#1E3A5F",
+    navy: "#354D97", navyMid: "#2A3F82", navyLight: "#4A5FAD",
 };
 
 const MOCK_MATCHES = [
@@ -357,142 +357,158 @@ export default function CricIntelligence() {
                     </aside>
 
                     {/* MAIN */}
-                    <main className="mc" style={{ padding: "22px 24px", overflowY: "auto" }}>
-                        {/* Hero */}
-                        <div style={{ textAlign: "center", marginBottom: 24 }}>
-                            <div style={{ fontSize: 11, color: C.muted, marginBottom: 10, fontWeight: 500 }}>{pred.venue || "Wankhede Stadium, Mumbai"}</div>
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 12 }}>
-                                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                    <TeamLogo name={(pred.team1 || "india").toLowerCase()} size={40} />
-                                    <span className="hn" style={{ fontSize: 36, fontWeight: 800, letterSpacing: -1 }}>{cleanTeam(pred.team1 || "INDIA")}</span>
-                                </div>
-                                <span style={{ fontSize: 13, color: C.muted }}>vs</span>
-                                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                    <span className="hn" style={{ fontSize: 36, fontWeight: 800, letterSpacing: -1, color: C.muted }}>{cleanTeam(pred.team2 || "AUSTRALIA")}</span>
-                                    <TeamLogo name={(pred.team2 || "australia").toLowerCase()} size={40} />
-                                </div>
-                            </div>
-                            <div style={{ display: "inline-flex", alignItems: "center", gap: 14, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "8px 18px" }}>
-                                <span style={{ fontSize: 15, fontWeight: 700 }}>{pred.displayScore || "156/3 (14.2 ov)"}</span>
-                                <div style={{ width: 1, height: 14, background: C.border }} />
-                                <span style={{ fontSize: 12, color: C.muted }}>CRR {pred.currentRunRate || 10.9}</span>
-                                <button onClick={() => { const t = `🏏 ${cleanTeam(pred.team1 || "India")} vs ${cleanTeam(pred.team2 || "Australia")} — AI: ${prob}% win probability. cricintelligence.com`; navigator.clipboard?.writeText(t).then(() => alert("Copied! 🏏")); }}
-                                    style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: C.accent, fontWeight: 600 }}>Share ↗</button>
-                            </div>
-                        </div>
+                    <main className="mc" style={{ padding: 0, overflowY: "auto" }}>
 
-                        {/* 2 cards */}
-                        <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-                            <div className="card" style={{ padding: 22 }}>
-                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WIN PROBABILITY</div>
-                                <div style={{ fontSize: 13, fontWeight: 700, color: winColor, marginBottom: 8 }}>{winMsg}</div>
-                                <div style={{ display: "flex", justifyContent: "center", margin: "4px 0 10px" }}>
-                                    <WinArc value={prob} />
-                                </div>
-                                <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>
-                                    <strong style={{ color: C.text }}>{cleanTeam(pred.team1 || "INDIA")}</strong> has a <strong style={{ color: winColor }}>{prob}% chance</strong> of winning based on current score, pitch & 1.7M historical matches.
-                                </div>
-                            </div>
-                            <div className="card" style={{ padding: 22 }}>
-                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 14 }}>MATCH INTEL</div>
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
-                                    <div>
-                                        <div style={{ fontSize: 10, color: C.green, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>STRENGTHS</div>
-                                        {(pred.strengths || MOCK_PRED.strengths).map(s => (
-                                            <div key={s} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.green }}>+</span>{s}</div>
-                                        ))}
+                        {/* Hero — Blue with pitch texture */}
+                        <div style={{ background: "#354D97", position: "relative", overflow: "hidden", padding: "24px 24px 28px" }}>
+                            <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.06, pointerEvents: "none" }} viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice">
+                                <rect x="360" y="-300" width="80" height="800" fill="none" stroke="#fff" strokeWidth="1.5" />
+                                <ellipse cx="400" cy="100" rx="380" ry="160" fill="none" stroke="#fff" strokeWidth="0.8" />
+                                <line x1="330" y1="30" x2="470" y2="30" stroke="#fff" strokeWidth="0.8" />
+                                <line x1="330" y1="170" x2="470" y2="170" stroke="#fff" strokeWidth="0.8" />
+                                <line x1="390" y1="22" x2="390" y2="40" stroke="#C8961E" strokeWidth="2" />
+                                <line x1="400" y1="22" x2="400" y2="40" stroke="#C8961E" strokeWidth="2" />
+                                <line x1="410" y1="22" x2="410" y2="40" stroke="#C8961E" strokeWidth="2" />
+                            </svg>
+                            <div style={{ position: "relative", textAlign: "center" }}>
+                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 10, fontWeight: 500, letterSpacing: 0.5 }}>{pred.venue || "Wankhede Stadium, Mumbai"}</div>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 12 }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                        <TeamLogo name={(pred.team1 || "india").toLowerCase()} size={40} />
+                                        <span className="hn" style={{ fontSize: 36, fontWeight: 800, letterSpacing: -1, color: "#fff" }}>{cleanTeam(pred.team1 || "INDIA")}</span>
                                     </div>
-                                    <div>
-                                        <div style={{ fontSize: 10, color: C.red, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>RISKS</div>
-                                        {(pred.weaknesses || MOCK_PRED.weaknesses).map(w => (
-                                            <div key={w} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.red }}>−</span>{w}</div>
-                                        ))}
+                                    <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>vs</span>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                        <span className="hn" style={{ fontSize: 36, fontWeight: 800, letterSpacing: -1, color: "rgba(255,255,255,0.55)" }}>{cleanTeam(pred.team2 || "AUSTRALIA")}</span>
+                                        <TeamLogo name={(pred.team2 || "australia").toLowerCase()} size={40} />
                                     </div>
                                 </div>
-                                {!isPremium
-                                    ? <button onClick={() => setShowPaywall(true)} className="btn-p" style={{ fontSize: 12 }}>Unlock Full Analysis — £9.99/mo</button>
-                                    : <div style={{ background: C.bg, borderRadius: 8, padding: "10px 12px", fontSize: 12, color: C.muted }}>{pred.weatherImpact?.tip || "Bright conditions favour batters."}</div>
-                                }
-                            </div>
-                        </div>
-
-                        {/* Weather + Pitch */}
-                        <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-                            <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || "☀️"}</span>
-                                <div>
-                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>WEATHER</div>
-                                    <div style={{ fontSize: 20, fontWeight: 800 }}>{pred.weather?.temp || 28}°C</div>
-                                    <div style={{ fontSize: 11, color: C.muted }}>{pred.weather?.condition || "SUNNY"}</div>
-                                </div>
-                            </div>
-                            <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                <span style={{ fontSize: 32 }}>🏏</span>
-                                <div>
-                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PITCH</div>
-                                    <div style={{ fontSize: 15, fontWeight: 700 }}>{pred.pitchLabel || "DRY / SPIN"}</div>
-                                    <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || "SHOWING WEAR"}</div>
+                                <div style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
+                                    <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore || "156/3 (14.2 ov)"}</span>
+                                    <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
+                                    <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || 10.9}</span>
+                                    <button onClick={() => { const t = `🏏 ${cleanTeam(pred.team1 || "India")} vs ${cleanTeam(pred.team2 || "Australia")} — AI: ${prob}% win probability. cricintelligence.com`; navigator.clipboard?.writeText(t).then(() => alert("Copied! 🏏")); }}
+                                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share ↗</button>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Over predictions */}
-                        <div className="card" style={{ padding: 22, marginBottom: 14 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                                <div>
-                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>OVER-BY-OVER PREDICTIONS</div>
-                                    <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{pred.phaseEmoji} {pred.currentPhase || "MIDDLE OVERS"}</div>
+                        {/* White content */}
+                        <div style={{ padding: "20px 24px" }}>
+
+                            {/* 2 cards */}
+                            <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                                <div className="card" style={{ padding: 22 }}>
+                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WIN PROBABILITY</div>
+                                    <div style={{ fontSize: 13, fontWeight: 700, color: winColor, marginBottom: 8 }}>{winMsg}</div>
+                                    <div style={{ display: "flex", justifyContent: "center", margin: "4px 0 10px" }}>
+                                        <WinArc value={prob} />
+                                    </div>
+                                    <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>
+                                        <strong style={{ color: C.text }}>{cleanTeam(pred.team1 || "INDIA")}</strong> has a <strong style={{ color: winColor }}>{prob}% chance</strong> of winning based on current score, pitch & 1.7M historical matches.
+                                    </div>
                                 </div>
-                                {!isPremium && <span style={{ fontSize: 11, color: C.accent, fontWeight: 600 }}>1 free · Upgrade for all 5</span>}
-                            </div>
-                            <div className="og" style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 8 }}>
-                                {(pred.nextOvers || MOCK_PRED.nextOvers).map((ov, i) => {
-                                    const wc = ov.wicketProb > 40 ? C.red : ov.wicketProb > 25 ? C.amber : C.green;
-                                    return (
-                                        <div key={i} className={`over-card ${activeOver === i ? "sel" : ""}`} onClick={() => setActiveOver(i)}>
-                                            {i === 0 && <div style={{ position: "absolute", top: -1, left: -1, right: -1, height: 3, background: C.accent, borderRadius: "14px 14px 0 0" }} />}
-                                            <div style={{ fontSize: 9, color: C.muted, fontWeight: 500, marginBottom: 2 }}>OVER {ov.over}</div>
-                                            <div style={{ fontSize: 8, fontWeight: 700, color: ov.phase === "POWERPLAY" ? C.accent : ov.phase === "DEATH OVERS" ? C.red : C.amber, marginBottom: 8, letterSpacing: 0.3 }}>
-                                                {ov.phaseEmoji} {ov.phase?.split(" ")[0]}
-                                            </div>
-                                            <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5, lineHeight: 1 }}>{ov.runRange}</div>
-                                            <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>runs</div>
-                                            <div style={{ background: `${wc}15`, borderRadius: 6, padding: "4px 4px" }}>
-                                                <div style={{ fontSize: 9, fontWeight: 700, color: wc }}>{ov.wicketProb > 40 ? "⚠️ Likely" : ov.wicketProb > 25 ? "Possible" : "Safe"}</div>
-                                                <div style={{ fontSize: 8, color: C.muted }}>{ov.wicketProb}% wkt</div>
-                                            </div>
-                                            <div style={{ fontSize: 8, color: C.muted, marginTop: 5 }}>{ov.confidence >= 80 ? "High" : ov.confidence >= 60 ? "Med" : "Low"} conf</div>
-                                            {i > 0 && !isPremium && (
-                                                <div className="lock" onClick={() => setShowPaywall(true)}>
-                                                    <span style={{ fontSize: 18 }}>🔒</span>
-                                                    <span style={{ fontSize: 10, fontWeight: 600 }}>Premium</span>
-                                                </div>
-                                            )}
+                                <div className="card" style={{ padding: 22 }}>
+                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 14 }}>MATCH INTEL</div>
+                                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+                                        <div>
+                                            <div style={{ fontSize: 10, color: C.green, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>STRENGTHS</div>
+                                            {(pred.strengths || MOCK_PRED.strengths).map(s => (
+                                                <div key={s} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.green }}>+</span>{s}</div>
+                                            ))}
                                         </div>
-                                    );
-                                })}
-                            </div>
-                            {(pred.nextOvers || MOCK_PRED.nextOvers)[activeOver] && (
-                                <div style={{ marginTop: 12, padding: "12px 14px", background: C.bg, borderRadius: 10, fontSize: 12, color: C.text, lineHeight: 1.6 }}>
-                                    {(pred.nextOvers || MOCK_PRED.nextOvers)[activeOver].tip}
+                                        <div>
+                                            <div style={{ fontSize: 10, color: C.red, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>RISKS</div>
+                                            {(pred.weaknesses || MOCK_PRED.weaknesses).map(w => (
+                                                <div key={w} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.red }}>−</span>{w}</div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    {!isPremium
+                                        ? <button onClick={() => setShowPaywall(true)} className="btn-p" style={{ fontSize: 12 }}>Unlock Full Analysis — £9.99/mo</button>
+                                        : <div style={{ background: C.bg, borderRadius: 8, padding: "10px 12px", fontSize: 12, color: C.muted }}>{pred.weatherImpact?.tip || "Bright conditions favour batters."}</div>
+                                    }
                                 </div>
-                            )}
-                        </div>
+                            </div>
 
-                        {/* Phase */}
-                        <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                            <div className="card" style={{ padding: 18 }}>
-                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>🔵 POWERPLAY</div>
-                                <div style={{ fontSize: 22, fontWeight: 800 }}>{pred.powerplay?.expectedScore || 58} runs</div>
-                                <div style={{ fontSize: 12, color: C.muted, marginTop: 4, lineHeight: 1.6 }}>{pred.powerplay?.tip || MOCK_PRED.powerplay.tip}</div>
+                            {/* Weather + Pitch */}
+                            <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                                <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
+                                    <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || "☀️"}</span>
+                                    <div>
+                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>WEATHER</div>
+                                        <div style={{ fontSize: 20, fontWeight: 800 }}>{pred.weather?.temp || 28}°C</div>
+                                        <div style={{ fontSize: 11, color: C.muted }}>{pred.weather?.condition || "SUNNY"}</div>
+                                    </div>
+                                </div>
+                                <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
+                                    <span style={{ fontSize: 32 }}>🏏</span>
+                                    <div>
+                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PITCH</div>
+                                        <div style={{ fontSize: 15, fontWeight: 700 }}>{pred.pitchLabel || "DRY / SPIN"}</div>
+                                        <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || "SHOWING WEAR"}</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="card" style={{ padding: 18, position: "relative", overflow: "hidden" }}>
-                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>🔴 DEATH OVERS</div>
-                                <div style={{ fontSize: 22, fontWeight: 800 }}>{pred.deathOvers?.expectedRR || 10.8} RR</div>
-                                <div style={{ fontSize: 12, color: C.muted, marginTop: 4, lineHeight: 1.6 }}>{pred.deathOvers?.tip || MOCK_PRED.deathOvers.tip}</div>
-                                {!isPremium && <div className="lock" onClick={() => setShowPaywall(true)}><span style={{ fontSize: 18 }}>🔒</span><span style={{ fontSize: 10, fontWeight: 600 }}>Premium</span></div>}
+
+                            {/* Over predictions */}
+                            <div className="card" style={{ padding: 22, marginBottom: 14 }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                                    <div>
+                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>OVER-BY-OVER PREDICTIONS</div>
+                                        <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{pred.phaseEmoji} {pred.currentPhase || "MIDDLE OVERS"}</div>
+                                    </div>
+                                    {!isPremium && <span style={{ fontSize: 11, color: C.accent, fontWeight: 600 }}>1 free · Upgrade for all 5</span>}
+                                </div>
+                                <div className="og" style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 8 }}>
+                                    {(pred.nextOvers || MOCK_PRED.nextOvers).map((ov, i) => {
+                                        const wc = ov.wicketProb > 40 ? C.red : ov.wicketProb > 25 ? C.amber : C.green;
+                                        return (
+                                            <div key={i} className={`over-card ${activeOver === i ? "sel" : ""}`} onClick={() => setActiveOver(i)}>
+                                                {i === 0 && <div style={{ position: "absolute", top: -1, left: -1, right: -1, height: 3, background: C.accent, borderRadius: "14px 14px 0 0" }} />}
+                                                <div style={{ fontSize: 9, color: C.muted, fontWeight: 500, marginBottom: 2 }}>OVER {ov.over}</div>
+                                                <div style={{ fontSize: 8, fontWeight: 700, color: ov.phase === "POWERPLAY" ? C.accent : ov.phase === "DEATH OVERS" ? C.red : C.amber, marginBottom: 8, letterSpacing: 0.3 }}>
+                                                    {ov.phaseEmoji} {ov.phase?.split(" ")[0]}
+                                                </div>
+                                                <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.5, lineHeight: 1 }}>{ov.runRange}</div>
+                                                <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>runs</div>
+                                                <div style={{ background: `${wc}15`, borderRadius: 6, padding: "4px 4px" }}>
+                                                    <div style={{ fontSize: 9, fontWeight: 700, color: wc }}>{ov.wicketProb > 40 ? "⚠️ Likely" : ov.wicketProb > 25 ? "Possible" : "Safe"}</div>
+                                                    <div style={{ fontSize: 8, color: C.muted }}>{ov.wicketProb}% wkt</div>
+                                                </div>
+                                                <div style={{ fontSize: 8, color: C.muted, marginTop: 5 }}>{ov.confidence >= 80 ? "High" : ov.confidence >= 60 ? "Med" : "Low"} conf</div>
+                                                {i > 0 && !isPremium && (
+                                                    <div className="lock" onClick={() => setShowPaywall(true)}>
+                                                        <span style={{ fontSize: 18 }}>🔒</span>
+                                                        <span style={{ fontSize: 10, fontWeight: 600 }}>Premium</span>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                                {(pred.nextOvers || MOCK_PRED.nextOvers)[activeOver] && (
+                                    <div style={{ marginTop: 12, padding: "12px 14px", background: C.bg, borderRadius: 10, fontSize: 12, color: C.text, lineHeight: 1.6 }}>
+                                        {(pred.nextOvers || MOCK_PRED.nextOvers)[activeOver].tip}
+                                    </div>
+                                )}
                             </div>
-                        </div>
+
+                            {/* Phase */}
+                            <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                                <div className="card" style={{ padding: 18 }}>
+                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>🔵 POWERPLAY</div>
+                                    <div style={{ fontSize: 22, fontWeight: 800 }}>{pred.powerplay?.expectedScore || 58} runs</div>
+                                    <div style={{ fontSize: 12, color: C.muted, marginTop: 4, lineHeight: 1.6 }}>{pred.powerplay?.tip || MOCK_PRED.powerplay.tip}</div>
+                                </div>
+                                <div className="card" style={{ padding: 18, position: "relative", overflow: "hidden" }}>
+                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>🔴 DEATH OVERS</div>
+                                    <div style={{ fontSize: 22, fontWeight: 800 }}>{pred.deathOvers?.expectedRR || 10.8} RR</div>
+                                    <div style={{ fontSize: 12, color: C.muted, marginTop: 4, lineHeight: 1.6 }}>{pred.deathOvers?.tip || MOCK_PRED.deathOvers.tip}</div>
+                                    {!isPremium && <div className="lock" onClick={() => setShowPaywall(true)}><span style={{ fontSize: 18 }}>🔒</span><span style={{ fontSize: 10, fontWeight: 600 }}>Premium</span></div>}
+                                </div>
+                            </div>
+                        </div>{/* end white content */}
                     </main>
 
                     {/* RIGHT */}
