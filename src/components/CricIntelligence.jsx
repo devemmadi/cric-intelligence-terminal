@@ -12,9 +12,9 @@ const C = {
 };
 
 const MOCK_MATCHES = [
-    { id: 1, t1: "INDIA", t2: "AUSTRALIA", status: "LIVE", day: "T20", detail: "2nd T20I · Wankhede", t1Score: 156, t2Score: null, t1Wkts: 3, matchId: null },
-    { id: 2, t1: "ENGLAND", t2: "PAKISTAN", status: "UPCOMING", day: "ODI", detail: "1st ODI · Lord's", t1Score: null, t2Score: null, matchId: null },
-    { id: 3, t1: "NZ", t2: "SA", status: "UPCOMING", day: "TEST", detail: "Cape Town · Day 1", t1Score: null, t2Score: null, matchId: null },
+    { id: 1, t1: "INDIA", t2: "AUSTRALIA", status: "LIVE", day: "T20", detail: "2nd T20I Â· Wankhede", t1Score: 156, t2Score: null, t1Wkts: 3, matchId: null },
+    { id: 2, t1: "ENGLAND", t2: "PAKISTAN", status: "UPCOMING", day: "ODI", detail: "1st ODI Â· Lord's", t1Score: null, t2Score: null, matchId: null },
+    { id: 3, t1: "NZ", t2: "SA", status: "UPCOMING", day: "TEST", detail: "Cape Town Â· Day 1", t1Score: null, t2Score: null, matchId: null },
 ];
 const MOCK_PRED = {
     team1: "India", team2: "Australia", venue: "Wankhede Stadium, Mumbai",
@@ -22,21 +22,21 @@ const MOCK_PRED = {
     displayScore: "156/3 (14.2 ov)", aiProbability: 72,
     currentRunRate: 10.9, requiredRunRate: 0,
     pitchLabel: "DRY / SPIN", pitchCondition: "SHOWING WEAR",
-    currentPhase: "MIDDLE OVERS", phaseEmoji: "🟡",
+    currentPhase: "MIDDLE OVERS", phaseEmoji: "ð¡",
     strengths: ["SOLID OPENING STAND", "FAST BOWLING PACE", "SPIN CONTROL"],
     weaknesses: ["VULNERABLE TO SHORT BALL", "DEATH RUN LEAKAGE", "UNSTABLE MID ORDER"],
     nextOvers: [
-        { over: 15, phase: "MIDDLE OVERS", expectedRuns: 9.2, wicketProb: 22, confidence: 85, runRange: "7–11", tip: "🟡 Build platform heading into death overs. Target 10 runs minimum." },
-        { over: 16, phase: "DEATH OVERS", expectedRuns: 10.8, wicketProb: 32, confidence: 77, runRange: "9–13", tip: "🔴 Death begins — high scoring expected. Yorkers key." },
-        { over: 17, phase: "DEATH OVERS", expectedRuns: 11.5, wicketProb: 38, confidence: 69, runRange: "9–14", tip: "🔴 Slog overs — boundaries crucial. Spin bowlers under pressure." },
-        { over: 18, phase: "DEATH OVERS", expectedRuns: 10.2, wicketProb: 42, confidence: 61, runRange: "8–13", tip: "⚠️ Wicket risk rising. Batters taking high-risk shots." },
-        { over: 19, phase: "DEATH OVERS", expectedRuns: 12.0, wicketProb: 45, confidence: 53, runRange: "10–14", tip: "🔴 Final push — maximum attack. Expect big hits." },
+        { over: 15, phase: "MIDDLE OVERS", expectedRuns: 9.2, wicketProb: 22, confidence: 85, runRange: "7â11", tip: "ð¡ Build platform heading into death overs. Target 10 runs minimum." },
+        { over: 16, phase: "DEATH OVERS", expectedRuns: 10.8, wicketProb: 32, confidence: 77, runRange: "9â13", tip: "ð´ Death begins â high scoring expected. Yorkers key." },
+        { over: 17, phase: "DEATH OVERS", expectedRuns: 11.5, wicketProb: 38, confidence: 69, runRange: "9â14", tip: "ð´ Slog overs â boundaries crucial. Spin bowlers under pressure." },
+        { over: 18, phase: "DEATH OVERS", expectedRuns: 10.2, wicketProb: 42, confidence: 61, runRange: "8â13", tip: "â ï¸ Wicket risk rising. Batters taking high-risk shots." },
+        { over: 19, phase: "DEATH OVERS", expectedRuns: 12.0, wicketProb: 45, confidence: 53, runRange: "10â14", tip: "ð´ Final push â maximum attack. Expect big hits." },
     ],
     weather: { temp: 28, condition: "SUNNY" },
-    weatherImpact: { tip: "Bright conditions favour batters.", emoji: "☀️" },
-    dataSource: "877 venues · 1.7M records · 78.2% accuracy",
+    weatherImpact: { tip: "Bright conditions favour batters.", emoji: "âï¸" },
+    dataSource: "877 venues Â· 1.7M records Â· 78.2% accuracy",
     overHistory: [{ over: 10, runs: 98 }, { over: 11, runs: 108 }, { over: 12, runs: 119 }, { over: 13, runs: 133 }, { over: 14, runs: 156 }],
-    powerplay: { expectedScore: 58, expectedRR: 9.6, tip: "Strong powerplay — batting conditions ideal." },
+    powerplay: { expectedScore: 58, expectedRR: 9.6, tip: "Strong powerplay â batting conditions ideal." },
     deathOvers: { expectedRR: 10.8, expectedRuns: 62, tip: "Death overs: expect 10.8 RR. Set a strong total." },
 };
 
@@ -162,7 +162,7 @@ export default function CricIntelligence() {
                     id: m.id || i, matchId: m.id,
                     t1: cleanTeam(m.team1 || m.teams?.[0] || "TBD"),
                     t2: cleanTeam(m.team2 || m.teams?.[1] || "TBD"),
-                    status: m.status?.includes("won") ? "ENDED" : m.matchStarted && !m.matchEnded ? "LIVE" : "UPCOMING",
+                    status: m.status?.includes("won") || m.status?.includes("Won") ? "ENDED" : (m.matchStarted && !m.matchEnded) || m.status?.includes("need") || m.status?.includes("opt") || m.status?.includes("batting") || m.status?.includes("over") ? "LIVE" : "UPCOMING",
                     day: m.matchType?.toUpperCase() || "T20",
                     detail: m.name || "",
                     t1Score: m.score?.[0]?.r ?? null, t1Wkts: m.score?.[0]?.w ?? null,
@@ -170,15 +170,23 @@ export default function CricIntelligence() {
                 }));
                 setLiveMatches(mapped); setLiveStatus("live");
                 const live = mapped.find(m => m.status === "LIVE");
-                if (live) setSelectedMatch(live);
+                if (live) {
+                    setSelectedMatch(live);
+                    if (live.matchId) {
+                        fetch(`${API_BASE}/match/${live.matchId}`)
+                            .then(r => r.ok ? r.json() : null)
+                            .then(d => { if (d && !d.error) setPred(d); })
+                            .catch(() => {});
+                    }
+                }
             }
         } catch { setLiveStatus("mock"); }
     }, []);
     useEffect(() => { fetchMatches(); }, [fetchMatches]);
     useEffect(() => { const t = setInterval(fetchMatches, 5 * 60 * 1000); return () => clearInterval(t); }, [fetchMatches]);
     useEffect(() => {
-        if (selectedMatch?.detail) {
-            fetch(`${API_BASE}/predict?venue=${encodeURIComponent(selectedMatch.detail)}`)
+        if (selectedMatch?.matchId) {
+            fetch(`${API_BASE}/match/${selectedMatch.matchId}`)
                 .then(r => r.ok ? r.json() : null).then(d => { if (d && !d.error) setPred(d); }).catch(() => { });
         }
     }, [selectedMatch]);
@@ -222,12 +230,12 @@ export default function CricIntelligence() {
     .mt { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0; font-family: Inter, system-ui; }
     `;
 
-    // ── LANDING ───────────────────────────────────────────────────────────────
+    // ââ LANDING âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     if (showLanding) return (
         <div style={{ minHeight: "100vh", background: "#F9F9F9", fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
 
-            {/* Hero — Blue with pitch texture */}
+            {/* Hero â Blue with pitch texture */}
             <div style={{ background: "#354D97", position: "relative", overflow: "hidden" }}>
                 {/* Cricket pitch SVG texture */}
                 <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.07, pointerEvents: "none" }} viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
@@ -247,14 +255,14 @@ export default function CricIntelligence() {
                     <div style={{ fontWeight: 700, fontSize: 17, color: "#fff", letterSpacing: -0.5 }}>CricIntelligence</div>
                     <button onClick={() => { localStorage.setItem("ci_v2", "1"); setShowLanding(false); }}
                         style={{ background: "#C8961E", color: "#000", border: "none", borderRadius: 8, padding: "10px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
-                        Open App →
+                        Open App â
                     </button>
                 </nav>
 
                 <div style={{ maxWidth: 700, margin: "0 auto", padding: "50px 32px 60px", position: "relative" }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(200,150,30,0.15)", border: "1px solid rgba(200,150,30,0.4)", borderRadius: 20, padding: "5px 14px", marginBottom: 24 }}>
                         <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22C55E", animation: "pulse 2s infinite" }} />
-                        <span style={{ fontSize: 12, fontWeight: 700, color: "#C8961E", letterSpacing: 0.5 }}>LIVE · IPL 2025 READY</span>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "#C8961E", letterSpacing: 0.5 }}>LIVE Â· IPL 2025 READY</span>
                     </div>
                     <h1 style={{ fontSize: "clamp(34px, 5.5vw, 60px)", fontWeight: 800, letterSpacing: -2, lineHeight: 1.05, marginBottom: 16, color: "#fff" }}>
                         Know who wins<br />
@@ -269,14 +277,14 @@ export default function CricIntelligence() {
                             style={{ flex: 1, minWidth: 220, padding: "12px 16px", borderRadius: 8, border: "1.5px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.1)", outline: "none", color: "#fff", fontSize: 14, fontFamily: "Inter, system-ui" }} />
                         <button onClick={() => { if (emailInput) localStorage.setItem("cricintel_email", emailInput); localStorage.setItem("ci_v2", "1"); setShowLanding(false); }}
                             style={{ background: "#C8961E", color: "#000", border: "none", borderRadius: 8, padding: "12px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
-                            Get Free Predictions →
+                            Get Free Predictions â
                         </button>
                     </div>
-                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>Free · No credit card · Cancel anytime</div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>Free Â· No credit card Â· Cancel anytime</div>
                 </div>
             </div>
 
-            {/* Stats + Preview — White */}
+            {/* Stats + Preview â White */}
             <div style={{ maxWidth: 700, margin: "0 auto", padding: "32px 24px 60px" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 24 }}>
                     {[["78.2%", "Model Accuracy", false], ["1.7M", "Data Points", true], ["877", "Venues", false]].map(([v, l, accent]) => (
@@ -297,7 +305,7 @@ export default function CricIntelligence() {
                         Our AI gives <strong style={{ color: "#354D97" }}>India a 72% chance</strong> of winning based on current conditions and 1.7M historical matches.
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-                        {[["Next over", "9–11 runs", "#0A0A0A"], ["Wicket risk", "Low · 22%", "#22C55E"], ["Confidence", "High · 85%", "#C8961E"]].map(([k, v, color]) => (
+                        {[["Next over", "9â11 runs", "#0A0A0A"], ["Wicket risk", "Low Â· 22%", "#22C55E"], ["Confidence", "High Â· 85%", "#C8961E"]].map(([k, v, color]) => (
                             <div key={k} style={{ background: "#F4F6FA", borderRadius: 10, padding: "10px 8px", textAlign: "center" }}>
                                 <div style={{ fontSize: 10, color: "#aaa", marginBottom: 3 }}>{k}</div>
                                 <div style={{ fontSize: 13, fontWeight: 700, color }}>{v}</div>
@@ -309,7 +317,7 @@ export default function CricIntelligence() {
         </div>
     );
 
-        // ── MAIN APP ──────────────────────────────────────────────────────────────
+        // ââ MAIN APP ââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
@@ -327,7 +335,7 @@ export default function CricIntelligence() {
                         <div style={{ width: 6, height: 6, borderRadius: "50%", background: liveStatus==="live" ? C.green : C.amber, animation: "pulse 2s infinite" }} />
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>{liveTime.toLocaleTimeString("en-GB")}</span>
                     </div>
-                    {!isPremium && <button onClick={() => setShowPaywall(true)} style={{ background: C.gold, color: C.navy, border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Upgrade ⚡</button>}
+                    {!isPremium && <button onClick={() => setShowPaywall(true)} style={{ background: C.gold, color: C.navy, border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Upgrade â¡</button>}
                 </div>
             </nav>
 
@@ -338,14 +346,14 @@ export default function CricIntelligence() {
                     {/* LEFT */}
                     <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, padding: "18px 14px", overflowY: "auto", background: C.surface }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.navy, letterSpacing: 1.5, marginBottom: 12, padding: "6px 10px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
-                            {liveStatus==="live" ? "🟢 LIVE DATA" : "● MATCHES"}
+                            {liveStatus==="live" ? "ð¢ LIVE DATA" : "â MATCHES"}
                         </div>
                         {liveMatches.map(m => (
                             <div key={m.id} className={`match-pill ${selectedMatch.id===m.id?"sel":""}`} onClick={() => setSelectedMatch(m)}>
                                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                                    <span style={{ fontSize: 10, color: C.muted }}>{m.day} · {m.detail?.split("·")[0]?.trim().slice(0,20)}</span>
+                                    <span style={{ fontSize: 10, color: C.muted }}>{m.day} Â· {m.detail?.split("Â·")[0]?.trim().slice(0,20)}</span>
                                     <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 5, background: m.status==="LIVE"?"#FFF0F0":C.bg, color: m.status==="LIVE"?C.red:C.muted }}>
-                                        {m.status==="LIVE"?"● LIVE":m.status}
+                                        {m.status==="LIVE"?"â LIVE":m.status}
                                     </span>
                                 </div>
                                 {[{n:m.t1,s:m.t1Score,w:m.t1Wkts,b:true},{n:m.t2,s:m.t2Score,b:false}].map(({n,s,w,b}) => (
@@ -368,7 +376,7 @@ export default function CricIntelligence() {
                     {/* MAIN */}
                     <main className="mc" style={{ padding: 0, overflowY: "auto" }}>
 
-                        {/* Hero — Blue with pitch texture */}
+                        {/* Hero â Blue with pitch texture */}
                         <div style={{ background: "#354D97", position: "relative", overflow: "hidden", padding: "24px 24px 28px" }}>
                             <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.06, pointerEvents: "none" }} viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice">
                                 <rect x="360" y="-300" width="80" height="800" fill="none" stroke="#fff" strokeWidth="1.5"/>
@@ -396,8 +404,8 @@ export default function CricIntelligence() {
                                     <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore || "156/3 (14.2 ov)"}</span>
                                     <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
                                     <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || 10.9}</span>
-                                    <button onClick={() => { const t = `🏏 ${cleanTeam(pred.team1 || "India")} vs ${cleanTeam(pred.team2 || "Australia")} — AI: ${prob}% win probability. cricintelligence.com`; navigator.clipboard?.writeText(t).then(() => alert("Copied! 🏏")); }}
-                                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share ↗</button>
+                                    <button onClick={() => { const t = `ð ${cleanTeam(pred.team1 || "India")} vs ${cleanTeam(pred.team2 || "Australia")} â AI: ${prob}% win probability. cricintelligence.com`; navigator.clipboard?.writeText(t).then(() => alert("Copied! ð")); }}
+                                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share â</button>
                                 </div>
                             </div>
                         </div>
@@ -429,12 +437,12 @@ export default function CricIntelligence() {
                                     <div>
                                         <div style={{ fontSize:10,color:C.red,fontWeight:700,letterSpacing:1,marginBottom:8 }}>RISKS</div>
                                         {(pred.weaknesses||MOCK_PRED.weaknesses).map(w => (
-                                            <div key={w} style={{ fontSize:11,marginBottom:5,display:"flex",gap:5 }}><span style={{ color:C.red }}>−</span>{w}</div>
+                                            <div key={w} style={{ fontSize:11,marginBottom:5,display:"flex",gap:5 }}><span style={{ color:C.red }}>â</span>{w}</div>
                                         ))}
                                     </div>
                                 </div>
                                 {!isPremium
-                                    ? <button onClick={() => setShowPaywall(true)} className="btn-p" style={{ fontSize:12 }}>Unlock Full Analysis — £9.99/mo</button>
+                                    ? <button onClick={() => setShowPaywall(true)} className="btn-p" style={{ fontSize:12 }}>Unlock Full Analysis â Â£9.99/mo</button>
                                     : <div style={{ background:C.bg,borderRadius:8,padding:"10px 12px",fontSize:12,color:C.muted }}>{pred.weatherImpact?.tip||"Bright conditions favour batters."}</div>
                                 }
                             </div>
@@ -443,15 +451,15 @@ export default function CricIntelligence() {
                         {/* Weather + Pitch */}
                         <div className="cr" style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14 }}>
                             <div className="card" style={{ padding:18,display:"flex",gap:14,alignItems:"center" }}>
-                                <span style={{ fontSize:32 }}>{pred.weatherImpact?.emoji||"☀️"}</span>
+                                <span style={{ fontSize:32 }}>{pred.weatherImpact?.emoji||"âï¸"}</span>
                                 <div>
                                     <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1 }}>WEATHER</div>
-                                    <div style={{ fontSize:20,fontWeight:800 }}>{pred.weather?.temp||28}°C</div>
+                                    <div style={{ fontSize:20,fontWeight:800 }}>{pred.weather?.temp||28}Â°C</div>
                                     <div style={{ fontSize:11,color:C.muted }}>{pred.weather?.condition||"SUNNY"}</div>
                                 </div>
                             </div>
                             <div className="card" style={{ padding:18,display:"flex",gap:14,alignItems:"center" }}>
-                                <span style={{ fontSize:32 }}>🏏</span>
+                                <span style={{ fontSize:32 }}>ð</span>
                                 <div>
                                     <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1 }}>PITCH</div>
                                     <div style={{ fontSize:15,fontWeight:700 }}>{pred.pitchLabel||"DRY / SPIN"}</div>
@@ -467,7 +475,7 @@ export default function CricIntelligence() {
                                     <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1 }}>OVER-BY-OVER PREDICTIONS</div>
                                     <div style={{ fontSize:12,color:C.muted,marginTop:2 }}>{pred.phaseEmoji} {pred.currentPhase||"MIDDLE OVERS"}</div>
                                 </div>
-                                {!isPremium && <span style={{ fontSize:11,color:C.accent,fontWeight:600 }}>1 free · Upgrade for all 5</span>}
+                                {!isPremium && <span style={{ fontSize:11,color:C.accent,fontWeight:600 }}>1 free Â· Upgrade for all 5</span>}
                             </div>
                             <div className="og" style={{ display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8 }}>
                                 {(pred.nextOvers||MOCK_PRED.nextOvers).map((ov,i) => {
@@ -482,13 +490,13 @@ export default function CricIntelligence() {
                                             <div style={{ fontSize:22,fontWeight:800,letterSpacing:-0.5,lineHeight:1 }}>{ov.runRange}</div>
                                             <div style={{ fontSize:9,color:C.muted,marginBottom:8 }}>runs</div>
                                             <div style={{ background:`${wc}15`,borderRadius:6,padding:"4px 4px" }}>
-                                                <div style={{ fontSize:9,fontWeight:700,color:wc }}>{ov.wicketProb>40?"⚠️ Likely":ov.wicketProb>25?"Possible":"Safe"}</div>
+                                                <div style={{ fontSize:9,fontWeight:700,color:wc }}>{ov.wicketProb>40?"â ï¸ Likely":ov.wicketProb>25?"Possible":"Safe"}</div>
                                                 <div style={{ fontSize:8,color:C.muted }}>{ov.wicketProb}% wkt</div>
                                             </div>
                                             <div style={{ fontSize:8,color:C.muted,marginTop:5 }}>{ov.confidence>=80?"High":ov.confidence>=60?"Med":"Low"} conf</div>
                                             {i>0 && !isPremium && (
                                                 <div className="lock" onClick={() => setShowPaywall(true)}>
-                                                    <span style={{ fontSize:18 }}>🔒</span>
+                                                    <span style={{ fontSize:18 }}>ð</span>
                                                     <span style={{ fontSize:10,fontWeight:600 }}>Premium</span>
                                                 </div>
                                             )}
@@ -506,15 +514,15 @@ export default function CricIntelligence() {
                         {/* Phase */}
                         <div className="cr" style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14 }}>
                             <div className="card" style={{ padding:18 }}>
-                                <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:10 }}>🔵 POWERPLAY</div>
+                                <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:10 }}>ðµ POWERPLAY</div>
                                 <div style={{ fontSize:22,fontWeight:800 }}>{pred.powerplay?.expectedScore||58} runs</div>
                                 <div style={{ fontSize:12,color:C.muted,marginTop:4,lineHeight:1.6 }}>{pred.powerplay?.tip||MOCK_PRED.powerplay.tip}</div>
                             </div>
                             <div className="card" style={{ padding:18,position:"relative",overflow:"hidden" }}>
-                                <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:10 }}>🔴 DEATH OVERS</div>
+                                <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:10 }}>ð´ DEATH OVERS</div>
                                 <div style={{ fontSize:22,fontWeight:800 }}>{pred.deathOvers?.expectedRR||10.8} RR</div>
                                 <div style={{ fontSize:12,color:C.muted,marginTop:4,lineHeight:1.6 }}>{pred.deathOvers?.tip||MOCK_PRED.deathOvers.tip}</div>
-                                {!isPremium && <div className="lock" onClick={() => setShowPaywall(true)}><span style={{ fontSize:18 }}>🔒</span><span style={{ fontSize:10,fontWeight:600 }}>Premium</span></div>}
+                                {!isPremium && <div className="lock" onClick={() => setShowPaywall(true)}><span style={{ fontSize:18 }}>ð</span><span style={{ fontSize:10,fontWeight:600 }}>Premium</span></div>}
                             </div>
                         </div>
                         </div>{/* end white content */}
@@ -538,16 +546,16 @@ export default function CricIntelligence() {
                         </div>
                         {!isPremium && (
                             <div style={{ background:C.text,borderRadius:14,padding:16,color:"#fff" }}>
-                                <div style={{ fontSize:13,fontWeight:700,marginBottom:6 }}>⚡ Unlock Premium</div>
-                                <div style={{ fontSize:11,color:"rgba(255,255,255,0.65)",lineHeight:1.5,marginBottom:12 }}>All 5 overs · Death intel · Pitch tracker · Real-time signals</div>
+                                <div style={{ fontSize:13,fontWeight:700,marginBottom:6 }}>â¡ Unlock Premium</div>
+                                <div style={{ fontSize:11,color:"rgba(255,255,255,0.65)",lineHeight:1.5,marginBottom:12 }}>All 5 overs Â· Death intel Â· Pitch tracker Â· Real-time signals</div>
                                 <button onClick={() => setShowPaywall(true)} style={{ width:"100%",background:C.gold,color:C.text,border:"none",borderRadius:8,padding:"9px",fontSize:13,fontWeight:700,cursor:"pointer" }}>
-                                    From £9.99/mo
+                                    From Â£9.99/mo
                                 </button>
                             </div>
                         )}
                         <div style={{ fontSize:10,color:C.muted,lineHeight:1.6,textAlign:"center",marginTop:"auto" }}>
-                            {pred.dataSource||"877 venues · 1.7M records"}<br />
-                            <span style={{ color:C.red,fontWeight:600 }}>18+ · BeGambleAware.org</span>
+                            {pred.dataSource||"877 venues Â· 1.7M records"}<br />
+                            <span style={{ color:C.red,fontWeight:600 }}>18+ Â· BeGambleAware.org</span>
                         </div>
                     </aside>
                 </div>
@@ -556,13 +564,13 @@ export default function CricIntelligence() {
             {/* MATCHES */}
             {activeTab === "matches" && (
                 <div className="fade" style={{ maxWidth:600,margin:"0 auto",padding:"22px 16px" }}>
-                    <div style={{ fontSize:20,fontWeight:800,marginBottom:18 }}>{liveStatus==="live"?"🟢 Live Matches":"Matches"}</div>
+                    <div style={{ fontSize:20,fontWeight:800,marginBottom:18 }}>{liveStatus==="live"?"ð¢ Live Matches":"Matches"}</div>
                     {liveMatches.map(m => (
                         <div key={m.id} className="card" style={{ padding:18,marginBottom:12,cursor:"pointer" }} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }}>
                             <div style={{ display:"flex",justifyContent:"space-between",marginBottom:12 }}>
-                                <span style={{ fontSize:11,color:C.muted }}>{m.day} · {m.detail}</span>
+                                <span style={{ fontSize:11,color:C.muted }}>{m.day} Â· {m.detail}</span>
                                 <span style={{ fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:6,background:m.status==="LIVE"?"#FFF0F0":C.bg,color:m.status==="LIVE"?C.red:C.muted }}>
-                                    {m.status==="LIVE"?"● LIVE":m.status}
+                                    {m.status==="LIVE"?"â LIVE":m.status}
                                 </span>
                             </div>
                             {[{n:m.t1,s:m.t1Score,w:m.t1Wkts,b:true},{n:m.t2,s:m.t2Score,b:false}].map(({n,s,w,b}) => (
@@ -571,7 +579,7 @@ export default function CricIntelligence() {
                                     {s!=null && <span style={{ fontSize:16,fontWeight:b?700:400,color:b?C.text:C.muted }}>{w!=null?`${s}/${w}`:s}</span>}
                                 </div>
                             ))}
-                            <div style={{ fontSize:12,color:C.accent,fontWeight:600,marginTop:4 }}>View AI Prediction →</div>
+                            <div style={{ fontSize:12,color:C.accent,fontWeight:600,marginTop:4 }}>View AI Prediction â</div>
                         </div>
                     ))}
                 </div>
@@ -584,7 +592,7 @@ export default function CricIntelligence() {
                     {[
                         { tag:"ANALYSIS", title:"IPL 2025: How AI is reshaping cricket strategy", time:"2h ago" },
                         { tag:"PITCH", title:"Wankhede pitch report: Spin-friendly surface ahead", time:"4h ago" },
-                        { tag:"STATS", title:"India's batting in death overs — a deep dive", time:"6h ago" },
+                        { tag:"STATS", title:"India's batting in death overs â a deep dive", time:"6h ago" },
                         { tag:"PREVIEW", title:"T20 World Cup 2026: Early favourites and form", time:"1d ago" },
                     ].map(({ tag,title,time }) => (
                         <div key={title} className="card" style={{ padding:16,marginBottom:10 }}>
@@ -600,7 +608,7 @@ export default function CricIntelligence() {
 
             {/* MOBILE NAV */}
             <nav className="mn">
-                {[["📊","Predict","predict"],["🏏","Matches","matches"],["📺","Media","media"],["⚡","Upgrade","up"]].map(([icon,label,key]) => (
+                {[["ð","Predict","predict"],["ð","Matches","matches"],["ðº","Media","media"],["â¡","Upgrade","up"]].map(([icon,label,key]) => (
                     <button key={key} className="mt" onClick={() => key==="up"?setShowPaywall(true):setActiveTab(key)}
                         style={{ opacity:activeTab===key?1:0.4 }}>
                         <span style={{ fontSize:22 }}>{icon}</span>
@@ -614,19 +622,19 @@ export default function CricIntelligence() {
                 <div style={{ position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",zIndex:300,display:"flex",alignItems:"flex-end" }} onClick={() => setShowPaywall(false)}>
                     <div style={{ width:"100%",maxWidth:500,margin:"0 auto",background:C.surface,borderRadius:"20px 20px 0 0",padding:26 }} onClick={e=>e.stopPropagation()}>
                         <div style={{ textAlign:"center",marginBottom:22 }}>
-                            <div style={{ fontSize:22,marginBottom:8 }}>⚡</div>
+                            <div style={{ fontSize:22,marginBottom:8 }}>â¡</div>
                             <div style={{ fontSize:21,fontWeight:800,marginBottom:6 }}>Unlock Premium</div>
-                            <div style={{ fontSize:13,color:C.muted }}>All 5 over predictions · Death overs intel · Pitch tracker</div>
+                            <div style={{ fontSize:13,color:C.muted }}>All 5 over predictions Â· Death overs intel Â· Pitch tracker</div>
                         </div>
                         {paymentStep==="plans" && (
                             <>
                                 <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14 }}>
-                                    {[{plan:"monthly",price:"£9.99",per:"/mo",label:"Monthly",sub:"Cancel anytime"},{plan:"annual",price:"£59.99",per:"/yr",label:"Annual ★",sub:"Save 50%"}].map(p => (
+                                    {[{plan:"monthly",price:"Â£9.99",per:"/mo",label:"Monthly",sub:"Cancel anytime"},{plan:"annual",price:"Â£59.99",per:"/yr",label:"Annual â",sub:"Save 50%"}].map(p => (
                                         <div key={p.plan} onClick={() => setSelectedPlan(p.plan)}
                                             style={{ border:`2px solid ${selectedPlan===p.plan?C.accent:C.border}`,borderRadius:12,padding:14,cursor:"pointer",background:selectedPlan===p.plan?"#F0F7FF":C.surface,textAlign:"center" }}>
                                             <div style={{ fontSize:12,fontWeight:600,marginBottom:4 }}>{p.label}</div>
                                             <div style={{ fontSize:22,fontWeight:800 }}>{p.price}</div>
-                                            <div style={{ fontSize:11,color:C.muted }}>{p.per} · {p.sub}</div>
+                                            <div style={{ fontSize:11,color:C.muted }}>{p.per} Â· {p.sub}</div>
                                         </div>
                                     ))}
                                 </div>
@@ -638,11 +646,11 @@ export default function CricIntelligence() {
                                 <input type="email" placeholder="Your email address" value={emailInput} onChange={e=>setEmailInput(e.target.value)}
                                     style={{ width:"100%",padding:"13px 16px",borderRadius:10,border:`1.5px solid ${C.border}`,fontSize:14,marginBottom:10,outline:"none",fontFamily:"Inter,system-ui" }} />
                                 <button className="btn-p" onClick={() => handleCheckout(selectedPlan)} disabled={checkingPayment}>
-                                    {checkingPayment?"Loading...":`Pay ${selectedPlan==="annual"?"£59.99/yr":"£9.99/mo"}`}
+                                    {checkingPayment?"Loading...":`Pay ${selectedPlan==="annual"?"Â£59.99/yr":"Â£9.99/mo"}`}
                                 </button>
                             </>
                         )}
-                        <div style={{ textAlign:"center",marginTop:10,fontSize:11,color:C.muted }}>18+ · Gamble responsibly · BeGambleAware.org</div>
+                        <div style={{ textAlign:"center",marginTop:10,fontSize:11,color:C.muted }}>18+ Â· Gamble responsibly Â· BeGambleAware.org</div>
                         <button onClick={() => { setShowPaywall(false); setPaymentStep("plans"); }} style={{ display:"block",width:"100%",background:"none",border:"none",color:C.muted,fontSize:13,cursor:"pointer",marginTop:8 }}>Maybe later</button>
                     </div>
                 </div>
