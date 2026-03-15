@@ -55,15 +55,15 @@ const TEAM_FLAGS = {"india": "????", "australia": "????", "england": "??????????
 function TeamLogo({ name, size = 32 }) {
     const [err, setErr] = useState(false);
     const key = (name || "").toLowerCase().trim();
-    const url = TEAM_LOGOS[key];
+    const flag = TEAM_FLAGS[key];
     const abbr = cleanTeam(name).slice(0, 3);
     const hue = [...key].reduce((a, c) => a + c.charCodeAt(0), 0) % 360;
-    if (!url || err) return (
+    if (flag) return (
         <div style={{ width: size, height: size, borderRadius: "50%", background: `hsl(${hue},55%,45%)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
             <span style={{ fontFamily: "Inter, system-ui", fontSize: size * 0.32, fontWeight: 700, color: "#fff" }}>{abbr}</span>
         </div>
     );
-    return <img src={url} alt={name} onError={() => setErr(true)}
+    //img alt={name} onError={() => setErr(true)}
         style={{ width: size, height: size, objectFit: "contain", borderRadius: "50%", background: "#fff", padding: 2, flexShrink: 0, border: `1px solid ${C.border}` }} />;
 }
 
