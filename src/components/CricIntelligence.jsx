@@ -11,9 +11,9 @@ const C = {
 };
 
 const MOCK_MATCHES = [
-    { id: 1, t1: "INDIA", t2: "AUSTRALIA", status: "LIVE", day: "T20", detail: "2nd T20I ÃÂÃÂÃÂÃÂ· Wankhede", t1Score: 156, t2Score: null, t1Wkts: 3, matchId: null },
-    { id: 2, t1: "ENGLAND", t2: "PAKISTAN", status: "UPCOMING", day: "ODI", detail: "1st ODI ÃÂÃÂÃÂÃÂ· Lord's", t1Score: null, t2Score: null, matchId: null },
-    { id: 3, t1: "NZ", t2: "SA", status: "UPCOMING", day: "TEST", detail: "Cape Town ÃÂÃÂÃÂÃÂ· Day 1", t1Score: null, t2Score: null, matchId: null },
+    { id: 1, t1: "INDIA", t2: "AUSTRALIA", status: "LIVE", day: "T20", detail: "2nd T20I ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Wankhede", t1Score: 156, t2Score: null, t1Wkts: 3, matchId: null },
+    { id: 2, t1: "ENGLAND", t2: "PAKISTAN", status: "UPCOMING", day: "ODI", detail: "1st ODI ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Lord's", t1Score: null, t2Score: null, matchId: null },
+    { id: 3, t1: "NZ", t2: "SA", status: "UPCOMING", day: "TEST", detail: "Cape Town ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Day 1", t1Score: null, t2Score: null, matchId: null },
 ];
 const MOCK_PRED = {
     team1: "India", team2: "Australia", venue: "Wankhede Stadium, Mumbai",
@@ -21,21 +21,21 @@ const MOCK_PRED = {
     displayScore: "156/3 (14.2 ov)", aiProbability: 72,
     currentRunRate: 10.9, requiredRunRate: 0,
     pitchLabel: "DRY / SPIN", pitchCondition: "SHOWING WEAR",
-    currentPhase: "MIDDLE OVERS", phaseEmoji: "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¡",
+    currentPhase: "MIDDLE OVERS", phaseEmoji: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡",
     strengths: ["SOLID OPENING STAND", "FAST BOWLING PACE", "SPIN CONTROL"],
     weaknesses: ["VULNERABLE TO SHORT BALL", "DEATH RUN LEAKAGE", "UNSTABLE MID ORDER"],
     nextOvers: [
-        { over: 15, phase: "MIDDLE OVERS", expectedRuns: 9.2, wicketProb: 22, confidence: 85, runRange: "7ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ11", tip: "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¡ Build platform heading into death overs. Target 10 runs minimum." },
-        { over: 16, phase: "DEATH OVERS", expectedRuns: 10.8, wicketProb: 32, confidence: 77, runRange: "9ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ13", tip: "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ´ Death begins ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ high scoring expected. Yorkers key." },
-        { over: 17, phase: "DEATH OVERS", expectedRuns: 11.5, wicketProb: 38, confidence: 69, runRange: "9ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ14", tip: "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ´ Slog overs ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ boundaries crucial. Spin bowlers under pressure." },
-        { over: 18, phase: "DEATH OVERS", expectedRuns: 10.2, wicketProb: 42, confidence: 61, runRange: "8ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ13", tip: "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ ÃÂÃÂ¯ÃÂÃÂ¸ÃÂÃÂ Wicket risk rising. Batters taking high-risk shots." },
-        { over: 19, phase: "DEATH OVERS", expectedRuns: 12.0, wicketProb: 45, confidence: 53, runRange: "10ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ14", tip: "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ´ Final push ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ maximum attack. Expect big hits." },
+        { over: 15, phase: "MIDDLE OVERS", expectedRuns: 9.2, wicketProb: 22, confidence: 85, runRange: "7ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ11", tip: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ Build platform heading into death overs. Target 10 runs minimum." },
+        { over: 16, phase: "DEATH OVERS", expectedRuns: 10.8, wicketProb: 32, confidence: 77, runRange: "9ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ13", tip: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ´ Death begins ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ high scoring expected. Yorkers key." },
+        { over: 17, phase: "DEATH OVERS", expectedRuns: 11.5, wicketProb: 38, confidence: 69, runRange: "9ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ14", tip: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ´ Slog overs ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ boundaries crucial. Spin bowlers under pressure." },
+        { over: 18, phase: "DEATH OVERS", expectedRuns: 10.2, wicketProb: 42, confidence: 61, runRange: "8ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ13", tip: "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ Wicket risk rising. Batters taking high-risk shots." },
+        { over: 19, phase: "DEATH OVERS", expectedRuns: 12.0, wicketProb: 45, confidence: 53, runRange: "10ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ14", tip: "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ´ Final push ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ maximum attack. Expect big hits." },
     ],
     weather: { temp: 28, condition: "SUNNY" },
-    weatherImpact: { tip: "Bright conditions favour batters.", emoji: "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂ¸ÃÂÃÂ" },
-    dataSource: "877 venues ÃÂÃÂÃÂÃÂ· 1.7M records ÃÂÃÂÃÂÃÂ· 78.2% accuracy",
+    weatherImpact: { tip: "Bright conditions favour batters.", emoji: "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ" },
+    dataSource: "877 venues ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· 1.7M records ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· 78.2% accuracy",
     overHistory: [{ over: 10, runs: 98 }, { over: 11, runs: 108 }, { over: 12, runs: 119 }, { over: 13, runs: 133 }, { over: 14, runs: 156 }],
-    powerplay: { expectedScore: 58, expectedRR: 9.6, tip: "Strong powerplay ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ batting conditions ideal." },
+    powerplay: { expectedScore: 58, expectedRR: 9.6, tip: "Strong powerplay ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ batting conditions ideal." },
     deathOvers: { expectedRR: 10.8, expectedRuns: 62, tip: "Death overs: expect 10.8 RR. Set a strong total." },
 };
 
@@ -174,7 +174,7 @@ export default function CricIntelligence() {
                     if (live.matchId) {
                         fetch(`${API_BASE}/match/${live.matchId}`)
                             .then(r => r.ok ? r.json() : null)
-                            .then(d => { if (d && !d.error) setPred(fixObj(d)); })
+                            .then(d => { if (d && !d.error) setPred(d); })
                             .catch(() => {});
                     }
                 }
@@ -186,7 +186,7 @@ export default function CricIntelligence() {
     useEffect(() => {
         if (selectedMatch?.matchId) {
             fetch(`${API_BASE}/match/${selectedMatch.matchId}`)
-                .then(r => r.ok ? r.json() : null).then(d => { if (d && !d.error) setPred(fixObj(d)); }).catch(() => { });
+                .then(r => r.ok ? r.json() : null).then(d => { if (d && !d.error) setPred(d); }).catch(() => { });
         }
     }, [selectedMatch]);
 
@@ -197,30 +197,6 @@ export default function CricIntelligence() {
     const CSS = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-// Fix Windows-1252 mojibake from backend emoji encoding
-function fixEmoji(str) {
-  if (!str || typeof str !== 'string') return str;
-  const win1252 = {0x80:0x20AC,0x82:0x201A,0x83:0x0192,0x84:0x201E,0x85:0x2026,0x86:0x2020,0x87:0x2021,0x88:0x02C6,0x89:0x2030,0x8A:0x0160,0x8B:0x2039,0x8C:0x0152,0x8E:0x017D,0x91:0x2018,0x92:0x2019,0x93:0x201C,0x94:0x201D,0x95:0x2022,0x96:0x2013,0x97:0x2014,0x98:0x02DC,0x99:0x2122,0x9A:0x0161,0x9B:0x203A,0x9C:0x0153,0x9E:0x017E,0x9F:0x0178};
-  const rev = {};
-  for (const [b,u] of Object.entries(win1252)) rev[u] = parseInt(b);
-  const bytes = [];
-  for (let i = 0; i < str.length; i++) {
-    const cp = str.charCodeAt(i);
-    bytes.push(rev[cp] !== undefined ? rev[cp] : cp & 0xFF);
-  }
-  try { return new TextDecoder('utf-8').decode(new Uint8Array(bytes)); } catch(e) { return str; }
-}
-function fixObj(obj) {
-  if (!obj) return obj;
-  if (typeof obj === 'string') return fixEmoji(obj);
-  if (Array.isArray(obj)) return obj.map(fixObj);
-  if (typeof obj === 'object') {
-    const r = {};
-    for (const k in obj) r[k] = fixObj(obj[k]);
-    return r;
-  }
-  return obj;
-}
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: ${C.bg}; }
@@ -255,12 +231,12 @@ function fixObj(obj) {
     .mt { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0; font-family: Inter, system-ui; }
     `;
 
-    // ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ LANDING ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
+    // ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ LANDING ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
     if (showLanding) return (
         <div style={{ minHeight: "100vh", background: "#F9F9F9", fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
 
-            {/* Hero ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Blue with pitch texture */}
+            {/* Hero ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Blue with pitch texture */}
             <div style={{ background: "#354D97", position: "relative", overflow: "hidden" }}>
                 {/* Cricket pitch SVG texture */}
                 <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.07, pointerEvents: "none" }} viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
@@ -280,14 +256,14 @@ function fixObj(obj) {
                     <div style={{ fontWeight: 700, fontSize: 17, color: "#fff", letterSpacing: -0.5 }}>CricIntelligence</div>
                     <button onClick={() => { localStorage.setItem("ci_v2", "1"); setShowLanding(false); }}
                         style={{ background: "#C8961E", color: "#000", border: "none", borderRadius: 8, padding: "10px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>
-                        Open App ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
+                        Open App ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
                     </button>
                 </nav>
 
                 <div style={{ maxWidth: 700, margin: "0 auto", padding: "50px 32px 60px", position: "relative" }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(200,150,30,0.15)", border: "1px solid rgba(200,150,30,0.4)", borderRadius: 20, padding: "5px 14px", marginBottom: 24 }}>
                         <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22C55E", animation: "pulse 2s infinite" }} />
-                        <span style={{ fontSize: 12, fontWeight: 700, color: "#C8961E", letterSpacing: 0.5 }}>LIVE ÃÂÃÂÃÂÃÂ· IPL 2025 READY</span>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "#C8961E", letterSpacing: 0.5 }}>LIVE ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· IPL 2025 READY</span>
                     </div>
                     <h1 style={{ fontSize: "clamp(34px, 5.5vw, 60px)", fontWeight: 800, letterSpacing: -2, lineHeight: 1.05, marginBottom: 16, color: "#fff" }}>
                         Know who wins<br />
@@ -302,14 +278,14 @@ function fixObj(obj) {
                             style={{ flex: 1, minWidth: 220, padding: "12px 16px", borderRadius: 8, border: "1.5px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.1)", outline: "none", color: "#fff", fontSize: 14, fontFamily: "Inter, system-ui" }} />
                         <button onClick={() => { if (emailInput) localStorage.setItem("cricintel_email", emailInput); localStorage.setItem("ci_v2", "1"); setShowLanding(false); }}
                             style={{ background: "#C8961E", color: "#000", border: "none", borderRadius: 8, padding: "12px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
-                            Get Free Predictions ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
+                            Get Free Predictions ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
                         </button>
                     </div>
-                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>Free ÃÂÃÂÃÂÃÂ· No credit card ÃÂÃÂÃÂÃÂ· Cancel anytime</div>
+                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>Free ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· No credit card ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Cancel anytime</div>
                 </div>
             </div>
 
-            {/* Stats + Preview ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ White */}
+            {/* Stats + Preview ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ White */}
             <div style={{ maxWidth: 700, margin: "0 auto", padding: "32px 24px 60px" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 24 }}>
                     {[["78.2%", "Model Accuracy", false], ["1.7M", "Data Points", true], ["877", "Venues", false]].map(([v, l, accent]) => (
@@ -330,7 +306,7 @@ function fixObj(obj) {
                         Our AI gives <strong style={{ color: "#354D97" }}>India a 72% chance</strong> of winning based on current conditions and 1.7M historical matches.
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
-                        {[["Next over", "9ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ11 runs", "#0A0A0A"], ["Wicket risk", "Low ÃÂÃÂÃÂÃÂ· 22%", "#22C55E"], ["Confidence", "High ÃÂÃÂÃÂÃÂ· 85%", "#C8961E"]].map(([k, v, color]) => (
+                        {[["Next over", "9ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ11 runs", "#0A0A0A"], ["Wicket risk", "Low ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· 22%", "#22C55E"], ["Confidence", "High ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· 85%", "#C8961E"]].map(([k, v, color]) => (
                             <div key={k} style={{ background: "#F4F6FA", borderRadius: 10, padding: "10px 8px", textAlign: "center" }}>
                                 <div style={{ fontSize: 10, color: "#aaa", marginBottom: 3 }}>{k}</div>
                                 <div style={{ fontSize: 13, fontWeight: 700, color }}>{v}</div>
@@ -342,7 +318,7 @@ function fixObj(obj) {
         </div>
     );
 
-        // ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ MAIN APP ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂ
+        // ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ MAIN APP ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
@@ -360,7 +336,7 @@ function fixObj(obj) {
                         <div style={{ width: 6, height: 6, borderRadius: "50%", background: liveStatus==="live" ? C.green : C.amber, animation: "pulse 2s infinite" }} />
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>{liveTime.toLocaleTimeString("en-GB")}</span>
                     </div>
-                    {!isPremium && <button onClick={() => setShowPaywall(true)} style={{ background: C.gold, color: C.navy, border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Upgrade ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¡</button>}
+                    {!isPremium && <button onClick={() => setShowPaywall(true)} style={{ background: C.gold, color: C.navy, border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Upgrade ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡</button>}
                 </div>
             </nav>
 
@@ -371,14 +347,14 @@ function fixObj(obj) {
                     {/* LEFT */}
                     <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, padding: "18px 14px", overflowY: "auto", background: C.surface }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.navy, letterSpacing: 1.5, marginBottom: 12, padding: "6px 10px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
-                            {liveStatus==="live" ? "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¢ LIVE DATA" : "ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ MATCHES"}
+                            {liveStatus==="live" ? "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ LIVE DATA" : "ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ MATCHES"}
                         </div>
                         {liveMatches.map(m => (
                             <div key={m.id} className={`match-pill ${selectedMatch.id===m.id?"sel":""}`} onClick={() => setSelectedMatch(m)}>
                                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                                    <span style={{ fontSize: 10, color: C.muted }}>{m.day} ÃÂÃÂÃÂÃÂ· {m.detail?.split("ÃÂÃÂÃÂÃÂ·")[0]?.trim().slice(0,20)}</span>
+                                    <span style={{ fontSize: 10, color: C.muted }}>{m.day} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {m.detail?.split("ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ·")[0]?.trim().slice(0,20)}</span>
                                     <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 5, background: m.status==="LIVE"?"#FFF0F0":C.bg, color: m.status==="LIVE"?C.red:C.muted }}>
-                                        {m.status==="LIVE"?"ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ LIVE":m.status}
+                                        {m.status==="LIVE"?"ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ LIVE":m.status}
                                     </span>
                                 </div>
                                 {[{n:m.t1,s:m.t1Score,w:m.t1Wkts,b:true},{n:m.t2,s:m.t2Score,b:false}].map(({n,s,w,b}) => (
@@ -401,7 +377,7 @@ function fixObj(obj) {
                     {/* MAIN */}
                     <main className="mc" style={{ padding: 0, overflowY: "auto" }}>
 
-                        {/* Hero ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Blue with pitch texture */}
+                        {/* Hero ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ Blue with pitch texture */}
                         <div style={{ background: "#354D97", position: "relative", overflow: "hidden", padding: "24px 24px 28px" }}>
                             <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.06, pointerEvents: "none" }} viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice">
                                 <rect x="360" y="-300" width="80" height="800" fill="none" stroke="#fff" strokeWidth="1.5"/>
@@ -429,8 +405,8 @@ function fixObj(obj) {
                                     <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore || "156/3 (14.2 ov)"}</span>
                                     <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
                                     <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || 10.9}</span>
-                                    <button onClick={() => { const t = `ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ ${cleanTeam(pred.team1 || "India")} vs ${cleanTeam(pred.team2 || "Australia")} ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ AI: ${prob}% win probability. cricintelligence.com`; navigator.clipboard?.writeText(t).then(() => alert("Copied! ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ")); }}
-                                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ</button>
+                                    <button onClick={() => { const t = `ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ${cleanTeam(pred.team1 || "India")} vs ${cleanTeam(pred.team2 || "Australia")} ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ AI: ${prob}% win probability. cricintelligence.com`; navigator.clipboard?.writeText(t).then(() => alert("Copied! ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ")); }}
+                                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</button>
                                 </div>
                             </div>
                         </div>
@@ -462,12 +438,12 @@ function fixObj(obj) {
                                     <div>
                                         <div style={{ fontSize:10,color:C.red,fontWeight:700,letterSpacing:1,marginBottom:8 }}>RISKS</div>
                                         {(pred.weaknesses||MOCK_PRED.weaknesses).map(w => (
-                                            <div key={w} style={{ fontSize:11,marginBottom:5,display:"flex",gap:5 }}><span style={{ color:C.red }}>ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ</span>{w}</div>
+                                            <div key={w} style={{ fontSize:11,marginBottom:5,display:"flex",gap:5 }}><span style={{ color:C.red }}>ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</span>{w}</div>
                                         ))}
                                     </div>
                                 </div>
                                 {!isPremium
-                                    ? <button onClick={() => setShowPaywall(true)} className="btn-p" style={{ fontSize:12 }}>Unlock Full Analysis ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂ£9.99/mo</button>
+                                    ? <button onClick={() => setShowPaywall(true)} className="btn-p" style={{ fontSize:12 }}>Unlock Full Analysis ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£9.99/mo</button>
                                     : <div style={{ background:C.bg,borderRadius:8,padding:"10px 12px",fontSize:12,color:C.muted }}>{pred.weatherImpact?.tip||"Bright conditions favour batters."}</div>
                                 }
                             </div>
@@ -476,15 +452,15 @@ function fixObj(obj) {
                         {/* Weather + Pitch */}
                         <div className="cr" style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14 }}>
                             <div className="card" style={{ padding:18,display:"flex",gap:14,alignItems:"center" }}>
-                                <span style={{ fontSize:32 }}>{pred.weatherImpact?.emoji||"ÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂ¸ÃÂÃÂ"}</span>
+                                <span style={{ fontSize:32 }}>{pred.weatherImpact?.emoji||"ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ"}</span>
                                 <div>
                                     <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1 }}>WEATHER</div>
-                                    <div style={{ fontSize:20,fontWeight:800 }}>{pred.weather?.temp||28}ÃÂÃÂÃÂÃÂ°C</div>
+                                    <div style={{ fontSize:20,fontWeight:800 }}>{pred.weather?.temp||28}ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ°C</div>
                                     <div style={{ fontSize:11,color:C.muted }}>{pred.weather?.condition||"SUNNY"}</div>
                                 </div>
                             </div>
                             <div className="card" style={{ padding:18,display:"flex",gap:14,alignItems:"center" }}>
-                                <span style={{ fontSize:32 }}>ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ</span>
+                                <span style={{ fontSize:32 }}>ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</span>
                                 <div>
                                     <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1 }}>PITCH</div>
                                     <div style={{ fontSize:15,fontWeight:700 }}>{pred.pitchLabel||"DRY / SPIN"}</div>
@@ -500,7 +476,7 @@ function fixObj(obj) {
                                     <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1 }}>OVER-BY-OVER PREDICTIONS</div>
                                     <div style={{ fontSize:12,color:C.muted,marginTop:2 }}>{pred.phaseEmoji} {pred.currentPhase||"MIDDLE OVERS"}</div>
                                 </div>
-                                {!isPremium && <span style={{ fontSize:11,color:C.accent,fontWeight:600 }}>1 free ÃÂÃÂÃÂÃÂ· Upgrade for all 5</span>}
+                                {!isPremium && <span style={{ fontSize:11,color:C.accent,fontWeight:600 }}>1 free ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Upgrade for all 5</span>}
                             </div>
                             <div className="og" style={{ display:"grid",gridTemplateColumns:"repeat(5,1fr)",gap:8 }}>
                                 {(pred.nextOvers||MOCK_PRED.nextOvers).map((ov,i) => {
@@ -515,13 +491,13 @@ function fixObj(obj) {
                                             <div style={{ fontSize:22,fontWeight:800,letterSpacing:-0.5,lineHeight:1 }}>{ov.runRange}</div>
                                             <div style={{ fontSize:9,color:C.muted,marginBottom:8 }}>runs</div>
                                             <div style={{ background:`${wc}15`,borderRadius:6,padding:"4px 4px" }}>
-                                                <div style={{ fontSize:9,fontWeight:700,color:wc }}>{ov.wicketProb>40?"ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ ÃÂÃÂ¯ÃÂÃÂ¸ÃÂÃÂ Likely":ov.wicketProb>25?"Possible":"Safe"}</div>
+                                                <div style={{ fontSize:9,fontWeight:700,color:wc }}>{ov.wicketProb>40?"ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ ÃÂÃÂÃÂÃÂ¯ÃÂÃÂÃÂÃÂ¸ÃÂÃÂÃÂÃÂ Likely":ov.wicketProb>25?"Possible":"Safe"}</div>
                                                 <div style={{ fontSize:8,color:C.muted }}>{ov.wicketProb}% wkt</div>
                                             </div>
                                             <div style={{ fontSize:8,color:C.muted,marginTop:5 }}>{ov.confidence>=80?"High":ov.confidence>=60?"Med":"Low"} conf</div>
                                             {i>0 && !isPremium && (
                                                 <div className="lock" onClick={() => setShowPaywall(true)}>
-                                                    <span style={{ fontSize:18 }}>ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ</span>
+                                                    <span style={{ fontSize:18 }}>ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</span>
                                                     <span style={{ fontSize:10,fontWeight:600 }}>Premium</span>
                                                 </div>
                                             )}
@@ -539,15 +515,15 @@ function fixObj(obj) {
                         {/* Phase */}
                         <div className="cr" style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14 }}>
                             <div className="card" style={{ padding:18 }}>
-                                <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:10 }}>ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂµ POWERPLAY</div>
+                                <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:10 }}>ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂµ POWERPLAY</div>
                                 <div style={{ fontSize:22,fontWeight:800 }}>{pred.powerplay?.expectedScore||58} runs</div>
                                 <div style={{ fontSize:12,color:C.muted,marginTop:4,lineHeight:1.6 }}>{pred.powerplay?.tip||MOCK_PRED.powerplay.tip}</div>
                             </div>
                             <div className="card" style={{ padding:18,position:"relative",overflow:"hidden" }}>
-                                <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:10 }}>ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ´ DEATH OVERS</div>
+                                <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:10 }}>ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ´ DEATH OVERS</div>
                                 <div style={{ fontSize:22,fontWeight:800 }}>{pred.deathOvers?.expectedRR||10.8} RR</div>
                                 <div style={{ fontSize:12,color:C.muted,marginTop:4,lineHeight:1.6 }}>{pred.deathOvers?.tip||MOCK_PRED.deathOvers.tip}</div>
-                                {!isPremium && <div className="lock" onClick={() => setShowPaywall(true)}><span style={{ fontSize:18 }}>ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ</span><span style={{ fontSize:10,fontWeight:600 }}>Premium</span></div>}
+                                {!isPremium && <div className="lock" onClick={() => setShowPaywall(true)}><span style={{ fontSize:18 }}>ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</span><span style={{ fontSize:10,fontWeight:600 }}>Premium</span></div>}
                             </div>
                         </div>
                         </div>{/* end white content */}
@@ -571,16 +547,16 @@ function fixObj(obj) {
                         </div>
                         {!isPremium && (
                             <div style={{ background:C.text,borderRadius:14,padding:16,color:"#fff" }}>
-                                <div style={{ fontSize:13,fontWeight:700,marginBottom:6 }}>ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¡ Unlock Premium</div>
-                                <div style={{ fontSize:11,color:"rgba(255,255,255,0.65)",lineHeight:1.5,marginBottom:12 }}>All 5 overs ÃÂÃÂÃÂÃÂ· Death intel ÃÂÃÂÃÂÃÂ· Pitch tracker ÃÂÃÂÃÂÃÂ· Real-time signals</div>
+                                <div style={{ fontSize:13,fontWeight:700,marginBottom:6 }}>ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ Unlock Premium</div>
+                                <div style={{ fontSize:11,color:"rgba(255,255,255,0.65)",lineHeight:1.5,marginBottom:12 }}>All 5 overs ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Death intel ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Pitch tracker ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Real-time signals</div>
                                 <button onClick={() => setShowPaywall(true)} style={{ width:"100%",background:C.gold,color:C.text,border:"none",borderRadius:8,padding:"9px",fontSize:13,fontWeight:700,cursor:"pointer" }}>
-                                    From ÃÂÃÂÃÂÃÂ£9.99/mo
+                                    From ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£9.99/mo
                                 </button>
                             </div>
                         )}
                         <div style={{ fontSize:10,color:C.muted,lineHeight:1.6,textAlign:"center",marginTop:"auto" }}>
-                            {pred.dataSource||"877 venues ÃÂÃÂÃÂÃÂ· 1.7M records"}<br />
-                            <span style={{ color:C.red,fontWeight:600 }}>18+ ÃÂÃÂÃÂÃÂ· BeGambleAware.org</span>
+                            {pred.dataSource||"877 venues ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· 1.7M records"}<br />
+                            <span style={{ color:C.red,fontWeight:600 }}>18+ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· BeGambleAware.org</span>
                         </div>
                     </aside>
                 </div>
@@ -589,13 +565,13 @@ function fixObj(obj) {
             {/* MATCHES */}
             {activeTab === "matches" && (
                 <div className="fade" style={{ maxWidth:600,margin:"0 auto",padding:"22px 16px" }}>
-                    <div style={{ fontSize:20,fontWeight:800,marginBottom:18 }}>{liveStatus==="live"?"ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ¢ Live Matches":"Matches"}</div>
+                    <div style={{ fontSize:20,fontWeight:800,marginBottom:18 }}>{liveStatus==="live"?"ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ Live Matches":"Matches"}</div>
                     {liveMatches.map(m => (
                         <div key={m.id} className="card" style={{ padding:18,marginBottom:12,cursor:"pointer" }} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }}>
                             <div style={{ display:"flex",justifyContent:"space-between",marginBottom:12 }}>
-                                <span style={{ fontSize:11,color:C.muted }}>{m.day} ÃÂÃÂÃÂÃÂ· {m.detail}</span>
+                                <span style={{ fontSize:11,color:C.muted }}>{m.day} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {m.detail}</span>
                                 <span style={{ fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:6,background:m.status==="LIVE"?"#FFF0F0":C.bg,color:m.status==="LIVE"?C.red:C.muted }}>
-                                    {m.status==="LIVE"?"ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ LIVE":m.status}
+                                    {m.status==="LIVE"?"ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ LIVE":m.status}
                                 </span>
                             </div>
                             {[{n:m.t1,s:m.t1Score,w:m.t1Wkts,b:true},{n:m.t2,s:m.t2Score,b:false}].map(({n,s,w,b}) => (
@@ -604,7 +580,7 @@ function fixObj(obj) {
                                     {s!=null && <span style={{ fontSize:16,fontWeight:b?700:400,color:b?C.text:C.muted }}>{w!=null?`${s}/${w}`:s}</span>}
                                 </div>
                             ))}
-                            <div style={{ fontSize:12,color:C.accent,fontWeight:600,marginTop:4 }}>View AI Prediction ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ</div>
+                            <div style={{ fontSize:12,color:C.accent,fontWeight:600,marginTop:4 }}>View AI Prediction ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ</div>
                         </div>
                     ))}
                 </div>
@@ -617,7 +593,7 @@ function fixObj(obj) {
                     {[
                         { tag:"ANALYSIS", title:"IPL 2025: How AI is reshaping cricket strategy", time:"2h ago" },
                         { tag:"PITCH", title:"Wankhede pitch report: Spin-friendly surface ahead", time:"4h ago" },
-                        { tag:"STATS", title:"India's batting in death overs ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ a deep dive", time:"6h ago" },
+                        { tag:"STATS", title:"India's batting in death overs ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ a deep dive", time:"6h ago" },
                         { tag:"PREVIEW", title:"T20 World Cup 2026: Early favourites and form", time:"1d ago" },
                     ].map(({ tag,title,time }) => (
                         <div key={title} className="card" style={{ padding:16,marginBottom:10 }}>
@@ -633,7 +609,7 @@ function fixObj(obj) {
 
             {/* MOBILE NAV */}
             <nav className="mn">
-                {[["ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ","Predict","predict"],["ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ","Matches","matches"],["ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂº","Media","media"],["ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¡","Upgrade","up"]].map(([icon,label,key]) => (
+                {[["ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ","Predict","predict"],["ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ","Matches","matches"],["ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂº","Media","media"],["ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡","Upgrade","up"]].map(([icon,label,key]) => (
                     <button key={key} className="mt" onClick={() => key==="up"?setShowPaywall(true):setActiveTab(key)}
                         style={{ opacity:activeTab===key?1:0.4 }}>
                         <span style={{ fontSize:22 }}>{icon}</span>
@@ -647,19 +623,19 @@ function fixObj(obj) {
                 <div style={{ position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",zIndex:300,display:"flex",alignItems:"flex-end" }} onClick={() => setShowPaywall(false)}>
                     <div style={{ width:"100%",maxWidth:500,margin:"0 auto",background:C.surface,borderRadius:"20px 20px 0 0",padding:26 }} onClick={e=>e.stopPropagation()}>
                         <div style={{ textAlign:"center",marginBottom:22 }}>
-                            <div style={{ fontSize:22,marginBottom:8 }}>ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ¡</div>
+                            <div style={{ fontSize:22,marginBottom:8 }}>ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡</div>
                             <div style={{ fontSize:21,fontWeight:800,marginBottom:6 }}>Unlock Premium</div>
-                            <div style={{ fontSize:13,color:C.muted }}>All 5 over predictions ÃÂÃÂÃÂÃÂ· Death overs intel ÃÂÃÂÃÂÃÂ· Pitch tracker</div>
+                            <div style={{ fontSize:13,color:C.muted }}>All 5 over predictions ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Death overs intel ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Pitch tracker</div>
                         </div>
                         {paymentStep==="plans" && (
                             <>
                                 <div style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14 }}>
-                                    {[{plan:"monthly",price:"ÃÂÃÂÃÂÃÂ£9.99",per:"/mo",label:"Monthly",sub:"Cancel anytime"},{plan:"annual",price:"ÃÂÃÂÃÂÃÂ£59.99",per:"/yr",label:"Annual ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ",sub:"Save 50%"}].map(p => (
+                                    {[{plan:"monthly",price:"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£9.99",per:"/mo",label:"Monthly",sub:"Cancel anytime"},{plan:"annual",price:"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£59.99",per:"/yr",label:"Annual ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",sub:"Save 50%"}].map(p => (
                                         <div key={p.plan} onClick={() => setSelectedPlan(p.plan)}
                                             style={{ border:`2px solid ${selectedPlan===p.plan?C.accent:C.border}`,borderRadius:12,padding:14,cursor:"pointer",background:selectedPlan===p.plan?"#F0F7FF":C.surface,textAlign:"center" }}>
                                             <div style={{ fontSize:12,fontWeight:600,marginBottom:4 }}>{p.label}</div>
                                             <div style={{ fontSize:22,fontWeight:800 }}>{p.price}</div>
-                                            <div style={{ fontSize:11,color:C.muted }}>{p.per} ÃÂÃÂÃÂÃÂ· {p.sub}</div>
+                                            <div style={{ fontSize:11,color:C.muted }}>{p.per} ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· {p.sub}</div>
                                         </div>
                                     ))}
                                 </div>
@@ -671,11 +647,11 @@ function fixObj(obj) {
                                 <input type="email" placeholder="Your email address" value={emailInput} onChange={e=>setEmailInput(e.target.value)}
                                     style={{ width:"100%",padding:"13px 16px",borderRadius:10,border:`1.5px solid ${C.border}`,fontSize:14,marginBottom:10,outline:"none",fontFamily:"Inter,system-ui" }} />
                                 <button className="btn-p" onClick={() => handleCheckout(selectedPlan)} disabled={checkingPayment}>
-                                    {checkingPayment?"Loading...":`Pay ${selectedPlan==="annual"?"ÃÂÃÂÃÂÃÂ£59.99/yr":"ÃÂÃÂÃÂÃÂ£9.99/mo"}`}
+                                    {checkingPayment?"Loading...":`Pay ${selectedPlan==="annual"?"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£59.99/yr":"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ£9.99/mo"}`}
                                 </button>
                             </>
                         )}
-                        <div style={{ textAlign:"center",marginTop:10,fontSize:11,color:C.muted }}>18+ ÃÂÃÂÃÂÃÂ· Gamble responsibly ÃÂÃÂÃÂÃÂ· BeGambleAware.org</div>
+                        <div style={{ textAlign:"center",marginTop:10,fontSize:11,color:C.muted }}>18+ ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· Gamble responsibly ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ· BeGambleAware.org</div>
                         <button onClick={() => { setShowPaywall(false); setPaymentStep("plans"); }} style={{ display:"block",width:"100%",background:"none",border:"none",color:C.muted,fontSize:13,cursor:"pointer",marginTop:8 }}>Maybe later</button>
                     </div>
                 </div>
