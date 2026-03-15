@@ -62,8 +62,6 @@ function TeamLogo({ name, size = 32 }) {
             <span style={{ fontFamily: "Inter, system-ui", fontSize: size * 0.32, fontWeight: 700, color: "#fff" }}>{abbr}</span>
         </div>
     );
-    //img alt={name} onError={() => setErr(true)}
-        style={{ width: size, height: size, objectFit: "contain", borderRadius: "50%", background: "#fff", padding: 2, flexShrink: 0, border: `1px solid ${C.border}` }} />;
 }
 
 function WinArc({ value }) {
