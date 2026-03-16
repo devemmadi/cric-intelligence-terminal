@@ -53,20 +53,20 @@ const BASE_LOGO = "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_16
 const TEAM_LOGOS = {
     "india":        BASE_LOGO + "/381800/381895.png",
     "australia":    BASE_LOGO + "/382700/382733.png",
-    "england":      BASE_LOGO + "/382700/382728.png",
-    "pakistan":     BASE_LOGO + "/382700/382730.png",
+    "england":      BASE_LOGO + "/381800/381894.png",
+    "pakistan":     BASE_LOGO + "/381800/381891.png",
     "new zealand":  BASE_LOGO + "/340500/340503.png",
     "nz":           BASE_LOGO + "/340500/340503.png",
     "south africa": BASE_LOGO + "/340400/340493.png",
     "sa":           BASE_LOGO + "/340400/340493.png",
     "sri lanka":    BASE_LOGO + "/340500/340505.png",
     "sl":           BASE_LOGO + "/340500/340505.png",
-    "west indies":  BASE_LOGO + "/381800/381891.png",
-    "wi":           BASE_LOGO + "/381800/381891.png",
-    "bangladesh":   BASE_LOGO + "/381800/381857.png",
+    "west indies":  BASE_LOGO + "/317600/317615.png",
+    "wi":           BASE_LOGO + "/317600/317615.png",
+    "bangladesh":   BASE_LOGO + "/341400/341456.png",
     "afghanistan":  BASE_LOGO + "/381800/381893.png",
     "ireland":      BASE_LOGO + "/349300/349350.png",
-    "zimbabwe":     BASE_LOGO + "/340000/340047.png",
+    "zimbabwe":     BASE_LOGO + "/383900/383967.png",
 };
 
 function TeamLogo({ name, size = 32 }) {
