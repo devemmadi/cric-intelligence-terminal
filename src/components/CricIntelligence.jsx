@@ -133,7 +133,6 @@ function Spark({ data }) {
     );
 }
 
-// ── Match ended detection — checks BOTH status field AND raw API status string
 function isMatchEnded(status) {
     if (!status) return false;
     const s = status.toLowerCase();
@@ -188,12 +187,13 @@ export default function CricIntelligence() {
             if (list.length) {
                 const mapped = list.slice(0, 8).map((m, i) => {
                     const rawStatus = m.status || "";
-                    // ── THE FIX: determine status cleanly from raw API string
                     let status;
                     if (isMatchEnded(rawStatus)) {
                         status = "ENDED";
-                    } 
-                    {
+                    } else if (
+                        (m.matchStarted && !m.matchEnded) ||
+                        ["need", "opt", "batting", "bowling", "over", "ov)"].some(kw => rawStatus.toLowerCase().includes(kw))
+                    ) {
                         status = "LIVE";
                     } else {
                         status = "UPCOMING";
@@ -241,8 +241,6 @@ export default function CricIntelligence() {
     const prob = pred.aiProbability || 72;
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
-
-    // ── THE KEY FIX: check BOTH status (set by us) AND rawStatus (from API)
     const matchEnded = isMatchEnded(selectedMatch?.status) || isMatchEnded(selectedMatch?.rawStatus);
 
     const CSS = `
@@ -388,7 +386,6 @@ export default function CricIntelligence() {
 
             {activeTab === "predict" && (
                 <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px 1fr 240px", minHeight: "calc(100vh - 54px)" }}>
-
                     <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, padding: "18px 14px", overflowY: "auto", background: C.surface }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.navy, letterSpacing: 1.5, marginBottom: 12, padding: "6px 10px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
                             {liveStatus==="live" ? "🟢 LIVE DATA" : "● MATCHES"}
@@ -397,11 +394,7 @@ export default function CricIntelligence() {
                             <div key={m.id} className={`match-pill ${selectedMatch.id===m.id?"sel":""}`} onClick={() => setSelectedMatch(m)}>
                                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
                                     <span style={{ fontSize: 10, color: C.muted }}>{m.day} · {m.detail?.split("·")[0]?.trim().slice(0,20)}</span>
-                                    <span style={{
-                                        fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 5,
-                                        background: m.status==="LIVE" ? "#FFF0F0" : m.status==="ENDED" ? "#F0F0F0" : C.bg,
-                                        color: m.status==="LIVE" ? C.red : C.muted
-                                    }}>
+                                    <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 5, background: m.status==="LIVE" ? "#FFF0F0" : m.status==="ENDED" ? "#F0F0F0" : C.bg, color: m.status==="LIVE" ? C.red : C.muted }}>
                                         {m.status==="LIVE" ? "● LIVE" : m.status}
                                     </span>
                                 </div>
@@ -451,9 +444,7 @@ export default function CricIntelligence() {
                                     <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
                                     <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || 10.9}</span>
                                     {matchEnded && (
-                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", background: "rgba(200,150,30,0.2)", padding: "2px 8px", borderRadius: 6 }}>
-                                            MATCH ENDED
-                                        </span>
+                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", background: "rgba(200,150,30,0.2)", padding: "2px 8px", borderRadius: 6 }}>MATCH ENDED</span>
                                     )}
                                     <button onClick={() => { const t = `🏏 ${cleanTeam(pred.team1||"India")} vs ${cleanTeam(pred.team2||"Australia")} — AI: ${prob}% win probability. cricintelligence.com`; navigator.clipboard?.writeText(t).then(() => alert("Copied! 🏏")); }}
                                         style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share ↗</button>
@@ -466,16 +457,10 @@ export default function CricIntelligence() {
                                 <div className="card" style={{ padding: 28, textAlign: "center" }}>
                                     <div style={{ fontSize: 40, marginBottom: 12 }}>🏆</div>
                                     <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 8 }}>Match Complete</div>
-                                    <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.7, marginBottom: 16 }}>
-                                        {selectedMatch?.rawStatus || "This match has ended."}
-                                    </div>
-                                    <div style={{ fontSize: 12, color: C.muted, background: C.bg, borderRadius: 10, padding: "10px 16px", marginBottom: 16 }}>
-                                        AI predictions are only shown for live and upcoming matches.
-                                    </div>
+                                    <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.7, marginBottom: 16 }}>{selectedMatch?.rawStatus || "This match has ended."}</div>
+                                    <div style={{ fontSize: 12, color: C.muted, background: C.bg, borderRadius: 10, padding: "10px 16px", marginBottom: 16 }}>AI predictions are only shown for live and upcoming matches.</div>
                                     <button onClick={() => { const live = liveMatches.find(m => m.status === "LIVE" || m.status === "UPCOMING"); if (live) setSelectedMatch(live); else setActiveTab("matches"); }}
-                                        className="btn-p" style={{ maxWidth: 240, margin: "0 auto" }}>
-                                        View Live Matches →
-                                    </button>
+                                        className="btn-p" style={{ maxWidth: 240, margin: "0 auto" }}>View Live Matches →</button>
                                 </div>
                             </div>
                         ) : (
