@@ -158,6 +158,37 @@ function isMatchEnded(status) {
            s.includes("draw") || s.includes("no result") || s.includes("abandoned");
 }
 
+
+function MatchPill({ m, selected, onClick }) {
+    return (
+        <div className={`match-pill ${selected?"sel":""}`} onClick={onClick}
+            style={{ opacity: m.status==="ENDED" ? 0.75 : 1 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
+                <span style={{ fontSize:10, color:"#64748B" }}>{m.day} · {m.detail?.split("·")[0]?.trim().slice(0,18)}</span>
+                <span style={{ fontSize:9, fontWeight:700, padding:"1px 6px", borderRadius:5,
+                    background: m.status==="LIVE" ? "#FFF0F0" : m.status==="UPCOMING" ? "#EFF6FF" : "#F0F0F0",
+                    color: m.status==="LIVE" ? "#E53E3E" : m.status==="UPCOMING" ? "#354D97" : "#64748B" }}>
+                    {m.status==="LIVE" ? "● LIVE" : m.status==="UPCOMING" ? "🗓️ SOON" : "ENDED"}
+                </span>
+            </div>
+            {[{n:m.t1,s:m.t1Score,w:m.t1Wkts,b:true},{n:m.t2,s:m.t2Score,b:false}].map(({n,s,w,b}) => (
+                <div key={n} style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:3 }}>
+                    <div style={{ display:"flex",alignItems:"center",gap:6 }}>
+                        <TeamLogo name={n} size={16} />
+                        <span style={{ fontSize:11,fontWeight:b?600:400,color:b?"#0A0A0A":"#64748B" }}>{n}</span>
+                    </div>
+                    {s!=null && <span style={{ fontSize:11,fontWeight:b?700:400,color:b?"#0A0A0A":"#64748B" }}>{w!=null?`${s}/${w}`:s}</span>}
+                </div>
+            ))}
+            {m.status==="UPCOMING" && m.detail && (
+                <div style={{ fontSize:9, color:"#354D97", marginTop:4, fontWeight:500 }}>
+                    {m.detail.split("·")[1]?.trim() || ""}
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
     const [showLanding, setShowLanding] = useState(() => !localStorage.getItem("ci_v2"));
@@ -427,25 +458,43 @@ export default function CricIntelligence() {
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.navy, letterSpacing: 1.5, marginBottom: 12, padding: "6px 10px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
                             {liveStatus==="live" ? "🟢 LIVE DATA" : "● MATCHES"}
                         </div>
-                        {liveMatches.map(m => (
-                            <div key={m.id} className={`match-pill ${selectedMatch.id===m.id?"sel":""}`} onClick={() => setSelectedMatch(m)}>
-                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                                    <span style={{ fontSize: 10, color: C.muted }}>{m.day} · {m.detail?.split("·")[0]?.trim().slice(0,20)}</span>
-                                    <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 5, background: m.status==="LIVE" ? "#FFF0F0" : m.status==="ENDED" ? "#F0F0F0" : C.bg, color: m.status==="LIVE" ? C.red : C.muted }}>
-                                        {m.status==="LIVE" ? "● LIVE" : m.status}
-                                    </span>
+
+                        {/* LIVE matches */}
+                        {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
+                            <>
+                                <div style={{ fontSize:9, fontWeight:700, color:C.red, letterSpacing:1.5, marginBottom:6, display:"flex", alignItems:"center", gap:4 }}>
+                                    <div style={{ width:5, height:5, borderRadius:"50%", background:C.red, animation:"pulse 2s infinite" }}/>
+                                    LIVE NOW
                                 </div>
-                                {[{n:m.t1,s:m.t1Score,w:m.t1Wkts,b:true},{n:m.t2,s:m.t2Score,b:false}].map(({n,s,w,b}) => (
-                                    <div key={n} style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4 }}>
-                                        <div style={{ display:"flex",alignItems:"center",gap:7 }}>
-                                            <TeamLogo name={n} size={18} />
-                                            <span style={{ fontSize:12,fontWeight:b?600:400,color:b?C.text:C.muted }}>{n}</span>
-                                        </div>
-                                        {s!=null && <span style={{ fontSize:12,fontWeight:b?700:400,color:b?C.text:C.muted }}>{w!=null?`${s}/${w}`:s}</span>}
-                                    </div>
+                                {liveMatches.filter(m => m.status === "LIVE").map(m => (
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch.id===m.id} onClick={() => setSelectedMatch(m)} />
                                 ))}
-                            </div>
-                        ))}
+                            </>
+                        )}
+
+                        {/* UPCOMING matches */}
+                        {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
+                            <>
+                                <div style={{ fontSize:9, fontWeight:700, color:C.accent, letterSpacing:1.5, margin:"10px 0 6px", display:"flex", alignItems:"center", gap:4 }}>
+                                    🗓️ UPCOMING
+                                </div>
+                                {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch.id===m.id} onClick={() => setSelectedMatch(m)} />
+                                ))}
+                            </>
+                        )}
+
+                        {/* ENDED matches */}
+                        {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
+                            <>
+                                <div style={{ fontSize:9, fontWeight:700, color:C.muted, letterSpacing:1.5, margin:"10px 0 6px" }}>
+                                    ✓ RECENT RESULTS
+                                </div>
+                                {liveMatches.filter(m => m.status === "ENDED").map(m => (
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch.id===m.id} onClick={() => setSelectedMatch(m)} />
+                                ))}
+                            </>
+                        )}
                         <div style={{ marginTop:16,padding:14,background:C.bg,borderRadius:12 }}>
                             <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:10 }}>RUNS TREND</div>
                             <Spark data={pred.overHistory||MOCK_PRED.overHistory} />
