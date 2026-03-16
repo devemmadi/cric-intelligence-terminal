@@ -79,6 +79,22 @@ const FLAG_CODES = {
     "kenya": "ke", "canada": "ca",
 };
 
+
+const TEAM_COLORS = {
+    "tasmania": "#1B5E99", "queensland": "#8B0000", "victoria": "#002B5C",
+    "nsw": "#003087", "new south wales": "#003087",
+    "western australia": "#C8961E", "wa": "#C8961E",
+    "south australia": "#CC0000", "northern territory": "#CC4400",
+    "dolphins": "#007A5E", "titans": "#F5A623", "warriors": "#6B0000",
+    "boland": "#1A3A5C", "knights": "#004B8D", "lions": "#FFD700",
+    "vtex india": "#7B2FBE", "aws world": "#FF9900",
+    "botswana": "#75AADB", "lesotho": "#009543",
+    "cyprus": "#4A90D9", "austria": "#CC0000",
+    "kwazulu-natal inland": "#006400", "kwazulu natal inland": "#006400",
+    "north west": "#8B4513",
+    "kzn inland": "#006400",
+};
+
 function TeamLogo({ name, size = 32 }) {
     const [errorLevel, setErrorLevel] = useState(0);
     const key = (name || "").toLowerCase().trim();
@@ -93,8 +109,9 @@ function TeamLogo({ name, size = 32 }) {
     const handleError = () => setErrorLevel(prev => prev + 1);
     useEffect(() => { setErrorLevel(0); }, [name]);
     if (!src || errorLevel >= 2) {
+        const teamBg = TEAM_COLORS[key] || `hsl(${hue},65%,38%)`;
         return (
-            <div style={{ width: size, height: size, borderRadius: "50%", background: `hsl(${hue},55%,45%)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <div style={{ width: size, height: size, borderRadius: "50%", background: teamBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "2px solid rgba(255,255,255,0.15)" }}>
                 <span style={{ fontFamily: "Inter, system-ui", fontSize: size * 0.32, fontWeight: 700, color: "#fff" }}>{abbr}</span>
             </div>
         );
@@ -359,22 +376,22 @@ export default function CricIntelligence() {
             <style>{CSS}</style>
 
             <nav style={{ background: C.navy, borderBottom: `1px solid ${C.navyLight}`, padding: "0 20px", height: 54, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
-                <div style={{ display:"flex", alignItems:"center", gap: 8 }}>
-  <svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100" height="100" fill="#0D1B3E" rx="6"/>
-    <rect width="100" height="4" fill="#C8961E"/>
-    <rect y="96" width="100" height="4" fill="#C8961E"/>
-    <path d="M 62,18 A 32,32 0 1,0 62,82" fill="none" stroke="#C8961E" strokeWidth="7" strokeLinecap="round"/>
-    <line x1="34" y1="30" x2="34" y2="70" stroke="white" strokeWidth="3.5" strokeLinecap="round"/>
-    <line x1="44" y1="28" x2="44" y2="72" stroke="white" strokeWidth="3.5" strokeLinecap="round"/>
-    <line x1="54" y1="30" x2="54" y2="70" stroke="white" strokeWidth="3.5" strokeLinecap="round"/>
-    <line x1="31" y1="28" x2="57" y2="28" stroke="#C8961E" strokeWidth="3" strokeLinecap="round"/>
-  </svg>
-  <div>
-    <span style={{ fontWeight: 800, fontSize: 14, color: "#fff", letterSpacing: 1, fontFamily: "Georgia, serif" }}>CRIC</span>
-    <span style={{ fontWeight: 400, fontSize: 11, color: "#C8961E", letterSpacing: 4, fontFamily: "Georgia, serif", marginLeft: 2 }}>INTELLIGENCE</span>
-  </div>
-</div>
+                <div style={{ display:"flex", alignItems:"center", gap:9 }}>
+                    <svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="100" height="100" fill="#0D1B3E" rx="8"/>
+                        <rect width="100" height="4" fill="#C8961E"/>
+                        <rect y="96" width="100" height="4" fill="#C8961E"/>
+                        <path d="M 62,18 A 32,32 0 1,0 62,82" fill="none" stroke="#C8961E" strokeWidth="8" strokeLinecap="round"/>
+                        <line x1="34" y1="30" x2="34" y2="70" stroke="white" strokeWidth="4" strokeLinecap="round"/>
+                        <line x1="44" y1="28" x2="44" y2="72" stroke="white" strokeWidth="4" strokeLinecap="round"/>
+                        <line x1="54" y1="30" x2="54" y2="70" stroke="white" strokeWidth="4" strokeLinecap="round"/>
+                        <line x1="31" y1="28" x2="57" y2="28" stroke="#C8961E" strokeWidth="3" strokeLinecap="round"/>
+                    </svg>
+                    <div style={{ display:"flex", flexDirection:"column", lineHeight:1.1 }}>
+                        <span style={{ fontWeight:800, fontSize:13, color:"#fff", letterSpacing:2, fontFamily:"Georgia,serif" }}>CRIC</span>
+                        <span style={{ fontWeight:400, fontSize:9, color:"#C8961E", letterSpacing:3.5, fontFamily:"Georgia,serif" }}>INTELLIGENCE</span>
+                    </div>
+                </div>
                 <div style={{ display: "flex", gap: 4 }}>
                     {[["predict","Predictions"],["matches","Matches"],["media","Media"]].map(([k,l]) => (
                         <button key={k} className={`tab-btn ${activeTab===k?"on":""}`} onClick={() => setActiveTab(k)} style={{ color: activeTab===k?"#fff":"rgba(255,255,255,0.55)" }}>{l}</button>
