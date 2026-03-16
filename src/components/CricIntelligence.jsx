@@ -232,10 +232,12 @@ export default function CricIntelligence() {
                 setLiveMatches(mapped);
                 setLiveStatus("live");
                 const live = mapped.find(m => m.status === "LIVE");
-                if (live) {
-                    setSelectedMatch(live);
-                    if (live.matchId) {
-                        fetch(`${API_BASE}/match/${live.matchId}`)
+                const upcoming = mapped.find(m => m.status === "UPCOMING");
+                const best = live || upcoming;
+                if (best) {
+                    setSelectedMatch(best);
+                    if (best.matchId) {
+                        fetch(`${API_BASE}/match/${best.matchId}`)
                             .then(r => r.ok ? r.json() : null)
                             .then(d => { if (d && !d.error) setPred(d); })
                             .catch(() => {});
