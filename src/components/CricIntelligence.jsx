@@ -242,6 +242,9 @@ export default function CricIntelligence() {
                             .then(d => { if (d && !d.error) setPred(d); })
                             .catch(() => {});
                     }
+                } else {
+                    // All matches ended — select first but show ended card
+                    setSelectedMatch(mapped[0]);
                 }
             }
         } catch { setLiveStatus("mock"); }
@@ -260,7 +263,7 @@ export default function CricIntelligence() {
     const prob = pred.aiProbability || 72;
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
-    const matchEnded = isMatchEnded(selectedMatch?.status) || isMatchEnded(selectedMatch?.rawStatus);
+    const matchEnded = selectedMatch?.status === "ENDED" || isMatchEnded(selectedMatch?.status) || isMatchEnded(selectedMatch?.rawStatus);
 
     const CSS = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -489,12 +492,22 @@ export default function CricIntelligence() {
                         {matchEnded ? (
                             <div style={{ padding: "24px" }}>
                                 <div className="card" style={{ padding: 28, textAlign: "center" }}>
-                                    <div style={{ fontSize: 40, marginBottom: 12 }}>🏆</div>
-                                    <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 8 }}>Match Complete</div>
-                                    <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.7, marginBottom: 16 }}>{selectedMatch?.rawStatus || "This match has ended."}</div>
-                                    <div style={{ fontSize: 12, color: C.muted, background: C.bg, borderRadius: 10, padding: "10px 16px", marginBottom: 16 }}>AI predictions are only shown for live and upcoming matches.</div>
-                                    <button onClick={() => { const live = liveMatches.find(m => m.status === "LIVE" || m.status === "UPCOMING"); if (live) setSelectedMatch(live); else setActiveTab("matches"); }}
-                                        className="btn-p" style={{ maxWidth: 240, margin: "0 auto" }}>View Live Matches →</button>
+                                    <div style={{ fontSize: 40, marginBottom: 12 }}>🏏</div>
+                                    <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 8 }}>
+                                        {liveMatches.every(m => m.status === "ENDED") ? "No Live Matches Right Now" : "Match Complete"}
+                                    </div>
+                                    <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.7, marginBottom: 16 }}>
+                                        {liveMatches.every(m => m.status === "ENDED")
+                                            ? "All matches have ended. IPL & international cricket coming soon — check back later!"
+                                            : (selectedMatch?.rawStatus || "This match has ended.")}
+                                    </div>
+                                    <div style={{ fontSize: 12, color: C.muted, background: C.bg, borderRadius: 10, padding: "10px 16px", marginBottom: 16 }}>
+                                        {liveMatches.every(m => m.status === "ENDED")
+                                            ? "🗓️ Next matches will appear here automatically when they go live."
+                                            : "AI predictions are only shown for live and upcoming matches."}
+                                    </div>
+                                    <button onClick={() => setActiveTab("matches")}
+                                        className="btn-p" style={{ maxWidth: 240, margin: "0 auto" }}>View All Matches →</button>
                                 </div>
                             </div>
                         ) : (
