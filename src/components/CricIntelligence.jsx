@@ -1,8 +1,7 @@
+/* eslint-disable */
 import React, { useState, useEffect, useCallback } from "react";
 
 const API_BASE = "https://cricintel-backend-production.up.railway.app";
-const STRIPE_PK = "pk_test_51T7nucBCZG94uH6ZX1dEhm8Ee8FWFEgFi6OlrzUEMtMVp5vzQOQ67NdmdoPGzLaJyrAQaAfssLE2BXoUB24Cqna200AKM4scTU";
-const CRIC_KEY = "3ea4f87d-7450-48af-8839-9dee74b28087";
 
 const C = {
     bg: "#F4F6FA", surface: "#FFFFFF", border: "#E2E8F0",
@@ -54,35 +53,73 @@ const BASE_LOGO = "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_16
 const TEAM_LOGOS = {
     "india":        BASE_LOGO + "/381800/381895.png",
     "australia":    BASE_LOGO + "/382700/382733.png",
-    "england":      BASE_LOGO + "/382700/382728.png",
-    "pakistan":     BASE_LOGO + "/382700/382730.png",
+    "england":      BASE_LOGO + "/381800/381894.png",
+    "pakistan":     BASE_LOGO + "/381800/381891.png",
     "new zealand":  BASE_LOGO + "/340500/340503.png",
     "nz":           BASE_LOGO + "/340500/340503.png",
     "south africa": BASE_LOGO + "/340400/340493.png",
     "sa":           BASE_LOGO + "/340400/340493.png",
     "sri lanka":    BASE_LOGO + "/340500/340505.png",
     "sl":           BASE_LOGO + "/340500/340505.png",
-    "west indies":  BASE_LOGO + "/381800/381891.png",
-    "wi":           BASE_LOGO + "/381800/381891.png",
-    "bangladesh":   BASE_LOGO + "/381800/381857.png",
+    "west indies":  BASE_LOGO + "/317600/317615.png",
+    "wi":           BASE_LOGO + "/317600/317615.png",
+    "bangladesh":   BASE_LOGO + "/341400/341456.png",
     "afghanistan":  BASE_LOGO + "/381800/381893.png",
     "ireland":      BASE_LOGO + "/349300/349350.png",
-    "zimbabwe":     BASE_LOGO + "/340000/340047.png",
+    "zimbabwe":     BASE_LOGO + "/383900/383967.png",
+};
+
+const FLAG_CODES = {
+    "india": "in", "australia": "au", "england": "gb-eng", "pakistan": "pk",
+    "new zealand": "nz", "nz": "nz", "south africa": "za", "sa": "za",
+    "sri lanka": "lk", "sl": "lk", "west indies": "bb", "wi": "bb",
+    "bangladesh": "bd", "afghanistan": "af", "ireland": "ie", "zimbabwe": "zw",
+    "netherlands": "nl", "scotland": "gb-sct", "nepal": "np", "oman": "om",
+    "uae": "ae", "united arab emirates": "ae", "usa": "us", "namibia": "na",
+    "kenya": "ke", "canada": "ca",
+};
+
+
+const TEAM_COLORS = {
+    "tasmania": "#1B5E99", "queensland": "#8B0000", "victoria": "#002B5C",
+    "nsw": "#003087", "new south wales": "#003087",
+    "western australia": "#C8961E", "wa": "#C8961E",
+    "south australia": "#CC0000", "northern territory": "#CC4400",
+    "dolphins": "#007A5E", "titans": "#F5A623", "warriors": "#6B0000",
+    "boland": "#1A3A5C", "knights": "#004B8D", "lions": "#FFD700",
+    "vtex india": "#7B2FBE", "aws world": "#FF9900",
+    "botswana": "#75AADB", "lesotho": "#009543",
+    "cyprus": "#4A90D9", "austria": "#CC0000",
+    "kwazulu-natal inland": "#006400", "kwazulu natal inland": "#006400",
+    "north west": "#8B4513",
+    "kzn inland": "#006400",
 };
 
 function TeamLogo({ name, size = 32 }) {
-    const [err, setErr] = useState(false);
+    const [errorLevel, setErrorLevel] = useState(0);
     const key = (name || "").toLowerCase().trim();
-    const url = TEAM_LOGOS[key];
+    const hsciUrl = TEAM_LOGOS[key];
+    const flagCode = FLAG_CODES[key];
+    const flagUrl = flagCode ? `https://flagcdn.com/w80/${flagCode}.png` : null;
     const abbr = cleanTeam(name).slice(0, 3);
     const hue = [...key].reduce((a, c) => a + c.charCodeAt(0), 0) % 360;
-    if (!url || err) return (
-        <div style={{ width: size, height: size, borderRadius: "50%", background: `hsl(${hue},55%,45%)`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <span style={{ fontFamily: "Inter, system-ui", fontSize: size * 0.32, fontWeight: 700, color: "#fff" }}>{abbr}</span>
-        </div>
+    let src = null;
+    if (errorLevel === 0 && hsciUrl) src = hsciUrl;
+    else if (errorLevel <= 1 && flagUrl) src = flagUrl;
+    const handleError = () => setErrorLevel(prev => prev + 1);
+    useEffect(() => { setErrorLevel(0); }, [name]);
+    if (!src || errorLevel >= 2) {
+        const teamBg = TEAM_COLORS[key] || `hsl(${hue},65%,38%)`;
+        return (
+            <div style={{ width: size, height: size, borderRadius: "50%", background: teamBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "2px solid rgba(255,255,255,0.15)" }}>
+                <span style={{ fontFamily: "Inter, system-ui", fontSize: size * 0.32, fontWeight: 700, color: "#fff" }}>{abbr}</span>
+            </div>
+        );
+    }
+    return (
+        <img src={src} alt={name} onError={handleError}
+            style={{ width: size, height: size, objectFit: "contain", borderRadius: errorLevel === 1 ? "4px" : "50%", background: "#fff", padding: errorLevel === 1 ? 0 : 2, flexShrink: 0, border: `1px solid ${C.border}` }} />
     );
-    return <img src={url} alt={name} onError={() => setErr(true)}
-        style={{ width: size, height: size, objectFit: "contain", borderRadius: "50%", background: "#fff", padding: 2, flexShrink: 0, border: `1px solid ${C.border}` }} />;
 }
 
 function WinArc({ value }) {
@@ -92,8 +129,7 @@ function WinArc({ value }) {
     return (
         <svg width={128} height={80} viewBox="0 0 128 80">
             <path d={`M ${cx - r},${cy} A ${r},${r} 0 0 1 ${cx + r},${cy}`} fill="none" stroke={C.border} strokeWidth={8} strokeLinecap="round" />
-            <path d={`M ${cx - r},${cy} A ${r},${r} 0 0 1 ${cx + r},${cy}`} fill="none" stroke={color} strokeWidth={8} strokeLinecap="round"
-                strokeDasharray={`${circ * pct} ${circ}`} />
+            <path d={`M ${cx - r},${cy} A ${r},${r} 0 0 1 ${cx + r},${cy}`} fill="none" stroke={color} strokeWidth={8} strokeLinecap="round" strokeDasharray={`${circ * pct} ${circ}`} />
             <text x={cx} y={cy - 6} textAnchor="middle" fontSize={22} fontWeight={700} fill={C.text} fontFamily="Inter, system-ui">{value}%</text>
             <text x={cx} y={cy + 10} textAnchor="middle" fontSize={9} fill={C.muted} fontFamily="Inter, system-ui" letterSpacing={1}>WIN PROB</text>
         </svg>
@@ -111,6 +147,45 @@ function Spark({ data }) {
             <polyline points={pts.map(p => p.join(",")).join(" ")} fill="none" stroke={C.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
             <circle cx={pts[pts.length - 1][0]} cy={pts[pts.length - 1][1]} r={4} fill={C.accent} />
         </svg>
+    );
+}
+
+function isMatchEnded(status) {
+    if (!status) return false;
+    const s = status.toLowerCase();
+    return s === "ended" ||
+           s.includes("won") || s.includes("win") || s.includes("tied") ||
+           s.includes("draw") || s.includes("no result") || s.includes("abandoned");
+}
+
+
+function MatchPill({ m, selected, onClick }) {
+    return (
+        <div className={`match-pill ${selected?"sel":""}`} onClick={onClick}
+            style={{ opacity: m.status==="ENDED" ? 0.75 : 1 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
+                <span style={{ fontSize:10, color:"#64748B" }}>{m.day} · {m.detail?.split("·")[0]?.trim().slice(0,18)}</span>
+                <span style={{ fontSize:9, fontWeight:700, padding:"1px 6px", borderRadius:5,
+                    background: m.status==="LIVE" ? "#FFF0F0" : m.status==="UPCOMING" ? "#EFF6FF" : "#F0F0F0",
+                    color: m.status==="LIVE" ? "#E53E3E" : m.status==="UPCOMING" ? "#354D97" : "#64748B" }}>
+                    {m.status==="LIVE" ? "● LIVE" : m.status==="UPCOMING" ? "🗓️ SOON" : "ENDED"}
+                </span>
+            </div>
+            {[{n:m.t1,s:m.t1Score,w:m.t1Wkts,b:true},{n:m.t2,s:m.t2Score,b:false}].map(({n,s,w,b}) => (
+                <div key={n} style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:3 }}>
+                    <div style={{ display:"flex",alignItems:"center",gap:6 }}>
+                        <TeamLogo name={n} size={16} />
+                        <span style={{ fontSize:11,fontWeight:b?600:400,color:b?"#0A0A0A":"#64748B" }}>{n}</span>
+                    </div>
+                    {s!=null && <span style={{ fontSize:11,fontWeight:b?700:400,color:b?"#0A0A0A":"#64748B" }}>{w!=null?`${s}/${w}`:s}</span>}
+                </div>
+            ))}
+            {m.status==="UPCOMING" && m.detail && (
+                <div style={{ fontSize:9, color:"#354D97", marginTop:4, fontWeight:500 }}>
+                    {m.detail.split("·")[1]?.trim() || ""}
+                </div>
+            )}
+        </div>
     );
 }
 
@@ -158,34 +233,68 @@ export default function CricIntelligence() {
             const d = await r.json();
             const list = Array.isArray(d) ? d : d.data || [];
             if (list.length) {
-                const mapped = list.slice(0, 8).map((m, i) => ({
-                    id: m.id || i, matchId: m.id,
-                    t1: cleanTeam(m.team1 || m.teams?.[0] || "TBD"),
-                    t2: cleanTeam(m.team2 || m.teams?.[1] || "TBD"),
-                    status: m.status?.includes("won") ? "ENDED" : m.matchStarted && !m.matchEnded ? "LIVE" : "UPCOMING",
-                    day: m.matchType?.toUpperCase() || "T20",
-                    detail: m.name || "",
-                    t1Score: m.score?.[0]?.r ?? null, t1Wkts: m.score?.[0]?.w ?? null,
-                    t2Score: m.score?.[1]?.r ?? null,
-                }));
-                setLiveMatches(mapped); setLiveStatus("live");
+                const mapped = list.slice(0, 8).map((m, i) => {
+                    const rawStatus = m.status || "";
+                    let status;
+                    if (isMatchEnded(rawStatus)) {
+                        status = "ENDED";
+                    } else if (
+                        (m.matchStarted && !m.matchEnded) ||
+                        ["need", "opt", "batting", "bowling", "over", "ov)"].some(kw => rawStatus.toLowerCase().includes(kw))
+                    ) {
+                        status = "LIVE";
+                    } else {
+                        status = "UPCOMING";
+                    }
+                    return {
+                        id: m.id || i,
+                        matchId: m.id,
+                        t1: cleanTeam(m.team1 || m.teams?.[0] || "TBD"),
+                        t2: cleanTeam(m.team2 || m.teams?.[1] || "TBD"),
+                        status,
+                        rawStatus,
+                        day: m.matchType?.toUpperCase() || "T20",
+                        detail: m.name || "",
+                        t1Score: m.score?.[0]?.r ?? null,
+                        t1Wkts:  m.score?.[0]?.w ?? null,
+                        t2Score: m.score?.[1]?.r ?? null,
+                    };
+                });
+                setLiveMatches(mapped);
+                setLiveStatus("live");
                 const live = mapped.find(m => m.status === "LIVE");
-                if (live) setSelectedMatch(live);
+                const upcoming = mapped.find(m => m.status === "UPCOMING");
+                const best = live || upcoming;
+                if (best) {
+                    setSelectedMatch(best);
+                    if (best.matchId) {
+                        fetch(`${API_BASE}/match/${best.matchId}`)
+                            .then(r => r.ok ? r.json() : null)
+                            .then(d => { if (d && !d.error) setPred(d); })
+                            .catch(() => {});
+                    }
+                } else {
+                    // All matches ended — select first but show ended card
+                    setSelectedMatch(mapped[0]);
+                }
             }
         } catch { setLiveStatus("mock"); }
     }, []);
     useEffect(() => { fetchMatches(); }, [fetchMatches]);
     useEffect(() => { const t = setInterval(fetchMatches, 5 * 60 * 1000); return () => clearInterval(t); }, [fetchMatches]);
     useEffect(() => {
-        if (selectedMatch?.detail) {
-            fetch(`${API_BASE}/predict?venue=${encodeURIComponent(selectedMatch.detail)}`)
-                .then(r => r.ok ? r.json() : null).then(d => { if (d && !d.error) setPred(d); }).catch(() => { });
+        if (selectedMatch?.matchId) {
+            fetch(`${API_BASE}/match/${selectedMatch.matchId}`)
+                .then(r => r.ok ? r.json() : null)
+                .then(d => { if (d && !d.error) setPred(d); })
+                .catch(() => {});
         }
     }, [selectedMatch]);
 
     const prob = pred.aiProbability || 72;
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
+    const matchEnded = selectedMatch?.status === "ENDED" || isMatchEnded(selectedMatch?.status) || isMatchEnded(selectedMatch?.rawStatus);
 
     const CSS = `
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -222,14 +331,10 @@ export default function CricIntelligence() {
     .mt { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0; font-family: Inter, system-ui; }
     `;
 
-    // ── LANDING ───────────────────────────────────────────────────────────────
     if (showLanding) return (
         <div style={{ minHeight: "100vh", background: "#F9F9F9", fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
-
-            {/* Hero — Blue with pitch texture */}
             <div style={{ background: "#354D97", position: "relative", overflow: "hidden" }}>
-                {/* Cricket pitch SVG texture */}
                 <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.07, pointerEvents: "none" }} viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
                     <rect x="330" y="10" width="140" height="480" fill="none" stroke="#fff" strokeWidth="1.5"/>
                     <line x1="300" y1="70" x2="500" y2="70" stroke="#fff" strokeWidth="1"/>
@@ -242,7 +347,6 @@ export default function CricIntelligence() {
                     <line x1="400" y1="415" x2="400" y2="440" stroke="#C8961E" strokeWidth="2.5"/>
                     <line x1="415" y1="415" x2="415" y2="440" stroke="#C8961E" strokeWidth="2.5"/>
                 </svg>
-
                 <nav style={{ padding: "18px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", position: "relative" }}>
                     <div style={{ fontWeight: 700, fontSize: 17, color: "#fff", letterSpacing: -0.5 }}>CricIntelligence</div>
                     <button onClick={() => { localStorage.setItem("ci_v2", "1"); setShowLanding(false); }}
@@ -250,22 +354,19 @@ export default function CricIntelligence() {
                         Open App →
                     </button>
                 </nav>
-
                 <div style={{ maxWidth: 700, margin: "0 auto", padding: "50px 32px 60px", position: "relative" }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(200,150,30,0.15)", border: "1px solid rgba(200,150,30,0.4)", borderRadius: 20, padding: "5px 14px", marginBottom: 24 }}>
                         <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22C55E", animation: "pulse 2s infinite" }} />
                         <span style={{ fontSize: 12, fontWeight: 700, color: "#C8961E", letterSpacing: 0.5 }}>LIVE · IPL 2025 READY</span>
                     </div>
                     <h1 style={{ fontSize: "clamp(34px, 5.5vw, 60px)", fontWeight: 800, letterSpacing: -2, lineHeight: 1.05, marginBottom: 16, color: "#fff" }}>
-                        Know who wins<br />
-                        <span style={{ color: "#C8961E" }}>before the over ends.</span>
+                        Know who wins<br /><span style={{ color: "#C8961E" }}>before the over ends.</span>
                     </h1>
                     <p style={{ fontSize: 16, color: "rgba(255,255,255,0.65)", lineHeight: 1.7, maxWidth: 460, marginBottom: 28 }}>
                         AI predictions built on 1.7M data points across 877 venues. Over-by-over accuracy at 78.2%.
                     </p>
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 10 }}>
-                        <input type="email" placeholder="Email for IPL alerts (optional)"
-                            onChange={e => setEmailInput(e.target.value)}
+                        <input type="email" placeholder="Email for IPL alerts (optional)" onChange={e => setEmailInput(e.target.value)}
                             style={{ flex: 1, minWidth: 220, padding: "12px 16px", borderRadius: 8, border: "1.5px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.1)", outline: "none", color: "#fff", fontSize: 14, fontFamily: "Inter, system-ui" }} />
                         <button onClick={() => { if (emailInput) localStorage.setItem("cricintel_email", emailInput); localStorage.setItem("ci_v2", "1"); setShowLanding(false); }}
                             style={{ background: "#C8961E", color: "#000", border: "none", borderRadius: 8, padding: "12px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" }}>
@@ -275,8 +376,6 @@ export default function CricIntelligence() {
                     <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>Free · No credit card · Cancel anytime</div>
                 </div>
             </div>
-
-            {/* Stats + Preview — White */}
             <div style={{ maxWidth: 700, margin: "0 auto", padding: "32px 24px 60px" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 24 }}>
                     {[["78.2%", "Model Accuracy", false], ["1.7M", "Data Points", true], ["877", "Venues", false]].map(([v, l, accent]) => (
@@ -286,7 +385,6 @@ export default function CricIntelligence() {
                         </div>
                     ))}
                 </div>
-
                 <div style={{ background: "#fff", border: "1px solid #E8E8E8", borderRadius: 16, padding: 22 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
                         <span style={{ fontSize: 11, fontWeight: 700, color: "#aaa", letterSpacing: 1 }}>LIVE PREVIEW</span>
@@ -309,14 +407,27 @@ export default function CricIntelligence() {
         </div>
     );
 
-        // ── MAIN APP ──────────────────────────────────────────────────────────────
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
 
-            {/* NAV */}
             <nav style={{ background: C.navy, borderBottom: `1px solid ${C.navyLight}`, padding: "0 20px", height: 54, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
-                <div style={{ fontWeight: 700, fontSize: 15, letterSpacing: -0.5, color: "#fff" }}>CricIntelligence</div>
+                <div style={{ display:"flex", alignItems:"center", gap:9 }}>
+                    <svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="100" height="100" fill="#0D1B3E" rx="8"/>
+                        <rect width="100" height="4" fill="#C8961E"/>
+                        <rect y="96" width="100" height="4" fill="#C8961E"/>
+                        <path d="M 62,18 A 32,32 0 1,0 62,82" fill="none" stroke="#C8961E" strokeWidth="8" strokeLinecap="round"/>
+                        <line x1="34" y1="30" x2="34" y2="70" stroke="white" strokeWidth="4" strokeLinecap="round"/>
+                        <line x1="44" y1="28" x2="44" y2="72" stroke="white" strokeWidth="4" strokeLinecap="round"/>
+                        <line x1="54" y1="30" x2="54" y2="70" stroke="white" strokeWidth="4" strokeLinecap="round"/>
+                        <line x1="31" y1="28" x2="57" y2="28" stroke="#C8961E" strokeWidth="3" strokeLinecap="round"/>
+                    </svg>
+                    <div style={{ display:"flex", flexDirection:"column", lineHeight:1.1 }}>
+                        <span style={{ fontWeight:800, fontSize:13, color:"#fff", letterSpacing:2, fontFamily:"Georgia,serif" }}>CRIC</span>
+                        <span style={{ fontWeight:400, fontSize:9, color:"#C8961E", letterSpacing:3.5, fontFamily:"Georgia,serif" }}>INTELLIGENCE</span>
+                    </div>
+                </div>
                 <div style={{ display: "flex", gap: 4 }}>
                     {[["predict","Predictions"],["matches","Matches"],["media","Media"]].map(([k,l]) => (
                         <button key={k} className={`tab-btn ${activeTab===k?"on":""}`} onClick={() => setActiveTab(k)} style={{ color: activeTab===k?"#fff":"rgba(255,255,255,0.55)" }}>{l}</button>
@@ -327,48 +438,70 @@ export default function CricIntelligence() {
                         <div style={{ width: 6, height: 6, borderRadius: "50%", background: liveStatus==="live" ? C.green : C.amber, animation: "pulse 2s infinite" }} />
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>{liveTime.toLocaleTimeString("en-GB")}</span>
                     </div>
+                    {pred.playerInsights && pred.playerInsights.length > 0 && (
+                        <div style={{padding:'8px 12px',background:'rgba(200,150,30,0.08)',borderRadius:8,border:'1px solid rgba(200,150,30,0.2)'}}>
+                            <div style={{fontSize:10,fontWeight:700,color:'#C8961E',letterSpacing:1,marginBottom:5}}>PLAYER INTELLIGENCE</div>
+                            {pred.playerInsights.map((insight,i) => (
+                                <div key={i} style={{fontSize:11,color:'#aaa',marginBottom:3,display:'flex',gap:6}}>
+                                    <span style={{color:'#C8961E'}}>·</span>{insight}
+                                </div>
+                            ))}
+                        </div>
+                    )}
                     {!isPremium && <button onClick={() => setShowPaywall(true)} style={{ background: C.gold, color: C.navy, border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Upgrade ⚡</button>}
                 </div>
             </nav>
 
-            {/* PREDICT */}
             {activeTab === "predict" && (
                 <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px 1fr 240px", minHeight: "calc(100vh - 54px)" }}>
-
-                    {/* LEFT */}
                     <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, padding: "18px 14px", overflowY: "auto", background: C.surface }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.navy, letterSpacing: 1.5, marginBottom: 12, padding: "6px 10px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
                             {liveStatus==="live" ? "🟢 LIVE DATA" : "● MATCHES"}
                         </div>
-                        {liveMatches.map(m => (
-                            <div key={m.id} className={`match-pill ${selectedMatch.id===m.id?"sel":""}`} onClick={() => setSelectedMatch(m)}>
-                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-                                    <span style={{ fontSize: 10, color: C.muted }}>{m.day} · {m.detail?.split("·")[0]?.trim().slice(0,20)}</span>
-                                    <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 5, background: m.status==="LIVE"?"#FFF0F0":C.bg, color: m.status==="LIVE"?C.red:C.muted }}>
-                                        {m.status==="LIVE"?"● LIVE":m.status}
-                                    </span>
+
+                        {/* LIVE matches */}
+                        {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
+                            <>
+                                <div style={{ fontSize:9, fontWeight:700, color:C.red, letterSpacing:1.5, marginBottom:6, display:"flex", alignItems:"center", gap:4 }}>
+                                    <div style={{ width:5, height:5, borderRadius:"50%", background:C.red, animation:"pulse 2s infinite" }}/>
+                                    LIVE NOW
                                 </div>
-                                {[{n:m.t1,s:m.t1Score,w:m.t1Wkts,b:true},{n:m.t2,s:m.t2Score,b:false}].map(({n,s,w,b}) => (
-                                    <div key={n} style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4 }}>
-                                        <div style={{ display:"flex",alignItems:"center",gap:7 }}>
-                                            <TeamLogo name={n} size={18} />
-                                            <span style={{ fontSize:12,fontWeight:b?600:400,color:b?C.text:C.muted }}>{n}</span>
-                                        </div>
-                                        {s!=null && <span style={{ fontSize:12,fontWeight:b?700:400,color:b?C.text:C.muted }}>{w!=null?`${s}/${w}`:s}</span>}
-                                    </div>
+                                {liveMatches.filter(m => m.status === "LIVE").map(m => (
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch.id===m.id} onClick={() => setSelectedMatch(m)} />
                                 ))}
-                            </div>
-                        ))}
+                            </>
+                        )}
+
+                        {/* UPCOMING matches */}
+                        {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
+                            <>
+                                <div style={{ fontSize:9, fontWeight:700, color:C.accent, letterSpacing:1.5, margin:"10px 0 6px", display:"flex", alignItems:"center", gap:4 }}>
+                                    🗓️ UPCOMING
+                                </div>
+                                {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch.id===m.id} onClick={() => setSelectedMatch(m)} />
+                                ))}
+                            </>
+                        )}
+
+                        {/* ENDED matches */}
+                        {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
+                            <>
+                                <div style={{ fontSize:9, fontWeight:700, color:C.muted, letterSpacing:1.5, margin:"10px 0 6px" }}>
+                                    ✓ RECENT RESULTS
+                                </div>
+                                {liveMatches.filter(m => m.status === "ENDED").map(m => (
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch.id===m.id} onClick={() => setSelectedMatch(m)} />
+                                ))}
+                            </>
+                        )}
                         <div style={{ marginTop:16,padding:14,background:C.bg,borderRadius:12 }}>
                             <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:10 }}>RUNS TREND</div>
                             <Spark data={pred.overHistory||MOCK_PRED.overHistory} />
                         </div>
                     </aside>
 
-                    {/* MAIN */}
                     <main className="mc" style={{ padding: 0, overflowY: "auto" }}>
-
-                        {/* Hero — Blue with pitch texture */}
                         <div style={{ background: "#354D97", position: "relative", overflow: "hidden", padding: "24px 24px 28px" }}>
                             <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.06, pointerEvents: "none" }} viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice">
                                 <rect x="360" y="-300" width="80" height="800" fill="none" stroke="#fff" strokeWidth="1.5"/>
@@ -396,23 +529,43 @@ export default function CricIntelligence() {
                                     <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore || "156/3 (14.2 ov)"}</span>
                                     <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
                                     <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || 10.9}</span>
-                                    <button onClick={() => { const t = `🏏 ${cleanTeam(pred.team1 || "India")} vs ${cleanTeam(pred.team2 || "Australia")} — AI: ${prob}% win probability. cricintelligence.com`; navigator.clipboard?.writeText(t).then(() => alert("Copied! 🏏")); }}
+                                    {matchEnded && (
+                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", background: "rgba(200,150,30,0.2)", padding: "2px 8px", borderRadius: 6 }}>MATCH ENDED</span>
+                                    )}
+                                    <button onClick={() => { const t = `🏏 ${cleanTeam(pred.team1||"India")} vs ${cleanTeam(pred.team2||"Australia")} — AI: ${prob}% win probability. cricintelligence.com`; navigator.clipboard?.writeText(t).then(() => alert("Copied! 🏏")); }}
                                         style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share ↗</button>
                                 </div>
                             </div>
                         </div>
 
-                        {/* White content */}
+                        {matchEnded ? (
+                            <div style={{ padding: "24px" }}>
+                                <div className="card" style={{ padding: 28, textAlign: "center" }}>
+                                    <div style={{ fontSize: 40, marginBottom: 12 }}>🏏</div>
+                                    <div style={{ fontSize: 18, fontWeight: 800, marginBottom: 8 }}>
+                                        {liveMatches.every(m => m.status === "ENDED") ? "No Live Matches Right Now" : "Match Complete"}
+                                    </div>
+                                    <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.7, marginBottom: 16 }}>
+                                        {liveMatches.every(m => m.status === "ENDED")
+                                            ? "All matches have ended. IPL & international cricket coming soon — check back later!"
+                                            : (selectedMatch?.rawStatus || "This match has ended.")}
+                                    </div>
+                                    <div style={{ fontSize: 12, color: C.muted, background: C.bg, borderRadius: 10, padding: "10px 16px", marginBottom: 16 }}>
+                                        {liveMatches.every(m => m.status === "ENDED")
+                                            ? "🗓️ Next matches will appear here automatically when they go live."
+                                            : "AI predictions are only shown for live and upcoming matches."}
+                                    </div>
+                                    <button onClick={() => setActiveTab("matches")}
+                                        className="btn-p" style={{ maxWidth: 240, margin: "0 auto" }}>View All Matches →</button>
+                                </div>
+                            </div>
+                        ) : (
                         <div style={{ padding: "20px 24px" }}>
-
-                        {/* 2 cards */}
                         <div className="cr" style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14 }}>
                             <div className="card" style={{ padding:22 }}>
                                 <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:4 }}>WIN PROBABILITY</div>
                                 <div style={{ fontSize:13,fontWeight:700,color:winColor,marginBottom:8 }}>{winMsg}</div>
-                                <div style={{ display:"flex",justifyContent:"center",margin:"4px 0 10px" }}>
-                                    <WinArc value={prob} />
-                                </div>
+                                <div style={{ display:"flex",justifyContent:"center",margin:"4px 0 10px" }}><WinArc value={prob} /></div>
                                 <div style={{ fontSize:12,color:C.muted,lineHeight:1.6 }}>
                                     <strong style={{ color:C.text }}>{cleanTeam(pred.team1||"INDIA")}</strong> has a <strong style={{ color:winColor }}>{prob}% chance</strong> of winning based on current score, pitch & 1.7M historical matches.
                                 </div>
@@ -440,7 +593,51 @@ export default function CricIntelligence() {
                             </div>
                         </div>
 
-                        {/* Weather + Pitch */}
+                        {/* ── EXPLAINABLE AI PANEL ── */}
+                        {pred.accuracySignals && (
+                        <div className="card" style={{ padding:20,marginBottom:14 }}>
+                            <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14 }}>
+                                <div>
+                                    <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1 }}>WHY THIS PREDICTION?</div>
+                                    <div style={{ fontSize:12,color:C.muted,marginTop:2 }}>AI reasoning — {pred.accuracyBoost > 0 ? `+${pred.accuracyBoost}% boost` : pred.accuracyBoost < 0 ? `${pred.accuracyBoost}% drag` : "neutral signals"}</div>
+                                </div>
+                                <div style={{ fontSize:11,fontWeight:700,padding:"4px 10px",borderRadius:20,background:pred.accuracyBoost>0?"#e8f5ee":pred.accuracyBoost<0?"#fff0f0":C.bg,color:pred.accuracyBoost>0?C.green:pred.accuracyBoost<0?C.red:C.muted }}>
+                                    {pred.accuracyBoost>0?"▲":pred.accuracyBoost<0?"▼":"●"} {Math.abs(pred.accuracyBoost||0)}%
+                                </div>
+                            </div>
+                            <div style={{ display:"grid",gap:8 }}>
+                                {[
+                                    {key:"h2h",icon:"⚔️",label:"Head to Head"},
+                                    {key:"venue",icon:"🏟️",label:"Venue Profile"},
+                                    {key:"toss",icon:"🪙",label:"Toss Impact"},
+                                    {key:"day_night",icon:"🌙",label:"Day/Night"},
+                                    {key:"player_form",icon:"🏏",label:"Player Form"},
+                                ].map(({key,icon,label}) => {
+                                    const sig = pred.accuracySignals[key];
+                                    if (!sig) return null;
+                                    const boost = sig.boost||0;
+                                    return (
+                                        <div key={key} style={{ display:"flex",alignItems:"center",gap:10,padding:"10px 12px",background:C.bg,borderRadius:10,border:`1px solid ${boost>0?"#b2dfcc":boost<0?"#fecaca":C.border}` }}>
+                                            <span style={{ fontSize:16 }}>{icon}</span>
+                                            <div style={{ flex:1,minWidth:0 }}>
+                                                <div style={{ fontSize:11,fontWeight:700,color:C.muted,marginBottom:2 }}>{label}</div>
+                                                <div style={{ fontSize:12,color:C.text,lineHeight:1.4 }}>{sig.label||"No data"}</div>
+                                            </div>
+                                            <div style={{ flexShrink:0,fontSize:12,fontWeight:700,color:boost>0?C.green:boost<0?C.red:C.muted,background:boost>0?"#e8f5ee":boost<0?"#fff0f0":"#f0f0f0",padding:"3px 8px",borderRadius:8 }}>
+                                                {boost>0?`+${(boost*100).toFixed(1)}`:boost<0?`${(boost*100).toFixed(1)}`:"—"}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            {pred.explanation && (
+                                <div style={{ marginTop:12,padding:"10px 12px",background:"#F0F7FF",borderRadius:8,fontSize:12,color:C.accent,lineHeight:1.6,borderLeft:`3px solid ${C.accent}` }}>
+                                    💡 {pred.explanation}
+                                </div>
+                            )}
+                        </div>
+                        )}
+
                         <div className="cr" style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14 }}>
                             <div className="card" style={{ padding:18,display:"flex",gap:14,alignItems:"center" }}>
                                 <span style={{ fontSize:32 }}>{pred.weatherImpact?.emoji||"☀️"}</span>
@@ -459,8 +656,6 @@ export default function CricIntelligence() {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Over predictions */}
                         <div className="card" style={{ padding:22,marginBottom:14 }}>
                             <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14 }}>
                                 <div>
@@ -502,8 +697,6 @@ export default function CricIntelligence() {
                                 </div>
                             )}
                         </div>
-
-                        {/* Phase */}
                         <div className="cr" style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14 }}>
                             <div className="card" style={{ padding:18 }}>
                                 <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:10 }}>🔵 POWERPLAY</div>
@@ -517,10 +710,10 @@ export default function CricIntelligence() {
                                 {!isPremium && <div className="lock" onClick={() => setShowPaywall(true)}><span style={{ fontSize:18 }}>🔒</span><span style={{ fontSize:10,fontWeight:600 }}>Premium</span></div>}
                             </div>
                         </div>
-                        </div>{/* end white content */}
+                        </div>
+                        )}
                     </main>
 
-                    {/* RIGHT */}
                     <aside className="sr" style={{ borderLeft:`1px solid ${C.border}`,padding:"18px 14px",background:C.surface,display:"flex",flexDirection:"column",gap:14 }}>
                         <div>
                             <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1.5,marginBottom:12 }}>AI ENGINE</div>
@@ -540,9 +733,7 @@ export default function CricIntelligence() {
                             <div style={{ background:C.text,borderRadius:14,padding:16,color:"#fff" }}>
                                 <div style={{ fontSize:13,fontWeight:700,marginBottom:6 }}>⚡ Unlock Premium</div>
                                 <div style={{ fontSize:11,color:"rgba(255,255,255,0.65)",lineHeight:1.5,marginBottom:12 }}>All 5 overs · Death intel · Pitch tracker · Real-time signals</div>
-                                <button onClick={() => setShowPaywall(true)} style={{ width:"100%",background:C.gold,color:C.text,border:"none",borderRadius:8,padding:"9px",fontSize:13,fontWeight:700,cursor:"pointer" }}>
-                                    From £9.99/mo
-                                </button>
+                                <button onClick={() => setShowPaywall(true)} style={{ width:"100%",background:C.gold,color:C.text,border:"none",borderRadius:8,padding:"9px",fontSize:13,fontWeight:700,cursor:"pointer" }}>From £9.99/mo</button>
                             </div>
                         )}
                         <div style={{ fontSize:10,color:C.muted,lineHeight:1.6,textAlign:"center",marginTop:"auto" }}>
@@ -553,15 +744,14 @@ export default function CricIntelligence() {
                 </div>
             )}
 
-            {/* MATCHES */}
             {activeTab === "matches" && (
                 <div className="fade" style={{ maxWidth:600,margin:"0 auto",padding:"22px 16px" }}>
                     <div style={{ fontSize:20,fontWeight:800,marginBottom:18 }}>{liveStatus==="live"?"🟢 Live Matches":"Matches"}</div>
                     {liveMatches.map(m => (
-                        <div key={m.id} className="card" style={{ padding:18,marginBottom:12,cursor:"pointer" }} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }}>
+                        <div key={m.id} className="card" style={{ padding:18,marginBottom:12,cursor:"pointer",opacity:m.status==="ENDED"?0.7:1 }} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }}>
                             <div style={{ display:"flex",justifyContent:"space-between",marginBottom:12 }}>
                                 <span style={{ fontSize:11,color:C.muted }}>{m.day} · {m.detail}</span>
-                                <span style={{ fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:6,background:m.status==="LIVE"?"#FFF0F0":C.bg,color:m.status==="LIVE"?C.red:C.muted }}>
+                                <span style={{ fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:6, background:m.status==="LIVE"?"#FFF0F0":m.status==="ENDED"?"#F0F0F0":C.bg, color:m.status==="LIVE"?C.red:C.muted }}>
                                     {m.status==="LIVE"?"● LIVE":m.status}
                                 </span>
                             </div>
@@ -571,13 +761,14 @@ export default function CricIntelligence() {
                                     {s!=null && <span style={{ fontSize:16,fontWeight:b?700:400,color:b?C.text:C.muted }}>{w!=null?`${s}/${w}`:s}</span>}
                                 </div>
                             ))}
-                            <div style={{ fontSize:12,color:C.accent,fontWeight:600,marginTop:4 }}>View AI Prediction →</div>
+                            <div style={{ fontSize:12,color:m.status==="ENDED"?C.muted:C.accent,fontWeight:600,marginTop:4 }}>
+                                {m.status==="ENDED" ? "Match ended · View result →" : "View AI Prediction →"}
+                            </div>
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* MEDIA */}
             {activeTab === "media" && (
                 <div className="fade" style={{ maxWidth:600,margin:"0 auto",padding:"22px 16px" }}>
                     <div style={{ fontSize:20,fontWeight:800,marginBottom:18 }}>Cricket Insights</div>
@@ -598,18 +789,15 @@ export default function CricIntelligence() {
                 </div>
             )}
 
-            {/* MOBILE NAV */}
             <nav className="mn">
                 {[["📊","Predict","predict"],["🏏","Matches","matches"],["📺","Media","media"],["⚡","Upgrade","up"]].map(([icon,label,key]) => (
-                    <button key={key} className="mt" onClick={() => key==="up"?setShowPaywall(true):setActiveTab(key)}
-                        style={{ opacity:activeTab===key?1:0.4 }}>
+                    <button key={key} className="mt" onClick={() => key==="up"?setShowPaywall(true):setActiveTab(key)} style={{ opacity:activeTab===key?1:0.4 }}>
                         <span style={{ fontSize:22 }}>{icon}</span>
                         <span style={{ fontSize:10,fontWeight:600,color:"rgba(255,255,255,0.7)" }}>{label}</span>
                     </button>
                 ))}
             </nav>
 
-            {/* PAYWALL */}
             {showPaywall && (
                 <div style={{ position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",zIndex:300,display:"flex",alignItems:"flex-end" }} onClick={() => setShowPaywall(false)}>
                     <div style={{ width:"100%",maxWidth:500,margin:"0 auto",background:C.surface,borderRadius:"20px 20px 0 0",padding:26 }} onClick={e=>e.stopPropagation()}>
