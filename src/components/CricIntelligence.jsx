@@ -359,7 +359,22 @@ export default function CricIntelligence() {
             <style>{CSS}</style>
 
             <nav style={{ background: C.navy, borderBottom: `1px solid ${C.navyLight}`, padding: "0 20px", height: 54, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
-                <div style={{ fontWeight: 700, fontSize: 15, letterSpacing: -0.5, color: "#fff" }}>CricIntelligence</div>
+                <div style={{ display:"flex", alignItems:"center", gap: 8 }}>
+  <svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100" height="100" fill="#0D1B3E" rx="6"/>
+    <rect width="100" height="4" fill="#C8961E"/>
+    <rect y="96" width="100" height="4" fill="#C8961E"/>
+    <path d="M 62,18 A 32,32 0 1,0 62,82" fill="none" stroke="#C8961E" strokeWidth="7" strokeLinecap="round"/>
+    <line x1="34" y1="30" x2="34" y2="70" stroke="white" strokeWidth="3.5" strokeLinecap="round"/>
+    <line x1="44" y1="28" x2="44" y2="72" stroke="white" strokeWidth="3.5" strokeLinecap="round"/>
+    <line x1="54" y1="30" x2="54" y2="70" stroke="white" strokeWidth="3.5" strokeLinecap="round"/>
+    <line x1="31" y1="28" x2="57" y2="28" stroke="#C8961E" strokeWidth="3" strokeLinecap="round"/>
+  </svg>
+  <div>
+    <span style={{ fontWeight: 800, fontSize: 14, color: "#fff", letterSpacing: 1, fontFamily: "Georgia, serif" }}>CRIC</span>
+    <span style={{ fontWeight: 400, fontSize: 11, color: "#C8961E", letterSpacing: 4, fontFamily: "Georgia, serif", marginLeft: 2 }}>INTELLIGENCE</span>
+  </div>
+</div>
                 <div style={{ display: "flex", gap: 4 }}>
                     {[["predict","Predictions"],["matches","Matches"],["media","Media"]].map(([k,l]) => (
                         <button key={k} className={`tab-btn ${activeTab===k?"on":""}`} onClick={() => setActiveTab(k)} style={{ color: activeTab===k?"#fff":"rgba(255,255,255,0.55)" }}>{l}</button>
