@@ -192,11 +192,8 @@ export default function CricIntelligence() {
                     let status;
                     if (isMatchEnded(rawStatus)) {
                         status = "ENDED";
-                    } else if (
-                        (m.matchStarted && !m.matchEnded) ||
-                        m.liveData ||
-                        ["need", "opt", "batting", "bowling", "over", "ov)"].some(kw => rawStatus.toLowerCase().includes(kw))
-                    ) {
+                    } 
+                    {
                         status = "LIVE";
                     } else {
                         status = "UPCOMING";
