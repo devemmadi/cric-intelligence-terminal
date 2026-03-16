@@ -1,7 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CricIntelligence from './components/CricIntelligence';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import TermsAndConditions from './components/TermsAndConditions';
 import './App.css';
 
 function App() {
@@ -10,6 +12,8 @@ function App() {
             <Routes>
                 <Route path="/" element={<CricIntelligence />} />
                 <Route path="/dashboard" element={<CricIntelligence />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/terms" element={<TermsAndConditions />} />
                 <Route path="*" element={<CricIntelligence />} />
             </Routes>
         </Router>
