@@ -159,6 +159,151 @@ function isMatchEnded(status) {
 }
 
 
+
+function NextOverIntelligence({ pred }) {
+    if (!pred || !pred.nextOvers || pred.nextOvers.length < 2) return null;
+    const ov1 = pred.nextOvers[0];
+    const ov2 = pred.nextOvers[1];
+    const detr = pred.deteriorationFactor || 1.0;
+    const spinBoost = Math.round((detr - 1.0) * 100);
+    const dewSoon = pred.weatherImpact?.dewFactor < 0.9;
+    const pitchCond = pred.pitchCondition || "FRESH";
+    const history = pred.overHistory || [];
+    const bowlerQuality = pred.bowlingFactor ? (pred.bowlingFactor <= 0.82 ? "Elite" : pred.bowlingFactor <= 0.92 ? "Good" : "Average") : "Average";
+    const batQuality = pred.battingFactor ? (pred.battingFactor >= 1.15 ? "Strong" : pred.battingFactor >= 0.95 ? "Average" : "Weak") : "Average";
+    const wicketColor1 = ov1.wicketProb > 40 ? "#A32D2D" : ov1.wicketProb > 25 ? "#BA7517" : "#3B6D11";
+    const wicketLabel1 = ov1.wicketProb > 40 ? "High" : ov1.wicketProb > 25 ? "Medium" : "Low";
+    const wicketBg1 = ov1.wicketProb > 40 ? "#E24B4A" : ov1.wicketProb > 25 ? "#EF9F27" : "#639922";
+    const wicketColor2 = ov2.wicketProb > 40 ? "#A32D2D" : ov2.wicketProb > 25 ? "#BA7517" : "#3B6D11";
+    const wicketLabel2 = ov2.wicketProb > 40 ? "High" : ov2.wicketProb > 25 ? "Medium" : "Low";
+    const wicketBg2 = ov2.wicketProb > 40 ? "#E24B4A" : ov2.wicketProb > 25 ? "#EF9F27" : "#639922";
+    const phase2 = ov2.phase === "DEATH OVERS" ? "DEATH" : ov2.phase === "POWERPLAY" ? "PP" : "MID";
+
+    const barHeights = history.slice(-4).map(h => {
+        const rr = h.over > 0 ? h.runs / h.over : 8;
+        return Math.max(8, Math.round((rr / 16) * 44));
+    });
+    const predBarH = Math.max(8, Math.round((ov1.expectedRuns / 16) * 44));
+
+    const CSS2 = `@keyframes blink2 { 0%,100%{opacity:1} 50%{opacity:0.3} }`;
+
+    return (
+        <div style={{ padding:"0 0 4px 0", marginBottom:14 }}>
+            <style>{CSS2}</style>
+
+            {/* Header */}
+            <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:16 }}>
+                <div style={{ width:8, height:8, borderRadius:"50%", background:"#E24B4A", animation:"blink2 1.5s infinite" }}/>
+                <span style={{ fontSize:13, fontWeight:500, color:"#0A0A0A" }}>Next over intelligence</span>
+                <span style={{ fontSize:12, color:"#64748B" }}>Over {ov1.over} · {ov1.phase}</span>
+            </div>
+
+            {/* Over cards */}
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10, marginBottom:12 }}>
+
+                {/* Over 1 — highlighted */}
+                <div style={{ background:"#fff", border:"2px solid #378ADD", borderRadius:12, padding:14, position:"relative" }}>
+                    <div style={{ fontSize:11, color:"#64748B", marginBottom:8, letterSpacing:0.5, textTransform:"uppercase" }}>Over {ov1.over} — now</div>
+                    <div style={{ display:"flex", alignItems:"baseline", gap:6, marginBottom:12 }}>
+                        <span style={{ fontSize:28, fontWeight:500, color:"#0A0A0A" }}>{ov1.runRange}</span>
+                        <span style={{ fontSize:13, color:"#64748B" }}>runs expected</span>
+                    </div>
+                    <div style={{ background:"#F4F6FA", borderRadius:8, padding:"8px 10px", marginBottom:10 }}>
+                        <div style={{ fontSize:11, color:"#64748B", marginBottom:3 }}>Bowling quality</div>
+                        <div style={{ fontSize:13, fontWeight:500, color:"#0A0A0A" }}>{bowlerQuality}</div>
+                        <div style={{ fontSize:12, color:"#64748B" }}>Factor {pred.bowlingFactor?.toFixed(2)||"1.00"}</div>
+                    </div>
+                    <div style={{ marginBottom:10 }}>
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:5 }}>
+                            <span style={{ fontSize:12, color:"#64748B" }}>Wicket risk</span>
+                            <span style={{ fontSize:12, fontWeight:500, color:wicketColor1 }}>{wicketLabel1} · {ov1.wicketProb}%</span>
+                        </div>
+                        <div style={{ height:4, background:"#F4F6FA", borderRadius:4, overflow:"hidden" }}>
+                            <div style={{ width:`${ov1.wicketProb}%`, height:"100%", background:wicketBg1, borderRadius:4 }}/>
+                        </div>
+                    </div>
+                    <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                        {spinBoost > 5 && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#FAEEDA", color:"#854F0B" }}>Spin turn +{spinBoost}%</span>}
+                        {!dewSoon && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#F4F6FA", color:"#64748B" }}>No dew yet</span>}
+                        {dewSoon && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#E6F1FB", color:"#185FA5" }}>Dew incoming</span>}
+                    </div>
+                </div>
+
+                {/* Over 2 */}
+                <div style={{ background:"#fff", border:"0.5px solid #E2E8F0", borderRadius:12, padding:14 }}>
+                    <div style={{ fontSize:11, color:"#64748B", marginBottom:8, letterSpacing:0.5, textTransform:"uppercase" }}>Over {ov2.over} — {phase2}</div>
+                    <div style={{ display:"flex", alignItems:"baseline", gap:6, marginBottom:12 }}>
+                        <span style={{ fontSize:28, fontWeight:500, color:"#0A0A0A" }}>{ov2.runRange}</span>
+                        <span style={{ fontSize:13, color:"#64748B" }}>runs expected</span>
+                    </div>
+                    <div style={{ background:"#F4F6FA", borderRadius:8, padding:"8px 10px", marginBottom:10 }}>
+                        <div style={{ fontSize:11, color:"#64748B", marginBottom:3 }}>Batting quality</div>
+                        <div style={{ fontSize:13, fontWeight:500, color:"#0A0A0A" }}>{batQuality}</div>
+                        <div style={{ fontSize:12, color:"#64748B" }}>Factor {pred.battingFactor?.toFixed(2)||"1.00"}</div>
+                    </div>
+                    <div style={{ marginBottom:10 }}>
+                        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:5 }}>
+                            <span style={{ fontSize:12, color:"#64748B" }}>Wicket risk</span>
+                            <span style={{ fontSize:12, fontWeight:500, color:wicketColor2 }}>{wicketLabel2} · {ov2.wicketProb}%</span>
+                        </div>
+                        <div style={{ height:4, background:"#F4F6FA", borderRadius:4, overflow:"hidden" }}>
+                            <div style={{ width:`${ov2.wicketProb}%`, height:"100%", background:wicketBg2, borderRadius:4 }}/>
+                        </div>
+                    </div>
+                    <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
+                        {ov2.phase === "DEATH OVERS" && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#FCEBEB", color:"#A32D2D" }}>Death overs</span>}
+                        {dewSoon && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#E6F1FB", color:"#185FA5" }}>Dew incoming</span>}
+                        {!dewSoon && ov2.phase !== "DEATH OVERS" && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#F4F6FA", color:"#64748B" }}>Normal</span>}
+                    </div>
+                </div>
+            </div>
+
+            {/* Run rate trend */}
+            {history.length >= 2 && (
+                <div style={{ background:"#fff", border:"0.5px solid #E2E8F0", borderRadius:12, padding:14, marginBottom:12 }}>
+                    <div style={{ fontSize:12, color:"#64748B", marginBottom:12 }}>Run rate trend</div>
+                    <div style={{ display:"flex", alignItems:"flex-end", gap:6, height:56 }}>
+                        {history.slice(-4).map((h, i) => (
+                            <div key={i} style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:4 }}>
+                                <div style={{ width:"100%", borderRadius:"3px 3px 0 0",
+                                    background: i===0?"#B5D4F4": i===1?"#85B7EB": i===2?"#378ADD":"#378ADD",
+                                    height:`${barHeights[i]}px` }}/>
+                                <span style={{ fontSize:10, color:"#64748B" }}>ov {h.over}</span>
+                            </div>
+                        ))}
+                        <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", gap:4, opacity:0.7 }}>
+                            <div style={{ width:"100%", borderRadius:"3px 3px 0 0",
+                                background:"rgba(24,95,165,0.15)", border:"1.5px dashed #185FA5",
+                                height:`${predBarH}px` }}/>
+                            <span style={{ fontSize:10, color:"#354D97", fontWeight:600 }}>ov {ov1.over} ↗</span>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Pitch behaviour */}
+            <div style={{ background:"#fff", border:"0.5px solid #E2E8F0", borderRadius:12, padding:14 }}>
+                <div style={{ fontSize:12, color:"#64748B", marginBottom:10 }}>Pitch behaviour now</div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
+                    <div style={{ textAlign:"center", padding:"10px 6px", background:"#F4F6FA", borderRadius:8 }}>
+                        <div style={{ fontSize:18, fontWeight:500, color: spinBoost > 5 ? "#BA7517" : "#64748B" }}>{spinBoost > 0 ? `+${spinBoost}%` : "—"}</div>
+                        <div style={{ fontSize:11, color:"#64748B", marginTop:3 }}>Spin turn</div>
+                    </div>
+                    <div style={{ textAlign:"center", padding:"10px 6px", background:"#F4F6FA", borderRadius:8 }}>
+                        <div style={{ fontSize:18, fontWeight:500, color:"#0A0A0A" }}>{pitchCond.split(" ")[0]}</div>
+                        <div style={{ fontSize:11, color:"#64748B", marginTop:3 }}>Surface</div>
+                    </div>
+                    <div style={{ textAlign:"center", padding:"10px 6px", background: dewSoon?"#E6F1FB":"#F4F6FA", borderRadius:8 }}>
+                        <div style={{ fontSize:18, fontWeight:500, color: dewSoon?"#185FA5":"#64748B" }}>{dewSoon?"Soon":"None"}</div>
+                        <div style={{ fontSize:11, color:"#64748B", marginTop:3 }}>Dew factor</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    );
+}
+
 function MatchPill({ m, selected, onClick }) {
     return (
         <div className={`match-pill ${selected?"sel":""}`} onClick={onClick}
@@ -607,11 +752,12 @@ export default function CricIntelligence() {
                             </div>
                             <div style={{ display:"grid",gap:8 }}>
                                 {[
-                                    {key:"h2h",icon:"⚔️",label:"Head to Head"},
-                                    {key:"venue",icon:"🏟️",label:"Venue Profile"},
-                                    {key:"toss",icon:"🪙",label:"Toss Impact"},
-                                    {key:"day_night",icon:"🌙",label:"Day/Night"},
-                                    {key:"player_form",icon:"🏏",label:"Player Form"},
+                                    {key:"pitch_wear",icon:"🏏",label:"Pitch Wear"},
+                                    {key:"dew",icon:"💧",label:"Dew Factor"},
+                                    {key:"batting_quality",icon:"🏏",label:"Batting Quality"},
+                                    {key:"bowling_quality",icon:"🎯",label:"Bowling Quality"},
+                                    {key:"pressure",icon:"⚡",label:"Target Pressure"},
+                                    {key:"weather",icon:"🌤️",label:"Weather Impact"},
                                 ].map(({key,icon,label}) => {
                                     const sig = pred.accuracySignals[key];
                                     if (!sig) return null;
@@ -637,6 +783,9 @@ export default function CricIntelligence() {
                             )}
                         </div>
                         )}
+
+                        {/* ── NEXT OVER INTELLIGENCE ── */}
+                        <NextOverIntelligence pred={pred} />
 
                         <div className="cr" style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14 }}>
                             <div className="card" style={{ padding:18,display:"flex",gap:14,alignItems:"center" }}>
