@@ -372,6 +372,260 @@ function MatchCard({ m, onClick }) {
     );
 }
 
+
+function BettingInsights({ pred, liveMatches }) {
+    const [odds, setOdds] = React.useState("");
+    const [selectedTeam, setSelectedTeam] = React.useState("team1");
+    const [history, setHistory] = React.useState(() => {
+        try { return JSON.parse(localStorage.getItem("ci_pred_history") || "[]"); } catch { return []; }
+    });
+    const [manualOdds, setManualOdds] = React.useState({ team1: "", team2: "" });
+
+    const prob = pred?.aiProbability || 50;
+    const team1 = pred?.team1 || "Team 1";
+    const team2 = pred?.team2 || "Team 2";
+    const prob2 = 100 - prob;
+
+    // Value bet calculation
+    const calcValue = (aiProb, oddsInput) => {
+        const o = parseFloat(oddsInput);
+        if (!o || o <= 1) return null;
+        const impliedProb = (1 / o) * 100;
+        const edge = aiProb - impliedProb;
+        const ev = (aiProb / 100) * (o - 1) - (1 - aiProb / 100);
+        return { impliedProb: impliedProb.toFixed(1), edge: edge.toFixed(1), ev: ev.toFixed(3), isValue: edge > 2 };
+    };
+
+    const v1 = calcValue(prob, manualOdds.team1);
+    const v2 = calcValue(prob2, manualOdds.team2);
+
+    // Pre-match betting brief
+    const getBettingAngles = () => {
+        const angles = [];
+        if (pred?.pitchType === "dry_spin") angles.push({ angle: "Back spinners", reason: "Dry/spin pitch — spinners will dominate. Back bowling performance markets.", icon: "🏏", confidence: "High" });
+        if (pred?.pitchType === "seam_swing") angles.push({ angle: "Back bowling team", reason: "Seam/swing conditions — bowling team has significant advantage.", icon: "🌀", confidence: "High" });
+        if (pred?.weatherImpact?.dewFactor < 0.9) angles.push({ angle: "Favour chasing team", reason: "Dew expected in evening — chasing team gets easier batting conditions.", icon: "💧", confidence: "Medium" });
+        if (pred?.weatherImpact?.swingFactor > 1.2) angles.push({ angle: "Under on runs", reason: "Overcast/swing conditions — expect lower scores than usual.", icon: "⛅", confidence: "High" });
+        if (pred?.pitchCondition === "HEAVILY WORN") angles.push({ angle: "Back lower totals", reason: "Heavily worn pitch — batting will be difficult, expect low scores.", icon: "📉", confidence: "High" });
+        if (angles.length < 3) angles.push({ angle: "Monitor toss", reason: "Toss result will be crucial — check batting/bowling conditions before placing.", icon: "🪙", confidence: "Medium" });
+        if (angles.length < 3) angles.push({ angle: "Check team news", reason: "Playing XI not yet confirmed — wait for toss before betting.", icon: "📋", confidence: "Low" });
+        return angles.slice(0, 3);
+    };
+
+    const angles = getBettingAngles();
+
+    // Save prediction to history
+    const savePrediction = (result) => {
+        if (!pred?.team1) return;
+        const entry = {
+            id: Date.now(),
+            date: new Date().toLocaleDateString("en-GB"),
+            match: `${team1} vs ${team2}`,
+            aiProb: prob,
+            predictedWinner: prob > 50 ? team1 : team2,
+            result: result,
+            correct: result === (prob > 50 ? "team1" : "team2"),
+        };
+        const newHistory = [entry, ...history].slice(0, 50);
+        setHistory(newHistory);
+        localStorage.setItem("ci_pred_history", JSON.stringify(newHistory));
+    };
+
+    const correctCount = history.filter(h => h.correct).length;
+    const accuracy = history.length > 0 ? ((correctCount / history.length) * 100).toFixed(0) : 0;
+
+    const C2 = { bg:"#F4F6FA", surface:"#fff", border:"#E2E8F0", accent:"#354D97", muted:"#64748B", text:"#0A0A0A", green:"#00B894", red:"#E53E3E", amber:"#F59E0B", gold:"#C8961E" };
+
+    return (
+        <div className="fade" style={{ maxWidth:680, margin:"0 auto", padding:"22px 16px" }}>
+
+            {/* Header */}
+            <div style={{ marginBottom:20 }}>
+                <div style={{ fontSize:20, fontWeight:800, marginBottom:4 }}>Betting Insights</div>
+                <div style={{ fontSize:13, color:C2.muted }}>AI-powered value identification · 18+ · Gamble responsibly</div>
+            </div>
+
+            {/* Current match */}
+            {pred?.team1 && (
+                <div style={{ background:C2.accent, borderRadius:12, padding:"12px 16px", marginBottom:16, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+                    <span style={{ fontSize:13, fontWeight:600, color:"#fff" }}>{team1} vs {team2}</span>
+                    <span style={{ fontSize:12, color:"rgba(255,255,255,0.7)" }}>{pred?.venue?.split(",")[0]}</span>
+                </div>
+            )}
+
+            {/* 1. Value Bet Calculator */}
+            <div style={{ background:C2.surface, border:`1px solid ${C2.border}`, borderRadius:16, padding:20, marginBottom:14 }}>
+                <div style={{ fontSize:12, fontWeight:700, color:C2.muted, letterSpacing:1, marginBottom:14 }}>⚡ VALUE BET CALCULATOR</div>
+
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:12 }}>
+                    {/* Team 1 */}
+                    <div style={{ padding:12, background:C2.bg, borderRadius:10 }}>
+                        <div style={{ fontSize:11, color:C2.muted, marginBottom:4 }}>{team1}</div>
+                        <div style={{ fontSize:18, fontWeight:700, color:C2.accent, marginBottom:8 }}>{prob}%</div>
+                        <input
+                            type="number" placeholder="Enter odds (e.g. 1.85)"
+                            value={manualOdds.team1}
+                            onChange={e => setManualOdds(p => ({...p, team1: e.target.value}))}
+                            style={{ width:"100%", padding:"8px 10px", borderRadius:8, border:`1px solid ${C2.border}`, fontSize:13, outline:"none", fontFamily:"Inter,system-ui" }}
+                        />
+                        {v1 && (
+                            <div style={{ marginTop:8, padding:"8px 10px", borderRadius:8,
+                                background: v1.isValue ? "#e8f5ee" : "#fff0f0",
+                                border: `1px solid ${v1.isValue ? "#b2dfcc" : "#fecaca"}` }}>
+                                <div style={{ fontSize:12, fontWeight:700, color: v1.isValue ? C2.green : C2.red }}>
+                                    {v1.isValue ? "✅ VALUE BET" : "❌ No Value"}
+                                </div>
+                                <div style={{ fontSize:11, color:C2.muted, marginTop:3 }}>
+                                    Implied: {v1.impliedProb}% · Edge: {v1.edge > 0 ? "+" : ""}{v1.edge}%
+                                </div>
+                                <div style={{ fontSize:11, color:C2.muted }}>
+                                    EV: {v1.ev > 0 ? "+" : ""}{v1.ev} per £1
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Team 2 */}
+                    <div style={{ padding:12, background:C2.bg, borderRadius:10 }}>
+                        <div style={{ fontSize:11, color:C2.muted, marginBottom:4 }}>{team2}</div>
+                        <div style={{ fontSize:18, fontWeight:700, color:C2.accent, marginBottom:8 }}>{prob2}%</div>
+                        <input
+                            type="number" placeholder="Enter odds (e.g. 2.10)"
+                            value={manualOdds.team2}
+                            onChange={e => setManualOdds(p => ({...p, team2: e.target.value}))}
+                            style={{ width:"100%", padding:"8px 10px", borderRadius:8, border:`1px solid ${C2.border}`, fontSize:13, outline:"none", fontFamily:"Inter,system-ui" }}
+                        />
+                        {v2 && (
+                            <div style={{ marginTop:8, padding:"8px 10px", borderRadius:8,
+                                background: v2.isValue ? "#e8f5ee" : "#fff0f0",
+                                border: `1px solid ${v2.isValue ? "#b2dfcc" : "#fecaca"}` }}>
+                                <div style={{ fontSize:12, fontWeight:700, color: v2.isValue ? C2.green : C2.red }}>
+                                    {v2.isValue ? "✅ VALUE BET" : "❌ No Value"}
+                                </div>
+                                <div style={{ fontSize:11, color:C2.muted, marginTop:3 }}>
+                                    Implied: {v2.impliedProb}% · Edge: {v2.edge > 0 ? "+" : ""}{v2.edge}%
+                                </div>
+                                <div style={{ fontSize:11, color:C2.muted }}>
+                                    EV: {v2.ev > 0 ? "+" : ""}{v2.ev} per £1
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Bookmaker links */}
+                <div style={{ fontSize:11, color:C2.muted, marginBottom:8 }}>Check odds at:</div>
+                <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                    {[
+                        { name:"Bet365", url:"https://www.bet365.com" },
+                        { name:"Betway", url:"https://www.betway.com" },
+                        { name:"William Hill", url:"https://www.williamhill.com" },
+                        { name:"Betfair", url:"https://www.betfair.com" },
+                    ].map(({name, url}) => (
+                        <a key={name} href={url} target="_blank" rel="noreferrer"
+                            style={{ fontSize:11, padding:"5px 12px", borderRadius:20, background:C2.accent, color:"#fff", textDecoration:"none", fontWeight:600 }}>
+                            {name} ↗
+                        </a>
+                    ))}
+                </div>
+            </div>
+
+            {/* 2. Pre-match Betting Brief */}
+            <div style={{ background:C2.surface, border:`1px solid ${C2.border}`, borderRadius:16, padding:20, marginBottom:14 }}>
+                <div style={{ fontSize:12, fontWeight:700, color:C2.muted, letterSpacing:1, marginBottom:14 }}>🎯 PRE-MATCH BETTING BRIEF</div>
+                <div style={{ display:"grid", gap:10 }}>
+                    {angles.map((a, i) => (
+                        <div key={i} style={{ display:"flex", gap:12, padding:"12px 14px", background:C2.bg, borderRadius:10,
+                            border:`1px solid ${a.confidence==="High"?"#b2dfcc":a.confidence==="Medium"?"#fde68a":C2.border}` }}>
+                            <span style={{ fontSize:20 }}>{a.icon}</span>
+                            <div style={{ flex:1 }}>
+                                <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+                                    <span style={{ fontSize:13, fontWeight:700, color:C2.text }}>{a.angle}</span>
+                                    <span style={{ fontSize:10, padding:"2px 8px", borderRadius:10, fontWeight:700,
+                                        background: a.confidence==="High"?"#e8f5ee":a.confidence==="Medium"?"#fef3c7":"#f0f0f0",
+                                        color: a.confidence==="High"?C2.green:a.confidence==="Medium"?"#92400E":C2.muted }}>
+                                        {a.confidence}
+                                    </span>
+                                </div>
+                                <div style={{ fontSize:12, color:C2.muted, lineHeight:1.5 }}>{a.reason}</div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* 3. Track Record */}
+            <div style={{ background:C2.surface, border:`1px solid ${C2.border}`, borderRadius:16, padding:20, marginBottom:14 }}>
+                <div style={{ fontSize:12, fontWeight:700, color:C2.muted, letterSpacing:1, marginBottom:14 }}>📈 TRACK RECORD</div>
+
+                {/* Stats */}
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:10, marginBottom:16 }}>
+                    <div style={{ textAlign:"center", padding:"12px 8px", background:C2.bg, borderRadius:10 }}>
+                        <div style={{ fontSize:24, fontWeight:800, color:C2.accent }}>{history.length}</div>
+                        <div style={{ fontSize:11, color:C2.muted, marginTop:3 }}>Predictions</div>
+                    </div>
+                    <div style={{ textAlign:"center", padding:"12px 8px", background:C2.bg, borderRadius:10 }}>
+                        <div style={{ fontSize:24, fontWeight:800, color:C2.green }}>{correctCount}</div>
+                        <div style={{ fontSize:11, color:C2.muted, marginTop:3 }}>Correct</div>
+                    </div>
+                    <div style={{ textAlign:"center", padding:"12px 8px", background: accuracy >= 60 ? "#e8f5ee" : C2.bg, borderRadius:10 }}>
+                        <div style={{ fontSize:24, fontWeight:800, color: accuracy >= 60 ? C2.green : C2.accent }}>{accuracy}%</div>
+                        <div style={{ fontSize:11, color:C2.muted, marginTop:3 }}>Accuracy</div>
+                    </div>
+                </div>
+
+                {/* Record match result */}
+                {pred?.team1 && (
+                    <div style={{ marginBottom:14, padding:12, background:C2.bg, borderRadius:10 }}>
+                        <div style={{ fontSize:12, color:C2.muted, marginBottom:8 }}>Record result for: <strong>{team1} vs {team2}</strong></div>
+                        <div style={{ display:"flex", gap:8 }}>
+                            <button onClick={() => savePrediction("team1")}
+                                style={{ flex:1, padding:"8px", borderRadius:8, border:`1px solid ${C2.border}`, background:C2.surface, cursor:"pointer", fontSize:12, fontWeight:600, color:C2.accent }}>
+                                {team1} won ✓
+                            </button>
+                            <button onClick={() => savePrediction("team2")}
+                                style={{ flex:1, padding:"8px", borderRadius:8, border:`1px solid ${C2.border}`, background:C2.surface, cursor:"pointer", fontSize:12, fontWeight:600, color:C2.muted }}>
+                                {team2} won ✓
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* History */}
+                {history.length > 0 ? (
+                    <div>
+                        <div style={{ fontSize:11, color:C2.muted, marginBottom:8 }}>Recent predictions:</div>
+                        {history.slice(0, 5).map((h, i) => (
+                            <div key={i} style={{ display:"flex", justifyContent:"space-between", alignItems:"center",
+                                padding:"8px 10px", background:C2.bg, borderRadius:8, marginBottom:6 }}>
+                                <div>
+                                    <div style={{ fontSize:12, fontWeight:600, color:C2.text }}>{h.match}</div>
+                                    <div style={{ fontSize:11, color:C2.muted }}>Predicted: {h.predictedWinner} ({h.aiProb}%)</div>
+                                </div>
+                                <div style={{ fontSize:18 }}>{h.correct ? "✅" : "❌"}</div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div style={{ textAlign:"center", padding:"20px", color:C2.muted, fontSize:13 }}>
+                        No predictions recorded yet. Use the button above after each match!
+                    </div>
+                )}
+            </div>
+
+            {/* Responsible gambling */}
+            <div style={{ padding:"14px 16px", background:"#FFF8F0", border:"1px solid #F59E0B", borderRadius:12, display:"flex", gap:12, alignItems:"center" }}>
+                <span style={{ fontSize:20 }}>⚠️</span>
+                <div style={{ fontSize:12, color:"#92400E", lineHeight:1.6 }}>
+                    <strong>Gamble responsibly.</strong> These are AI predictions for informational purposes only — not betting advice.
+                    18+ only · BeGambleAware.org · 0808 8020 133
+                </div>
+            </div>
+
+        </div>
+    );
+}
+
 function MediaSection() {
     const [news, setNews] = React.useState([]);
     const [loading, setLoading] = React.useState(true);
@@ -712,7 +966,7 @@ export default function CricIntelligence() {
                     </div>
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
-                    {[["predict","Predictions"],["matches","Matches"],["media","Media"]].map(([k,l]) => (
+                    {[["predict","Predictions"],["matches","Matches"],["insights","Insights"],["media","Media"]].map(([k,l]) => (
                         <button key={k} className={`tab-btn ${activeTab===k?"on":""}`} onClick={() => setActiveTab(k)} style={{ color: activeTab===k?"#fff":"rgba(255,255,255,0.55)" }}>{l}</button>
                     ))}
                 </div>
@@ -1081,8 +1335,12 @@ export default function CricIntelligence() {
                 <MediaSection />
             )}
 
+            {activeTab === "insights" && (
+                <BettingInsights pred={pred} liveMatches={liveMatches} />
+            )}
+
             <nav className="mn">
-                {[["📊","Predict","predict"],["🏏","Matches","matches"],["📺","Media","media"],["⚡","Upgrade","up"]].map(([icon,label,key]) => (
+                {[["📊","Predict","predict"],["🏏","Matches","matches"],["💡","Insights","insights"],["📺","Media","media"],["⚡","Upgrade","up"]].map(([icon,label,key]) => (
                     <button key={key} className="mt" onClick={() => key==="up"?setShowPaywall(true):setActiveTab(key)} style={{ opacity:activeTab===key?1:0.4 }}>
                         <span style={{ fontSize:22 }}>{icon}</span>
                         <span style={{ fontSize:10,fontWeight:600,color:"rgba(255,255,255,0.7)" }}>{label}</span>
