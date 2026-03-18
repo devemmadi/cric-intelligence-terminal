@@ -380,11 +380,31 @@ function BettingInsights({ pred, liveMatches }) {
         try { return JSON.parse(localStorage.getItem("ci_pred_history") || "[]"); } catch { return []; }
     });
     const [manualOdds, setManualOdds] = React.useState({ team1: "", team2: "" });
+    const [liveOdds, setLiveOdds] = React.useState(null);
+    const [oddsLoading, setOddsLoading] = React.useState(false);
 
     const prob = pred?.aiProbability || 50;
     const team1 = pred?.team1 || "Team 1";
     const team2 = pred?.team2 || "Team 2";
     const prob2 = 100 - prob;
+
+    // Fetch live odds automatically
+    React.useEffect(() => {
+        if (!pred?.team1) return;
+        setOddsLoading(true);
+        fetch(`${API_BASE}/odds?team1=${encodeURIComponent(pred.team1)}&team2=${encodeURIComponent(pred.team2)}`)
+            .then(r => r.ok ? r.json() : null)
+            .then(d => {
+                if (d && d.bookmakers && d.bookmakers.length > 0) {
+                    setLiveOdds(d);
+                    // Auto-fill best odds
+                    if (d.best_team1_odds) setManualOdds(p => ({...p, team1: d.best_team1_odds.toFixed(2)}));
+                    if (d.best_team2_odds) setManualOdds(p => ({...p, team2: d.best_team2_odds.toFixed(2)}));
+                }
+                setOddsLoading(false);
+            })
+            .catch(() => setOddsLoading(false));
+    }, [pred?.team1, pred?.team2]);
 
     // Value bet calculation
     const calcValue = (aiProb, oddsInput) => {
@@ -513,21 +533,54 @@ function BettingInsights({ pred, liveMatches }) {
                     </div>
                 </div>
 
-                {/* Bookmaker links */}
-                <div style={{ fontSize:11, color:C2.muted, marginBottom:8 }}>Check odds at:</div>
-                <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
-                    {[
-                        { name:"Bet365", url:"https://www.bet365.com" },
-                        { name:"Betway", url:"https://www.betway.com" },
-                        { name:"William Hill", url:"https://www.williamhill.com" },
-                        { name:"Betfair", url:"https://www.betfair.com" },
-                    ].map(({name, url}) => (
-                        <a key={name} href={url} target="_blank" rel="noreferrer"
-                            style={{ fontSize:11, padding:"5px 12px", borderRadius:20, background:C2.accent, color:"#fff", textDecoration:"none", fontWeight:600 }}>
-                            {name} ↗
-                        </a>
-                    ))}
-                </div>
+                {/* Live odds table */}
+                {oddsLoading && <div style={{ fontSize:12, color:C2.muted, padding:"8px 0" }}>Loading live odds...</div>}
+                {liveOdds && liveOdds.bookmakers && liveOdds.bookmakers.length > 0 && (
+                    <div style={{ marginTop:8 }}>
+                        <div style={{ fontSize:11, color:C2.muted, marginBottom:6 }}>Live odds from bookmakers:</div>
+                        <div style={{ background:C2.bg, borderRadius:8, overflow:"hidden", border:`1px solid ${C2.border}` }}>
+                            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", padding:"6px 10px", borderBottom:`1px solid ${C2.border}` }}>
+                                <span style={{ fontSize:10, fontWeight:700, color:C2.muted }}>BOOKMAKER</span>
+                                <span style={{ fontSize:10, fontWeight:700, color:C2.accent, textAlign:"center" }}>{team1}</span>
+                                <span style={{ fontSize:10, fontWeight:700, color:C2.muted, textAlign:"center" }}>{team2}</span>
+                            </div>
+                            {liveOdds.bookmakers.map((bm, i) => {
+                                const v1 = calcValue(prob, bm.team1_odds);
+                                const v2 = calcValue(prob2, bm.team2_odds);
+                                return (
+                                    <div key={i} style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", padding:"7px 10px", borderBottom: i < liveOdds.bookmakers.length-1 ? `1px solid ${C2.border}` : "none", background: (v1?.isValue || v2?.isValue) ? "#f0fdf4" : "transparent" }}>
+                                        <span style={{ fontSize:11, fontWeight:600, color:C2.text }}>{bm.bookmaker}</span>
+                                        <span style={{ fontSize:12, fontWeight:700, color: v1?.isValue ? "#00B894" : C2.text, textAlign:"center" }}>
+                                            {bm.team1_odds || "—"} {v1?.isValue && "✅"}
+                                        </span>
+                                        <span style={{ fontSize:12, fontWeight:700, color: v2?.isValue ? "#00B894" : C2.muted, textAlign:"center" }}>
+                                            {bm.team2_odds || "—"} {v2?.isValue && "✅"}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div style={{ fontSize:10, color:C2.muted, marginTop:4 }}>✅ = Value bet detected</div>
+                    </div>
+                )}
+                {!oddsLoading && (!liveOdds || !liveOdds.bookmakers?.length) && (
+                    <div>
+                        <div style={{ fontSize:11, color:C2.muted, marginBottom:8 }}>No live odds available — check manually:</div>
+                        <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                            {[
+                                { name:"Bet365", url:"https://www.bet365.com" },
+                                { name:"Betway", url:"https://www.betway.com" },
+                                { name:"William Hill", url:"https://www.williamhill.com" },
+                                { name:"Betfair", url:"https://www.betfair.com" },
+                            ].map(({name, url}) => (
+                                <a key={name} href={url} target="_blank" rel="noreferrer"
+                                    style={{ fontSize:11, padding:"5px 12px", borderRadius:20, background:C2.accent, color:"#fff", textDecoration:"none", fontWeight:600 }}>
+                                    {name} ↗
+                                </a>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* 2. Pre-match Betting Brief */}
