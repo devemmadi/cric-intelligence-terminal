@@ -67,6 +67,13 @@ const TEAM_LOGOS = {
     "afghanistan":  BASE_LOGO + "/381800/381893.png",
     "ireland":      BASE_LOGO + "/349300/349350.png",
     "zimbabwe":     BASE_LOGO + "/383900/383967.png",
+    "india women":  BASE_LOGO + "/381800/381895.png",
+    "australia women": BASE_LOGO + "/382700/382733.png",
+    "england women": BASE_LOGO + "/381800/381894.png",
+    "pakistan women": BASE_LOGO + "/381800/381891.png",
+    "west indies women": BASE_LOGO + "/317600/317615.png",
+    "new zealand women": BASE_LOGO + "/340500/340503.png",
+    "south africa women": BASE_LOGO + "/340400/340493.png",
 };
 
 const FLAG_CODES = {
@@ -169,6 +176,7 @@ function NextOverIntelligence({ pred }) {
     const dewSoon = pred.weatherImpact?.dewFactor < 0.9;
     const pitchCond = pred.pitchCondition || "FRESH";
     const history = pred.overHistory || [];
+    const hasHistory = history.length >= 2;
     const bowlerQuality = pred.bowlingFactor ? (pred.bowlingFactor <= 0.82 ? "Elite" : pred.bowlingFactor <= 0.92 ? "Good" : "Average") : "Average";
     const batQuality = pred.battingFactor ? (pred.battingFactor >= 1.15 ? "Strong" : pred.battingFactor >= 0.95 ? "Average" : "Weak") : "Average";
     const wicketColor1 = ov1.wicketProb > 40 ? "#A32D2D" : ov1.wicketProb > 25 ? "#BA7517" : "#3B6D11";
@@ -259,7 +267,7 @@ function NextOverIntelligence({ pred }) {
             </div>
 
             {/* Run rate trend */}
-            {history.length >= 2 && (
+            {hasHistory && (
                 <div style={{ background:"#fff", border:"0.5px solid #E2E8F0", borderRadius:12, padding:14, marginBottom:12 }}>
                     <div style={{ fontSize:12, color:"#64748B", marginBottom:12 }}>Run rate trend</div>
                     <div style={{ display:"flex", alignItems:"flex-end", gap:6, height:56 }}>
@@ -306,7 +314,7 @@ function NextOverIntelligence({ pred }) {
 
 function MatchPill({ m, selected, onClick }) {
     return (
-        <div className={`match-pill ${selected?"sel":""}`} onClick={onClick}
+        <div className={`match-pill ${selected?"sel":""}`} onClick={() => { onClick(); window.scrollTo({top:0, behavior:'smooth'}); }}
             style={{ opacity: m.status==="ENDED" ? 0.75 : 1 }}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
                 <span style={{ fontSize:10, color:"#64748B" }}>{m.day} · {m.detail?.split("·")[0]?.trim().slice(0,18)}</span>
@@ -334,6 +342,136 @@ function MatchPill({ m, selected, onClick }) {
     );
 }
 
+
+
+function MatchCard({ m, onClick }) {
+    return (
+        <div className="card" style={{ padding:16,marginBottom:10,cursor:"pointer",opacity:m.status==="ENDED"?0.8:1 }} onClick={onClick}>
+            <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10 }}>
+                <span style={{ fontSize:11,color:"#64748B" }}>{m.day} · {m.detail?.split("·")[0]?.trim()}</span>
+                <span style={{ fontSize:10,fontWeight:700,padding:"3px 10px",borderRadius:20,
+                    background:m.status==="LIVE"?"#FFF0F0":m.status==="UPCOMING"?"#EFF6FF":"#F0F0F0",
+                    color:m.status==="LIVE"?"#E53E3E":m.status==="UPCOMING"?"#354D97":"#64748B" }}>
+                    {m.status==="LIVE"?"● LIVE":m.status==="UPCOMING"?"🗓️ UPCOMING":"ENDED"}
+                </span>
+            </div>
+            {[{n:m.t1,s:m.t1Score,w:m.t1Wkts,b:true},{n:m.t2,s:m.t2Score,b:false}].map(({n,s,w,b}) => (
+                <div key={n} style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8 }}>
+                    <div style={{ display:"flex",alignItems:"center",gap:10 }}>
+                        <TeamLogo name={n} size={32} />
+                        <span style={{ fontSize:16,fontWeight:b?700:400,color:b?"#0A0A0A":"#64748B" }}>{n}</span>
+                    </div>
+                    {s!=null && <span style={{ fontSize:16,fontWeight:b?700:400,color:b?"#0A0A0A":"#64748B" }}>{w!=null?`${s}/${w}`:s}</span>}
+                </div>
+            ))}
+            <div style={{ fontSize:12,fontWeight:600,marginTop:6,
+                color:m.status==="ENDED"?"#64748B":m.status==="UPCOMING"?"#354D97":"#00B894" }}>
+                {m.status==="ENDED" ? "View result →" : m.status==="UPCOMING" ? "Pre-match prediction →" : "View live prediction →"}
+            </div>
+        </div>
+    );
+}
+
+function MediaSection() {
+    const [news, setNews] = React.useState([]);
+    const [loading, setLoading] = React.useState(true);
+
+    React.useEffect(() => {
+        // Fetch cricket news from Cricket API
+        fetch(`${API_BASE}/news`)
+            .then(r => r.ok ? r.json() : null)
+            .then(d => {
+                if (d && d.length) { setNews(d); setLoading(false); }
+                else { setLoading(false); }
+            })
+            .catch(() => setLoading(false));
+    }, []);
+
+    const fallbackNews = [
+        { tag:"IPL 2025", title:"IPL 2025 auction: Full list of players sold and unsold", time:"2h ago", url:"https://www.espncricinfo.com", source:"ESPNcricinfo" },
+        { tag:"SERIES", title:"NZ vs SA T20I series — match preview and predictions", time:"4h ago", url:"https://www.cricbuzz.com", source:"Cricbuzz" },
+        { tag:"ANALYSIS", title:"How AI is transforming cricket match predictions", time:"6h ago", url:"https://cricintelligence.com", source:"CricIntelligence" },
+        { tag:"WOMEN'S", title:"Australia Women dominate WI series — key stats", time:"1d ago", url:"https://www.espncricinfo.com", source:"ESPNcricinfo" },
+        { tag:"IPL", title:"IPL 2025 schedule: Complete fixtures and venues", time:"1d ago", url:"https://www.iplt20.com", source:"IPL Official" },
+        { tag:"STATS", title:"T20 death over specialists — top 10 bowlers in 2025", time:"2d ago", url:"https://www.cricbuzz.com", source:"Cricbuzz" },
+    ];
+
+    const displayNews = news.length > 0 ? news : fallbackNews;
+    const C2 = { bg:"#F4F6FA", surface:"#fff", border:"#E2E8F0", accent:"#354D97", muted:"#64748B", text:"#0A0A0A", navy:"#354D97", gold:"#C8961E" };
+
+    return (
+        <div className="fade" style={{ maxWidth:680, margin:"0 auto", padding:"22px 16px" }}>
+            {/* Header */}
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
+                <div style={{ fontSize:20, fontWeight:800 }}>Cricket News & Insights</div>
+                <div style={{ fontSize:11, color:C2.muted }}>Updated live</div>
+            </div>
+
+            {/* Quick links */}
+            <div style={{ display:"flex", gap:8, marginBottom:20, flexWrap:"wrap" }}>
+                {[
+                    { label:"ESPNcricinfo", url:"https://www.espncricinfo.com/cricket-news" },
+                    { label:"Cricbuzz", url:"https://www.cricbuzz.com/cricket-news" },
+                    { label:"ICC", url:"https://www.icc-cricket.com/media-releases" },
+                    { label:"IPL Official", url:"https://www.iplt20.com/news" },
+                ].map(({label, url}) => (
+                    <a key={label} href={url} target="_blank" rel="noreferrer"
+                        style={{ fontSize:12, padding:"6px 14px", borderRadius:20, background:C2.navy, color:"#fff", textDecoration:"none", fontWeight:600 }}>
+                        {label} ↗
+                    </a>
+                ))}
+            </div>
+
+            {/* News cards */}
+            {loading ? (
+                <div style={{ textAlign:"center", padding:40, color:C2.muted }}>Loading news...</div>
+            ) : (
+                displayNews.map(({ tag, title, time, url, source }, i) => (
+                    <a key={i} href={url || "#"} target="_blank" rel="noreferrer" style={{ textDecoration:"none" }}>
+                        <div className="card" style={{ padding:16, marginBottom:10, cursor:"pointer" }}>
+                            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
+                                <span style={{ fontSize:10, fontWeight:700, color:C2.accent, letterSpacing:1, background:`${C2.accent}12`, padding:"2px 8px", borderRadius:4 }}>{tag}</span>
+                                <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                                    {source && <span style={{ fontSize:10, color:C2.muted }}>{source}</span>}
+                                    <span style={{ fontSize:11, color:C2.muted }}>{time}</span>
+                                </div>
+                            </div>
+                            <div style={{ fontSize:14, fontWeight:600, lineHeight:1.5, color:C2.text }}>{title}</div>
+                            {url && url !== "#" && <div style={{ fontSize:11, color:C2.accent, marginTop:6 }}>Read more →</div>}
+                        </div>
+                    </a>
+                ))
+            )}
+
+            {/* YouTube section */}
+            <div style={{ marginTop:24, paddingTop:20, borderTop:`1px solid ${C2.border}` }}>
+                <div style={{ fontSize:16, fontWeight:700, marginBottom:14 }}>🎬 Cricket on YouTube</div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+                    {[
+                        { channel:"ICC", url:"https://www.youtube.com/@ICC", desc:"Official match highlights" },
+                        { channel:"BCCI", url:"https://www.youtube.com/@BCCIofficial", desc:"India cricket official" },
+                        { channel:"ESPNcricinfo", url:"https://www.youtube.com/@ESPNcricinfo", desc:"Analysis & interviews" },
+                        { channel:"CricTracker", url:"https://www.youtube.com/@CricTracker", desc:"Live streams & news" },
+                    ].map(({channel, url, desc}) => (
+                        <a key={channel} href={url} target="_blank" rel="noreferrer" style={{ textDecoration:"none" }}>
+                            <div style={{ background:C2.surface, border:`1px solid ${C2.border}`, borderRadius:12, padding:14, cursor:"pointer" }}>
+                                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:6 }}>
+                                    <div style={{ width:32, height:32, borderRadius:"50%", background:"#FF0000", display:"flex", alignItems:"center", justifyContent:"center" }}>
+                                        <span style={{ fontSize:14 }}>▶</span>
+                                    </div>
+                                    <span style={{ fontSize:13, fontWeight:700, color:C2.text }}>{channel}</span>
+                                </div>
+                                <div style={{ fontSize:11, color:C2.muted }}>{desc}</div>
+                                <div style={{ fontSize:11, color:"#FF0000", marginTop:4, fontWeight:600 }}>Watch ↗</div>
+                            </div>
+                        </a>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
     const [showLanding, setShowLanding] = useState(() => !localStorage.getItem("ci_v2"));
@@ -352,7 +490,7 @@ export default function CricIntelligence() {
     const [activeOver, setActiveOver] = useState(0);
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
-    useEffect(() => { const t = setInterval(() => setTicker(p => p + 1), 10000); return () => clearInterval(t); }, []);
+    useEffect(() => { const t = setInterval(() => setTicker(p => p + 1), 15000); return () => clearInterval(t); }, []);
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         if (params.get("premium") === "true") { setIsPremium(true); localStorage.setItem("cricintel_premium", "true"); window.history.replaceState({}, "", window.location.pathname); }
@@ -378,14 +516,14 @@ export default function CricIntelligence() {
             const d = await r.json();
             const list = Array.isArray(d) ? d : d.data || [];
             if (list.length) {
-                const mapped = list.slice(0, 8).map((m, i) => {
+                const mapped = list.slice(0, 20).map((m, i) => {
                     const rawStatus = m.status || "";
                     let status;
                     if (isMatchEnded(rawStatus)) {
                         status = "ENDED";
                     } else if (
                         (m.matchStarted && !m.matchEnded) ||
-                        ["need", "opt", "batting", "bowling", "over", "ov)"].some(kw => rawStatus.toLowerCase().includes(kw))
+                        ["need", "opt", "batting", "bowling", "over", "ov)", "day", "session", "innings", "require", "trail", "lead"].some(kw => rawStatus.toLowerCase().includes(kw))
                     ) {
                         status = "LIVE";
                     } else {
@@ -426,7 +564,7 @@ export default function CricIntelligence() {
         } catch { setLiveStatus("mock"); }
     }, []);
     useEffect(() => { fetchMatches(); }, [fetchMatches]);
-    useEffect(() => { const t = setInterval(fetchMatches, 5 * 60 * 1000); return () => clearInterval(t); }, [fetchMatches]);
+    useEffect(() => { const t = setInterval(fetchMatches, 30 * 1000); return () => clearInterval(t); }, [fetchMatches]);
     useEffect(() => {
         if (selectedMatch?.matchId) {
             fetch(`${API_BASE}/match/${selectedMatch.matchId}`)
@@ -894,48 +1032,53 @@ export default function CricIntelligence() {
             )}
 
             {activeTab === "matches" && (
-                <div className="fade" style={{ maxWidth:600,margin:"0 auto",padding:"22px 16px" }}>
-                    <div style={{ fontSize:20,fontWeight:800,marginBottom:18 }}>{liveStatus==="live"?"🟢 Live Matches":"Matches"}</div>
-                    {liveMatches.map(m => (
-                        <div key={m.id} className="card" style={{ padding:18,marginBottom:12,cursor:"pointer",opacity:m.status==="ENDED"?0.7:1 }} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }}>
-                            <div style={{ display:"flex",justifyContent:"space-between",marginBottom:12 }}>
-                                <span style={{ fontSize:11,color:C.muted }}>{m.day} · {m.detail}</span>
-                                <span style={{ fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:6, background:m.status==="LIVE"?"#FFF0F0":m.status==="ENDED"?"#F0F0F0":C.bg, color:m.status==="LIVE"?C.red:C.muted }}>
-                                    {m.status==="LIVE"?"● LIVE":m.status}
-                                </span>
+                <div className="fade" style={{ maxWidth:680,margin:"0 auto",padding:"22px 16px" }}>
+
+                    {/* LIVE NOW */}
+                    {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
+                        <div style={{ marginBottom:24 }}>
+                            <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:12 }}>
+                                <div style={{ width:8,height:8,borderRadius:"50%",background:C.red,animation:"pulse 1.5s infinite" }}/>
+                                <span style={{ fontSize:13,fontWeight:700,color:C.red,letterSpacing:1 }}>LIVE NOW</span>
+                                <span style={{ fontSize:11,color:C.muted }}>({liveMatches.filter(m=>m.status==="LIVE").length} matches)</span>
                             </div>
-                            {[{n:m.t1,s:m.t1Score,w:m.t1Wkts,b:true},{n:m.t2,s:m.t2Score,b:false}].map(({n,s,w,b}) => (
-                                <div key={n} style={{ display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8 }}>
-                                    <div style={{ display:"flex",alignItems:"center",gap:10 }}><TeamLogo name={n} size={28} /><span style={{ fontSize:16,fontWeight:b?700:400,color:b?C.text:C.muted }}>{n}</span></div>
-                                    {s!=null && <span style={{ fontSize:16,fontWeight:b?700:400,color:b?C.text:C.muted }}>{w!=null?`${s}/${w}`:s}</span>}
-                                </div>
+                            {liveMatches.filter(m => m.status === "LIVE").map(m => (
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); window.scrollTo({top:0,behavior:"smooth"}); }} />
                             ))}
-                            <div style={{ fontSize:12,color:m.status==="ENDED"?C.muted:C.accent,fontWeight:600,marginTop:4 }}>
-                                {m.status==="ENDED" ? "Match ended · View result →" : "View AI Prediction →"}
-                            </div>
                         </div>
-                    ))}
+                    )}
+
+                    {/* UPCOMING */}
+                    {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
+                        <div style={{ marginBottom:24 }}>
+                            <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:12 }}>
+                                <span style={{ fontSize:13,fontWeight:700,color:C.accent,letterSpacing:1 }}>🗓️ UPCOMING</span>
+                                <span style={{ fontSize:11,color:C.muted }}>({liveMatches.filter(m=>m.status==="UPCOMING").length} matches)</span>
+                            </div>
+                            {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); window.scrollTo({top:0,behavior:"smooth"}); }} />
+                            ))}
+                        </div>
+                    )}
+
+                    {/* RECENT RESULTS */}
+                    {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
+                        <div>
+                            <div style={{ display:"flex",alignItems:"center",gap:8,marginBottom:12 }}>
+                                <span style={{ fontSize:13,fontWeight:700,color:C.muted,letterSpacing:1 }}>✓ RECENT RESULTS</span>
+                                <span style={{ fontSize:11,color:C.muted }}>({liveMatches.filter(m=>m.status==="ENDED").length} matches)</span>
+                            </div>
+                            {liveMatches.filter(m => m.status === "ENDED").map(m => (
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); window.scrollTo({top:0,behavior:"smooth"}); }} />
+                            ))}
+                        </div>
+                    )}
+
                 </div>
             )}
 
             {activeTab === "media" && (
-                <div className="fade" style={{ maxWidth:600,margin:"0 auto",padding:"22px 16px" }}>
-                    <div style={{ fontSize:20,fontWeight:800,marginBottom:18 }}>Cricket Insights</div>
-                    {[
-                        { tag:"ANALYSIS", title:"IPL 2025: How AI is reshaping cricket strategy", time:"2h ago" },
-                        { tag:"PITCH", title:"Wankhede pitch report: Spin-friendly surface ahead", time:"4h ago" },
-                        { tag:"STATS", title:"India's batting in death overs — a deep dive", time:"6h ago" },
-                        { tag:"PREVIEW", title:"T20 World Cup 2026: Early favourites and form", time:"1d ago" },
-                    ].map(({ tag,title,time }) => (
-                        <div key={title} className="card" style={{ padding:16,marginBottom:10 }}>
-                            <div style={{ display:"flex",justifyContent:"space-between",marginBottom:6 }}>
-                                <span style={{ fontSize:10,fontWeight:700,color:C.accent,letterSpacing:1 }}>{tag}</span>
-                                <span style={{ fontSize:11,color:C.muted }}>{time}</span>
-                            </div>
-                            <div style={{ fontSize:14,fontWeight:600,lineHeight:1.4 }}>{title}</div>
-                        </div>
-                    ))}
-                </div>
+                <MediaSection />
             )}
 
             <nav className="mn">
