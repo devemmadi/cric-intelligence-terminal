@@ -4,10 +4,10 @@ import React, { useState, useEffect, useCallback } from "react";
 const API_BASE = "https://cricintel-backend-production.up.railway.app";
 
 const C = {
-    bg: "#F4F6FA", surface: "#FFFFFF", border: "#E2E8F0",
-    text: "#0A0A0A", muted: "#64748B", accent: "#354D97",
+    bg: "#EEF2FF", surface: "#FFFFFF", border: "#E2E8F0",
+    text: "#0A0A0A", muted: "#64748B", accent: "#1E2D6B",
     green: "#00B894", red: "#E53E3E", amber: "#F59E0B", gold: "#C8961E",
-    navy: "#354D97", navyMid: "#2A3F82", navyLight: "#4A5FAD",
+    navy: "#1E2D6B", navyMid: "#2A3F82", navyLight: "#4A5FAD",
 };
 
 const MOCK_MATCHES = [
@@ -216,7 +216,7 @@ function NextOverIntelligence({ pred }) {
                         <span style={{ fontSize:28, fontWeight:500, color:"#0A0A0A" }}>{ov1.runRange}</span>
                         <span style={{ fontSize:13, color:"#64748B" }}>runs expected</span>
                     </div>
-                    <div style={{ background:"#F4F6FA", borderRadius:8, padding:"8px 10px", marginBottom:10 }}>
+                    <div style={{ background:"#EEF2FF", borderRadius:8, padding:"8px 10px", marginBottom:10 }}>
                         <div style={{ fontSize:11, color:"#64748B", marginBottom:3 }}>Bowling quality</div>
                         <div style={{ fontSize:13, fontWeight:500, color:"#0A0A0A" }}>{bowlerQuality}</div>
                         <div style={{ fontSize:12, color:"#64748B" }}>Factor {pred.bowlingFactor?.toFixed(2)||"1.00"}</div>
@@ -226,13 +226,13 @@ function NextOverIntelligence({ pred }) {
                             <span style={{ fontSize:12, color:"#64748B" }}>Wicket risk</span>
                             <span style={{ fontSize:12, fontWeight:500, color:wicketColor1 }}>{wicketLabel1} · {ov1.wicketProb}%</span>
                         </div>
-                        <div style={{ height:4, background:"#F4F6FA", borderRadius:4, overflow:"hidden" }}>
+                        <div style={{ height:4, background:"#EEF2FF", borderRadius:4, overflow:"hidden" }}>
                             <div style={{ width:`${ov1.wicketProb}%`, height:"100%", background:wicketBg1, borderRadius:4 }}/>
                         </div>
                     </div>
                     <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
                         {spinBoost > 5 && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#FAEEDA", color:"#854F0B" }}>Spin turn +{spinBoost}%</span>}
-                        {!dewSoon && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#F4F6FA", color:"#64748B" }}>No dew yet</span>}
+                        {!dewSoon && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#EEF2FF", color:"#64748B" }}>No dew yet</span>}
                         {dewSoon && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#E6F1FB", color:"#185FA5" }}>Dew incoming</span>}
                     </div>
                 </div>
@@ -244,7 +244,7 @@ function NextOverIntelligence({ pred }) {
                         <span style={{ fontSize:28, fontWeight:500, color:"#0A0A0A" }}>{ov2.runRange}</span>
                         <span style={{ fontSize:13, color:"#64748B" }}>runs expected</span>
                     </div>
-                    <div style={{ background:"#F4F6FA", borderRadius:8, padding:"8px 10px", marginBottom:10 }}>
+                    <div style={{ background:"#EEF2FF", borderRadius:8, padding:"8px 10px", marginBottom:10 }}>
                         <div style={{ fontSize:11, color:"#64748B", marginBottom:3 }}>Batting quality</div>
                         <div style={{ fontSize:13, fontWeight:500, color:"#0A0A0A" }}>{batQuality}</div>
                         <div style={{ fontSize:12, color:"#64748B" }}>Factor {pred.battingFactor?.toFixed(2)||"1.00"}</div>
@@ -254,14 +254,14 @@ function NextOverIntelligence({ pred }) {
                             <span style={{ fontSize:12, color:"#64748B" }}>Wicket risk</span>
                             <span style={{ fontSize:12, fontWeight:500, color:wicketColor2 }}>{wicketLabel2} · {ov2.wicketProb}%</span>
                         </div>
-                        <div style={{ height:4, background:"#F4F6FA", borderRadius:4, overflow:"hidden" }}>
+                        <div style={{ height:4, background:"#EEF2FF", borderRadius:4, overflow:"hidden" }}>
                             <div style={{ width:`${ov2.wicketProb}%`, height:"100%", background:wicketBg2, borderRadius:4 }}/>
                         </div>
                     </div>
                     <div style={{ display:"flex", gap:6, flexWrap:"wrap" }}>
                         {ov2.phase === "DEATH OVERS" && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#FCEBEB", color:"#A32D2D" }}>Death overs</span>}
                         {dewSoon && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#E6F1FB", color:"#185FA5" }}>Dew incoming</span>}
-                        {!dewSoon && ov2.phase !== "DEATH OVERS" && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#F4F6FA", color:"#64748B" }}>Normal</span>}
+                        {!dewSoon && ov2.phase !== "DEATH OVERS" && <span style={{ fontSize:11, padding:"3px 8px", borderRadius:6, background:"#EEF2FF", color:"#64748B" }}>Normal</span>}
                     </div>
                 </div>
             </div>
@@ -283,7 +283,7 @@ function NextOverIntelligence({ pred }) {
                             <div style={{ width:"100%", borderRadius:"3px 3px 0 0",
                                 background:"rgba(24,95,165,0.15)", border:"1.5px dashed #185FA5",
                                 height:`${predBarH}px` }}/>
-                            <span style={{ fontSize:10, color:"#354D97", fontWeight:600 }}>ov {ov1.over} ↗</span>
+                            <span style={{ fontSize:10, color:"#1E2D6B", fontWeight:600 }}>ov {ov1.over} ↗</span>
                         </div>
                     </div>
                 </div>
@@ -293,15 +293,15 @@ function NextOverIntelligence({ pred }) {
             <div style={{ background:"#fff", border:"0.5px solid #E2E8F0", borderRadius:12, padding:14 }}>
                 <div style={{ fontSize:12, color:"#64748B", marginBottom:10 }}>Pitch behaviour now</div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:8 }}>
-                    <div style={{ textAlign:"center", padding:"10px 6px", background:"#F4F6FA", borderRadius:8 }}>
+                    <div style={{ textAlign:"center", padding:"10px 6px", background:"#EEF2FF", borderRadius:8 }}>
                         <div style={{ fontSize:18, fontWeight:500, color: spinBoost > 5 ? "#BA7517" : "#64748B" }}>{spinBoost > 0 ? `+${spinBoost}%` : "—"}</div>
                         <div style={{ fontSize:11, color:"#64748B", marginTop:3 }}>Spin turn</div>
                     </div>
-                    <div style={{ textAlign:"center", padding:"10px 6px", background:"#F4F6FA", borderRadius:8 }}>
+                    <div style={{ textAlign:"center", padding:"10px 6px", background:"#EEF2FF", borderRadius:8 }}>
                         <div style={{ fontSize:18, fontWeight:500, color:"#0A0A0A" }}>{pitchCond.split(" ")[0]}</div>
                         <div style={{ fontSize:11, color:"#64748B", marginTop:3 }}>Surface</div>
                     </div>
-                    <div style={{ textAlign:"center", padding:"10px 6px", background: dewSoon?"#E6F1FB":"#F4F6FA", borderRadius:8 }}>
+                    <div style={{ textAlign:"center", padding:"10px 6px", background: dewSoon?"#E6F1FB":"#EEF2FF", borderRadius:8 }}>
                         <div style={{ fontSize:18, fontWeight:500, color: dewSoon?"#185FA5":"#64748B" }}>{dewSoon?"Soon":"None"}</div>
                         <div style={{ fontSize:11, color:"#64748B", marginTop:3 }}>Dew factor</div>
                     </div>
@@ -320,7 +320,7 @@ function MatchPill({ m, selected, onClick }) {
                 <span style={{ fontSize:10, color:"#64748B" }}>{m.day} · {m.detail?.split("·")[0]?.trim().slice(0,18)}</span>
                 <span style={{ fontSize:9, fontWeight:700, padding:"1px 6px", borderRadius:5,
                     background: m.status==="LIVE" ? "#FFF0F0" : m.status==="UPCOMING" ? "#EFF6FF" : "#F0F0F0",
-                    color: m.status==="LIVE" ? "#E53E3E" : m.status==="UPCOMING" ? "#354D97" : "#64748B" }}>
+                    color: m.status==="LIVE" ? "#E53E3E" : m.status==="UPCOMING" ? "#1E2D6B" : "#64748B" }}>
                     {m.status==="LIVE" ? "● LIVE" : m.status==="UPCOMING" ? "🗓️ SOON" : "ENDED"}
                 </span>
             </div>
@@ -334,7 +334,7 @@ function MatchPill({ m, selected, onClick }) {
                 </div>
             ))}
             {m.status==="UPCOMING" && m.detail && (
-                <div style={{ fontSize:9, color:"#354D97", marginTop:4, fontWeight:500 }}>
+                <div style={{ fontSize:9, color:"#1E2D6B", marginTop:4, fontWeight:500 }}>
                     {m.detail.split("·")[1]?.trim() || ""}
                 </div>
             )}
@@ -351,7 +351,7 @@ function MatchCard({ m, onClick }) {
                 <span style={{ fontSize:11,color:"#64748B" }}>{m.day} · {m.detail?.split("·")[0]?.trim()}</span>
                 <span style={{ fontSize:10,fontWeight:700,padding:"3px 10px",borderRadius:20,
                     background:m.status==="LIVE"?"#FFF0F0":m.status==="UPCOMING"?"#EFF6FF":"#F0F0F0",
-                    color:m.status==="LIVE"?"#E53E3E":m.status==="UPCOMING"?"#354D97":"#64748B" }}>
+                    color:m.status==="LIVE"?"#E53E3E":m.status==="UPCOMING"?"#1E2D6B":"#64748B" }}>
                     {m.status==="LIVE"?"● LIVE":m.status==="UPCOMING"?"🗓️ UPCOMING":"ENDED"}
                 </span>
             </div>
@@ -365,7 +365,7 @@ function MatchCard({ m, onClick }) {
                 </div>
             ))}
             <div style={{ fontSize:12,fontWeight:600,marginTop:6,
-                color:m.status==="ENDED"?"#64748B":m.status==="UPCOMING"?"#354D97":"#00B894" }}>
+                color:m.status==="ENDED"?"#64748B":m.status==="UPCOMING"?"#1E2D6B":"#00B894" }}>
                 {m.status==="ENDED" ? "View result →" : m.status==="UPCOMING" ? "Pre-match prediction →" : "View live prediction →"}
             </div>
         </div>
@@ -434,7 +434,7 @@ function BettingInsights({ pred, liveMatches }) {
     const correctCount = history.filter(h => h.correct).length;
     const accuracy = history.length > 0 ? ((correctCount / history.length) * 100).toFixed(0) : 0;
 
-    const C2 = { bg:"#F4F6FA", surface:"#fff", border:"#E2E8F0", accent:"#354D97", muted:"#64748B", text:"#0A0A0A", green:"#00B894", red:"#E53E3E", amber:"#F59E0B", gold:"#C8961E" };
+    const C2 = { bg:"#EEF2FF", surface:"#fff", border:"#E2E8F0", accent:"#1E2D6B", muted:"#64748B", text:"#0A0A0A", green:"#00B894", red:"#E53E3E", amber:"#F59E0B", gold:"#C8961E" };
 
     return (
         <div className="fade" style={{ maxWidth:680, margin:"0 auto", padding:"22px 16px" }}>
@@ -651,7 +651,7 @@ function MediaSection() {
     ];
 
     const displayNews = news.length > 0 ? news : fallbackNews;
-    const C2 = { bg:"#F4F6FA", surface:"#fff", border:"#E2E8F0", accent:"#354D97", muted:"#64748B", text:"#0A0A0A", navy:"#354D97", gold:"#C8961E" };
+    const C2 = { bg:"#EEF2FF", surface:"#fff", border:"#E2E8F0", accent:"#1E2D6B", muted:"#64748B", text:"#0A0A0A", navy:"#1E2D6B", gold:"#C8961E" };
 
     return (
         <div className="fade" style={{ maxWidth:680, margin:"0 auto", padding:"22px 16px" }}>
@@ -842,7 +842,10 @@ export default function CricIntelligence() {
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
     .fade { animation: fadeUp .4s ease forwards; }
     .card { background: ${C.surface}; border: 1px solid ${C.border}; border-radius: 16px; transition: box-shadow .2s; }
-    .card:hover { box-shadow: 0 4px 24px rgba(10,22,40,0.08); }
+    .card:hover { box-shadow: 0 4px 20px rgba(30,45,107,0.10); }
+    .card-green { border-top: 3px solid ${C.green} !important; }
+    .card-blue { border-top: 3px solid ${C.navy} !important; }
+    .card-red { border-top: 3px solid ${C.red} !important; }
     .match-pill { transition: all .2s; cursor: pointer; border-radius: 12px; border: 1.5px solid ${C.border}; padding: 12px 14px; background: ${C.surface}; margin-bottom: 8px; }
     .match-pill:hover { border-color: ${C.accent}60; }
     .match-pill.sel { border-color: ${C.accent}; background: #F0F7FF; }
@@ -871,7 +874,7 @@ export default function CricIntelligence() {
     if (showLanding) return (
         <div style={{ minHeight: "100vh", background: "#F9F9F9", fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
-            <div style={{ background: "#354D97", position: "relative", overflow: "hidden" }}>
+            <div style={{ background: "#1E2D6B", position: "relative", overflow: "hidden" }}>
                 <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.07, pointerEvents: "none" }} viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
                     <rect x="330" y="10" width="140" height="480" fill="none" stroke="#fff" strokeWidth="1.5"/>
                     <line x1="300" y1="70" x2="500" y2="70" stroke="#fff" strokeWidth="1"/>
@@ -916,8 +919,8 @@ export default function CricIntelligence() {
             <div style={{ maxWidth: 700, margin: "0 auto", padding: "32px 24px 60px" }}>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 24 }}>
                     {[["78.2%", "Model Accuracy", false], ["1.7M", "Data Points", true], ["877", "Venues", false]].map(([v, l, accent]) => (
-                        <div key={l} style={{ background: accent ? "#354D97" : "#fff", border: accent ? "none" : "1px solid #E8E8E8", borderRadius: 12, padding: "18px 14px", textAlign: "center" }}>
-                            <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: -1, color: accent ? "#C8961E" : "#354D97" }}>{v}</div>
+                        <div key={l} style={{ background: accent ? "#1E2D6B" : "#fff", border: accent ? "none" : "1px solid #E8E8E8", borderRadius: 12, padding: "18px 14px", textAlign: "center" }}>
+                            <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: -1, color: accent ? "#C8961E" : "#1E2D6B" }}>{v}</div>
                             <div style={{ fontSize: 12, color: accent ? "rgba(255,255,255,0.6)" : "#888", marginTop: 4 }}>{l}</div>
                         </div>
                     ))}
@@ -929,11 +932,11 @@ export default function CricIntelligence() {
                     </div>
                     <div style={{ fontSize: 18, fontWeight: 700, color: "#0A0A0A", marginBottom: 6 }}>India vs Australia</div>
                     <div style={{ fontSize: 14, color: "#666", lineHeight: 1.6, marginBottom: 14 }}>
-                        Our AI gives <strong style={{ color: "#354D97" }}>India a 72% chance</strong> of winning based on current conditions and 1.7M historical matches.
+                        Our AI gives <strong style={{ color: "#1E2D6B" }}>India a 72% chance</strong> of winning based on current conditions and 1.7M historical matches.
                     </div>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
                         {[["Next over", "9–11 runs", "#0A0A0A"], ["Wicket risk", "Low · 22%", "#22C55E"], ["Confidence", "High · 85%", "#C8961E"]].map(([k, v, color]) => (
-                            <div key={k} style={{ background: "#F4F6FA", borderRadius: 10, padding: "10px 8px", textAlign: "center" }}>
+                            <div key={k} style={{ background: "#EEF2FF", borderRadius: 10, padding: "10px 8px", textAlign: "center" }}>
                                 <div style={{ fontSize: 10, color: "#aaa", marginBottom: 3 }}>{k}</div>
                                 <div style={{ fontSize: 13, fontWeight: 700, color }}>{v}</div>
                             </div>
@@ -991,7 +994,7 @@ export default function CricIntelligence() {
 
             {activeTab === "predict" && (
                 <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px 1fr 240px", minHeight: "calc(100vh - 54px)" }}>
-                    <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, padding: "18px 14px", overflowY: "auto", background: C.surface }}>
+                    <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, background: "#F8FAFF", padding: "18px 14px", overflowY: "auto", background: C.surface }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.navy, letterSpacing: 1.5, marginBottom: 12, padding: "6px 10px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
                             {liveStatus==="live" ? "🟢 LIVE DATA" : "● MATCHES"}
                         </div>
@@ -1039,7 +1042,7 @@ export default function CricIntelligence() {
                     </aside>
 
                     <main className="mc" style={{ padding: 0, overflowY: "auto" }}>
-                        <div style={{ background: "#354D97", position: "relative", overflow: "hidden", padding: "24px 24px 28px" }}>
+                        <div style={{ background: "linear-gradient(160deg,#1a2760 0%,#253580 100%)", position: "relative", overflow: "hidden", padding: "24px 24px 28px" }}>
                             <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.06, pointerEvents: "none" }} viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice">
                                 <rect x="360" y="-300" width="80" height="800" fill="none" stroke="#fff" strokeWidth="1.5"/>
                                 <ellipse cx="400" cy="100" rx="380" ry="160" fill="none" stroke="#fff" strokeWidth="0.8"/>
@@ -1054,11 +1057,11 @@ export default function CricIntelligence() {
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 12 }}>
                                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                         <TeamLogo name={(pred.team1 || "india").toLowerCase()} size={40} />
-                                        <span className="hn" style={{ fontSize: 36, fontWeight: 800, letterSpacing: -1, color: "#fff" }}>{cleanTeam(pred.team1 || "INDIA")}</span>
+                                        <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "#fff" }}>{cleanTeam(pred.team1 || "INDIA")}</span>
                                     </div>
                                     <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>vs</span>
                                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                        <span className="hn" style={{ fontSize: 36, fontWeight: 800, letterSpacing: -1, color: "rgba(255,255,255,0.55)" }}>{cleanTeam(pred.team2 || "AUSTRALIA")}</span>
+                                        <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "rgba(255,255,255,0.55)" }}>{cleanTeam(pred.team2 || "AUSTRALIA")}</span>
                                         <TeamLogo name={(pred.team2 || "australia").toLowerCase()} size={40} />
                                     </div>
                                 </div>
@@ -1132,7 +1135,7 @@ export default function CricIntelligence() {
 
                         {/* ── EXPLAINABLE AI PANEL ── */}
                         {pred.accuracySignals && (
-                        <div className="card" style={{ padding:20,marginBottom:14 }}>
+                        <div className="card card-green" style={{ padding:20,marginBottom:14 }}>
                             <div style={{ display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14 }}>
                                 <div>
                                     <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1 }}>WHY THIS PREDICTION?</div>
