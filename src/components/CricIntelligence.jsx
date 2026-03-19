@@ -786,6 +786,7 @@ export default function CricIntelligence() {
     const [selectedMatch, setSelectedMatch] = useState(MOCK_MATCHES[0]);
     const [pred, setPred] = useState(MOCK_PRED);
     const [liveStatus, setLiveStatus] = useState("connecting");
+    const [backendLoading, setBackendLoading] = useState(true);
     const [isPremium, setIsPremium] = useState(() => localStorage.getItem("cricintel_premium") === "true");
     const [showPaywall, setShowPaywall] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState("monthly");
@@ -797,7 +798,13 @@ export default function CricIntelligence() {
     const [activeOver, setActiveOver] = useState(0);
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
-    useEffect(() => { const t = setInterval(() => setTicker(p => p + 1), 15000); return () => clearInterval(t); }, []);
+    // Wake up Railway backend on load
+    useEffect(() => {
+        fetch(`${API_BASE}/health`, {method:'GET'})
+            .then(r => r.ok ? setLiveStatus('connecting') : null)
+            .catch(() => null);
+    }, []);
+    useEffect(() => { const t = setInterval(() => setTicker(p => p + 1), 60000); return () => clearInterval(t); }, []);
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         if (params.get("premium") === "true") { setIsPremium(true); localStorage.setItem("cricintel_premium", "true"); window.history.replaceState({}, "", window.location.pathname); }
@@ -813,13 +820,28 @@ export default function CricIntelligence() {
     };
 
     const fetchPred = useCallback(async () => {
-        try { const r = await fetch(`${API_BASE}/predict`); if (r.ok) setPred(await r.json()); } catch { }
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 8000);
+            const r = await fetch(`${API_BASE}/predict`, {signal: controller.signal});
+            clearTimeout(timeout);
+            if (r.ok) {
+                const data = await r.json();
+                if (data && !data.error) setPred(data);
+            }
+        } catch(e) {
+            if (e.name !== 'AbortError') console.warn('Pred fetch failed:', e.message);
+        }
     }, []);
     useEffect(() => { fetchPred(); }, [fetchPred, ticker]);
 
     const fetchMatches = useCallback(async () => {
         try {
-            const r = await fetch(`${API_BASE}/matches`);
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 8000);
+            const r = await fetch(`${API_BASE}/matches`, {signal: controller.signal});
+            clearTimeout(timeout);
+            if (!r.ok) throw new Error('Server error');
             const d = await r.json();
             const list = Array.isArray(d) ? d : d.data || [];
             if (list.length) {
@@ -852,6 +874,7 @@ export default function CricIntelligence() {
                 });
                 setLiveMatches(mapped);
                 setLiveStatus("live");
+                setBackendLoading(false);
                 const live = mapped.find(m => m.status === "LIVE");
                 const upcoming = mapped.find(m => m.status === "UPCOMING");
                 const best = live || upcoming;
@@ -868,10 +891,14 @@ export default function CricIntelligence() {
                     setSelectedMatch(mapped[0]);
                 }
             }
-        } catch { setLiveStatus("mock"); }
+        } catch(e) {
+            console.warn('Matches fetch failed:', e.message);
+            setLiveStatus("mock");
+            setBackendLoading(false);
+        }
     }, []);
     useEffect(() => { fetchMatches(); }, [fetchMatches]);
-    useEffect(() => { const t = setInterval(fetchMatches, 30 * 1000); return () => clearInterval(t); }, [fetchMatches]);
+    useEffect(() => { const t = setInterval(fetchMatches, 60 * 1000); return () => clearInterval(t); }, [fetchMatches]);
     useEffect(() => {
         if (selectedMatch?.matchId) {
             fetch(`${API_BASE}/match/${selectedMatch.matchId}`)
@@ -1044,6 +1071,12 @@ export default function CricIntelligence() {
                     {!isPremium && <button onClick={() => setShowPaywall(true)} style={{ background: C.gold, color: C.navy, border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Upgrade ⚡</button>}
                 </div>
             </nav>
+            {backendLoading && liveStatus === "connecting" && (
+                <div style={{position:'fixed',bottom:20,right:20,background:'#1E2D6B',color:'#fff',padding:'10px 16px',borderRadius:10,fontSize:12,zIndex:999,display:'flex',alignItems:'center',gap:8}}>
+                    <div style={{width:8,height:8,borderRadius:'50%',background:'#F59E0B',animation:'pulse 1s infinite'}}/>
+                    Loading live data...
+                </div>
+            )}
 
             {activeTab === "predict" && (
                 <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px 1fr 240px", minHeight: "calc(100vh - 54px)" }}>
