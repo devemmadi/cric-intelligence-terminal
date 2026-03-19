@@ -1235,6 +1235,58 @@ export default function CricIntelligence() {
                         {/* ── NEXT OVER INTELLIGENCE ── */}
                         <NextOverIntelligence pred={pred} />
 
+                        {/* ── MARKET PREDICTIONS ── */}
+                        {pred.markets && (
+                        <div className="card" style={{padding:20,marginBottom:14}}>
+                            <div style={{fontSize:10,fontWeight:700,color:'#64748B',letterSpacing:1,marginBottom:14}}>🎯 MARKET PREDICTIONS</div>
+                            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}>
+                                <div style={{background:'#EEF2FF',borderRadius:10,padding:12}}>
+                                    <div style={{fontSize:10,color:'#64748B',marginBottom:4}}>SESSION RUNS</div>
+                                    <div style={{fontSize:20,fontWeight:800,color:'#1E2D6B'}}>{pred.markets.sessionRuns?.expected}</div>
+                                    <div style={{fontSize:10,color:'#64748B',marginTop:3}}>next {pred.markets.sessionRuns?.overs} overs</div>
+                                    <div style={{fontSize:10,fontWeight:600,color:'#C8961E',marginTop:6,lineHeight:1.4}}>{pred.markets.sessionRuns?.market}</div>
+                                </div>
+                                <div style={{background:'#FFF0F0',borderRadius:10,padding:12}}>
+                                    <div style={{fontSize:10,color:'#64748B',marginBottom:4}}>NEXT WICKET</div>
+                                    <div style={{fontSize:20,fontWeight:800,color:'#E53E3E'}}>{pred.markets.nextWicket?.probability}%</div>
+                                    <div style={{fontSize:10,color:'#64748B',marginTop:3}}>this over</div>
+                                    <div style={{fontSize:10,fontWeight:600,color:'#C8961E',marginTop:6,lineHeight:1.4}}>{pred.markets.nextWicket?.market}</div>
+                                </div>
+                                <div style={{background:'#F0FDF4',borderRadius:10,padding:12}}>
+                                    <div style={{fontSize:10,color:'#64748B',marginBottom:4}}>BOUNDARIES</div>
+                                    <div style={{fontSize:20,fontWeight:800,color:'#00B894'}}>{pred.markets.boundaries?.expected}</div>
+                                    <div style={{fontSize:10,color:'#64748B',marginTop:3}}>next 2 overs</div>
+                                    <div style={{fontSize:10,fontWeight:600,color:'#C8961E',marginTop:6,lineHeight:1.4}}>{pred.markets.boundaries?.market}</div>
+                                </div>
+                            </div>
+                        </div>
+                        )}
+
+                        {/* ── PLAYER WEAKNESS PROFILE ── */}
+                        {pred.playerWeaknesses && pred.playerWeaknesses.length > 0 && (
+                        <div className="card card-red" style={{padding:20,marginBottom:14}}>
+                            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:14}}>
+                                <div>
+                                    <div style={{fontSize:10,fontWeight:700,color:'#64748B',letterSpacing:1}}>🎯 PLAYER WEAKNESS PROFILE</div>
+                                    <div style={{fontSize:12,color:'#64748B',marginTop:2}}>Tactical betting intelligence</div>
+                                </div>
+                                <span style={{fontSize:10,padding:'3px 8px',borderRadius:10,background:'#FFF0F0',color:'#E53E3E',fontWeight:700}}>EDGE</span>
+                            </div>
+                            <div style={{display:'grid',gap:10}}>
+                                {pred.playerWeaknesses.map((pw,i) => (
+                                    <div key={i} style={{padding:'12px 14px',background:'#EEF2FF',borderRadius:10,border:'1px solid #fecaca'}}>
+                                        <div style={{display:'flex',justifyContent:'space-between',marginBottom:6}}>
+                                            <span style={{fontSize:13,fontWeight:700,color:'#0A0A0A'}}>{pw.player}</span>
+                                            <span style={{fontSize:11,fontWeight:700,color:'#E53E3E'}}>{pw.struggleRate}% struggle</span>
+                                        </div>
+                                        <div style={{fontSize:12,color:'#64748B',marginBottom:6}}>Weakness: <strong>{pw.weakness}</strong></div>
+                                        <div style={{fontSize:11,padding:'5px 10px',background:'#C8961E20',borderRadius:6,color:'#C8961E',fontWeight:600}}>💰 {pw.market}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        )}
+
                         <div className="cr" style={{ display:"grid",gridTemplateColumns:"1fr 1fr",gap:14,marginBottom:14 }}>
                             <div className="card" style={{ padding:18,display:"flex",gap:14,alignItems:"center" }}>
                                 <span style={{ fontSize:32 }}>{pred.weatherImpact?.emoji||"☀️"}</span>
