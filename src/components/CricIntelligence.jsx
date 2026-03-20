@@ -877,7 +877,7 @@ function PrivacyPolicy({ onClose }) {
                     {title:'1. Information We Collect',text:'We collect email addresses when provided voluntarily. We use cookies to remember your preferences. We do not collect personal financial information.'},
                     {title:'2. How We Use Your Information',text:'Email addresses are used only to send cricket prediction alerts you have requested. We do not sell or share your personal data with third parties.'},
                     {title:'3. Cookies',text:'We use essential cookies to maintain your session and preferences. Analytics cookies help us improve our service. You can disable cookies in your browser settings.'},
-                    {title:'4. Third Party Services',text:'We use Stripe for payment processing. Stripe's privacy policy applies to payment data. We use Cricbuzz and CricketData.org APIs for cricket data.'},
+                    {title:'4. Third Party Services',text:'We use Stripe for payment processing. Stripe privacy policy applies to payment data. We use Cricbuzz and CricketData.org APIs for cricket data.'},
                     {title:'5. Betting & Gambling',text:'CricIntelligence provides AI predictions for informational purposes only. We are not a licensed betting operator. Users must comply with their local gambling laws. 18+ only.'},
                     {title:'6. Data Retention',text:'We retain email addresses until you unsubscribe. Payment records are retained as required by law. You may request deletion of your data at any time.'},
                     {title:'7. Your Rights',text:'You have the right to access, correct, or delete your personal data. Contact us at privacy@cricintelligence.com for any data requests.'},
