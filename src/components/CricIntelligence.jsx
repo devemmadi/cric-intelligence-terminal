@@ -798,6 +798,68 @@ function MediaSection() {
     );
 }
 
+function PrivacyPolicy({ onClose }) {
+    return (
+        <div style={{position:'fixed',inset:0,background:'#fff',zIndex:500,overflowY:'auto',padding:'40px 24px',fontFamily:'Inter,system-ui'}}>
+            <div style={{maxWidth:700,margin:'0 auto'}}>
+                <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',fontSize:14,color:'#64748B',marginBottom:24}}>← Back</button>
+                <h1 style={{fontSize:28,fontWeight:800,marginBottom:8}}>Privacy Policy</h1>
+                <p style={{color:'#64748B',marginBottom:32}}>Last updated: March 2026</p>
+                {[
+                    {title:'1. Information We Collect',text:'We collect email addresses when provided voluntarily. We use cookies to remember your preferences. We do not collect personal financial information.'},
+                    {title:'2. How We Use Your Information',text:'Email addresses are used only to send cricket prediction alerts you have requested. We do not sell or share your personal data with third parties.'},
+                    {title:'3. Cookies',text:'We use essential cookies to maintain your session and preferences. Analytics cookies help us improve our service. You can disable cookies in your browser settings.'},
+                    {title:'4. Third Party Services',text:'We use Stripe for payment processing. Stripe's privacy policy applies to payment data. We use Cricbuzz and CricketData.org APIs for cricket data.'},
+                    {title:'5. Betting & Gambling',text:'CricIntelligence provides AI predictions for informational purposes only. We are not a licensed betting operator. Users must comply with their local gambling laws. 18+ only.'},
+                    {title:'6. Data Retention',text:'We retain email addresses until you unsubscribe. Payment records are retained as required by law. You may request deletion of your data at any time.'},
+                    {title:'7. Your Rights',text:'You have the right to access, correct, or delete your personal data. Contact us at privacy@cricintelligence.com for any data requests.'},
+                    {title:'8. Contact',text:'For privacy concerns, contact: privacy@cricintelligence.com'},
+                ].map(({title,text},i)=>(
+                    <div key={i} style={{marginBottom:24}}>
+                        <h2 style={{fontSize:16,fontWeight:700,marginBottom:8}}>{title}</h2>
+                        <p style={{color:'#64748B',lineHeight:1.7}}>{text}</p>
+                    </div>
+                ))}
+                <div style={{marginTop:32,padding:16,background:'#FFF8F0',border:'1px solid #F59E0B',borderRadius:8}}>
+                    <p style={{fontSize:12,color:'#92400E'}}>⚠️ <strong>Gambling Warning:</strong> 18+ only. Gambling can be addictive. Please gamble responsibly. BeGambleAware.org | 0808 8020 133</p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function TermsConditions({ onClose }) {
+    return (
+        <div style={{position:'fixed',inset:0,background:'#fff',zIndex:500,overflowY:'auto',padding:'40px 24px',fontFamily:'Inter,system-ui'}}>
+            <div style={{maxWidth:700,margin:'0 auto'}}>
+                <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',fontSize:14,color:'#64748B',marginBottom:24}}>← Back</button>
+                <h1 style={{fontSize:28,fontWeight:800,marginBottom:8}}>Terms & Conditions</h1>
+                <p style={{color:'#64748B',marginBottom:32}}>Last updated: March 2026</p>
+                {[
+                    {title:'1. Acceptance of Terms',text:'By using CricIntelligence, you agree to these terms. If you do not agree, please do not use our service.'},
+                    {title:'2. Service Description',text:'CricIntelligence provides AI-powered cricket match predictions for informational and entertainment purposes only. Predictions are not guaranteed to be accurate.'},
+                    {title:'3. Not Betting Advice',text:'All predictions, odds analysis, and insights provided by CricIntelligence are for informational purposes only and do not constitute betting advice. Always gamble responsibly.'},
+                    {title:'4. Age Restriction',text:'You must be 18 years or older to use CricIntelligence. By using our service, you confirm you are of legal gambling age in your jurisdiction.'},
+                    {title:'5. Subscription & Payments',text:'Premium subscriptions are billed monthly (£9.99) or annually (£59.99). Subscriptions auto-renew unless cancelled. Refunds are available within 7 days of purchase.'},
+                    {title:'6. Accuracy Disclaimer',text:'Our AI predictions are based on historical data and statistical models. We do not guarantee any specific accuracy. Past performance does not guarantee future results.'},
+                    {title:'7. Prohibited Use',text:'You may not use CricIntelligence to operate a betting service, scrape our data, or resell our predictions. Commercial use requires a separate license.'},
+                    {title:'8. Limitation of Liability',text:'CricIntelligence is not liable for any financial losses resulting from use of our predictions. Use of our service is at your own risk.'},
+                    {title:'9. Governing Law',text:'These terms are governed by the laws of England and Wales.'},
+                    {title:'10. Contact',text:'For terms enquiries: legal@cricintelligence.com'},
+                ].map(({title,text},i)=>(
+                    <div key={i} style={{marginBottom:24}}>
+                        <h2 style={{fontSize:16,fontWeight:700,marginBottom:8}}>{title}</h2>
+                        <p style={{color:'#64748B',lineHeight:1.7}}>{text}</p>
+                    </div>
+                ))}
+                <div style={{marginTop:32,padding:16,background:'#FFF8F0',border:'1px solid #F59E0B',borderRadius:8}}>
+                    <p style={{fontSize:12,color:'#92400E'}}>⚠️ <strong>Responsible Gambling:</strong> 18+ only. BeGambleAware.org | GamStop | 0808 8020 133</p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
     const [showLanding, setShowLanding] = useState(() => !localStorage.getItem("ci_v2"));
@@ -815,6 +877,8 @@ export default function CricIntelligence() {
     const [liveTime, setLiveTime] = useState(new Date());
     const [ticker, setTicker] = useState(0);
     const [activeOver, setActiveOver] = useState(0);
+    const [showPrivacy, setShowPrivacy] = useState(false);
+    const [showTerms, setShowTerms] = useState(false);
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
     // Wake up Railway backend on load
@@ -973,6 +1037,8 @@ export default function CricIntelligence() {
     if (showLanding) return (
         <div style={{ minHeight: "100vh", background: "#F9F9F9", fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
+            {showPrivacy && <PrivacyPolicy onClose={()=>setShowPrivacy(false)} />}
+            {showTerms && <TermsConditions onClose={()=>setShowTerms(false)} />}
             <div style={{ background: "#1E2D6B", position: "relative", overflow: "hidden" }}>
                 <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.07, pointerEvents: "none" }} viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
                     <rect x="330" y="10" width="140" height="480" fill="none" stroke="#fff" strokeWidth="1.5"/>
@@ -1492,8 +1558,11 @@ export default function CricIntelligence() {
                             </div>
                         )}
                         <div style={{ fontSize:10,color:C.muted,lineHeight:1.6,textAlign:"center",marginTop:"auto" }}>
-                            {pred.dataSource||"877 venues · 1.7M records"}<br />
-                            <span style={{ color:C.red,fontWeight:600 }}>18+ · BeGambleAware.org</span>
+                            {pred?.dataSource||"877 venues · 1.7M records"}<br />
+                            <span style={{ color:C.red,fontWeight:600 }}>18+ · BeGambleAware.org</span><br/>
+                        <span onClick={()=>setShowPrivacy(true)} style={{cursor:'pointer',color:C.muted,textDecoration:'underline'}}>Privacy Policy</span>
+                        {' · '}
+                        <span onClick={()=>setShowTerms(true)} style={{cursor:'pointer',color:C.muted,textDecoration:'underline'}}>Terms & Conditions</span>
                         </div>
                     </aside>
                 </div>
