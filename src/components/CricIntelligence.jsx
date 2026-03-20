@@ -1075,7 +1075,13 @@ export default function CricIntelligence() {
                 </div>
             )}
 
-            {activeTab === "predict" && (
+            {activeTab === "predict" && (!pred ? (
+            <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"80vh",flexDirection:"column",gap:16}}>
+                <div style={{width:40,height:40,border:"3px solid #E2E8F0",borderTop:"3px solid #1E2D6B",borderRadius:"50%",animation:"spin 1s linear infinite"}}/>
+                <div style={{fontSize:14,color:"#64748B",fontFamily:"Inter,system-ui"}}>Loading live matches...</div>
+                <style>{"@keyframes spin{to{transform:rotate(360deg)}}"}</style>
+            </div>
+        ) : (
                 <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px 1fr 240px", minHeight: "calc(100vh - 54px)" }}>
                     <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, background: "#F8FAFF", padding: "18px 14px", overflowY: "visible", background: C.surface }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.navy, letterSpacing: 1.5, marginBottom: 12, padding: "6px 10px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
@@ -1484,6 +1490,7 @@ export default function CricIntelligence() {
                 </div>
             )}
 
+            ))}
             {activeTab === "matches" && (
                 <div className="fade" style={{ maxWidth:680,margin:"0 auto",padding:"22px 16px" }}>
 
