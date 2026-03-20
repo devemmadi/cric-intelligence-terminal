@@ -780,7 +780,7 @@ export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
     const [showLanding, setShowLanding] = useState(() => !localStorage.getItem("ci_v2"));
     const [liveMatches, setLiveMatches] = useState(MOCK_MATCHES);
-    const [selectedMatch, setSelectedMatch] = useState(null);
+    const [selectedMatch, setSelectedMatch] = useState(MOCK_MATCHES[0]);
     const [pred, setPred] = useState(null);
     const [liveStatus, setLiveStatus] = useState("connecting");
     const [backendLoading, setBackendLoading] = useState(true);
@@ -1090,7 +1090,7 @@ export default function CricIntelligence() {
                                     LIVE NOW
                                 </div>
                                 {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch.id===m.id} onClick={() => setSelectedMatch(m)} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id===m.id} onClick={() => setSelectedMatch(m)} />
                                 ))}
                             </>
                         )}
@@ -1102,7 +1102,7 @@ export default function CricIntelligence() {
                                     🗓️ UPCOMING
                                 </div>
                                 {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch.id===m.id} onClick={() => setSelectedMatch(m)} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id===m.id} onClick={() => setSelectedMatch(m)} />
                                 ))}
                             </>
                         )}
@@ -1114,7 +1114,7 @@ export default function CricIntelligence() {
                                     ✓ RECENT RESULTS
                                 </div>
                                 {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch.id===m.id} onClick={() => setSelectedMatch(m)} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id===m.id} onClick={() => setSelectedMatch(m)} />
                                 ))}
                             </>
                         )}
