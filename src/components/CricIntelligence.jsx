@@ -1099,7 +1099,7 @@ export default function CricIntelligence() {
 
             {activeTab === "predict" && (
                 <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px 1fr 240px", minHeight: "calc(100vh - 54px)" }}>
-                    <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, background: "#F8FAFF", padding: "18px 14px", overflowY: "auto", background: C.surface }}>
+                    <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, background: "#F8FAFF", padding: "18px 14px", overflowY: "visible", background: C.surface }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.navy, letterSpacing: 1.5, marginBottom: 12, padding: "6px 10px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
                             {liveStatus==="live" ? "🟢 LIVE DATA" : "● MATCHES"}
                         </div>
@@ -1146,10 +1146,10 @@ export default function CricIntelligence() {
                         </div>
                     </aside>
 
-                    <main className="mc" style={{ padding: 0, overflowY: "auto" }}>
-                        {/* Sticky score bar - always visible when scrolling */}
+                    <main className="mc" style={{ padding: 0 }}>
+                        {/* Sticky score bar */}
                         {!matchEnded && (
-                        <div style={{ position:"fixed", top:54, left:300, right:240, zIndex:50, background:"rgba(26,39,96,0.97)", backdropFilter:"blur(8px)", borderBottom:"1px solid rgba(255,255,255,0.1)", padding:"8px 20px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                        <div style={{ position:"sticky", top:0, zIndex:50, background:"rgba(26,39,96,0.97)", backdropFilter:"blur(8px)", borderBottom:"1px solid rgba(255,255,255,0.1)", padding:"8px 20px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
                             <div style={{ display:"flex", alignItems:"center", gap:12 }}>
                                 <TeamLogo name={(pred.team1||'india').toLowerCase()} size={22} />
                                 <span style={{ fontSize:13, fontWeight:700, color:"#fff" }}>{cleanTeam(pred.team1)}</span>
