@@ -1182,7 +1182,7 @@ export default function CricIntelligence() {
                                     {pred.innings === 2 && pred.runsNeeded > 0 && (
                                         <div style={{ display:"flex", alignItems:"center", gap:12, background:"rgba(0,0,0,0.25)", borderRadius:8, padding:"6px 16px" }}>
                                             <span style={{ fontSize:13, fontWeight:700, color:"#fff" }}>
-                                                {cleanTeam(pred.team2)} needs <span style={{ color:"#F59E0B" }}>{pred.runsNeeded} runs</span> in <span style={{ color:"#F59E0B" }}>{Math.round((pred.target > 0 ? (pred.matchType==='t20'||pred.matchType==='it20'?20:50) - pred.overs : 0) * 6)} balls</span>
+                                                {cleanTeam(pred.team2)} needs <span style={{ color:"#F59E0B" }}>{pred.runsNeeded} runs</span> in <span style={{ color:"#F59E0B" }}>{Math.max(0, Math.round((pred.target > 0 ? (pred.matchType==='t20'||pred.matchType==='it20'?20:50) - (pred.overs||0) : 0) * 6))} balls</span>
                                             </span>
                                             <span style={{ fontSize:11, padding:"2px 8px", borderRadius:6, fontWeight:700,
                                                 background: pred.requiredRunRate > 15 ? "rgba(229,62,62,0.3)" : pred.requiredRunRate > 10 ? "rgba(245,158,11,0.3)" : "rgba(0,184,148,0.3)",
