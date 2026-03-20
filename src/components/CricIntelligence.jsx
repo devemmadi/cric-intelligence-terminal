@@ -73,6 +73,7 @@ const TEAM_LOGOS = {
     "pakistan women": BASE_LOGO + "/381800/381891.png",
     "west indies women": BASE_LOGO + "/317600/317615.png",
     "new zealand women": BASE_LOGO + "/340500/340503.png",
+    "nzw":           `https://flagcdn.com/w80/nz.png`,
     "south africa women": BASE_LOGO + "/340400/340493.png",
 };
 
@@ -81,6 +82,8 @@ const FLAG_CODES = {
     "new zealand": "nz", "nz": "nz", "south africa": "za", "sa": "za",
     "sri lanka": "lk", "sl": "lk", "west indies": "bb", "wi": "bb",
     "bangladesh": "bd", "afghanistan": "af", "ireland": "ie", "zimbabwe": "zw",
+    "nzw": "nz", "saw": "za", "auw": "au", "engw": "gb-eng", "indw": "in", "pakw": "pk",
+    "wiw": "bb", "banw": "bd", "slw": "lk",
     "netherlands": "nl", "scotland": "gb-sct", "nepal": "np", "oman": "om",
     "uae": "ae", "united arab emirates": "ae", "usa": "us", "namibia": "na",
     "kenya": "ke", "canada": "ca",
