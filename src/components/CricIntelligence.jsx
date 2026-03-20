@@ -402,7 +402,7 @@ function BettingInsights({ pred, liveMatches }) {
     const prob = pred?.aiProbability || 50;
     const team1 = pred?.team1 || "Team 1";
     const team2 = pred?.team2 || "Team 2";
-    const prob2 = 100 - prob;
+    const prob2 = Math.round((100 - prob) * 10) / 10;
 
     // Fetch live odds automatically
     React.useEffect(() => {
@@ -497,7 +497,7 @@ function BettingInsights({ pred, liveMatches }) {
                     {/* Team 1 */}
                     <div style={{ padding:12, background:C2.bg, borderRadius:10 }}>
                         <div style={{ fontSize:11, color:C2.muted, marginBottom:4 }}>{team1}</div>
-                        <div style={{ fontSize:18, fontWeight:700, color:C2.accent, marginBottom:8 }}>{prob}%</div>
+                        <div style={{ fontSize:18, fontWeight:700, color:C2.accent, marginBottom:8 }}>{Number(prob).toFixed(1)}%</div>
                         <input
                             type="number" placeholder="Enter odds (e.g. 1.85)"
                             value={manualOdds.team1}
@@ -524,7 +524,7 @@ function BettingInsights({ pred, liveMatches }) {
                     {/* Team 2 */}
                     <div style={{ padding:12, background:C2.bg, borderRadius:10 }}>
                         <div style={{ fontSize:11, color:C2.muted, marginBottom:4 }}>{team2}</div>
-                        <div style={{ fontSize:18, fontWeight:700, color:C2.accent, marginBottom:8 }}>{prob2}%</div>
+                        <div style={{ fontSize:18, fontWeight:700, color:C2.accent, marginBottom:8 }}>{Number(prob2).toFixed(1)}%</div>
                         <input
                             type="number" placeholder="Enter odds (e.g. 2.10)"
                             value={manualOdds.team2}
