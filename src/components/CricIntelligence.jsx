@@ -1147,6 +1147,30 @@ export default function CricIntelligence() {
                     </aside>
 
                     <main className="mc" style={{ padding: 0, overflowY: "auto" }}>
+                        {/* Sticky score bar - always visible when scrolling */}
+                        {!matchEnded && (
+                        <div style={{ position:"sticky", top:0, zIndex:50, background:"rgba(26,39,96,0.97)", backdropFilter:"blur(8px)", borderBottom:"1px solid rgba(255,255,255,0.1)", padding:"8px 20px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                            <div style={{ display:"flex", alignItems:"center", gap:12 }}>
+                                <TeamLogo name={(pred.team1||'india').toLowerCase()} size={22} />
+                                <span style={{ fontSize:13, fontWeight:700, color:"#fff" }}>{cleanTeam(pred.team1)}</span>
+                                <span style={{ fontSize:14, fontWeight:800, color:"#fff" }}>{pred.displayScore||'0/0 (0 ov)'}</span>
+                                <div style={{ width:1, height:14, background:"rgba(255,255,255,0.2)" }}/>
+                                <span style={{ fontSize:11, color:"rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate||0}</span>
+                                {pred.requiredRunRate > 0 && <span style={{ fontSize:11, color:"rgba(255,255,255,0.6)" }}>| RRR {pred.requiredRunRate}</span>}
+                            </div>
+                            <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+                                {pred.innings === 2 && pred.runsNeeded > 0 && (
+                                    <span style={{ fontSize:11, color:"#F59E0B", fontWeight:600 }}>
+                                        {cleanTeam(pred.team2)} needs {pred.runsNeeded} runs
+                                    </span>
+                                )}
+                                <div style={{ background: prob>=65?"#00B894":prob>=45?"#F59E0B":"#E53E3E", borderRadius:20, padding:"3px 10px" }}>
+                                    <span style={{ fontSize:12, fontWeight:800, color:"#fff" }}>{prob}%</span>
+                                </div>
+                                <TeamLogo name={(pred.team2||'australia').toLowerCase()} size={22} />
+                            </div>
+                        </div>
+                        )}
                         <div style={{ background: "linear-gradient(160deg,#1a2760 0%,#253580 100%)", position: "relative", overflow: "hidden", padding: "24px 24px 28px" }}>
                             <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.06, pointerEvents: "none" }} viewBox="0 0 800 200" preserveAspectRatio="xMidYMid slice">
                                 <rect x="360" y="-300" width="80" height="800" fill="none" stroke="#fff" strokeWidth="1.5"/>
