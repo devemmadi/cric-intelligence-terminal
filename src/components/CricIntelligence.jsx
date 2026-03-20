@@ -905,7 +905,7 @@ export default function CricIntelligence() {
         }
     }, [selectedMatch]);
 
-    const prob = pred.aiProbability || 72;
+    const prob = pred?.aiProbability || 50;
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
     const matchEnded = selectedMatch?.status === "ENDED" || isMatchEnded(selectedMatch?.status) || isMatchEnded(selectedMatch?.rawStatus);
@@ -1125,6 +1125,13 @@ export default function CricIntelligence() {
                     </aside>
 
                     <main className="mc" style={{ padding: 0 }}>
+                        {!pred && (
+                        <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"50vh",flexDirection:"column",gap:16}}>
+                            <div style={{width:36,height:36,border:"3px solid #E2E8F0",borderTop:"3px solid #1E2D6B",borderRadius:"50%",animation:"spin 1s linear infinite"}}/>
+                            <div style={{fontSize:14,color:"#64748B"}}>Loading live data...</div>
+                            <style>{"@keyframes spin{to{transform:rotate(360deg)}}"}</style>
+                        </div>
+                        )}
                         {/* Sticky score bar */}
                         {!matchEnded && (
                         <div style={{ position:"sticky", top:0, zIndex:50, background:"rgba(26,39,96,0.97)", backdropFilter:"blur(8px)", borderBottom:"1px solid rgba(255,255,255,0.1)", padding:"8px 20px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
