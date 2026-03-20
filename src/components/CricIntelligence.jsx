@@ -807,6 +807,21 @@ function MediaSection() {
     );
 }
 
+function BlogSection({ onClose }) {
+    const [activeArticle, setActiveArticle] = useState(null);
+    const articles = [
+        {id:1,title:"IPL 2026 Cricket Predictions — AI Analysis Guide",tag:"IPL 2026",readTime:"5 min read",date:"March 2026",intro:"IPL 2026 starts March 28. Our AI analyses 1.7M historical matches across 877 venues to give you precise over-by-over predictions.",content:[{h:"How Our AI Predicts IPL Matches",p:"CricIntelligence uses real historical data from 877 cricket venues worldwide. For every IPL match, our engine calculates win probability based on current score, pitch conditions, weather, and live player performance updated every 60 seconds."},{h:"Value Betting in IPL",p:"Most bettors ask who will win but serious bettors ask where is the value. Our Value Bet Calculator shows you exactly when bookmaker odds are mispriced vs our AI probability. A positive Expected Value means long-term profit."},{h:"Over-by-Over Predictions",p:"Our unique feature: predict exactly how many runs the next over will produce, with wicket probability. During death overs this becomes especially valuable for in-play betting markets."},{h:"Free to Use",p:"CricIntelligence is completely free. No signup required. Get AI predictions for every IPL 2026 match at cricintelligence.com"}]},
+        {id:2,title:"Cricket Value Betting Guide UK 2026 — Find Edge with AI",tag:"Betting Guide",readTime:"7 min read",date:"March 2026",intro:"Value betting is the only mathematically proven way to profit from cricket betting long-term. This guide explains exactly how to find value using AI predictions.",content:[{h:"What is Value Betting?",p:"A value bet exists when the bookmaker implied probability is lower than the true probability. Example: Bookmaker gives India 2.10 odds (implied 47.6%). Our AI says India has 55% chance. That is a value bet."},{h:"Expected Value Explained",p:"EV = (Win Probability x Profit) minus (Loss Probability x Stake). Positive EV means you profit long-term. Our calculator shows EV per pound staked automatically."},{h:"Which Bookmakers for Cricket?",p:"Bet365 offers the most cricket markets. Betfair Exchange often has the best prices. William Hill and Betway are reliable for live betting. Always compare odds before placing."},{h:"Responsible Betting",p:"Set a fixed stake of 1-3% of bankroll per bet. Never chase losses. Track every bet. 18+ only. BeGambleAware.org"}]},
+        {id:3,title:"Cricket Over-by-Over Betting Strategy 2026",tag:"Strategy",readTime:"6 min read",date:"March 2026",intro:"In-play over betting is one of cricket most exciting markets. Learn how to use AI predictions to find edge in session and over markets.",content:[{h:"What are Over Markets?",p:"Bookmakers offer markets on individual overs: Over/Under 7.5 runs this over, Will there be a wicket this over. These markets update live and offer significant value."},{h:"Key Factors for Over Predictions",p:"1. Bowler economy rate last 3 overs. 2. Batsman strike rate current innings. 3. Phase of play powerplay vs death. 4. Pitch conditions. 5. Pressure runs needed vs balls remaining."},{h:"Death Overs Strategy",p:"Death overs 16-20 are the most profitable betting phase. Our AI factors in pitch wear, dew for evening games, and pressure to predict expected run rate accurately."},{h:"Session Betting",p:"Our Market Predictions panel shows expected runs for the next 6 overs. This maps directly to Session Runs markets offered by Bet365 and Betway."}]},
+    ];
+    const C2={bg:"#EEF2FF",surface:"#fff",border:"#E2E8F0",accent:"#1E2D6B",muted:"#64748B",text:"#0A0A0A"};
+    if(activeArticle){
+        const art=articles.find(a=>a.id===activeArticle);
+        return(<div style={{position:'fixed',inset:0,background:'#fff',zIndex:500,overflowY:'auto',padding:'40px 24px',fontFamily:'Inter,system-ui'}}><div style={{maxWidth:700,margin:'0 auto'}}><button onClick={()=>setActiveArticle(null)} style={{background:'none',border:'none',cursor:'pointer',fontSize:14,color:'#64748B',marginBottom:24}}>← Back to Guides</button><div style={{fontSize:11,fontWeight:700,color:C2.accent,letterSpacing:1,background:C2.bg,padding:'3px 10px',borderRadius:4,display:'inline-block',marginBottom:12}}>{art.tag}</div><h1 style={{fontSize:24,fontWeight:800,marginBottom:8,lineHeight:1.3}}>{art.title}</h1><div style={{fontSize:12,color:C2.muted,marginBottom:24}}>{art.date} · {art.readTime}</div><p style={{fontSize:15,color:C2.text,lineHeight:1.8,marginBottom:24,fontWeight:500}}>{art.intro}</p>{art.content.map(({h,p},i)=>(<div key={i} style={{marginBottom:24}}><h2 style={{fontSize:17,fontWeight:700,marginBottom:8,color:C2.accent}}>{h}</h2><p style={{fontSize:14,color:C2.muted,lineHeight:1.8}}>{p}</p></div>))}<div style={{marginTop:32,padding:20,background:C2.bg,borderRadius:12,textAlign:'center'}}><div style={{fontSize:15,fontWeight:700,marginBottom:8}}>Try CricIntelligence Free</div><div style={{fontSize:13,color:C2.muted,marginBottom:16}}>AI predictions for every cricket match. Value bet calculator included.</div><button onClick={onClose} style={{background:C2.accent,color:'#fff',border:'none',borderRadius:8,padding:'10px 24px',fontSize:14,fontWeight:700,cursor:'pointer'}}>View Live Predictions →</button></div><div style={{marginTop:16,fontSize:11,color:C2.muted,textAlign:'center'}}>18+ · Gamble Responsibly · BeGambleAware.org</div></div></div>);
+    }
+    return(<div style={{position:'fixed',inset:0,background:'#fff',zIndex:500,overflowY:'auto',padding:'40px 24px',fontFamily:'Inter,system-ui'}}><div style={{maxWidth:700,margin:'0 auto'}}><button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',fontSize:14,color:'#64748B',marginBottom:24}}>← Back</button><h1 style={{fontSize:28,fontWeight:800,marginBottom:4}}>Cricket Betting Guides</h1><p style={{color:C2.muted,marginBottom:32}}>AI-powered insights for smarter cricket betting</p><div style={{display:'grid',gap:14}}>{articles.map(art=>(<div key={art.id} onClick={()=>setActiveArticle(art.id)} style={{padding:20,border:'1px solid #E2E8F0',borderRadius:12,cursor:'pointer'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}><span style={{fontSize:10,fontWeight:700,color:C2.accent,background:C2.bg,padding:'2px 8px',borderRadius:4}}>{art.tag}</span><span style={{fontSize:11,color:C2.muted}}>{art.readTime}</span></div><div style={{fontSize:16,fontWeight:700,marginBottom:6}}>{art.title}</div><div style={{fontSize:13,color:C2.muted}}>{art.intro.substring(0,100)}...</div><div style={{fontSize:12,color:C2.accent,marginTop:8,fontWeight:600}}>Read guide →</div></div>))}</div><div style={{marginTop:24,fontSize:11,color:C2.muted,textAlign:'center'}}>18+ · Gamble Responsibly · BeGambleAware.org</div></div></div>);
+}
+
 function ResponsibleGambling({ onClose }) {
     return (
         <div style={{position:'fixed',inset:0,background:'#fff',zIndex:500,overflowY:'auto',padding:'40px 24px',fontFamily:'Inter,system-ui'}}>
@@ -932,6 +947,7 @@ export default function CricIntelligence() {
     const [activeOver, setActiveOver] = useState(0);
     const [showPrivacy, setShowPrivacy] = useState(false);
     const [showResponsible, setShowResponsible] = useState(false);
+    const [showBlog, setShowBlog] = useState(false);
     const [showTerms, setShowTerms] = useState(false);
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
@@ -1093,6 +1109,7 @@ export default function CricIntelligence() {
             <style>{CSS}</style>
             {showPrivacy && <PrivacyPolicy onClose={()=>setShowPrivacy(false)} />}
             {showResponsible && <ResponsibleGambling onClose={()=>setShowResponsible(false)} />}
+            {showBlog && <BlogSection onClose={()=>setShowBlog(false)} />}
             {showTerms && <TermsConditions onClose={()=>setShowTerms(false)} />}
             <div style={{ background: "#1E2D6B", position: "relative", overflow: "hidden" }}>
                 <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.07, pointerEvents: "none" }} viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
@@ -1189,8 +1206,8 @@ export default function CricIntelligence() {
                     </div>
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
-                    {[["predict","Predictions"],["matches","Matches"],["insights","Insights"],["media","Media"]].map(([k,l]) => (
-                        <button key={k} className={`tab-btn ${activeTab===k?"on":""}`} onClick={() => setActiveTab(k)} style={{ color: activeTab===k?"#fff":"rgba(255,255,255,0.55)" }}>{l}</button>
+                    {[["predict","Predictions"],["matches","Matches"],["insights","Insights"],["media","Media"],["blog","Guides"]].map(([k,l]) => (
+                        <button key={k} className={`tab-btn ${activeTab===k?"on":""}`} onClick={() => k==="blog" ? setShowBlog(true) : setActiveTab(k)} style={{ color: activeTab===k?"#fff":"rgba(255,255,255,0.55)" }}>{l}</button>
                     ))}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
