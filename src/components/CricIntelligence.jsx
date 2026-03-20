@@ -584,20 +584,29 @@ function BettingInsights({ pred, liveMatches }) {
                 )}
                 {!oddsLoading && (!liveOdds || !liveOdds.bookmakers?.length) && (
                     <div>
-                        <div style={{ fontSize:11, color:C2.muted, marginBottom:8 }}>No live odds available — check manually:</div>
-                        <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+                        <div style={{ fontSize:12, fontWeight:700, color:C2.text, marginBottom:10 }}>🎯 Best Bookmakers for Cricket</div>
+                        <div style={{ display:"grid", gap:8 }}>
                             {[
-                                { name:"Bet365", url:"https://www.bet365.com" },
-                                { name:"Betway", url:"https://www.betway.com" },
-                                { name:"William Hill", url:"https://www.williamhill.com" },
-                                { name:"Betfair", url:"https://www.betfair.com" },
-                            ].map(({name, url}) => (
-                                <a key={name} href={url} target="_blank" rel="noreferrer"
-                                    style={{ fontSize:11, padding:"5px 12px", borderRadius:20, background:C2.accent, color:"#fff", textDecoration:"none", fontWeight:600 }}>
-                                    {name} ↗
+                                { name:"Bet365", url:"https://www.bet365.com", desc:"Best live cricket betting", badge:"#POPULAR", color:"#1B5E20" },
+                                { name:"Betway", url:"https://www.betway.com", desc:"Great cricket markets", badge:"TOP ODDS", color:"#1E2D6B" },
+                                { name:"William Hill", url:"https://www.williamhill.com", desc:"Trusted UK bookmaker", badge:"TRUSTED", color:"#8B0000" },
+                                { name:"Betfair", url:"https://www.betfair.com", desc:"Betting exchange — best value", badge:"EXCHANGE", color:"#FF6B00" },
+                            ].map(({name, url, desc, badge, color}) => (
+                                <a key={name} href={url} target="_blank" rel="noreferrer" style={{ textDecoration:"none" }}>
+                                    <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", padding:"10px 14px", background:C2.bg, borderRadius:10, border:`1px solid ${C2.border}` }}>
+                                        <div>
+                                            <div style={{ fontSize:13, fontWeight:700, color:C2.text }}>{name}</div>
+                                            <div style={{ fontSize:11, color:C2.muted }}>{desc}</div>
+                                        </div>
+                                        <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                                            <span style={{ fontSize:9, fontWeight:700, padding:"2px 6px", borderRadius:4, background:color, color:"#fff" }}>{badge}</span>
+                                            <span style={{ fontSize:12, color:C2.accent, fontWeight:700 }}>Bet Now ↗</span>
+                                        </div>
+                                    </div>
                                 </a>
                             ))}
                         </div>
+                        <div style={{ fontSize:10, color:C2.muted, marginTop:8 }}>18+ · BeGambleAware.org · Gamble Responsibly</div>
                     </div>
                 )}
             </div>
@@ -798,6 +807,50 @@ function MediaSection() {
     );
 }
 
+function ResponsibleGambling({ onClose }) {
+    return (
+        <div style={{position:'fixed',inset:0,background:'#fff',zIndex:500,overflowY:'auto',padding:'40px 24px',fontFamily:'Inter,system-ui'}}>
+            <div style={{maxWidth:700,margin:'0 auto'}}>
+                <button onClick={onClose} style={{background:'none',border:'none',cursor:'pointer',fontSize:14,color:'#64748B',marginBottom:24}}>← Back</button>
+                <h1 style={{fontSize:28,fontWeight:800,marginBottom:8}}>Responsible Gambling</h1>
+                <p style={{color:'#64748B',marginBottom:32}}>We are committed to promoting safe and responsible gambling.</p>
+                <div style={{background:'#FFF0F0',border:'2px solid #E53E3E',borderRadius:12,padding:20,marginBottom:24}}>
+                    <div style={{fontSize:18,fontWeight:800,color:'#E53E3E',marginBottom:8}}>⚠️ 18+ Only</div>
+                    <p style={{color:'#64748B',lineHeight:1.7}}>CricIntelligence is strictly for users aged 18 and over. Gambling can be addictive and harmful. Please gamble responsibly and within your means.</p>
+                </div>
+                <div style={{display:'grid',gap:12,marginBottom:24}}>
+                    {[
+                        {org:'BeGambleAware',url:'https://www.begambleaware.org',desc:'Free advice and support for gambling problems',phone:'0808 8020 133'},
+                        {org:'GamCare',url:'https://www.gamcare.org.uk',desc:'Support, information and counselling for problem gamblers',phone:'0808 8020 133'},
+                        {org:'GamStop',url:'https://www.gamstop.co.uk',desc:'Free self-exclusion scheme for online gambling sites',phone:null},
+                        {org:'Gambling Therapy',url:'https://www.gamblingtherapy.org',desc:'Free practical advice and emotional support worldwide',phone:null},
+                    ].map(({org,url,desc,phone},i)=>(
+                        <div key={i} style={{padding:16,border:'1px solid #E2E8F0',borderRadius:10}}>
+                            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
+                                <a href={url} target="_blank" rel="noreferrer" style={{fontSize:15,fontWeight:700,color:'#1E2D6B'}}>{org} ↗</a>
+                                {phone && <span style={{fontSize:13,fontWeight:600,color:'#00B894'}}>{phone}</span>}
+                            </div>
+                            <p style={{fontSize:13,color:'#64748B'}}>{desc}</p>
+                        </div>
+                    ))}
+                </div>
+                <div style={{marginBottom:24}}>
+                    <h2 style={{fontSize:16,fontWeight:700,marginBottom:12}}>Safe Gambling Tips</h2>
+                    {['Set a budget before you start and stick to it','Never chase your losses','Only gamble with money you can afford to lose','Take regular breaks','Do not gamble when stressed or upset','Use deposit limits offered by bookmakers','Self-exclude if gambling becomes a problem'].map((tip,i)=>(
+                        <div key={i} style={{display:'flex',gap:8,marginBottom:8}}>
+                            <span style={{color:'#00B894',fontWeight:700}}>✓</span>
+                            <span style={{fontSize:13,color:'#64748B'}}>{tip}</span>
+                        </div>
+                    ))}
+                </div>
+                <div style={{padding:16,background:'#EEF2FF',borderRadius:10}}>
+                    <p style={{fontSize:13,color:'#1E2D6B',lineHeight:1.7}}><strong>Disclaimer:</strong> CricIntelligence provides AI predictions for informational purposes only. We are not a licensed betting operator. Predictions do not constitute betting advice. Always gamble responsibly.</p>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function PrivacyPolicy({ onClose }) {
     return (
         <div style={{position:'fixed',inset:0,background:'#fff',zIndex:500,overflowY:'auto',padding:'40px 24px',fontFamily:'Inter,system-ui'}}>
@@ -878,6 +931,7 @@ export default function CricIntelligence() {
     const [ticker, setTicker] = useState(0);
     const [activeOver, setActiveOver] = useState(0);
     const [showPrivacy, setShowPrivacy] = useState(false);
+    const [showResponsible, setShowResponsible] = useState(false);
     const [showTerms, setShowTerms] = useState(false);
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
@@ -1038,6 +1092,7 @@ export default function CricIntelligence() {
         <div style={{ minHeight: "100vh", background: "#F9F9F9", fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
             {showPrivacy && <PrivacyPolicy onClose={()=>setShowPrivacy(false)} />}
+            {showResponsible && <ResponsibleGambling onClose={()=>setShowResponsible(false)} />}
             {showTerms && <TermsConditions onClose={()=>setShowTerms(false)} />}
             <div style={{ background: "#1E2D6B", position: "relative", overflow: "hidden" }}>
                 <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.07, pointerEvents: "none" }} viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
@@ -1559,10 +1614,12 @@ export default function CricIntelligence() {
                         )}
                         <div style={{ fontSize:10,color:C.muted,lineHeight:1.6,textAlign:"center",marginTop:"auto" }}>
                             {pred?.dataSource||"877 venues · 1.7M records"}<br />
-                            <span style={{ color:C.red,fontWeight:600 }}>18+ · BeGambleAware.org</span><br/>
+                            <span style={{ color:C.red,fontWeight:600 }}>18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{color:C.red}}>BeGambleAware.org</a></span><br/>
                         <span onClick={()=>setShowPrivacy(true)} style={{cursor:'pointer',color:C.muted,textDecoration:'underline'}}>Privacy Policy</span>
                         {' · '}
-                        <span onClick={()=>setShowTerms(true)} style={{cursor:'pointer',color:C.muted,textDecoration:'underline'}}>Terms & Conditions</span>
+                        <span onClick={()=>setShowTerms(true)} style={{cursor:'pointer',color:C.muted,textDecoration:'underline'}}>Terms</span>
+                        {' · '}
+                        <span onClick={()=>setShowResponsible(true)} style={{cursor:'pointer',color:C.red,textDecoration:'underline',fontWeight:600}}>Responsible Gambling</span>
                         </div>
                     </aside>
                 </div>
