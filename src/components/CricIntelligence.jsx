@@ -16,9 +16,9 @@ const MOCK_MATCHES = [
     { id: 3, t1: "NZ", t2: "SA", status: "UPCOMING", day: "TEST", detail: "Cape Town · Day 1", t1Score: null, t2Score: null, matchId: null },
 ];
 const MOCK_PRED = {
-    team1: "India", team2: "Australia", venue: "Wankhede Stadium, Mumbai",
+    team1: "", team2: "", venue: "",
     score: 156, wickets: 3, overs: 14.2, matchType: "t20",
-    displayScore: "156/3 (14.2 ov)", aiProbability: 72,
+    displayScore: "156/3 (14.2 ov)", aiProbability: 50,
     currentRunRate: 10.9, requiredRunRate: 0,
     pitchLabel: "DRY / SPIN", pitchCondition: "SHOWING WEAR",
     currentPhase: "MIDDLE OVERS", phaseEmoji: "🟡",
