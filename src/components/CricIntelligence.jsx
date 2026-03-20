@@ -1149,7 +1149,7 @@ export default function CricIntelligence() {
                     <main className="mc" style={{ padding: 0, overflowY: "auto" }}>
                         {/* Sticky score bar - always visible when scrolling */}
                         {!matchEnded && (
-                        <div style={{ position:"sticky", top:54, zIndex:50, background:"rgba(26,39,96,0.97)", backdropFilter:"blur(8px)", borderBottom:"1px solid rgba(255,255,255,0.1)", padding:"8px 20px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                        <div style={{ position:"fixed", top:54, left:300, right:240, zIndex:50, background:"rgba(26,39,96,0.97)", backdropFilter:"blur(8px)", borderBottom:"1px solid rgba(255,255,255,0.1)", padding:"8px 20px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
                             <div style={{ display:"flex", alignItems:"center", gap:12 }}>
                                 <TeamLogo name={(pred.team1||'india').toLowerCase()} size={22} />
                                 <span style={{ fontSize:13, fontWeight:700, color:"#fff" }}>{cleanTeam(pred.team1)}</span>
