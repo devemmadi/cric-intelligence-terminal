@@ -868,7 +868,7 @@ export default function CricIntelligence() {
     const [pred, setPred] = useState(MOCK_PRED);
     const [liveStatus, setLiveStatus] = useState("connecting");
     const [backendLoading, setBackendLoading] = useState(true);
-    const [isPremium, setIsPremium] = useState(() => localStorage.getItem("cricintel_premium") === "true");
+    const [isPremium, setIsPremium] = useState(true); // Free for all users
     const [showPaywall, setShowPaywall] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState("monthly");
     const [emailInput, setEmailInput] = useState("");
