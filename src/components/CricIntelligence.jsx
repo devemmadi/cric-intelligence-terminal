@@ -1167,15 +1167,30 @@ export default function CricIntelligence() {
                                         <TeamLogo name={(pred.team2 || "australia").toLowerCase()} size={40} />
                                     </div>
                                 </div>
-                                <div style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
-                                    <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore || "156/3 (14.2 ov)"}</span>
-                                    <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
-                                    <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || 10.9}</span>
-                                    {matchEnded && (
-                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", background: "rgba(200,150,30,0.2)", padding: "2px 8px", borderRadius: 6 }}>MATCH ENDED</span>
+                                <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:8 }}>
+                                    <div style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
+                                        <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore || "156/3 (14.2 ov)"}</span>
+                                        <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
+                                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || 10.9}</span>
+                                        {pred.requiredRunRate > 0 && <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>| RRR {pred.requiredRunRate}</span>}
+                                        {matchEnded && (
+                                            <span style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", background: "rgba(200,150,30,0.2)", padding: "2px 8px", borderRadius: 6 }}>MATCH ENDED</span>
+                                        )}
+                                        <button onClick={() => { const t = `🏏 ${cleanTeam(pred.team1||"India")} vs ${cleanTeam(pred.team2||"Australia")} — AI: ${prob}% win probability. cricintelligence.com`; navigator.clipboard?.writeText(t).then(() => alert("Copied! 🏏")); }}
+                                            style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share ↗</button>
+                                    </div>
+                                    {pred.innings === 2 && pred.runsNeeded > 0 && (
+                                        <div style={{ display:"flex", alignItems:"center", gap:12, background:"rgba(0,0,0,0.25)", borderRadius:8, padding:"6px 16px" }}>
+                                            <span style={{ fontSize:13, fontWeight:700, color:"#fff" }}>
+                                                {cleanTeam(pred.team2)} needs <span style={{ color:"#F59E0B" }}>{pred.runsNeeded} runs</span> in <span style={{ color:"#F59E0B" }}>{Math.round((pred.target > 0 ? (pred.matchType==='t20'||pred.matchType==='it20'?20:50) - pred.overs : 0) * 6)} balls</span>
+                                            </span>
+                                            <span style={{ fontSize:11, padding:"2px 8px", borderRadius:6, fontWeight:700,
+                                                background: pred.requiredRunRate > 15 ? "rgba(229,62,62,0.3)" : pred.requiredRunRate > 10 ? "rgba(245,158,11,0.3)" : "rgba(0,184,148,0.3)",
+                                                color: pred.requiredRunRate > 15 ? "#FCA5A5" : pred.requiredRunRate > 10 ? "#FDE68A" : "#6EE7B7" }}>
+                                                {pred.requiredRunRate > 15 ? "Nearly Impossible" : pred.requiredRunRate > 12 ? "Very Hard" : pred.requiredRunRate > 9 ? "Difficult" : pred.requiredRunRate > 7 ? "Competitive" : "Comfortable"}
+                                            </span>
+                                        </div>
                                     )}
-                                    <button onClick={() => { const t = `🏏 ${cleanTeam(pred.team1||"India")} vs ${cleanTeam(pred.team2||"Australia")} — AI: ${prob}% win probability. cricintelligence.com`; navigator.clipboard?.writeText(t).then(() => alert("Copied! 🏏")); }}
-                                        style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share ↗</button>
                                 </div>
                             </div>
                         </div>
@@ -1208,9 +1223,24 @@ export default function CricIntelligence() {
                                 <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:4 }}>WIN PROBABILITY</div>
                                 <div style={{ fontSize:13,fontWeight:700,color:winColor,marginBottom:8 }}>{winMsg}</div>
                                 <div style={{ display:"flex",justifyContent:"center",margin:"4px 0 10px" }}><WinArc value={prob} /></div>
-                                <div style={{ fontSize:12,color:C.muted,lineHeight:1.6 }}>
-                                    <strong style={{ color:C.text }}>{cleanTeam(pred.team1||"INDIA")}</strong> has a <strong style={{ color:winColor }}>{prob}% chance</strong> of winning based on current score, pitch & 1.7M historical matches.
-                                </div>
+                                {pred.innings === 2 && pred.runsNeeded > 0 ? (
+                                    <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:8, marginBottom:8 }}>
+                                        <div style={{ textAlign:"center", padding:"8px", background:"#e8f5ee", borderRadius:8 }}>
+                                            <div style={{ fontSize:10, color:C.muted, marginBottom:2 }}>🛡️ DEFENDING</div>
+                                            <div style={{ fontSize:16, fontWeight:800, color:C.green }}>{prob}%</div>
+                                            <div style={{ fontSize:11, fontWeight:600, color:C.text }}>{cleanTeam(pred.team1)}</div>
+                                        </div>
+                                        <div style={{ textAlign:"center", padding:"8px", background:"#fff0f0", borderRadius:8 }}>
+                                            <div style={{ fontSize:10, color:C.muted, marginBottom:2 }}>🏃 CHASING</div>
+                                            <div style={{ fontSize:16, fontWeight:800, color:C.red }}>{Math.round((100-prob)*10)/10}%</div>
+                                            <div style={{ fontSize:11, fontWeight:600, color:C.text }}>{cleanTeam(pred.team2)}</div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div style={{ fontSize:12,color:C.muted,lineHeight:1.6 }}>
+                                        <strong style={{ color:C.text }}>{cleanTeam(pred.team1||"INDIA")}</strong> has a <strong style={{ color:winColor }}>{prob}% chance</strong> of winning based on current score, pitch & 1.7M historical matches.
+                                    </div>
+                                )}
                             </div>
                             <div className="card" style={{ padding:22 }}>
                                 <div style={{ fontSize:10,fontWeight:700,color:C.muted,letterSpacing:1,marginBottom:14 }}>MATCH INTEL</div>
