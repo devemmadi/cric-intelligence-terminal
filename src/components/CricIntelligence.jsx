@@ -1207,7 +1207,7 @@ export default function CricIntelligence() {
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
                     {[["predict","Predictions"],["matches","Matches"],["insights","Insights"],["media","Media"],["blog","Guides"]].map(([k,l]) => (
-                        <button key={k} className={`tab-btn ${activeTab===k?"on":""}`} onClick={() => k==="blog" ? setShowBlog(true) : setActiveTab(k)} style={{ color: activeTab===k?"#fff":"rgba(255,255,255,0.55)" }}>{l}</button>
+                        <button key={k} className={`tab-btn ${activeTab===k?"on":""}`} onClick={() => setActiveTab(k)} style={{ color: activeTab===k?"#fff":"rgba(255,255,255,0.55)" }}>{l}</button>
                     ))}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -1690,6 +1690,9 @@ export default function CricIntelligence() {
 
             {activeTab === "media" && (
                 <MediaSection />
+            )}
+            {activeTab === "blog" && (
+                <BlogSection onClose={()=>setActiveTab("predict")} />
             )}
 
             {activeTab === "insights" && (
