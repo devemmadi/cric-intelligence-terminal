@@ -86,6 +86,7 @@ const FLAG_CODES = {
     "sri lanka": "lk", "sl": "lk", "west indies": "bb", "wi": "bb",
     "bangladesh": "bd", "afghanistan": "af", "ireland": "ie", "zimbabwe": "zw",
     "nzw": "nz", "saw": "za", "auw": "au", "engw": "gb-eng", "indw": "in", "pakw": "pk",
+    "new zealand women": "nz", "south africa women": "za", "australia women": "au", "england women": "gb-eng", "india women": "in", "pakistan women": "pk", "west indies women": "bb", "bangladesh women": "bd", "sri lanka women": "lk",
     "wiw": "bb", "banw": "bd", "slw": "lk",
     "netherlands": "nl", "scotland": "gb-sct", "nepal": "np", "oman": "om",
     "uae": "ae", "united arab emirates": "ae", "usa": "us", "namibia": "na",
