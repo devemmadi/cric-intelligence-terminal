@@ -812,6 +812,51 @@ function MediaSection() {
     );
 }
 
+function AboutPage({onClose}){
+    const C={bg:"#EEF2FF",accent:"#1E2D6B",gold:"#C8961E",muted:"#64748B",text:"#0A0A0A",border:"#E2E8F0"};
+    return(
+        <div style={{position:"fixed",inset:0,background:"#fff",zIndex:500,overflowY:"auto",padding:"40px 24px",fontFamily:"Inter,system-ui"}}>
+            <div style={{maxWidth:700,margin:"0 auto"}}>
+                <button onClick={onClose} style={{background:"none",border:"none",cursor:"pointer",fontSize:14,color:C.muted,marginBottom:24}}>← Back</button>
+                <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:24}}>
+                    <div style={{width:48,height:48,background:C.accent,borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:24}}>🏏</div>
+                    <div>
+                        <h1 style={{fontSize:24,fontWeight:800,margin:0}}>About CricIntelligence</h1>
+                        <div style={{fontSize:12,color:C.muted}}>AI-powered cricket predictions</div>
+                    </div>
+                </div>
+                <div style={{padding:"20px",background:C.bg,borderRadius:12,marginBottom:24}}>
+                    <p style={{fontSize:14,color:C.accent,lineHeight:1.8,margin:0}}>CricIntelligence is an AI-powered cricket analytics platform built for serious cricket fans and betting enthusiasts. We combine 1.7 million historical match records with live data to deliver precise over-by-over predictions.</p>
+                </div>
+                {[
+                    {icon:"🎯",title:"Our Mission",desc:"To give cricket fans and bettors a genuine edge through data-driven insights. We believe in transparency — our AI explains every prediction, not just gives a number."},
+                    {icon:"📊",title:"Our Data",desc:"1.7 million cricket matches across 877 venues worldwide. Updated every 60 seconds with live Cricbuzz data. Real historical run rates for every major cricket ground."},
+                    {icon:"🔬",title:"Our Approach",desc:"No static player lists. No hardcoded assumptions. Every prediction is calculated from real venue data, live player performance, weather conditions, and match pressure."},
+                    {icon:"🌍",title:"Who We Serve",desc:"Cricket fans in the UK, Australia, and worldwide who want more than just win/lose predictions. Serious bettors looking for value, not luck."},
+                ].map(({icon,title,desc},i)=>(
+                    <div key={i} style={{display:"flex",gap:16,marginBottom:20,paddingBottom:20,borderBottom:i<3?"1px solid "+C.border:"none"}}>
+                        <div style={{fontSize:24,minWidth:40}}>{icon}</div>
+                        <div>
+                            <div style={{fontSize:15,fontWeight:700,marginBottom:6}}>{title}</div>
+                            <div style={{fontSize:13,color:C.muted,lineHeight:1.7}}>{desc}</div>
+                        </div>
+                    </div>
+                ))}
+                <div style={{padding:20,background:"linear-gradient(135deg,#1E2D6B,#354D97)",borderRadius:12,color:"#fff"}}>
+                    <div style={{fontSize:15,fontWeight:700,marginBottom:12}}>Contact Us</div>
+                    <div style={{display:"grid",gap:8}}>
+                        <div style={{fontSize:13,color:"rgba(255,255,255,0.8)"}}>📧 <a href="mailto:hello@cricintelligence.com" style={{color:"#C8961E"}}>hello@cricintelligence.com</a></div>
+                        <div style={{fontSize:13,color:"rgba(255,255,255,0.8)"}}>🌐 <a href="https://www.cricintelligence.com" style={{color:"#C8961E"}}>www.cricintelligence.com</a></div>
+                        <div style={{fontSize:13,color:"rgba(255,255,255,0.8)"}}>📍 United Kingdom</div>
+                    </div>
+                    <div style={{marginTop:12,fontSize:11,color:"rgba(255,255,255,0.5)"}}>For partnership, affiliate, or media enquiries please email us directly.</div>
+                </div>
+                <div style={{marginTop:16,fontSize:11,color:C.muted,textAlign:"center"}}>18+ · Gamble Responsibly · BeGambleAware.org</div>
+            </div>
+        </div>
+    );
+}
+
 function MethodologyPage({onClose}){
     const C={bg:"#EEF2FF",accent:"#1E2D6B",gold:"#C8961E",muted:"#64748B",text:"#0A0A0A",border:"#E2E8F0"};
     return(
@@ -1007,6 +1052,7 @@ export default function CricIntelligence() {
     const [showResponsible, setShowResponsible] = useState(false);
     const [showBlog, setShowBlog] = useState(false);
     const [showMethodology, setShowMethodology] = useState(false);
+    const [showAbout, setShowAbout] = useState(false);
     const [showTerms, setShowTerms] = useState(false);
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
@@ -1170,6 +1216,7 @@ export default function CricIntelligence() {
             {showResponsible && <ResponsibleGambling onClose={()=>setShowResponsible(false)} />}
             {showBlog && <BlogSection onClose={()=>setShowBlog(false)} />}
             {showMethodology && <MethodologyPage onClose={()=>setShowMethodology(false)} />}
+            {showAbout && <AboutPage onClose={()=>setShowAbout(false)} />}
             {showTerms && <TermsConditions onClose={()=>setShowTerms(false)} />}
             <div style={{ background: "#1E2D6B", position: "relative", overflow: "hidden" }}>
                 <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", opacity: 0.07, pointerEvents: "none" }} viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
