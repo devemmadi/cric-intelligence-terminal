@@ -1480,7 +1480,7 @@ export default function CricIntelligence() {
                                 </div>
                                 <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:8 }}>
                                     <div style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
-                                        <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore || "156/3 (14.2 ov)"}</span>
+                                        <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred?.displayScore || ""}</span>
                                         <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
                                         <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || 10.9}</span>
                                         {pred.requiredRunRate > 0 && <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>| RRR {pred.requiredRunRate}</span>}
