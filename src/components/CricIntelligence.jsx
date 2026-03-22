@@ -111,8 +111,8 @@ const TEAM_COLORS = {
 function TeamLogo({ name, size = 32 }) {
     const [errorLevel, setErrorLevel] = useState(0);
     const key = (name || "").toLowerCase().trim();
-    const hsciUrl = TEAM_LOGOS[key];
-    const flagCode = FLAG_CODES[key];
+    const hsciUrl = TEAM_LOGOS[key] || TEAM_LOGOS[name] || Object.entries(TEAM_LOGOS).find(([k])=>k.toLowerCase()===key)?.[1];
+    const flagCode = FLAG_CODES[key] || FLAG_CODES[name?.toLowerCase()?.trim()] || Object.entries(FLAG_CODES).find(([k])=>k.toLowerCase()===key)?.[0] && FLAG_CODES[Object.entries(FLAG_CODES).find(([k])=>k.toLowerCase()===key)?.[0]];
     const flagUrl = flagCode ? `https://flagcdn.com/w80/${flagCode}.png` : null;
     const abbr = cleanTeam(name).slice(0, 3);
     const hue = [...key].reduce((a, c) => a + c.charCodeAt(0), 0) % 360;
