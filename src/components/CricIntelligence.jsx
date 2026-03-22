@@ -218,6 +218,9 @@ function NextOverIntelligence({ pred }) {
                     <div style={{ display:"flex", alignItems:"baseline", gap:6, marginBottom:12 }}>
                         <span style={{ fontSize:28, fontWeight:500, color:"#0A0A0A" }}>{ov1.runRange}</span>
                         <span style={{ fontSize:13, color:"#64748B" }}>runs expected</span>
+                        <div style={{marginTop:8,height:5,borderRadius:4,background:'#E2E8F0',overflow:'hidden'}}>
+                            <div style={{height:'100%',borderRadius:4,transition:'width 0.5s',background:ov1.wicketProb>40?'#E53E3E':ov1.wicketProb>25?'#F59E0B':'#00B894',width:Math.min(100,(ov1.expectedRuns||8)/20*100)+'%'}}/>
+                        </div>
                     </div>
                     <div style={{ background:"#EEF2FF", borderRadius:8, padding:"8px 10px", marginBottom:10 }}>
                         <div style={{ fontSize:11, color:"#64748B", marginBottom:3 }}>Bowling quality</div>
@@ -584,7 +587,7 @@ function BettingInsights({ pred, liveMatches }) {
                 )}
                 {!oddsLoading && (!liveOdds || !liveOdds.bookmakers?.length) && (
                     <div>
-                        <div style={{ fontSize:12, fontWeight:700, color:C2.text, marginBottom:10 }}>🎯 Best Bookmakers for Cricket</div>
+                        <div style={{padding:"10px 12px",background:"linear-gradient(135deg,#1E2D6B,#354D97)",borderRadius:10,marginBottom:12}}><div style={{fontSize:10,fontWeight:800,color:"#C8961E",letterSpacing:2}}>TOOLS FOR BETTORS</div><div style={{fontSize:11,color:"rgba(255,255,255,0.8)",marginTop:3}}>Find value · Compare odds · Bet smart</div></div><div style={{fontSize:12,fontWeight:700,color:C2.text,marginBottom:10}}>Best Bookmakers for Cricket</div>
                         <div style={{ display:"grid", gap:8 }}>
                             {[
                                 { name:"Bet365", url:"https://www.bet365.com", desc:"Best live cricket betting", badge:"#POPULAR", color:"#1B5E20" },
