@@ -196,7 +196,7 @@ function NextOverIntelligence({ pred }) {
     });
     const predBarH = Math.max(8, Math.round((ov1.expectedRuns / 16) * 44));
 
-    const CSS2 = `@keyframes blink2 { 0%,100%{opacity:1} 50%{opacity:0.3} }`;
+    const CSS2 = `@keyframes blink2 { 0%,100%{opacity:1} 50%{opacity:0.3} } @media(max-width:768px){.over-grid{grid-template-columns:1fr!important;gap:8px!important}}`;
 
     return (
         <div style={{ padding:"0 0 4px 0", marginBottom:14 }}>
@@ -1131,7 +1131,7 @@ export default function CricIntelligence() {
     @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
     .fade { animation: fadeUp .4s ease forwards; }
-    .card { background: ${C.surface}; border: 1px solid ${C.border}; border-radius: 16px; transition: box-shadow .2s; }
+    .card { background: ${C.surface}; border: 1px solid #CBD5E1; box-shadow: 0 1px 6px rgba(0,0,0,0.06); border-radius: 16px; transition: box-shadow .2s; }
     .card:hover { box-shadow: 0 4px 20px rgba(30,45,107,0.10); }
     .card-green { border-top: 3px solid ${C.green} !important; }
     .card-blue { border-top: 3px solid ${C.navy} !important; }
