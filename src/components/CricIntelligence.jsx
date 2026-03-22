@@ -1744,6 +1744,10 @@ export default function CricIntelligence() {
                         <span onClick={()=>setShowTerms(true)} style={{cursor:'pointer',color:C.muted,textDecoration:'underline'}}>Terms</span>
                         {' · '}
                         <span onClick={()=>setShowResponsible(true)} style={{cursor:'pointer',color:C.red,textDecoration:'underline',fontWeight:600}}>Responsible Gambling</span>
+                        {' · '}
+                        <span onClick={()=>setShowMethodology(true)} style={{cursor:'pointer',color:C.accent,textDecoration:'underline'}}>How It Works</span>
+                        {' · '}
+                        <span onClick={()=>setShowAbout(true)} style={{cursor:'pointer',color:C.accent,textDecoration:'underline'}}>About Us</span>
                         </div>
                     </aside>
                 </div>
