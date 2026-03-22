@@ -74,6 +74,7 @@ const TEAM_LOGOS = {
     "west indies women": BASE_LOGO + "/317600/317615.png",
     "new zealand women": BASE_LOGO + "/340500/340503.png",
     "New Zealand Women": BASE_LOGO + "/340500/340503.png",
+    "new zealand women": BASE_LOGO + "/340500/340503.png",
     "nzw": `https://flagcdn.com/w80/nz.png`,
     "New Zealand Women": BASE_LOGO + "/340500/340503.png",
     "south africa women": BASE_LOGO + "/340400/340493.png",
