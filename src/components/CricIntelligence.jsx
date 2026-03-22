@@ -17,9 +17,9 @@ const MOCK_MATCHES = [
 ];
 const MOCK_PRED = {
     team1: "", team2: "", venue: "",
-    score: 156, wickets: 3, overs: 14.2, matchType: "t20",
-    displayScore: "156/3 (14.2 ov)", aiProbability: 50,
-    currentRunRate: 10.9, requiredRunRate: 0,
+    score: 0, wickets: 0, overs: 0, matchType: "t20",
+    displayScore: "", aiProbability: 50,
+    currentRunRate: 0, requiredRunRate: 0,
     pitchLabel: "DRY / SPIN", pitchCondition: "SHOWING WEAR",
     currentPhase: "MIDDLE OVERS", phaseEmoji: "🟡",
     strengths: ["SOLID OPENING STAND", "FAST BOWLING PACE", "SPIN CONTROL"],
