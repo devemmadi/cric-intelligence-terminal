@@ -1,4 +1,4 @@
-﻿/* eslint-disable */
+/* eslint-disable */
 import React, { useState, useEffect, useCallback } from "react";
 
 const API_BASE = "https://web-production-91f0.up.railway.app";
@@ -1435,5 +1435,3 @@ export default function CricIntelligence() {
         </div>
     );
 }
-
-
