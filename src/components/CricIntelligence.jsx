@@ -339,7 +339,7 @@ export default function CricIntelligence() {
     const [showLanding, setShowLanding] = useState(() => !localStorage.getItem("ci_v2"));
     const [liveMatches, setLiveMatches] = useState(MOCK_MATCHES);
     const [selectedMatch, setSelectedMatch] = useState(MOCK_MATCHES[0]);
-    const [pred, setPred] = useState(null);
+    const [pred, setPred] = useState(MOCK_PRED);
     const [liveStatus, setLiveStatus] = useState("connecting");
     const [isPremium, setIsPremium] = useState(() => localStorage.getItem("cricintel_premium") === "true");
     const [showPaywall, setShowPaywall] = useState(false);
