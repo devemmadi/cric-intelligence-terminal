@@ -10,9 +10,6 @@ const C = {
     navy: "#1E2D6B", navyMid: "#2A3F82", navyLight: "#4A5FAD",
 };
 
-const MOCK_MATCHES = [
-    { id: 1, t1: "TBD", t2: "TBD", status: "UPCOMING", day: "T20", detail: "Loading...", t1Score: null, t2Score: null, matchId: null },
-];
 
 function cleanTeam(name) {
     if (!name) return "";
