@@ -14,7 +14,7 @@ const C = {
 function cleanTeam(name) {
     if (!name) return "";
     const shorts = { "south africa": "SA", "new zealand": "NZ", "west indies": "WI", "sri lanka": "SL", "united arab emirates": "UAE" };
-    const n = name.split(",")[0].trim();
+    const n = name.split(" - ")[0].trim();
     const key = n.toLowerCase();
     if (shorts[key]) return shorts[key];
     if (n.length > 12) return n.split(" ").filter(w => w.length > 1).map(w => w[0]).join("").toUpperCase();
@@ -262,7 +262,7 @@ function MatchPill({ m, selected, onClick }) {
     return (
         <div className={`match-pill ${selected ? "sel" : ""}`} onClick={() => { onClick(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ opacity: m.status === "ENDED" ? 0.75 : 1 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: 10, color: "#64748B" }}>{m.day} - {m.detail?.split("ÃÂ·")[0]?.trim().slice(0, 18)}</span>
+                <span style={{ fontSize: 10, color: "#64748B" }}>{m.day} - {m.detail?.split("")[0]?.trim().slice(0, 18)}</span>
                 <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 5, background: m.status === "LIVE" ? "#FFF0F0" : m.status === "UPCOMING" ? "#EFF6FF" : "#F0F0F0", color: m.status === "LIVE" ? "#E53E3E" : m.status === "UPCOMING" ? "#1E2D6B" : "#64748B" }}>
                     {m.status === "LIVE" ? "LIVE" : m.status === "UPCOMING" ? "SOON" : "ENDED"}
                 </span>
@@ -284,7 +284,7 @@ function MatchCard({ m, onClick }) {
     return (
         <div className="card" style={{ padding: 16, marginBottom: 10, cursor: "pointer", opacity: m.status === "ENDED" ? 0.8 : 1 }} onClick={onClick}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                <span style={{ fontSize: 11, color: "#64748B" }}>{m.day} - {m.detail?.split("ÃÂ·")[0]?.trim()}</span>
+                <span style={{ fontSize: 11, color: "#64748B" }}>{m.day} - {m.detail?.split("")[0]?.trim()}</span>
                 <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: m.status === "LIVE" ? "#FFF0F0" : m.status === "UPCOMING" ? "#EFF6FF" : "#F0F0F0", color: m.status === "LIVE" ? "#E53E3E" : m.status === "UPCOMING" ? "#1E2D6B" : "#64748B" }}>
                     {m.status === "LIVE" ? "LIVE" : m.status === "UPCOMING" ? "UPCOMING" : "ENDED"}
                 </span>
@@ -348,7 +348,7 @@ function MediaSection() {
 function NoMatchesScreen() {
     return (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 32px", textAlign: "center" }}>
-            <div style={{ fontSize: 64, marginBottom: 20 }}>Ã°ÂÂÂ</div>
+            <div style={{ fontSize: 64, marginBottom: 20 }}>&#127955;</div>
             <div style={{ fontSize: 24, fontWeight: 800, color: C.navy, marginBottom: 10 }}>No Live Matches Right Now</div>
             <div style={{ fontSize: 15, color: C.muted, lineHeight: 1.7, maxWidth: 380, marginBottom: 24 }}>
                 IPL and international matches will appear here automatically when they go live.
@@ -683,7 +683,7 @@ body { background: ${C.bg}; }
 
                                     <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
                                         <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                            <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || "Ã¢ÂÂ"}</span>
+                                            <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || "&#9728;"}</span>
                                             <div>
                                                 <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>WEATHER</div>
                                                 <div style={{ fontSize: 20, fontWeight: 800 }}>{pred.weather?.temp || ""}C</div>
@@ -868,7 +868,7 @@ body { background: ${C.bg}; }
                 <div className="fade" style={{ maxWidth: 680, margin: "0 auto", padding: "22px 16px" }}>
                     {liveMatches.length === 0 && (
                         <div style={{ textAlign: "center", padding: 60, color: C.muted }}>
-                            <div style={{ fontSize: 40, marginBottom: 12 }}>Ã°ÂÂÂ</div>
+                            <div style={{ fontSize: 40, marginBottom: 12 }}>&#127955;</div>
                             <div style={{ fontSize: 18, fontWeight: 700 }}>Loading matches...</div>
                         </div>
                     )}
@@ -925,7 +925,7 @@ body { background: ${C.bg}; }
                                     {[{ plan: "monthly", price: "9.99", per: "/mo", label: "Monthly", sub: "Cancel anytime" }, { plan: "annual", price: "59.99", per: "/yr", label: "Annual", sub: "Save 50%" }].map(p => (
                                         <div key={p.plan} onClick={() => setSelectedPlan(p.plan)} style={{ border: `2px solid ${selectedPlan === p.plan ? C.accent : C.border}`, borderRadius: 12, padding: 14, cursor: "pointer", textAlign: "center" }}>
                                             <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 4 }}>{p.label}</div>
-                                            <div style={{ fontSize: 22, fontWeight: 800 }}>ÃÂ£{p.price}</div>
+                                            <div style={{ fontSize: 22, fontWeight: 800 }}>{p.price}</div>
                                             <div style={{ fontSize: 11, color: C.muted }}>{p.per} - {p.sub}</div>
                                         </div>
                                     ))}
@@ -937,7 +937,7 @@ body { background: ${C.bg}; }
                             <>
                                 <input type="email" placeholder="Your email address" value={emailInput} onChange={e => setEmailInput(e.target.value)} style={{ width: "100%", padding: "13px 16px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, marginBottom: 10, outline: "none", fontFamily: "Inter,system-ui" }} />
                                 <button className="btn-p" onClick={() => handleCheckout(selectedPlan)} disabled={checkingPayment}>
-                                    {checkingPayment ? "Loading..." : `Pay ${selectedPlan === "annual" ? "ÃÂ£59.99/yr" : "ÃÂ£9.99/mo"}`}
+                                    {checkingPayment ? "Loading..." : `Pay ${selectedPlan === "annual" ? "59.99/yr" : "&#163;9.99/mo"}`}
                                 </button>
                             </>
                         )}
