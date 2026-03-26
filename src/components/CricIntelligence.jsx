@@ -349,7 +349,7 @@ function MediaSection() {
 function NoMatchesScreen() {
     return (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 32px", textAlign: "center" }}>
-            <div style={{ fontSize: 64, marginBottom: 20 }}>&#127955;</div>
+            <div style={{ fontSize: 64, marginBottom: 20 }}>[cricket]</div>
             <div style={{ fontSize: 24, fontWeight: 800, color: C.navy, marginBottom: 10 }}>No Live Matches Right Now</div>
             <div style={{ fontSize: 15, color: C.muted, lineHeight: 1.7, maxWidth: 380, marginBottom: 24 }}>
                 IPL and international matches will appear here automatically when they go live.
@@ -717,7 +717,7 @@ body { background: ${C.bg}; }
                                           <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>NEXT 3 OVERS PREDICTION</div>
                                           <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{pred?.currentPhase || ""}</div>
                                         </div>
-                                        <div style={{ fontSize: 10, color: C.accent }}>1 free &middot; <span style={{ color: C.gold, fontWeight: 700, cursor: "pointer" }}>Upgrade for all 5</span></div>
+                                        <div style={{ fontSize: 10, color: C.accent }}>1 free  -  <span style={{ color: C.gold, fontWeight: 700, cursor: "pointer" }}>Upgrade for all 5</span></div>
                                       </div>
 
                                       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -746,7 +746,7 @@ body { background: ${C.bg}; }
                                             }}>
                                               {isLocked ? (
                                                 <div style={{ textAlign: "center", padding: "8px 0" }}>
-                                                  <div style={{ fontSize: 18, marginBottom: 4 }}>&#128274;</div>
+                                                  <div style={{ fontSize: 18, marginBottom: 4 }}>[lock]</div>
                                                   <div style={{ fontSize: 11, color: C.muted }}>Premium</div>
                                                 </div>
                                               ) : (
@@ -784,7 +784,7 @@ body { background: ${C.bg}; }
                                                       {last3r > 0 && (
                                                         <div style={{ background: C.navyLight, borderRadius: 6, padding: "4px 8px" }}>
                                                           <div style={{ fontSize: 9, color: C.muted, letterSpacing: 0.5 }}>LAST 3 OV</div>
-                                                          <div style={{ fontSize: 14, fontWeight: 800, color: C.text, lineHeight: 1.2 }}>{last3r}r&nbsp;{last3w}w</div>
+                                                          <div style={{ fontSize: 14, fontWeight: 800, color: C.text, lineHeight: 1.2 }}>{last3r}r {last3w}w</div>
                                                         </div>
                                                       )}
                                                       {pship > 0 && (
@@ -818,7 +818,7 @@ body { background: ${C.bg}; }
                                                       <span style={{ fontSize: 9, fontWeight: 700, color: pred?.pitchCondition === "HEAVILY WORN" ? C.red : pred?.pitchCondition === "WORN" ? C.amber : C.green }}>{pred?.pitchCondition || ""}</span>
                                                     </div>
                                                     <div style={{ background: C.navyLight, borderRadius: 6, padding: "3px 8px", display: "flex", alignItems: "center", gap: 5 }}>
-                                                      <span style={{ fontSize: 10, color: C.muted }}>{pred?.weather?.temp}&#176;C</span>
+                                                      <span style={{ fontSize: 10, color: C.muted }}>{pred?.weather?.temp}C</span>
                                                       <span style={{ fontSize: 9, color: C.muted }}>{pred?.weather?.condition}</span>
                                                     </div>
                                                     {ov.pitchWear > 0 && (
@@ -827,7 +827,7 @@ body { background: ${C.bg}; }
                                                       </div>
                                                     )}
                                                     <div style={{ background: C.navyLight, borderRadius: 6, padding: "3px 8px", display: "flex", alignItems: "center", gap: 5 }}>
-                                                      <span style={{ fontSize: 9, color: C.muted }}>bat {ov.batFactor} &middot; bowl {ov.bowlFactor}</span>
+                                                      <span style={{ fontSize: 9, color: C.muted }}>bat {ov.batFactor}  -  bowl {ov.bowlFactor}</span>
                                                     </div>
                                                   </div>
 
@@ -879,7 +879,7 @@ body { background: ${C.bg}; }
                 <div className="fade" style={{ maxWidth: 680, margin: "0 auto", padding: "22px 16px" }}>
                     {liveMatches.length === 0 && (
                         <div style={{ textAlign: "center", padding: 60, color: C.muted }}>
-                            <div style={{ fontSize: 40, marginBottom: 12 }}>&#127955;</div>
+                            <div style={{ fontSize: 40, marginBottom: 12 }}>[cricket]</div>
                             <div style={{ fontSize: 18, fontWeight: 700 }}>Loading matches...</div>
                         </div>
                     )}
@@ -948,7 +948,7 @@ body { background: ${C.bg}; }
                             <>
                                 <input type="email" placeholder="Your email address" value={emailInput} onChange={e => setEmailInput(e.target.value)} style={{ width: "100%", padding: "13px 16px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, marginBottom: 10, outline: "none", fontFamily: "Inter,system-ui" }} />
                                 <button className="btn-p" onClick={() => handleCheckout(selectedPlan)} disabled={checkingPayment}>
-                                    {checkingPayment ? "Loading..." : `Pay ${selectedPlan === "annual" ? "59.99/yr" : "&#163;9.99/mo"}`}
+                                    {checkingPayment ? "Loading..." : `Pay ${selectedPlan === "annual" ? "59.99/yr" : "GBP9.99/mo"}`}
                                 </button>
                             </>
                         )}
