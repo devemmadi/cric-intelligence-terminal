@@ -683,7 +683,17 @@ body { background: ${C.bg}; }
 
                                     <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
                                         <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                            <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || "&#9728;"}</span>
+                                            <span style={{ 
+                                                fontSize: 13, fontWeight: 700, 
+                                                background: pred?.weather?.condition === "SUNNY" || pred?.weather?.condition === "CLEAR" ? "#FFF3CD" : 
+                                                            pred?.weather?.condition === "RAIN" ? "#CCE5FF" : 
+                                                            pred?.weather?.condition === "OVERCAST" ? "#E2E3E5" : "#E2E3E5",
+                                                color: pred?.weather?.condition === "SUNNY" || pred?.weather?.condition === "CLEAR" ? "#856404" : 
+                                                       pred?.weather?.condition === "RAIN" ? "#004085" : "#383D41",
+                                                padding: "6px 10px", borderRadius: 8, letterSpacing: 0.5
+                                              }}>
+                                                {pred?.weather?.condition || "N/A"}
+                                              </span>
                                             <div>
                                                 <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>WEATHER</div>
                                                 <div style={{ fontSize: 20, fontWeight: 800 }}>{pred.weather?.temp || ""}C</div>
