@@ -262,7 +262,7 @@ function MatchPill({ m, selected, onClick }) {
     return (
         <div className={`match-pill ${selected ? "sel" : ""}`} onClick={() => { onClick(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ opacity: m.status === "ENDED" ? 0.75 : 1 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: 10, color: "#64748B" }}>{m.day} - {m.detail?.split("Â·")[0]?.trim().slice(0, 18)}</span>
+                <span style={{ fontSize: 10, color: "#64748B" }}>{m.day} - {m.detail?.split("ÃÂ·")[0]?.trim().slice(0, 18)}</span>
                 <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 5, background: m.status === "LIVE" ? "#FFF0F0" : m.status === "UPCOMING" ? "#EFF6FF" : "#F0F0F0", color: m.status === "LIVE" ? "#E53E3E" : m.status === "UPCOMING" ? "#1E2D6B" : "#64748B" }}>
                     {m.status === "LIVE" ? "LIVE" : m.status === "UPCOMING" ? "SOON" : "ENDED"}
                 </span>
@@ -284,7 +284,7 @@ function MatchCard({ m, onClick }) {
     return (
         <div className="card" style={{ padding: 16, marginBottom: 10, cursor: "pointer", opacity: m.status === "ENDED" ? 0.8 : 1 }} onClick={onClick}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                <span style={{ fontSize: 11, color: "#64748B" }}>{m.day} - {m.detail?.split("Â·")[0]?.trim()}</span>
+                <span style={{ fontSize: 11, color: "#64748B" }}>{m.day} - {m.detail?.split("ÃÂ·")[0]?.trim()}</span>
                 <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: m.status === "LIVE" ? "#FFF0F0" : m.status === "UPCOMING" ? "#EFF6FF" : "#F0F0F0", color: m.status === "LIVE" ? "#E53E3E" : m.status === "UPCOMING" ? "#1E2D6B" : "#64748B" }}>
                     {m.status === "LIVE" ? "LIVE" : m.status === "UPCOMING" ? "UPCOMING" : "ENDED"}
                 </span>
@@ -348,7 +348,7 @@ function MediaSection() {
 function NoMatchesScreen() {
     return (
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 32px", textAlign: "center" }}>
-            <div style={{ fontSize: 64, marginBottom: 20 }}>ð</div>
+            <div style={{ fontSize: 64, marginBottom: 20 }}>Ã°ÂÂÂ</div>
             <div style={{ fontSize: 24, fontWeight: 800, color: C.navy, marginBottom: 10 }}>No Live Matches Right Now</div>
             <div style={{ fontSize: 15, color: C.muted, lineHeight: 1.7, maxWidth: 380, marginBottom: 24 }}>
                 IPL and international matches will appear here automatically when they go live.
@@ -683,7 +683,7 @@ body { background: ${C.bg}; }
 
                                     <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
                                         <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                            <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || "â"}</span>
+                                            <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || "Ã¢ÂÂ"}</span>
                                             <div>
                                                 <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>WEATHER</div>
                                                 <div style={{ fontSize: 20, fontWeight: 800 }}>{pred.weather?.temp || ""}C</div>
@@ -706,7 +706,7 @@ body { background: ${C.bg}; }
                                           <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>NEXT 3 OVERS PREDICTION</div>
                                           <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{pred?.currentPhase || ""}</div>
                                         </div>
-                                        <div style={{ fontSize: 10, color: C.accent }}>1 free · <span style={{ color: C.gold, fontWeight: 700 }}>Upgrade for all 5</span></div>
+                                        <div style={{ fontSize: 10, color: C.accent }}>1 free Â· <span style={{ color: C.gold, fontWeight: 700 }}>Upgrade for all 5</span></div>
                                       </div>
 
                                       {/* 3 over cards stacked vertically */}
@@ -734,7 +734,7 @@ body { background: ${C.bg}; }
                                             }}>
                                               {isLocked ? (
                                                 <div style={{ textAlign: "center", padding: 8 }}>
-                                                  <span style={{ fontSize: 20 }}>🔒</span>
+                                                  <span style={{ fontSize: 20 }}>ð</span>
                                                   <div style={{ fontSize: 11, color: C.muted, marginTop: 4 }}>Premium</div>
                                                 </div>
                                               ) : (
@@ -752,7 +752,7 @@ body { background: ${C.bg}; }
                                                   <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
                                                     {batSR > 0 && (
                                                       <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "4px 8px" }}>
-                                                        <span style={{ fontSize: 13 }}>🏏</span>
+                                                        <span style={{ fontSize: 13 }}></span>
                                                         <div>
                                                           <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>BATSMAN SR</div>
                                                           <div style={{ fontSize: 13, fontWeight: 800, color: batSR > 130 ? C.green : batSR < 80 ? C.red : C.amber }}>{batSR}</div>
@@ -761,7 +761,7 @@ body { background: ${C.bg}; }
                                                     )}
                                                     {bowlEco > 0 && (
                                                       <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "4px 8px" }}>
-                                                        <span style={{ fontSize: 13 }}>🎯</span>
+                                                        <span style={{ fontSize: 13 }}></span>
                                                         <div>
                                                           <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>BOWLER ECO</div>
                                                           <div style={{ fontSize: 13, fontWeight: 800, color: bowlEco < 7 ? C.green : bowlEco > 10 ? C.red : C.amber }}>{bowlEco}</div>
@@ -770,7 +770,7 @@ body { background: ${C.bg}; }
                                                     )}
                                                     {bndPct > 0 && (
                                                       <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "4px 8px" }}>
-                                                        <span style={{ fontSize: 13 }}>💥</span>
+                                                        <span style={{ fontSize: 13 }}></span>
                                                         <div>
                                                           <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>BOUNDARY %</div>
                                                           <div style={{ fontSize: 13, fontWeight: 800, color: bndPct > 40 ? C.green : C.muted }}>{bndPct}%</div>
@@ -779,16 +779,16 @@ body { background: ${C.bg}; }
                                                     )}
                                                     {last3r > 0 && (
                                                       <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "4px 8px" }}>
-                                                        <span style={{ fontSize: 13 }}>📊</span>
+                                                        <span style={{ fontSize: 13 }}></span>
                                                         <div>
                                                           <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>LAST 3 OV</div>
-                                                          <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{last3r}r · {last3w}w</div>
+                                                          <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{last3r}r {last3w}w</div>
                                                         </div>
                                                       </div>
                                                     )}
                                                     {pship > 0 && (
                                                       <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "4px 8px" }}>
-                                                        <span style={{ fontSize: 13 }}>🤝</span>
+                                                        <span style={{ fontSize: 13 }}></span>
                                                         <div>
                                                           <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>PARTNERSHIP</div>
                                                           <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{pship}</div>
@@ -808,24 +808,24 @@ body { background: ${C.bg}; }
                                                     </div>
                                                     <div style={{ display: "flex", justifyContent: "space-between", marginTop: 5 }}>
                                                       <span style={{ fontSize: 11, color: C.muted }}>Expected: {ov.expectedRuns} runs</span>
-                                                      <span style={{ fontSize: 11, fontWeight: 700, color: wc }}>⚡ {ov.wicketProb}% wicket</span>
+                                                      <span style={{ fontSize: 11, fontWeight: 700, color: wc }}>â¡ {ov.wicketProb}% wicket</span>
                                                     </div>
                                                   </div>
 
                                                   {/* Row 4: Pitch + Weather + Wear inline */}
                                                   <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
                                                     <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "3px 8px" }}>
-                                                      <span style={{ fontSize: 11 }}>🏟</span>
-                                                      <span style={{ fontSize: 10, color: C.muted }}>{pred?.pitchLabel || "—"}</span>
+                                                      <span style={{ fontSize: 11 }}>ð</span>
+                                                      <span style={{ fontSize: 10, color: C.muted }}>{pred?.pitchLabel || "â"}</span>
                                                       <span style={{ fontSize: 9, color: pred?.pitchCondition === "WORN" ? C.red : pred?.pitchCondition === "DRY" ? C.amber : C.green, fontWeight: 700 }}>{pred?.pitchCondition || ""}</span>
                                                     </div>
                                                     <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "3px 8px" }}>
-                                                      <span style={{ fontSize: 11 }}>🌤</span>
-                                                      <span style={{ fontSize: 10, color: C.muted }}>{pred?.weather?.temp}°C · {pred?.weather?.condition}</span>
+                                                      <span style={{ fontSize: 11 }}>ð¤</span>
+                                                      <span style={{ fontSize: 10, color: C.muted }}>{pred?.weather?.temp}Â°C Â· {pred?.weather?.condition}</span>
                                                     </div>
                                                     {ov.pitchWear > 0 && (
                                                       <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "3px 8px" }}>
-                                                        <span style={{ fontSize: 11 }}>📉</span>
+                                                        <span style={{ fontSize: 11 }}>ð</span>
                                                         <span style={{ fontSize: 10, color: ov.pitchWear > 10 ? C.red : ov.pitchWear > 5 ? C.amber : C.muted }}>Wear {ov.pitchWear}%</span>
                                                       </div>
                                                     )}
@@ -880,7 +880,7 @@ body { background: ${C.bg}; }
                 <div className="fade" style={{ maxWidth: 680, margin: "0 auto", padding: "22px 16px" }}>
                     {liveMatches.length === 0 && (
                         <div style={{ textAlign: "center", padding: 60, color: C.muted }}>
-                            <div style={{ fontSize: 40, marginBottom: 12 }}>ð</div>
+                            <div style={{ fontSize: 40, marginBottom: 12 }}>Ã°ÂÂÂ</div>
                             <div style={{ fontSize: 18, fontWeight: 700 }}>Loading matches...</div>
                         </div>
                     )}
@@ -937,7 +937,7 @@ body { background: ${C.bg}; }
                                     {[{ plan: "monthly", price: "9.99", per: "/mo", label: "Monthly", sub: "Cancel anytime" }, { plan: "annual", price: "59.99", per: "/yr", label: "Annual", sub: "Save 50%" }].map(p => (
                                         <div key={p.plan} onClick={() => setSelectedPlan(p.plan)} style={{ border: `2px solid ${selectedPlan === p.plan ? C.accent : C.border}`, borderRadius: 12, padding: 14, cursor: "pointer", textAlign: "center" }}>
                                             <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 4 }}>{p.label}</div>
-                                            <div style={{ fontSize: 22, fontWeight: 800 }}>Â£{p.price}</div>
+                                            <div style={{ fontSize: 22, fontWeight: 800 }}>ÃÂ£{p.price}</div>
                                             <div style={{ fontSize: 11, color: C.muted }}>{p.per} - {p.sub}</div>
                                         </div>
                                     ))}
@@ -949,7 +949,7 @@ body { background: ${C.bg}; }
                             <>
                                 <input type="email" placeholder="Your email address" value={emailInput} onChange={e => setEmailInput(e.target.value)} style={{ width: "100%", padding: "13px 16px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, marginBottom: 10, outline: "none", fontFamily: "Inter,system-ui" }} />
                                 <button className="btn-p" onClick={() => handleCheckout(selectedPlan)} disabled={checkingPayment}>
-                                    {checkingPayment ? "Loading..." : `Pay ${selectedPlan === "annual" ? "Â£59.99/yr" : "Â£9.99/mo"}`}
+                                    {checkingPayment ? "Loading..." : `Pay ${selectedPlan === "annual" ? "ÃÂ£59.99/yr" : "ÃÂ£9.99/mo"}`}
                                 </button>
                             </>
                         )}
