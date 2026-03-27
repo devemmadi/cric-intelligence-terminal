@@ -756,7 +756,35 @@ body { background: ${C.bg}; }
                                                     </div>
                                                   </div>
 
-                                                  {/* Row 4: Pitch + Weather + Wear inline */}
+                                                                                          {/* LIVE BALL TRACKER */}
+                                        {(() => {
+                                          const pc = data && data.playerContext ? data.playerContext : null;
+                                          const curRuns = pc ? pc.currentOverRuns : null;
+                                          const curBalls = pc ? pc.currentOverBalls : 0;
+                                          const isCurrentOv = curRuns !== null && curBalls > 0 && ov.over === (data.nextOvers && data.nextOvers[0] ? data.nextOvers[0].over : -1);
+                                          if (!isCurrentOv) return null;
+                                          const projected = curBalls > 0 ? Math.round((curRuns / curBalls) * 6) : 0;
+                                          const lo = parseInt((ov.runRange || '0-0').split('-')[0]);
+                                          const hi = parseInt((ov.runRange || '0-0').split('-')[1]);
+                                          const status = projected > hi ? 'AHEAD' : projected < lo ? 'BEHIND' : 'ON TRACK';
+                                          const sc = status === 'AHEAD' ? '#00B894' : status === 'BEHIND' ? '#E53E3E' : '#F59E0B';
+                                          return (
+                                            <div style={{ marginTop: 8, marginBottom: 6, padding: '7px 10px', background: 'rgba(30,45,107,0.07)', borderRadius: 6, border: '1px solid rgba(30,45,107,0.18)' }}>
+                                              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span style={{ fontSize: 11, color: '#64748B', fontWeight: 700, letterSpacing: 0.3 }}>
+                                                  LIVE: {curRuns}r in {curBalls} {curBalls === 1 ? 'ball' : 'balls'}
+                                                </span>
+                                                <span style={{ fontSize: 11, fontWeight: 800, color: sc, letterSpacing: 0.5 }}>
+                                                  {status}
+                                                </span>
+                                              </div>
+                                              <div style={{ fontSize: 10, color: '#64748B', marginTop: 2 }}>
+                                                Projected: ~{projected} runs this over
+                                              </div>
+                                            </div>
+                                          );
+                                        })()}
+{/* Row 4: Pitch + Weather + Wear inline */}
                                                   <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
                                                     <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "3px 8px" }}>
                                                       <span style={{ fontSize: 11 }}></span>
