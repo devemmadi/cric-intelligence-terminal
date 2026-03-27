@@ -758,10 +758,10 @@ body { background: ${C.bg}; }
 
                                                                                           {/* LIVE BALL TRACKER */}
                                         {(() => {
-                                          const pc = data && data.playerContext ? data.playerContext : null;
+                                          const pc = pred && pred.playerContext ? pred.playerContext : null;
                                           const curRuns = pc ? pc.currentOverRuns : null;
-                                          const curBalls = pc ? pc.currentOverBalls : 0;
-                                          const isCurrentOv = curRuns !== null && curBalls > 0 && ov.over === (data.nextOvers && data.nextOvers[0] ? data.nextOvers[0].over : -1);
+                                          const curBalls = pc ? (pc.currentOverBalls || 0) : 0;
+                                          const isCurrentOv = curRuns !== null && curBalls > 0 && ov.over === (pred.nextOvers && pred.nextOvers[0] ? pred.nextOvers[0].over : -1);
                                           if (!isCurrentOv) return null;
                                           const projected = curBalls > 0 ? Math.round((curRuns / curBalls) * 6) : 0;
                                           const lo = parseInt((ov.runRange || '0-0').split('-')[0]);
