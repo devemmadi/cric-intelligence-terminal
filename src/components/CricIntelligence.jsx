@@ -749,9 +749,9 @@ body { background: ${C.bg}; }
                                                   </div>
 
                                                   {/* Row 2: Batsman + Bowler live stats */}
-                                                  <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
+                                                  <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
                                                     {batSR > 0 && (
-                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "4px 8px" }}>
+                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
                                                         <span style={{ fontSize: 13 }}></span>
                                                         <div>
                                                           <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>BATSMAN SR</div>
@@ -760,7 +760,7 @@ body { background: ${C.bg}; }
                                                       </div>
                                                     )}
                                                     {bowlEco > 0 && (
-                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "4px 8px" }}>
+                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
                                                         <span style={{ fontSize: 13 }}></span>
                                                         <div>
                                                           <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>BOWLER ECO</div>
@@ -769,7 +769,7 @@ body { background: ${C.bg}; }
                                                       </div>
                                                     )}
                                                     {bndPct > 0 && (
-                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "4px 8px" }}>
+                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
                                                         <span style={{ fontSize: 13 }}></span>
                                                         <div>
                                                           <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>BOUNDARY %</div>
@@ -778,7 +778,7 @@ body { background: ${C.bg}; }
                                                       </div>
                                                     )}
                                                     {last3r > 0 && (
-                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "4px 8px" }}>
+                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
                                                         <span style={{ fontSize: 13 }}></span>
                                                         <div>
                                                           <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>LAST 3 OV</div>
@@ -787,7 +787,7 @@ body { background: ${C.bg}; }
                                                       </div>
                                                     )}
                                                     {pship > 0 && (
-                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "4px 8px" }}>
+                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
                                                         <span style={{ fontSize: 13 }}></span>
                                                         <div>
                                                           <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>PARTNERSHIP</div>
@@ -833,7 +833,7 @@ body { background: ${C.bg}; }
 
                                                   {/* Row 5: Tip */}
                                                   <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 8, marginTop: 2 }}>
-                                                    <span style={{ fontSize: 11, color: C.accent, fontStyle: "italic" }}>"{ov.tip}"</span>
+                                                    <span style={{ fontSize: 13, color: C.accent, fontStyle: "italic", fontWeight: 600 }}>"{ov.tip}"</span>
                                                   </div>
                                                 </>
                                               )}
