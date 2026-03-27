@@ -687,6 +687,32 @@ body { background: ${C.bg}; }
                                                     <span style={{ fontSize: 11, color: C.muted }}>{ov.confidence}% conf</span>
                                                   </div>
 
+                                                  {/* VERDICT BADGE - Option B+C */}
+                                                  {(() => {
+                                                    const sr = pred && pred.playerContext ? (pred.playerContext.strikerSR || 0) : 0;
+                                                    const eco = pred && pred.playerContext ? (pred.playerContext.bowlerEco || 8) : 8;
+                                                    const bnd = pred && pred.playerContext ? (pred.playerContext.boundaryPct || 0) : 0;
+                                                    const l3r = pred && pred.playerContext ? (pred.playerContext.last3Runs || 0) : 0;
+                                                    const phase = ov.phase || '';
+                                                    let vText, vColor, vBg;
+                                                    if (sr > 150 && eco > 8.5) {
+                                                      vText = 'BIG SCORING OVER'; vColor = '#E53E3E'; vBg = 'rgba(229,62,62,0.12)';
+                                                    } else if (sr > 150 || (eco > 8 && bnd > 35)) {
+                                                      vText = 'RUNS LIKELY'; vColor = '#F59E0B'; vBg = 'rgba(245,158,11,0.12)';
+                                                    } else if (sr < 100 && eco < 6.5) {
+                                                      vText = 'TIGHT OVER'; vColor = '#00B894'; vBg = 'rgba(0,184,148,0.12)';
+                                                    } else if (l3r > 25 || phase === 'DEATH OVERS') {
+                                                      vText = 'HOT MOMENTUM'; vColor = '#E53E3E'; vBg = 'rgba(229,62,62,0.12)';
+                                                    } else {
+                                                      vText = 'STEADY OVER'; vColor = '#64748B'; vBg = 'rgba(100,116,139,0.12)';
+                                                    }
+                                                    return (
+                                                      <div style={{ display: 'inline-block', marginTop: 6, marginBottom: 2, padding: '3px 10px', background: vBg, border: '1px solid ' + vColor, borderRadius: 20 }}>
+                                                        <span style={{ fontSize: 11, fontWeight: 800, color: vColor, letterSpacing: 0.6 }}>{vText}</span>
+                                                      </div>
+                                                    );
+                                                  })()}
+
                                                   {/* Row 2: Batsman + Bowler live stats */}
                                                   <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
                                                     {batSR > 0 && (
@@ -806,6 +832,33 @@ body { background: ${C.bg}; }
                                                   {/* Row 5: Tip */}
                                                   <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 8, marginTop: 2 }}>
                                                     <span style={{ fontSize: 13, color: C.accent, fontStyle: "italic", fontWeight: 600 }}>"{ov.tip}"</span>
+                                                  {/* PLAIN ENGLISH - Option D */}
+                                                  {(() => {
+                                                    const sr = pred && pred.playerContext ? (pred.playerContext.strikerSR || 0) : 0;
+                                                    const eco = pred && pred.playerContext ? (pred.playerContext.bowlerEco || 8) : 8;
+                                                    const bnd = pred && pred.playerContext ? (pred.playerContext.boundaryPct || 0) : 0;
+                                                    const l3r = pred && pred.playerContext ? (pred.playerContext.last3Runs || 0) : 0;
+                                                    const wkp = ov.wicketProb || 0;
+                                                    let eng;
+                                                    if (sr > 150 && eco > 8.5) {
+                                                      eng = 'Batter on fire (SR ' + Math.round(sr) + ') vs expensive bowler — big over incoming';
+                                                    } else if (sr > 150) {
+                                                      eng = 'Aggressive batter (SR ' + Math.round(sr) + ') in control — expect ' + ov.runRange + ' runs';
+                                                    } else if (eco < 6) {
+                                                      eng = 'Bowler on top (Eco ' + eco.toFixed(1) + ') — tough to score freely';
+                                                    } else if (wkp > 25) {
+                                                      eng = 'Wicket danger (' + wkp + '%) — could be a turning point';
+                                                    } else if (l3r > 25) {
+                                                      eng = 'Last 3 overs were HOT (' + l3r + 'r) — momentum with batting team';
+                                                    } else {
+                                                      eng = 'Balanced contest — ML predicts ' + ov.runRange + ' runs';
+                                                    }
+                                                    return (
+                                                      <div style={{ marginTop: 6, padding: '6px 10px', background: 'rgba(30,45,107,0.06)', borderRadius: 6, borderLeft: '3px solid ' + C.accent }}>
+                                                        <span style={{ fontSize: 12, color: C.text, fontWeight: 500 }}>{eng}</span>
+                                                      </div>
+                                                    );
+                                                  })()}
                                                   </div>
                                                 </>
                                               )}
