@@ -866,6 +866,7 @@ body { background: ${C.bg}; }
                                           );
                                         })}
                                       </div>
+                                    </div>{/* close over-cards card */}
 
                                     {/* RIGHT COLUMN */}
                                     <div style={{ position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 14 }}>
@@ -912,7 +913,7 @@ body { background: ${C.bg}; }
                                         </div>
                                     )}
 
-                                                                        </div>                                    </div>                                </div>
+                                                                        </div>                                </div>
 <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
                                         <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
                                             <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || ""}</span>
