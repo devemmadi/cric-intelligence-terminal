@@ -637,7 +637,7 @@ body { background: ${C.bg}; }
                                 </div>
 
                                 <div style={{ padding: "20px 24px" }}>
-                                    <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                                    <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
                                     <div className="card" style={{ padding: 22, marginBottom: 14 }}>
                                       {/* NEXT 3 OVERS - header */}
                                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
@@ -866,7 +866,9 @@ body { background: ${C.bg}; }
                                           );
                                         })}
                                       </div>
-                                    </div>                                </div>
+
+                                    {/* RIGHT COLUMN */}
+                                    <div style={{ position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 14 }}>
                                         <div className="card" style={{ padding: 22 }}>
                                             <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WIN PROBABILITY</div>
                                             <div style={{ fontSize: 13, fontWeight: 700, color: winColor, marginBottom: 8 }}>{winMsg}</div>
@@ -910,7 +912,8 @@ body { background: ${C.bg}; }
                                         </div>
                                     )}
 
-                                    <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                                                                        </div>                                    </div>                                </div>
+<div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
                                         <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
                                             <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || ""}</span>
                                             <div>
