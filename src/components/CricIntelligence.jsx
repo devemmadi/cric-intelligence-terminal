@@ -841,17 +841,17 @@ body { background: ${C.bg}; }
                                                     const wkp = ov.wicketProb || 0;
                                                     let eng;
                                                     if (sr > 150 && eco > 8.5) {
-                                                      eng = 'Batter on fire (SR ' + Math.round(sr) + ') vs expensive bowler â big over incoming';
+                                                      eng = 'Batter on fire (SR ' + Math.round(sr) + ') vs expensive bowler  -  big over incoming';
                                                     } else if (sr > 150) {
-                                                      eng = 'Aggressive batter (SR ' + Math.round(sr) + ') in control â expect ' + ov.runRange + ' runs';
+                                                      eng = 'Aggressive batter (SR ' + Math.round(sr) + ') in control  -  expect ' + ov.runRange + ' runs';
                                                     } else if (eco < 6) {
-                                                      eng = 'Bowler on top (Eco ' + eco.toFixed(1) + ') â tough to score freely';
+                                                      eng = 'Bowler on top (Eco ' + eco.toFixed(1) + ')  -  tough to score freely';
                                                     } else if (wkp > 25) {
-                                                      eng = 'Wicket danger (' + wkp + '%) â could be a turning point';
+                                                      eng = 'Wicket danger (' + wkp + '%)  -  could be a turning point';
                                                     } else if (l3r > 25) {
-                                                      eng = 'Last 3 overs were HOT (' + l3r + 'r) â momentum with batting team';
+                                                      eng = 'Last 3 overs were HOT (' + l3r + 'r)  -  momentum with batting team';
                                                     } else {
-                                                      eng = 'Balanced contest â ML predicts ' + ov.runRange + ' runs';
+                                                      eng = 'Balanced contest  -  ML predicts ' + ov.runRange + ' runs';
                                                     }
                                                     return (
                                                       <div style={{ marginTop: 6, padding: '6px 10px', background: 'rgba(255,255,255,0.07)', borderRadius: 6, borderLeft: '3px solid #4A90D9' }}>
