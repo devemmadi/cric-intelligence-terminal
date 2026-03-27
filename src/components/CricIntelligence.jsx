@@ -638,67 +638,6 @@ body { background: ${C.bg}; }
 
                                 <div style={{ padding: "20px 24px" }}>
                                     <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-                                        <div className="card" style={{ padding: 22 }}>
-                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WIN PROBABILITY</div>
-                                            <div style={{ fontSize: 13, fontWeight: 700, color: winColor, marginBottom: 8 }}>{winMsg}</div>
-                                            <div style={{ display: "flex", justifyContent: "center", margin: "4px 0 10px" }}><WinArc value={prob} /></div>
-                                            <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>
-                                                <strong style={{ color: C.text }}>{cleanTeam(pred.team1)}</strong> has a <strong style={{ color: winColor }}>{prob}% chance</strong> of winning based on current score, pitch and 1.7M historical matches.
-                                            </div>
-                                        </div>
-                                        <div className="card" style={{ padding: 22 }}>
-                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 14 }}>MATCH INTEL</div>
-                                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
-                                                <div>
-                                                    <div style={{ fontSize: 10, color: C.green, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>STRENGTHS</div>
-                                                    {(pred.strengths || pred.pitchStrengths || []).map((s, i) => (
-                                                        <div key={i} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.green }}>+</span>{s}</div>
-                                                    ))}
-                                                </div>
-                                                <div>
-                                                    <div style={{ fontSize: 10, color: C.red, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>RISKS</div>
-                                                    {(pred.weaknesses || pred.pitchRisks || []).map((w, i) => (
-                                                        <div key={i} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.red }}>-</span>{w}</div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                            {!isPremium
-                                                ? <button onClick={() => setShowPaywall(true)} className="btn-p" style={{ fontSize: 12 }}>Unlock Full Analysis - 9.99/mo</button>
-                                                : <div style={{ background: C.bg, borderRadius: 8, padding: "10px 12px", fontSize: 12, color: C.muted }}>{pred.weatherImpact?.tip || "Bright conditions favour batters."}</div>
-                                            }
-                                        </div>
-                                    </div>
-
-                                    <NextOverIntelligence pred={pred} />
-
-                                    {pred.toss && (
-                                        <div style={{ background: "linear-gradient(135deg,#1E2D6B,#253580)", borderRadius: 14, padding: "14px 18px", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
-                                            <div>
-                                                <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 2 }}>TOSS</div>
-                                                <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{pred.toss.winner} won - elected to {pred.toss.decision}</div>
-                                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>{pred.tossTip || ""}</div>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-                                        <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                            <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || ""}</span>
-                                            <div>
-                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>WEATHER</div>
-                                                <div style={{ fontSize: 20, fontWeight: 800 }}>{pred.weather?.temp || ""}C</div>
-                                                <div style={{ fontSize: 11, color: C.muted }}>{pred.weather?.condition || ""}</div>
-                                            </div>
-                                        </div>
-                                        <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                            <div>
-                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PITCH</div>
-                                                <div style={{ fontSize: 15, fontWeight: 700 }}>{pred.pitchLabel || ""}</div>
-                                                <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || ""}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                     <div className="card" style={{ padding: 22, marginBottom: 14 }}>
                                       {/* NEXT 3 OVERS - header */}
                                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
@@ -842,6 +781,67 @@ body { background: ${C.bg}; }
                                         })}
                                       </div>
                                     </div>                                </div>
+                                        <div className="card" style={{ padding: 22 }}>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WIN PROBABILITY</div>
+                                            <div style={{ fontSize: 13, fontWeight: 700, color: winColor, marginBottom: 8 }}>{winMsg}</div>
+                                            <div style={{ display: "flex", justifyContent: "center", margin: "4px 0 10px" }}><WinArc value={prob} /></div>
+                                            <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>
+                                                <strong style={{ color: C.text }}>{cleanTeam(pred.team1)}</strong> has a <strong style={{ color: winColor }}>{prob}% chance</strong> of winning based on current score, pitch and 1.7M historical matches.
+                                            </div>
+                                        </div>
+                                        <div className="card" style={{ padding: 22 }}>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 14 }}>MATCH INTEL</div>
+                                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+                                                <div>
+                                                    <div style={{ fontSize: 10, color: C.green, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>STRENGTHS</div>
+                                                    {(pred.strengths || pred.pitchStrengths || []).map((s, i) => (
+                                                        <div key={i} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.green }}>+</span>{s}</div>
+                                                    ))}
+                                                </div>
+                                                <div>
+                                                    <div style={{ fontSize: 10, color: C.red, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>RISKS</div>
+                                                    {(pred.weaknesses || pred.pitchRisks || []).map((w, i) => (
+                                                        <div key={i} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.red }}>-</span>{w}</div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            {!isPremium
+                                                ? <button onClick={() => setShowPaywall(true)} className="btn-p" style={{ fontSize: 12 }}>Unlock Full Analysis - 9.99/mo</button>
+                                                : <div style={{ background: C.bg, borderRadius: 8, padding: "10px 12px", fontSize: 12, color: C.muted }}>{pred.weatherImpact?.tip || "Bright conditions favour batters."}</div>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <NextOverIntelligence pred={pred} />
+
+                                    {pred.toss && (
+                                        <div style={{ background: "linear-gradient(135deg,#1E2D6B,#253580)", borderRadius: 14, padding: "14px 18px", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
+                                            <div>
+                                                <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 2 }}>TOSS</div>
+                                                <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{pred.toss.winner} won - elected to {pred.toss.decision}</div>
+                                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>{pred.tossTip || ""}</div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                                        <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
+                                            <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || ""}</span>
+                                            <div>
+                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>WEATHER</div>
+                                                <div style={{ fontSize: 20, fontWeight: 800 }}>{pred.weather?.temp || ""}C</div>
+                                                <div style={{ fontSize: 11, color: C.muted }}>{pred.weather?.condition || ""}</div>
+                                            </div>
+                                        </div>
+                                        <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
+                                            <div>
+                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PITCH</div>
+                                                <div style={{ fontSize: 15, fontWeight: 700 }}>{pred.pitchLabel || ""}</div>
+                                                <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || ""}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                             </>
                         )}
                     </main>
