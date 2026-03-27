@@ -712,7 +712,7 @@ body { background: ${C.bg}; }
                                       {/* 3 over cards stacked vertically */}
                                       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                                         {(pred.nextOvers || []).slice(0, 3).map((ov, i) => {
-                                          const isLocked = i > 0 && !pred.isPro;
+                                          const isLocked = false;
                                           const wc = ov.wicketProb > 40 ? C.red : ov.wicketProb > 25 ? C.amber : C.green;
                                           const runFill = Math.min(100, (ov.expectedRuns / 18) * 100);
                                           const batSR = pred?.playerContext?.strikerSR || 0;
