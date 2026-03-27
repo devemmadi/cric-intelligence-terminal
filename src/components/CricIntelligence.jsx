@@ -693,8 +693,9 @@ body { background: ${C.bg}; }
                                                       <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
                                                         <span style={{ fontSize: 13 }}></span>
                                                         <div>
-                                                          <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>BATSMAN SR</div>
-                                                          <div style={{ fontSize: 13, fontWeight: 800, color: batSR > 130 ? C.green : batSR < 80 ? C.red : C.amber }}>{batSR}</div>
+                                                          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 0.5 }}>BATSMAN SR</div>
+                                                          <div style={{ fontSize: 16, fontWeight: 900, color: batSR > 130 ? C.green : batSR < 80 ? C.red : C.amber, lineHeight: 1.1 }}>{batSR}</div>
+                                                          <div style={{ fontSize: 9, fontWeight: 800, color: batSR > 130 ? C.green : batSR < 80 ? C.red : C.amber, marginTop: 1 }}>{batSR > 150 ? "EXPLOSIVE" : batSR > 130 ? "AGGRESSIVE" : batSR > 100 ? "STEADY" : "STRUGGLING"}</div>
                                                         </div>
                                                       </div>
                                                     )}
@@ -702,8 +703,9 @@ body { background: ${C.bg}; }
                                                       <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
                                                         <span style={{ fontSize: 13 }}></span>
                                                         <div>
-                                                          <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>BOWLER ECO</div>
-                                                          <div style={{ fontSize: 13, fontWeight: 800, color: bowlEco < 7 ? C.green : bowlEco > 10 ? C.red : C.amber }}>{bowlEco}</div>
+                                                          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 0.5 }}>BOWL ECO</div>
+                                                          <div style={{ fontSize: 16, fontWeight: 900, color: bowlEco < 7 ? C.green : bowlEco > 10 ? C.red : C.amber, lineHeight: 1.1 }}>{bowlEco}</div>
+                                                          <div style={{ fontSize: 9, fontWeight: 800, color: bowlEco < 7 ? C.green : bowlEco > 10 ? C.red : C.amber, marginTop: 1 }}>{bowlEco < 6 ? "TIGHT" : bowlEco < 8 ? "DECENT" : bowlEco < 10 ? "EXPENSIVE" : "HAMMERED"}</div>
                                                         </div>
                                                       </div>
                                                     )}
@@ -711,8 +713,9 @@ body { background: ${C.bg}; }
                                                       <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
                                                         <span style={{ fontSize: 13 }}></span>
                                                         <div>
-                                                          <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>BOUNDARY %</div>
-                                                          <div style={{ fontSize: 13, fontWeight: 800, color: bndPct > 40 ? C.green : C.muted }}>{bndPct}%</div>
+                                                          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 0.5 }}>BOUNDARY</div>
+                                                          <div style={{ fontSize: 16, fontWeight: 900, color: bndPct > 40 ? C.green : bndPct > 25 ? C.amber : C.muted, lineHeight: 1.1 }}>{bndPct}%</div>
+                                                          <div style={{ fontSize: 9, fontWeight: 800, color: bndPct > 40 ? C.green : bndPct > 25 ? C.amber : C.muted, marginTop: 1 }}>{bndPct > 40 ? "FIRING" : bndPct > 25 ? "ACTIVE" : "QUIET"}</div>
                                                         </div>
                                                       </div>
                                                     )}
@@ -720,8 +723,9 @@ body { background: ${C.bg}; }
                                                       <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
                                                         <span style={{ fontSize: 13 }}></span>
                                                         <div>
-                                                          <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>LAST 3 OV</div>
-                                                          <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{last3r}r {last3w}w</div>
+                                                          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 0.5 }}>LAST 3 OV</div>
+                                                          <div style={{ fontSize: 16, fontWeight: 900, color: last3r > 25 ? C.green : last3r > 15 ? C.amber : C.muted, lineHeight: 1.1 }}>{last3r}r {last3w}w</div>
+                                                          <div style={{ fontSize: 9, fontWeight: 800, color: last3r > 25 ? C.green : last3r > 15 ? C.amber : C.muted, marginTop: 1 }}>{last3r > 25 ? "HOT" : last3r > 15 ? "MOVING" : "DRY"}</div>
                                                         </div>
                                                       </div>
                                                     )}
@@ -729,8 +733,9 @@ body { background: ${C.bg}; }
                                                       <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
                                                         <span style={{ fontSize: 13 }}></span>
                                                         <div>
-                                                          <div style={{ fontSize: 9, color: C.muted, lineHeight: 1 }}>PARTNERSHIP</div>
-                                                          <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{pship}</div>
+                                                          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 0.5 }}>PARTNERSHIP</div>
+                                                          <div style={{ fontSize: 16, fontWeight: 900, color: pship > 50 ? C.red : pship > 25 ? C.amber : C.muted, lineHeight: 1.1 }}>{pship}</div>
+                                                          <div style={{ fontSize: 9, fontWeight: 800, color: pship > 50 ? C.red : pship > 25 ? C.amber : C.muted, marginTop: 1 }}>{pship > 50 ? "DANGEROUS" : pship > 25 ? "BUILDING" : "NEW"}</div>
                                                         </div>
                                                       </div>
                                                     )}
