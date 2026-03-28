@@ -72,24 +72,22 @@ const TEAM_COLORS = {
 
 function TeamLogo({ name, size = 32, imageId = 0 }) {
     const [imgError, setImgError] = React.useState(false);
-    const abbr = (name || "?").replace(/[^A-Z]/g, "").substring(0, 3) || (name || "?").substring(0, 3).toUpperCase();
+    const abbr = (name || "?").replace(/[^A-Za-z]/g, "").substring(0, 3).toUpperCase() || "???";
     const colors = ["#1E2D6B","#C8961E","#00B894","#E53E3E","#6B21A8","#DD6B20","#0369A1","#065F46"];
-    const teamBg = colors[(abbr.charCodeAt(0) || 0) % colors.length];
-    const proxyUrl = imageId ? `https://web-production-91f0.up.railway.app/team-image/${imageId}` : null;
-
+    const teamBg = colors[(abbr.charCodeAt(0) || 65) % colors.length];
+    const proxyUrl = imageId ? "https://web-production-91f0.up.railway.app/team-image/" + imageId : null;
     if (!proxyUrl || imgError) {
         return (
-            <div style={{ width: size, height: size, borderRadius: "50%", background: teamBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "2px solid rgba(255,255,255,0.2)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>
-                <span style={{ fontFamily: "Inter, system-ui", fontSize: size * 0.32, fontWeight: 800, color: "#fff", letterSpacing: 0.5 }}>{abbr}</span>
+            <div style={{ width: size, height: size, borderRadius: "50%", background: teamBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "2px solid rgba(255,255,255,0.25)", boxShadow: "0 2px 8px rgba(0,0,0,0.25)" }}>
+                <span style={{ fontFamily: "Inter,system-ui", fontSize: size * 0.32, fontWeight: 800, color: "#fff", letterSpacing: 0.5 }}>{abbr}</span>
             </div>
         );
     }
     return (
         <img src={proxyUrl} alt={name} onError={() => setImgError(true)}
-            style={{ width: size, height: size, objectFit: "contain", borderRadius: "50%", background: "#fff", padding: 2, flexShrink: 0, border: `2px solid ${teamBg}`, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }} />
+            style={{ width: size, height: size, objectFit: "contain", borderRadius: "50%", background: "#fff", padding: 2, flexShrink: 0, border: "2px solid " + teamBg, boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }} />
     );
 }
-
 function WinArc({ value }) {
     const r = 54, cx = 64, cy = 64, circ = Math.PI * r;
     const pct = Math.min(Math.max(value, 0), 100) / 100;
@@ -282,7 +280,7 @@ function MatchCard({ m, onClick }) {
                     {m.status === "LIVE" ? "LIVE" : m.status === "UPCOMING" ? "UPCOMING" : "ENDED"}
                 </span>
             </div>
-            {[{ n: m.t1, s: m.t1Score, w: m.t1Wkts, b: true }, { n: m.t2, s: m.t2Score, b: false }].map(({ n, s, w, b }) => (
+            {[{ n: m.t1, s: m.t1Score, w: m.t1Wkts, b: true, imgId: m.t1ImageId || 0 }, { n: m.t2, s: m.t2Score, b: false, imgId: m.t2ImageId || 0 }].map(({ n, s, w, b, imgId }) => (
                 <div key={n} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                         <TeamLogo name={n} size={32} imageId={imgId || 0} />
