@@ -608,12 +608,12 @@ body { background: ${C.bg}; }
                         </div>
                     </aside>
 
-                    <main className="mc" style={{ padding: 0, overflowY: "auto" }}>
+                    <main className="mc" style={{ padding: 0, overflowY: "auto", overflow: "visible" }}>
                         {!pred ? (
                             <NoMatchesScreen />
                         ) : (
                             <>
-                                <div style={{ background: "linear-gradient(160deg,#1a2760 0%,#253580 100%)", padding: "24px 24px 28px" }}>
+                                <div style={{ background: "linear-gradient(160deg,#1a2760 0%,#253580 100%)", padding: "16px 24px 20px", position: "sticky", top: 0, zIndex: 100 }}>
                                     <div style={{ textAlign: "center" }}>
                                         <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 10 }}>{pred.venue || ""}</div>
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 12 }}>
