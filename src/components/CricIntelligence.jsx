@@ -643,7 +643,7 @@ body { background: ${C.bg}; }
                                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
                                         <div>
                                           <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>{`NEXT ${(pred.nextOvers || []).length} OVERS PREDICTION`}</div>
-                                          <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{pred?.currentPhase || ""}</div>
+                                          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{pred?.currentPhase || ""}</div>
                                         </div>
                                         <div style={{ fontSize: 10, color: C.accent }}>1 free  <span style={{ color: C.gold, fontWeight: 700 }}>Upgrade for all 5</span></div>
                                       </div>
@@ -665,9 +665,9 @@ body { background: ${C.bg}; }
                                           const phaseColor = ov.phase === "POWERPLAY" ? C.accent : ov.phase === "DEATH OVERS" ? C.red : C.amber;
                                           return (
                                             <div key={i} onClick={() => setActiveOver(i)} style={{
-                                              background: activeOver === i ? C.navyMid : C.surface,
-                                              border: `1px solid ${activeOver === i ? C.accent : C.border}`,
-                                              borderLeft: `3px solid ${activeOver === i ? C.accent : phaseColor}`,
+                                              background: activeOver === i ? "#2A3F82" : "#1B2A6B",
+                                              border: `2px solid ${activeOver === i ? "#fff" : "rgba(255,255,255,0.18)"}`,
+                                              borderLeft: `4px solid ${activeOver === i ? "#fff" : phaseColor}`,
                                               borderRadius: 12, padding: "14px 16px",
                                               cursor: "pointer", opacity: isLocked ? 0.45 : 1,
                                               transition: "all 0.2s"
@@ -682,10 +682,10 @@ body { background: ${C.bg}; }
                                                   {/* Row 1: Over number + phase */}
                                                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                                                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                                      <span style={{ fontSize: 14, fontWeight: 900, color: activeOver === i ? "#fff" : C.text }}>OVER {ov.over}</span>
-                                                      <span style={{ fontSize: 9, fontWeight: 700, color: phaseColor, background: phaseColor + "22", padding: "2px 7px", borderRadius: 20 }}>{ov.phase}</span>
+                                                      <span style={{ fontSize: 14, fontWeight: 900, color: "#fff" }}>OVER {ov.over}</span>
+                                                      <span style={{ fontSize: 9, fontWeight: 700, color: "#fff", background: phaseColor + "22", padding: "2px 7px", borderRadius: 20 }}>{ov.phase}</span>
                                                     </div>
-                                                    <span style={{ fontSize: 10, color: C.muted, background: C.bg, padding: '2px 6px', borderRadius: 4 }}>{ov.confidence}% conf</span>
+                                                    <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: 4 }}>{ov.confidence}% conf</span>
                                                   </div>
 
                                                   {/* VERDICT BADGE - Option B+C */}
@@ -697,15 +697,15 @@ body { background: ${C.bg}; }
                                                     const phase = ov.phase || '';
                                                     let vText, vColor, vBg;
                                                     if (sr > 150 && eco > 8.5) {
-                                                      vText = 'BIG SCORING OVER'; vColor = '#E53E3E'; vBg = 'rgba(229,62,62,0.12)';
+                                                      vText = 'BIG SCORING OVER'; vColor = '#FF4444'; vBg = 'rgba(255,68,68,0.22)';
                                                     } else if (sr > 150 || (eco > 8 && bnd > 35)) {
-                                                      vText = 'RUNS LIKELY'; vColor = '#F59E0B'; vBg = 'rgba(245,158,11,0.12)';
+                                                      vText = 'RUNS LIKELY'; vColor = '#FF9500'; vBg = 'rgba(255,149,0,0.22)';
                                                     } else if (sr < 100 && eco < 6.5) {
-                                                      vText = 'TIGHT OVER'; vColor = '#00B894'; vBg = 'rgba(0,184,148,0.12)';
+                                                      vText = 'TIGHT OVER'; vColor = '#00C896'; vBg = 'rgba(0,200,150,0.22)';
                                                     } else if (l3r > 25 || phase === 'DEATH OVERS') {
-                                                      vText = 'HOT MOMENTUM'; vColor = '#E53E3E'; vBg = 'rgba(229,62,62,0.12)';
+                                                      vText = 'HOT MOMENTUM'; vColor = '#A855F7'; vBg = 'rgba(168,85,247,0.22)';
                                                     } else {
-                                                      vText = 'STEADY OVER'; vColor = '#64748B'; vBg = 'rgba(100,116,139,0.12)';
+                                                      vText = 'STEADY OVER'; vColor = '#3B82F6'; vBg = 'rgba(59,130,246,0.22)';
                                                     }
                                                     return (
                                                       <div style={{ display: 'inline-block', marginTop: 8, marginBottom: 4, padding: '5px 14px', background: vBg, border: '1.5px solid ' + vColor, borderRadius: 20, boxShadow: '0 2px 8px ' + vBg }}>
@@ -771,7 +771,7 @@ body { background: ${C.bg}; }
                                                   {/* Row 3: Expected runs bar */}
                                                   <div style={{ marginBottom: 10 }}>
                                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
-                                                      <span style={{ fontSize: 28, fontWeight: 900, color: "#FFFFFF", lineHeight: 1 }}>{ov.runRange}</span>
+                                                      <span style={{ fontSize: 32, fontWeight: 900, color: "#FFFFFF", lineHeight: 1, textShadow: "0 0 20px rgba(255,255,255,0.3)" }}>{ov.runRange}</span>
                                                       <span style={{ fontSize: 12, color: "#CBD5E1" }}>runs expected</span>
                                                     </div>
                                                     <div style={{ height: 5, background: C.border, borderRadius: 3 }}>
