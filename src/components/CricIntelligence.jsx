@@ -474,10 +474,10 @@ export default function CricIntelligence() {
                 if (best && !userSelectedRef.current) setSelectedMatch(best);
             }
         } catch { setLiveStatus("mock"); }
-    }, [selectedMatch]);
+    }, []);
 
-    useEffect(() => { fetchMatches(); }, [fetchMatches]);
-    useEffect(() => { const t = setInterval(fetchMatches, 30000); return () => clearInterval(t); }, [fetchMatches]);
+    useEffect(() => { fetchMatches(); }, []);
+    useEffect(() => { const t = setInterval(fetchMatches, 30000); return () => clearInterval(t); }, []);
 
     useEffect(() => {
         if (selectedMatch?.matchId) {
