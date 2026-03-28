@@ -413,7 +413,7 @@ export default function CricIntelligence() {
 
     const fetchPred = useCallback(async (matchId) => {
         try {
-            const r = await const mid = matchId || selectedMatch?.matchId; fetch(`${API_BASE}/predict${mid ? "?match_id=" + mid : ""}`);
+            const r = await fetch(`${API_BASE}/predict${(matchId || selectedMatch?.matchId) ? "?match_id=" + (matchId || selectedMatch?.matchId) : ""}`);
             if (r.ok) {
                 const d = await r.json();
                 if (d && d.team1) {
