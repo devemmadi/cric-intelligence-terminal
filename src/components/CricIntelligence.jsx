@@ -70,30 +70,23 @@ const TEAM_COLORS = {
     "north west": "#8B4513", "kzn inland": "#006400",
 };
 
-function TeamLogo({ name, size = 32 }) {
-    const [errorLevel, setErrorLevel] = useState(0);
-    const key = (name || "").toLowerCase().trim();
-    const hsciUrl = TEAM_LOGOS[key];
-    const flagCode = FLAG_CODES[key];
-    const flagUrl = flagCode ? `https://flagcdn.com/w80/${flagCode}.png` : null;
-    const abbr = cleanTeam(name).slice(0, 3);
-    const hue = [...key].reduce((a, c) => a + c.charCodeAt(0), 0) % 360;
-    let src = null;
-    if (errorLevel === 0 && hsciUrl) src = hsciUrl;
-    else if (errorLevel <= 1 && flagUrl) src = flagUrl;
-    const handleError = () => setErrorLevel(prev => prev + 1);
-    useEffect(() => { setErrorLevel(0); }, [name]);
-    if (!src || errorLevel >= 2) {
-        const teamBg = TEAM_COLORS[key] || `hsl(${hue},65%,38%)`;
+function TeamLogo({ name, size = 32, imageId = 0 }) {
+    const [imgError, setImgError] = React.useState(false);
+    const abbr = (name || "?").replace(/[^A-Z]/g, "").substring(0, 3) || (name || "?").substring(0, 3).toUpperCase();
+    const colors = ["#1E2D6B","#C8961E","#00B894","#E53E3E","#6B21A8","#DD6B20","#0369A1","#065F46"];
+    const teamBg = colors[(abbr.charCodeAt(0) || 0) % colors.length];
+    const proxyUrl = imageId ? `https://web-production-91f0.up.railway.app/team-image/${imageId}` : null;
+
+    if (!proxyUrl || imgError) {
         return (
-            <div style={{ width: size, height: size, borderRadius: "50%", background: teamBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "2px solid rgba(255,255,255,0.15)" }}>
-                <span style={{ fontFamily: "Inter, system-ui", fontSize: size * 0.32, fontWeight: 700, color: "#fff" }}>{abbr}</span>
+            <div style={{ width: size, height: size, borderRadius: "50%", background: teamBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "2px solid rgba(255,255,255,0.2)", boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }}>
+                <span style={{ fontFamily: "Inter, system-ui", fontSize: size * 0.32, fontWeight: 800, color: "#fff", letterSpacing: 0.5 }}>{abbr}</span>
             </div>
         );
     }
     return (
-        <img src={src} alt={name} onError={handleError}
-            style={{ width: size, height: size, objectFit: "contain", borderRadius: errorLevel === 1 ? "4px" : "50%", background: "#fff", padding: errorLevel === 1 ? 0 : 2, flexShrink: 0, border: `1px solid ${C.border}` }} />
+        <img src={proxyUrl} alt={name} onError={() => setImgError(true)}
+            style={{ width: size, height: size, objectFit: "contain", borderRadius: "50%", background: "#fff", padding: 2, flexShrink: 0, border: `2px solid ${teamBg}`, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }} />
     );
 }
 
@@ -267,10 +260,10 @@ function MatchPill({ m, selected, onClick }) {
                     {m.status === "LIVE" ? "LIVE" : m.status === "UPCOMING" ? "SOON" : "ENDED"}
                 </span>
             </div>
-            {[{ n: m.t1, s: m.t1Score, w: m.t1Wkts, b: true }, { n: m.t2, s: m.t2Score, b: false }].map(({ n, s, w, b }) => (
+            {[{ n: m.t1, s: m.t1Score, w: m.t1Wkts, b: true, imgId: m.t1ImageId || 0 }, { n: m.t2, s: m.t2Score, b: false, imgId: m.t2ImageId || 0 }].map(({ n, s, w, b, imgId }) => (
                 <div key={n} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 3 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <TeamLogo name={n} size={16} />
+                        <TeamLogo name={n} size={16} imageId={imgId} />
                         <span style={{ fontSize: 11, fontWeight: b ? 600 : 400, color: b ? "#0A0A0A" : "#64748B" }}>{n}</span>
                     </div>
                     {s != null && <span style={{ fontSize: 11, fontWeight: b ? 700 : 400, color: b ? "#0A0A0A" : "#64748B" }}>{w != null ? `${s}/${w}` : s}</span>}
@@ -292,7 +285,7 @@ function MatchCard({ m, onClick }) {
             {[{ n: m.t1, s: m.t1Score, w: m.t1Wkts, b: true }, { n: m.t2, s: m.t2Score, b: false }].map(({ n, s, w, b }) => (
                 <div key={n} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <TeamLogo name={n} size={32} />
+                        <TeamLogo name={n} size={32} imageId={imgId || 0} />
                         <span style={{ fontSize: 16, fontWeight: b ? 700 : 400, color: b ? "#0A0A0A" : "#64748B" }}>{n}</span>
                     </div>
                     {s != null && <span style={{ fontSize: 16, fontWeight: b ? 700 : 400, color: b ? "#0A0A0A" : "#64748B" }}>{w != null ? `${s}/${w}` : s}</span>}
@@ -425,7 +418,14 @@ export default function CricIntelligence() {
             const r = await fetch(`${API_BASE}/predict`);
             if (r.ok) {
                 const d = await r.json();
-                if (d && d.team1) setPred(d);
+                if (d && d.team1) {
+                    // Merge imageIds from /matches into pred
+                    const mList = window.__matchList || [];
+                    const mMatch = mList.find(mx => mx.team1 === d.team1 || mx.t1 === d.team1);
+                    d.team1ImageId = mMatch?.t1ImageId || mMatch?.team1ImageId || 0;
+                    d.team2ImageId = mMatch?.t2ImageId || mMatch?.team2ImageId || 0;
+                    setPred(d);
+                }
                 else setPred(null);
             }
         } catch { }
@@ -457,6 +457,8 @@ export default function CricIntelligence() {
                         matchId: m.id,
                         t1: cleanTeam(m.team1 || m.teams?.[0] || "TBD"),
                         t2: cleanTeam(m.team2 || m.teams?.[1] || "TBD"),
+                        t1ImageId: m.team1ImageId || 0,
+                        t2ImageId: m.team2ImageId || 0,
                         status, rawStatus,
                         day: m.matchType?.toUpperCase() || "T20",
                         detail: m.name || "",
@@ -466,6 +468,7 @@ export default function CricIntelligence() {
                     };
                 });
                 setLiveMatches(mapped);
+        window.__matchList = mapped;
                 setLiveStatus("live");
                 const live = mapped.find(m => m.status === "LIVE");
                 const upcoming = mapped.find(m => m.status === "UPCOMING");
@@ -618,13 +621,13 @@ body { background: ${C.bg}; }
                                         <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 10 }}>{pred.venue || ""}</div>
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 12 }}>
                                             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                                <TeamLogo name={(pred.team1 || "").toLowerCase()} size={40} />
+                                                <TeamLogo name={(pred.team1 || "").toLowerCase()} size={40} imageId={pred.team1ImageId || 0} />
                                                 <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "#fff" }}>{cleanTeam(pred.team1)}</span>
                                             </div>
                                             <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>vs</span>
                                             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                                 <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "rgba(255,255,255,0.55)" }}>{cleanTeam(pred.team2)}</span>
-                                                <TeamLogo name={(pred.team2 || "").toLowerCase()} size={40} />
+                                                <TeamLogo name={(pred.team2 || "").toLowerCase()} size={40} imageId={pred.team2ImageId || 0} />
                                             </div>
                                         </div>
                                         <div style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
