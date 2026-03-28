@@ -373,6 +373,7 @@ export default function CricIntelligence() {
     const [pred, setPred] = useState(null);
     const [liveStatus, setLiveStatus] = useState("connecting");
         const [isPremium, setIsPremium] = useState(true);
+    const hasUserSelectedRef = React.useRef(false);
     const [showPaywall, setShowPaywall] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState("monthly");
     const [emailInput, setEmailInput] = useState("");
