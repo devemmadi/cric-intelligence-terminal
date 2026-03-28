@@ -471,10 +471,10 @@ export default function CricIntelligence() {
                 const live = mapped.find(m => m.status === "LIVE");
                 const upcoming = mapped.find(m => m.status === "UPCOMING");
                 const best = live || upcoming;
-                if (best) setSelectedMatch(best);
+                if (best && !selectedMatch) setSelectedMatch(best);
             }
         } catch { setLiveStatus("mock"); }
-    }, []);
+    }, [selectedMatch]);
 
     useEffect(() => { fetchMatches(); }, [fetchMatches]);
     useEffect(() => { const t = setInterval(fetchMatches, 30000); return () => clearInterval(t); }, [fetchMatches]);
