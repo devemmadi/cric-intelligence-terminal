@@ -903,6 +903,7 @@ body { background: ${C.bg}; }
                                     </div>
 
                                     </div>{/* close .cr grid */}
+                                </div>{/* close padding div */}
 
                                     <NextOverIntelligence pred={pred} />
 
@@ -935,6 +936,7 @@ body { background: ${C.bg}; }
 
                             </>
                         )}
+                                </div>{/* close outer content div */}
                     </main>
 
                     <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14 }}>
