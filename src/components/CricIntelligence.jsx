@@ -429,7 +429,7 @@ export default function CricIntelligence() {
         } catch { }
     }, []);
 
-    useEffect(() => { fetchPred(); }, [fetchPred, ticker]);
+    useEffect(() => { fetchPred(); }, [selectedMatch, ticker]);
 
     const fetchMatches = useCallback(async () => {
         try {
