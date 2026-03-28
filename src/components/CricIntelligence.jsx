@@ -365,53 +365,7 @@ function NoMatchesScreen() {
     );
 }
 
-export default function LiveScorecard({ batters, bowler }) {
-    if (!batters || batters.length === 0) return null;
-    return (
-        <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"⚡ LIVE SCORECARD"}</div>
-            <div style={{ marginBottom: 10 }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, marginBottom: 5 }}>
-                    <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BATTER"}</span>
-                    <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"R"}</span>
-                    <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"B"}</span>
-                    <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"SR"}</span>
-                </div>
-                {batters.map(function(b, i) { return (
-                    <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, padding: "5px 0", borderTop: "1px solid rgba(255,255,255,0.05)", alignItems: "center" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                            {b.isStriker && <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22C55E", display: "inline-block", flexShrink: 0 }} />}
-                            <span style={{ fontSize: 11, fontWeight: b.isStriker ? 700 : 400, color: b.isStriker ? "#E2E8F0" : "#94A3B8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 90 }}>{b.name}</span>
-                        </div>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0", textAlign: "right" }}>{b.runs}</span>
-                        <span style={{ fontSize: 11, color: "#94A3B8", textAlign: "right" }}>{b.balls}</span>
-                        <span style={{ fontSize: 11, fontWeight: 600, textAlign: "right", color: b.sr >= 150 ? "#22C55E" : b.sr >= 100 ? "#F59E0B" : "#EF4444" }}>{b.sr ? Math.round(b.sr) : 0}</span>
-                    </div>
-                ); })}
-            </div>
-            {bowler && bowler.name && (
-                <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 8 }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 30px 30px 28px 44px", gap: 4, marginBottom: 4 }}>
-                        <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BOWLER"}</span>
-                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"O"}</span>
-                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"R"}</span>
-                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"W"}</span>
-                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"ECO"}</span>
-                    </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 30px 30px 28px 44px", gap: 4, padding: "5px 0", borderTop: "1px solid rgba(255,255,255,0.05)", alignItems: "center" }}>
-                        <span style={{ fontSize: 11, fontWeight: 600, color: "#E2E8F0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 90 }}>{bowler.name}</span>
-                        <span style={{ fontSize: 11, color: "#94A3B8", textAlign: "right" }}>{bowler.overs}</span>
-                        <span style={{ fontSize: 11, color: "#94A3B8", textAlign: "right" }}>{bowler.runs}</span>
-                        <span style={{ fontSize: 12, fontWeight: 700, textAlign: "right", color: bowler.wickets > 0 ? "#22C55E" : "#E2E8F0" }}>{bowler.wickets}</span>
-                        <span style={{ fontSize: 11, fontWeight: 600, textAlign: "right", color: bowler.economy <= 7 ? "#22C55E" : bowler.economy <= 10 ? "#F59E0B" : "#EF4444" }}>{bowler.economy ? bowler.economy.toFixed(1) : "0.0"}</span>
-                    </div>
-                </div>
-            )}
-        </div>
-    );
-}
-
-function CricIntelligence() {
+export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
     const [showLanding, setShowLanding] = useState(() => { try { return !localStorage.getItem("ci_v2"); } catch { return false; } });
     const [liveMatches, setLiveMatches] = useState([]);
@@ -924,9 +878,6 @@ body { background: ${C.bg}; }
 
                                     {/* RIGHT COLUMN */}
                                     <div style={{ position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 14 }}>
-                                        {pred && pred.batters && pred.batters.length > 0 && (
-                                            <LiveScorecard batters={pred.batters} bowler={pred.bowler || {}} />
-                                        )}
                                         <div className="card" style={{ padding: 22 }}>
                                             <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WIN PROBABILITY</div>
                                             <div style={{ fontSize: 15, fontWeight: 800, color: winColor, marginBottom: 8, letterSpacing: 0.3 }}>{winMsg}</div>
