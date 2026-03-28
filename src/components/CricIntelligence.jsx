@@ -372,7 +372,7 @@ export default function CricIntelligence() {
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [pred, setPred] = useState(null);
     const [liveStatus, setLiveStatus] = useState("connecting");
-    const [isPremium, setIsPremium] = useState(true); // All features free - const _unused = (() => { try { return localStorage.getItem("cricintel_premium") === "true"; } catch { return false; } });
+        const [isPremium, setIsPremium] = useState(true);
     const [showPaywall, setShowPaywall] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState("monthly");
     const [emailInput, setEmailInput] = useState("");
@@ -967,8 +967,7 @@ body { background: ${C.bg}; }
                                 </div>
                             ))}
                         </div>
-                                                )}
-                        <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center", marginTop: "auto" }}>
+                                                <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center", marginTop: "auto" }}>
                             {pred?.dataSource || "877 venues - 1.7M records"}<br />
                             <span style={{ color: C.red, fontWeight: 600 }}>18+ - BeGambleAware.org</span>
                         </div>
