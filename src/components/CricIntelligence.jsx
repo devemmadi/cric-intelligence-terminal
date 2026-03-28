@@ -411,9 +411,9 @@ export default function CricIntelligence() {
         } catch { } finally { setCheckingPayment(false); }
     };
 
-    const fetchPred = useCallback(async () => {
+    const fetchPred = useCallback(async (matchId) => {
         try {
-            const r = await fetch(`${API_BASE}/predict${selectedMatch?.matchId ? "?match_id=" + selectedMatch.matchId : ""}`);
+            const r = await const mid = matchId || selectedMatch?.matchId; fetch(`${API_BASE}/predict${mid ? "?match_id=" + mid : ""}`);
             if (r.ok) {
                 const d = await r.json();
                 if (d && d.team1) {
@@ -583,7 +583,7 @@ body { background: ${C.bg}; }
                                     <div style={{ width: 5, height: 5, borderRadius: "50%", background: C.red, animation: "pulse 2s infinite" }} />LIVE NOW
                                 </div>
                                 {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { userSelectedRef.current = true; setSelectedMatch(m); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { userSelectedRef.current = true; setSelectedMatch(m); setTimeout(() => fetchPred(m.matchId), 50); }} />
                                 ))}
                             </>
                         )}
@@ -591,7 +591,7 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 9, fontWeight: 700, color: C.accent, letterSpacing: 1.5, margin: "10px 0 6px" }}>UPCOMING</div>
                                 {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { userSelectedRef.current = true; setSelectedMatch(m); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { userSelectedRef.current = true; setSelectedMatch(m); setTimeout(() => fetchPred(m.matchId), 50); }} />
                                 ))}
                             </>
                         )}
@@ -599,7 +599,7 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1.5, margin: "10px 0 6px" }}>RECENT</div>
                                 {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { userSelectedRef.current = true; setSelectedMatch(m); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { userSelectedRef.current = true; setSelectedMatch(m); setTimeout(() => fetchPred(m.matchId), 50); }} />
                                 ))}
                             </>
                         )}
