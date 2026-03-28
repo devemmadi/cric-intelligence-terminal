@@ -372,7 +372,7 @@ export default function CricIntelligence() {
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [pred, setPred] = useState(null);
     const [liveStatus, setLiveStatus] = useState("connecting");
-    const [isPremium, setIsPremium] = useState(() => { try { return localStorage.getItem("cricintel_premium") === "true"; } catch { return false; } });
+    const [isPremium, setIsPremium] = useState(true); // All features free - const _unused = (() => { try { return localStorage.getItem("cricintel_premium") === "true"; } catch { return false; } });
     const [showPaywall, setShowPaywall] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState("monthly");
     const [emailInput, setEmailInput] = useState("");
@@ -567,7 +567,7 @@ body { background: ${C.bg}; }
                         <div style={{ width: 6, height: 6, borderRadius: "50%", background: liveStatus === "live" ? C.green : C.amber, animation: "pulse 2s infinite" }} />
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>{liveTime.toLocaleTimeString("en-GB")}</span>
                     </div>
-                    {!isPremium && <button onClick={() => setShowPaywall(true)} style={{ background: C.gold, color: C.navy, border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 700, cursor: "pointer" }}>Upgrade</button>}
+                    
                 </div>
             </nav>
 
@@ -651,7 +651,7 @@ body { background: ${C.bg}; }
                                           <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>{`NEXT ${(pred.nextOvers || []).length} OVERS PREDICTION`}</div>
                                           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{pred?.currentPhase || ""}</div>
                                         </div>
-                                        <div style={{ fontSize: 10, color: C.accent }}>1 free  <span style={{ color: C.gold, fontWeight: 700 }}>Upgrade for all 5</span></div>
+                                        
                                       </div>
 
                                       {/* 3 over cards stacked vertically */}
@@ -914,11 +914,7 @@ body { background: ${C.bg}; }
                                                     ))}
                                                 </div>
                                             </div>
-                                            {!isPremium
-                                                ? <button onClick={() => setShowPaywall(true)} className="btn-p" style={{ fontSize: 12 }}>Unlock Full Analysis - 9.99/mo</button>
-                                                : <div style={{ background: C.bg, borderRadius: 8, padding: "10px 12px", fontSize: 12, color: C.muted }}>{pred.weatherImpact?.tip || "Bright conditions favour batters."}</div>
-                                            }
-                                        </div>
+                                            <div style={{ background: C.bg, borderRadius: 8, padding: "10px 12px", fontSize: 12, color: C.muted }}>{pred.weatherImpact?.tip || "Bright conditions favour batters."}</div>                        </div>
                                     </div>
 
                                     <NextOverIntelligence pred={pred} />
@@ -971,13 +967,7 @@ body { background: ${C.bg}; }
                                 </div>
                             ))}
                         </div>
-                        {!isPremium && (
-                            <div style={{ background: C.text, borderRadius: 14, padding: 16, color: "#fff" }}>
-                                <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 6 }}>Unlock Premium</div>
-                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.65)", lineHeight: 1.5, marginBottom: 12 }}>All 5 overs - Death intel - Pitch tracker - Real-time signals</div>
-                                <button onClick={() => setShowPaywall(true)} style={{ width: "100%", background: C.gold, color: C.text, border: "none", borderRadius: 8, padding: "9px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>From 9.99/mo</button>
-                            </div>
-                        )}
+                                                )}
                         <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center", marginTop: "auto" }}>
                             {pred?.dataSource || "877 venues - 1.7M records"}<br />
                             <span style={{ color: C.red, fontWeight: 600 }}>18+ - BeGambleAware.org</span>
@@ -1027,47 +1017,14 @@ body { background: ${C.bg}; }
             {activeTab === "media" && <MediaSection />}
 
             <nav className="mn">
-                {[["Predict", "predict"], ["Matches", "matches"], ["Media", "media"], ["Upgrade", "up"]].map(([label, key]) => (
-                    <button key={key} className="mt" onClick={() => key === "up" ? setShowPaywall(true) : setActiveTab(key)} style={{ opacity: activeTab === key ? 1 : 0.4 }}>
+                {[["Predict", "predict"], ["Matches", "matches"], ["Media", "media"]].map(([label, key]) => (
+                    <button key={key} className="mt" onClick={() => setActiveTab(key)} style={{ opacity: activeTab === key ? 1 : 0.4 }}>
                         <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>{label}</span>
                     </button>
                 ))}
             </nav>
 
-            {showPaywall && (
-                <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 300, display: "flex", alignItems: "flex-end" }} onClick={() => setShowPaywall(false)}>
-                    <div style={{ width: "100%", maxWidth: 500, margin: "0 auto", background: C.surface, borderRadius: "20px 20px 0 0", padding: 26 }} onClick={e => e.stopPropagation()}>
-                        <div style={{ textAlign: "center", marginBottom: 22 }}>
-                            <div style={{ fontSize: 21, fontWeight: 800, marginBottom: 6 }}>Unlock Premium</div>
-                            <div style={{ fontSize: 13, color: C.muted }}>All 5 over predictions - Death overs intel - Pitch tracker</div>
-                        </div>
-                        {paymentStep === "plans" && (
-                            <>
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
-                                    {[{ plan: "monthly", price: "9.99", per: "/mo", label: "Monthly", sub: "Cancel anytime" }, { plan: "annual", price: "59.99", per: "/yr", label: "Annual", sub: "Save 50%" }].map(p => (
-                                        <div key={p.plan} onClick={() => setSelectedPlan(p.plan)} style={{ border: `2px solid ${selectedPlan === p.plan ? C.accent : C.border}`, borderRadius: 12, padding: 14, cursor: "pointer", textAlign: "center" }}>
-                                            <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 4 }}>{p.label}</div>
-                                            <div style={{ fontSize: 22, fontWeight: 800 }}>{p.price}</div>
-                                            <div style={{ fontSize: 11, color: C.muted }}>{p.per} - {p.sub}</div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <button className="btn-p" onClick={() => setPaymentStep("email")}>Continue</button>
-                            </>
-                        )}
-                        {paymentStep === "email" && (
-                            <>
-                                <input type="email" placeholder="Your email address" value={emailInput} onChange={e => setEmailInput(e.target.value)} style={{ width: "100%", padding: "13px 16px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, marginBottom: 10, outline: "none", fontFamily: "Inter,system-ui" }} />
-                                <button className="btn-p" onClick={() => handleCheckout(selectedPlan)} disabled={checkingPayment}>
-                                    {checkingPayment ? "Loading..." : `Pay ${selectedPlan === "annual" ? "59.99/yr" : "9.99/mo"}`}
-                                </button>
-                            </>
-                        )}
-                        <div style={{ textAlign: "center", marginTop: 10, fontSize: 11, color: C.muted }}>18+ - Gamble responsibly - BeGambleAware.org</div>
-                        <button onClick={() => { setShowPaywall(false); setPaymentStep("plans"); }} style={{ display: "block", width: "100%", background: "none", border: "none", color: C.muted, fontSize: 13, cursor: "pointer", marginTop: 8 }}>Maybe later</button>
-                    </div>
-                </div>
-            )}
+            
         </div>
     );
 }
