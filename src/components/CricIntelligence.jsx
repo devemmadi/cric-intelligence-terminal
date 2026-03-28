@@ -642,7 +642,7 @@ body { background: ${C.bg}; }
                                       {/* NEXT 3 OVERS - header */}
                                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
                                         <div>
-                                          <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>NEXT 3 OVERS PREDICTION</div>
+                                          <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>{`NEXT ${(pred.nextOvers || []).length} OVERS PREDICTION`}</div>
                                           <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>{pred?.currentPhase || ""}</div>
                                         </div>
                                         <div style={{ fontSize: 10, color: C.accent }}>1 free  <span style={{ color: C.gold, fontWeight: 700 }}>Upgrade for all 5</span></div>
@@ -667,6 +667,7 @@ body { background: ${C.bg}; }
                                             <div key={i} onClick={() => setActiveOver(i)} style={{
                                               background: activeOver === i ? C.navyMid : C.surface,
                                               border: `1px solid ${activeOver === i ? C.accent : C.border}`,
+                                              borderLeft: `3px solid ${activeOver === i ? C.accent : phaseColor}`,
                                               borderRadius: 12, padding: "14px 16px",
                                               cursor: "pointer", opacity: isLocked ? 0.45 : 1,
                                               transition: "all 0.2s"
@@ -681,10 +682,10 @@ body { background: ${C.bg}; }
                                                   {/* Row 1: Over number + phase */}
                                                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                                                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                                      <span style={{ fontSize: 13, fontWeight: 800, color: C.text }}>OVER {ov.over}</span>
+                                                      <span style={{ fontSize: 14, fontWeight: 900, color: activeOver === i ? "#fff" : C.text }}>OVER {ov.over}</span>
                                                       <span style={{ fontSize: 9, fontWeight: 700, color: phaseColor, background: phaseColor + "22", padding: "2px 7px", borderRadius: 20 }}>{ov.phase}</span>
                                                     </div>
-                                                    <span style={{ fontSize: 11, color: C.muted }}>{ov.confidence}% conf</span>
+                                                    <span style={{ fontSize: 10, color: C.muted, background: C.bg, padding: '2px 6px', borderRadius: 4 }}>{ov.confidence}% conf</span>
                                                   </div>
 
                                                   {/* VERDICT BADGE - Option B+C */}
@@ -707,8 +708,8 @@ body { background: ${C.bg}; }
                                                       vText = 'STEADY OVER'; vColor = '#64748B'; vBg = 'rgba(100,116,139,0.12)';
                                                     }
                                                     return (
-                                                      <div style={{ display: 'inline-block', marginTop: 6, marginBottom: 2, padding: '3px 10px', background: vBg, border: '1px solid ' + vColor, borderRadius: 20 }}>
-                                                        <span style={{ fontSize: 11, fontWeight: 800, color: vColor, letterSpacing: 0.6 }}>{vText}</span>
+                                                      <div style={{ display: 'inline-block', marginTop: 8, marginBottom: 4, padding: '5px 14px', background: vBg, border: '1.5px solid ' + vColor, borderRadius: 20, boxShadow: '0 2px 8px ' + vBg }}>
+                                                        <span style={{ fontSize: 12, fontWeight: 900, color: vColor, letterSpacing: 0.6 }}>{vText}</span>
                                                       </div>
                                                     );
                                                   })()}
@@ -831,7 +832,7 @@ body { background: ${C.bg}; }
 
                                                   {/* Row 5: Tip */}
                                                   <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 8, marginTop: 2 }}>
-                                                    <span style={{ fontSize: 13, color: C.accent, fontStyle: "italic", fontWeight: 600 }}>"{ov.tip}"</span>
+                                                    <span style={{ fontSize: 13, color: C.accent, fontStyle: "italic", fontWeight: 600 }}>{ov.tip && ov.tip.trim() ? '"' + ov.tip + '"' : ""}</span>
                                                   {/* PLAIN ENGLISH - Option D */}
                                                   {(() => {
                                                     const sr = pred && pred.playerContext ? (pred.playerContext.strikerSR || 0) : 0;
@@ -869,10 +870,10 @@ body { background: ${C.bg}; }
                                     </div>{/* close over-cards card */}
 
                                     {/* RIGHT COLUMN */}
-                                    <div style={{ position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 14 }}>
+                                    <div style={{ position: "sticky", top: 72, display: "flex", flexDirection: "column", gap: 14 }}>
                                         <div className="card" style={{ padding: 22 }}>
                                             <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WIN PROBABILITY</div>
-                                            <div style={{ fontSize: 13, fontWeight: 700, color: winColor, marginBottom: 8 }}>{winMsg}</div>
+                                            <div style={{ fontSize: 15, fontWeight: 800, color: winColor, marginBottom: 8, letterSpacing: 0.3 }}>{winMsg}</div>
                                             <div style={{ display: "flex", justifyContent: "center", margin: "4px 0 10px" }}><WinArc value={prob} /></div>
                                             <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>
                                                 <strong style={{ color: C.text }}>{cleanTeam(pred.team1)}</strong> has a <strong style={{ color: winColor }}>{prob}% chance</strong> of winning based on current score, pitch and 1.7M historical matches.
@@ -901,6 +902,8 @@ body { background: ${C.bg}; }
                                         </div>
                                     </div>
 
+                                    </div>{/* close .cr grid */}
+
                                     <NextOverIntelligence pred={pred} />
 
                                     {pred.toss && (
@@ -912,8 +915,6 @@ body { background: ${C.bg}; }
                                             </div>
                                         </div>
                                     )}
-
-                                                                        </div>                                </div>
 <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
                                         <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
                                             <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || ""}</span>
