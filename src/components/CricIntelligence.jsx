@@ -870,7 +870,7 @@ body { background: ${C.bg}; }
                                     </div>{/* close over-cards card */}
 
                                     {/* RIGHT COLUMN */}
-                                    <div style={{ position: "sticky", top: 72, display: "flex", flexDirection: "column", gap: 14 }}>
+                                    <div style={{ position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 14 }}>
                                         <div className="card" style={{ padding: 22 }}>
                                             <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WIN PROBABILITY</div>
                                             <div style={{ fontSize: 15, fontWeight: 800, color: winColor, marginBottom: 8, letterSpacing: 0.3 }}>{winMsg}</div>
@@ -902,9 +902,6 @@ body { background: ${C.bg}; }
                                         </div>
                                     </div>
 
-                                    </div>{/* close .cr grid */}
-                                </div>{/* close padding div */}
-
                                     <NextOverIntelligence pred={pred} />
 
                                     {pred.toss && (
@@ -916,6 +913,8 @@ body { background: ${C.bg}; }
                                             </div>
                                         </div>
                                     )}
+
+                                                                        </div>                                </div>
 <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
                                         <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
                                             <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || ""}</span>
@@ -936,7 +935,6 @@ body { background: ${C.bg}; }
 
                             </>
                         )}
-                                </div>{/* close outer content div */}
                     </main>
 
                     <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14 }}>
