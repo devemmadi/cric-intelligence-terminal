@@ -683,7 +683,7 @@ body { background: ${C.bg}; }
                                                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                                                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                                                       <span style={{ fontSize: 14, fontWeight: 900, color: "#fff" }}>OVER {ov.over}</span>
-                                                      <span style={{ fontSize: 9, fontWeight: 700, color: "#fff", background: phaseColor + "22", padding: "2px 7px", borderRadius: 20 }}>{ov.phase}</span>
+                                                      <span style={{ fontSize: 9, fontWeight: 700, color: "#fff", background: phaseColor, padding: "2px 8px", borderRadius: 20, fontWeight: 800 }}>{ov.phase}</span>
                                                     </div>
                                                     <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: 4 }}>{ov.confidence}% conf</span>
                                                   </div>
@@ -697,19 +697,19 @@ body { background: ${C.bg}; }
                                                     const phase = ov.phase || '';
                                                     let vText, vColor, vBg;
                                                     if (sr > 150 && eco > 8.5) {
-                                                      vText = 'BIG SCORING OVER'; vColor = '#FF4444'; vBg = 'rgba(255,68,68,0.22)';
+                                                      vText = 'BIG SCORING OVER'; vColor = '#FFFFFF'; vBg = '#E53E3E';
                                                     } else if (sr > 150 || (eco > 8 && bnd > 35)) {
-                                                      vText = 'RUNS LIKELY'; vColor = '#FF9500'; vBg = 'rgba(255,149,0,0.22)';
+                                                      vText = 'RUNS LIKELY'; vColor = '#FFFFFF'; vBg = '#DD6B20';
                                                     } else if (sr < 100 && eco < 6.5) {
-                                                      vText = 'TIGHT OVER'; vColor = '#00C896'; vBg = 'rgba(0,200,150,0.22)';
+                                                      vText = 'TIGHT OVER'; vColor = '#FFFFFF'; vBg = '#276749';
                                                     } else if (l3r > 25 || phase === 'DEATH OVERS') {
-                                                      vText = 'HOT MOMENTUM'; vColor = '#A855F7'; vBg = 'rgba(168,85,247,0.22)';
+                                                      vText = 'HOT MOMENTUM'; vColor = '#FFFFFF'; vBg = '#6B21A8';
                                                     } else {
-                                                      vText = 'STEADY OVER'; vColor = '#3B82F6'; vBg = 'rgba(59,130,246,0.22)';
+                                                      vText = 'STEADY OVER'; vColor = '#FFFFFF'; vBg = '#1D4ED8';
                                                     }
                                                     return (
-                                                      <div style={{ display: 'inline-block', marginTop: 8, marginBottom: 4, padding: '5px 14px', background: vBg, border: '1.5px solid ' + vColor, borderRadius: 20, boxShadow: '0 2px 8px ' + vBg }}>
-                                                        <span style={{ fontSize: 12, fontWeight: 900, color: vColor, letterSpacing: 0.6 }}>{vText}</span>
+                                                      <div style={{ display: 'inline-block', marginTop: 8, marginBottom: 4, padding: '6px 16px', background: vBg, borderRadius: 20, boxShadow: '0 3px 10px rgba(0,0,0,0.25)' }}>
+                                                        <span style={{ fontSize: 11, fontWeight: 900, color: vColor, letterSpacing: 1.2, textTransform: "uppercase" }}>{vText}</span>
                                                       </div>
                                                     );
                                                   })()}
@@ -771,11 +771,11 @@ body { background: ${C.bg}; }
                                                   {/* Row 3: Expected runs bar */}
                                                   <div style={{ marginBottom: 10 }}>
                                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
-                                                      <span style={{ fontSize: 32, fontWeight: 900, color: "#FFFFFF", lineHeight: 1, textShadow: "0 0 20px rgba(255,255,255,0.3)" }}>{ov.runRange}</span>
+                                                      <span style={{ fontSize: 36, fontWeight: 900, color: "#FFFFFF", lineHeight: 1, textShadow: "0 2px 12px rgba(255,255,255,0.4)", letterSpacing: -1 }}>{ov.runRange}</span>
                                                       <span style={{ fontSize: 12, color: "#CBD5E1" }}>runs expected</span>
                                                     </div>
                                                     <div style={{ height: 5, background: C.border, borderRadius: 3 }}>
-                                                      <div style={{ height: "100%", width: runFill + "%", background: `linear-gradient(90deg, ${C.accent}, ${C.green})`, borderRadius: 3, transition: "width 0.4s" }} />
+                                                      <div style={{ height: "100%", width: runFill + "%", background: "linear-gradient(90deg, #4A90E2, #00D4AA)", borderRadius: 3, boxShadow: "0 0 8px rgba(0,212,170,0.5)", transition: "width 0.4s" }} />
                                                     </div>
                                                     <div style={{ display: "flex", justifyContent: "space-between", marginTop: 5 }}>
                                                       <span style={{ fontSize: 11, fontWeight: 700, color: "#FFFFFF" }}>Expected: {ov.expectedRuns} runs</span>
