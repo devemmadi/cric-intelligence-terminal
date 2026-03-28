@@ -632,6 +632,11 @@ body { background: ${C.bg}; }
                                             <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore || ""}</span>
                                             <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
                                             <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || ""}</span>
+                                            {pred.momentum !== undefined && pred.currentRunRate > 0 && (
+                                                <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: pred.momentum > 0.5 ? "rgba(0,200,150,0.25)" : pred.momentum < -0.5 ? "rgba(229,62,62,0.25)" : "rgba(255,255,255,0.1)", color: pred.momentum > 0.5 ? "#00D4AA" : pred.momentum < -0.5 ? "#FF6B6B" : "rgba(255,255,255,0.7)" }}>
+                                                    {pred.momentum > 0.5 ? "+" : ""}{pred.momentum > 0 ? pred.momentum.toFixed(1) : pred.momentum.toFixed(1)} vs avg
+                                                </span>
+                                            )}
                                             <button onClick={() => { const t = `${cleanTeam(pred.team1)} vs ${cleanTeam(pred.team2)} - AI: ${prob}% win probability. cricintelligence.com`; try { navigator.clipboard?.writeText(t).then(() => alert("Copied!")); } catch {} }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share</button>
                                         </div>
                                     </div>
@@ -881,7 +886,20 @@ body { background: ${C.bg}; }
                                             </div>
                                         </div>
                                         <div className="card" style={{ padding: 22 }}>
-                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 14 }}>MATCH INTEL</div>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>MATCH INTEL</div>
+                                            {pred.pressureScore !== undefined && (
+                                                <div style={{ marginBottom: 14 }}>
+                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                                                        <span style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PRESSURE INDEX</span>
+                                                        <span style={{ fontSize: 13, fontWeight: 900, color: pred.pressureScore > 70 ? C.red : pred.pressureScore > 45 ? C.amber : C.green }}>
+                                                            {pred.pressureScore > 75 ? "CRITICAL" : pred.pressureScore > 55 ? "HIGH" : pred.pressureScore > 35 ? "MODERATE" : "LOW"} {pred.pressureScore}/100
+                                                        </span>
+                                                    </div>
+                                                    <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 6, overflow: "hidden" }}>
+                                                        <div style={{ height: "100%", width: pred.pressureScore + "%", borderRadius: 6, transition: "width 0.6s ease", background: pred.pressureScore > 70 ? "linear-gradient(90deg,#E53E3E,#FF6B6B)" : pred.pressureScore > 45 ? "linear-gradient(90deg,#DD6B20,#F6AD55)" : "linear-gradient(90deg,#276749,#68D391)" }} />
+                                                    </div>
+                                                </div>
+                                            )}
                                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
                                                 <div>
                                                     <div style={{ fontSize: 10, color: C.green, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>STRENGTHS</div>
