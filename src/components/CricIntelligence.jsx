@@ -471,7 +471,7 @@ export default function CricIntelligence() {
                 const live = mapped.find(m => m.status === "LIVE");
                 const upcoming = mapped.find(m => m.status === "UPCOMING");
                 const best = live || upcoming;
-                if (best && !userSelectedRef.current) setSelectedMatch(best);
+                if (best && !selectedMatch) setSelectedMatch(best);
             }
         } catch { setLiveStatus("mock"); }
     }, []);
@@ -583,7 +583,7 @@ body { background: ${C.bg}; }
                                     <div style={{ width: 5, height: 5, borderRadius: "50%", background: C.red, animation: "pulse 2s infinite" }} />LIVE NOW
                                 </div>
                                 {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { userSelectedRef.current = true; setSelectedMatch(m); setTimeout(() => fetchPred(m.matchId), 50); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => setSelectedMatch(m)} />
                                 ))}
                             </>
                         )}
@@ -591,7 +591,7 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 9, fontWeight: 700, color: C.accent, letterSpacing: 1.5, margin: "10px 0 6px" }}>UPCOMING</div>
                                 {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { userSelectedRef.current = true; setSelectedMatch(m); setTimeout(() => fetchPred(m.matchId), 50); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => setSelectedMatch(m)} />
                                 ))}
                             </>
                         )}
@@ -599,7 +599,7 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1.5, margin: "10px 0 6px" }}>RECENT</div>
                                 {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { userSelectedRef.current = true; setSelectedMatch(m); setTimeout(() => fetchPred(m.matchId), 50); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => setSelectedMatch(m)} />
                                 ))}
                             </>
                         )}
