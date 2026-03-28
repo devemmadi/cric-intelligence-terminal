@@ -1,371 +1,50 @@
-/* eslint-disable */
-import React, { useState, useEffect, useCallback } from "react";
 
-const API_BASE = "https://web-production-91f0.up.railway.app";
-
-const C = {
-    bg: "#EEF2FF", surface: "#FFFFFF", border: "#E2E8F0",
-    text: "#0A0A0A", muted: "#64748B", accent: "#1E2D6B",
-    green: "#00B894", red: "#E53E3E", amber: "#F59E0B", gold: "#C8961E",
-    navy: "#1E2D6B", navyMid: "#2A3F82", navyLight: "#4A5FAD",
-};
-
-
-function cleanTeam(name) {
-    if (!name) return "";
-    const shorts = { "south africa": "SA", "new zealand": "NZ", "west indies": "WI", "sri lanka": "SL", "united arab emirates": "UAE" };
-    const n = name.split(",")[0].trim();
-    const key = n.toLowerCase();
-    if (shorts[key]) return shorts[key];
-    if (n.length > 12) return n.split(" ").filter(w => w.length > 1).map(w => w[0]).join("").toUpperCase();
-    return n.toUpperCase();
-}
-
-const BASE_LOGO = "https://img1.hscicdn.com/image/upload/f_auto,t_ds_square_w_160,q_50/lsci/db/PICTURES/CMS";
-const TEAM_LOGOS = {
-    "india": BASE_LOGO + "/381800/381895.png",
-    "australia": BASE_LOGO + "/382700/382733.png",
-    "england": BASE_LOGO + "/381800/381894.png",
-    "pakistan": BASE_LOGO + "/381800/381891.png",
-    "new zealand": BASE_LOGO + "/340500/340505.png",
-    "nz": BASE_LOGO + "/340500/340505.png",
-    "south africa": BASE_LOGO + "/382700/382733.png",
-    "sa": BASE_LOGO + "/382700/382733.png",
-    "sri lanka": BASE_LOGO + "/340500/340505.png",
-    "sl": BASE_LOGO + "/340500/340505.png",
-    "west indies": BASE_LOGO + "/317600/317615.png",
-    "wi": BASE_LOGO + "/317600/317615.png",
-    "bangladesh": BASE_LOGO + "/341400/341456.png",
-    "afghanistan": BASE_LOGO + "/381800/381893.png",
-    "ireland": BASE_LOGO + "/349300/349350.png",
-    "zimbabwe": BASE_LOGO + "/383900/383967.png",
-    "india women": BASE_LOGO + "/381800/381895.png",
-    "australia women": BASE_LOGO + "/382700/382733.png",
-    "england women": BASE_LOGO + "/381800/381894.png",
-    "pakistan women": BASE_LOGO + "/381800/381891.png",
-    "west indies women": BASE_LOGO + "/317600/317615.png",
-    "new zealand women": BASE_LOGO + "/340500/340505.png",
-    "south africa women": BASE_LOGO + "/382700/382733.png",
-};
-const FLAG_CODES = {
-    "india": "in", "australia": "au", "england": "gb-eng", "pakistan": "pk",
-    "new zealand": "nz", "nz": "nz", "south africa": "za", "sa": "za",
-    "sri lanka": "lk", "sl": "lk", "west indies": "bb", "wi": "bb",
-    "bangladesh": "bd", "afghanistan": "af", "ireland": "ie", "zimbabwe": "zw",
-    "netherlands": "nl", "scotland": "gb-sct", "nepal": "np", "oman": "om",
-    "uae": "ae", "united arab emirates": "ae", "usa": "us", "namibia": "na",
-    "kenya": "ke", "canada": "ca",
-};
-const TEAM_COLORS = {
-    "tasmania": "#1B5E99", "queensland": "#8B0000", "victoria": "#002B5C",
-    "nsw": "#003087", "new south wales": "#003087",
-    "western australia": "#C8961E", "wa": "#C8961E",
-    "south australia": "#CC0000", "northern territory": "#CC4400",
-    "dolphins": "#007A5E", "titans": "#F5A623", "warriors": "#6B0000",
-    "boland": "#1A3A5C", "knights": "#004B8D", "lions": "#FFD700",
-    "vtex india": "#7B2FBE", "aws world": "#FF9900",
-    "botswana": "#75AADB", "lesotho": "#009543",
-    "cyprus": "#4A90D9", "austria": "#CC0000",
-    "kwazulu-natal inland": "#006400", "kwazulu natal inland": "#006400",
-    "north west": "#8B4513", "kzn inland": "#006400",
-};
-
-function TeamLogo({ name, size = 32, imageId = 0 }) {
-    const [imgError, setImgError] = React.useState(false);
-    const abbr = (name || "?").replace(/[^A-Za-z]/g, "").substring(0, 3).toUpperCase() || "???";
-    const colors = ["#1E2D6B","#C8961E","#00B894","#E53E3E","#6B21A8","#DD6B20","#0369A1","#065F46"];
-    const teamBg = colors[(abbr.charCodeAt(0) || 65) % colors.length];
-    const proxyUrl = imageId ? "https://web-production-91f0.up.railway.app/team-image/" + imageId : null;
-    if (!proxyUrl || imgError) {
-        return (
-            <div style={{ width: size, height: size, borderRadius: "50%", background: teamBg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, border: "2px solid rgba(255,255,255,0.25)", boxShadow: "0 2px 8px rgba(0,0,0,0.25)" }}>
-                <span style={{ fontFamily: "Inter,system-ui", fontSize: size * 0.32, fontWeight: 800, color: "#fff", letterSpacing: 0.5 }}>{abbr}</span>
-            </div>
-        );
-    }
+function LiveScorecard({ batters, bowler }) {
+    if (!batters || batters.length === 0) return null;
     return (
-        <img src={proxyUrl} alt={name} onError={() => setImgError(true)}
-            style={{ width: size, height: size, objectFit: "contain", borderRadius: "50%", background: "#fff", padding: 2, flexShrink: 0, border: "2px solid " + teamBg, boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }} />
-    );
-}
-function WinArc({ value }) {
-    const r = 54, cx = 64, cy = 64, circ = Math.PI * r;
-    const pct = Math.min(Math.max(value, 0), 100) / 100;
-    const color = value >= 65 ? C.green : value >= 45 ? C.amber : C.red;
-    return (
-        <svg width={128} height={80} viewBox="0 0 128 80">
-            <path d={`M ${cx - r},${cy} A ${r},${r} 0 0 1 ${cx + r},${cy}`} fill="none" stroke={C.border} strokeWidth={8} strokeLinecap="round" />
-            <path d={`M ${cx - r},${cy} A ${r},${r} 0 0 1 ${cx + r},${cy}`} fill="none" stroke={color} strokeWidth={8} strokeLinecap="round" strokeDasharray={`${circ * pct} ${circ}`} />
-            <text x={cx} y={cy - 6} textAnchor="middle" fontSize={22} fontWeight={700} fill={C.text} fontFamily="Inter, system-ui">{value}%</text>
-            <text x={cx} y={cy + 10} textAnchor="middle" fontSize={9} fill={C.muted} fontFamily="Inter, system-ui" letterSpacing={1}>WIN PROB</text>
-        </svg>
-    );
-}
-
-function Spark({ data }) {
-    if (!data || data.length < 2) return null;
-    const vals = data.map(d => d.runs);
-    const min = Math.min(...vals), max = Math.max(...vals);
-    const w = 160, h = 40;
-    const pts = vals.map((v, i) => [(i / (vals.length - 1)) * w, h - ((v - min) / (max - min || 1)) * (h - 8) - 4]);
-    return (
-        <svg width={w} height={h}>
-            <polyline points={pts.map(p => p.join(",")).join(" ")} fill="none" stroke={C.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx={pts[pts.length - 1][0]} cy={pts[pts.length - 1][1]} r={4} fill={C.accent} />
-        </svg>
-    );
-}
-
-function isMatchEnded(status) {
-    if (!status) return false;
-    const s = status.toLowerCase();
-    return s === "ended" ||
-        s.includes("won") || s.includes("win") || s.includes("tied") ||
-        s.includes("draw") || s.includes("no result") || s.includes("abandoned");
-}
-
-function NextOverIntelligence({ pred }) {
-    if (!pred || !pred.nextOvers || pred.nextOvers.length < 2) return null;
-    const ov1 = pred.nextOvers[0];
-    const ov2 = pred.nextOvers[1];
-    const detr = pred.deteriorationFactor || 1.0;
-    const spinBoost = Math.round((detr - 1.0) * 100);
-    const dewSoon = pred.weatherImpact?.dewFactor < 0.9;
-    const pitchCond = pred.pitchCondition || "FRESH";
-    const history = pred.overHistory || [];
-    const hasHistory = history.length >= 2;
-    const bowlerQuality = pred.bowlingFactor ? (pred.bowlingFactor <= 0.82 ? "Elite" : pred.bowlingFactor <= 0.92 ? "Good" : "Average") : "Average";
-    const batQuality = pred.battingFactor ? (pred.battingFactor >= 1.15 ? "Strong" : pred.battingFactor >= 0.95 ? "Average" : "Weak") : "Average";
-    const wicketColor1 = ov1.wicketProb > 40 ? "#A32D2D" : ov1.wicketProb > 25 ? "#BA7517" : "#3B6D11";
-    const wicketLabel1 = ov1.wicketProb > 40 ? "High" : ov1.wicketProb > 25 ? "Medium" : "Low";
-    const wicketBg1 = ov1.wicketProb > 40 ? "#E24B4A" : ov1.wicketProb > 25 ? "#EF9F27" : "#639922";
-    const wicketColor2 = ov2.wicketProb > 40 ? "#A32D2D" : ov2.wicketProb > 25 ? "#BA7517" : "#3B6D11";
-    const wicketLabel2 = ov2.wicketProb > 40 ? "High" : ov2.wicketProb > 25 ? "Medium" : "Low";
-    const wicketBg2 = ov2.wicketProb > 40 ? "#E24B4A" : ov2.wicketProb > 25 ? "#EF9F27" : "#639922";
-    const phase2 = ov2.phase === "DEATH OVERS" ? "DEATH" : ov2.phase === "POWERPLAY" ? "PP" : "MID";
-    const barHeights = history.slice(-4).map(h => {
-        const rr = h.over > 0 ? h.runs / h.over : 8;
-        return Math.max(8, Math.round((rr / 16) * 44));
-    });
-    const predBarH = Math.max(8, Math.round((ov1.expectedRuns / 16) * 44));
-    const CSS2 = `@keyframes blink2 { 0%,100%{opacity:1} 50%{opacity:0.3} }`;
-    return (
-        <div style={{ padding: "0 0 4px 0", marginBottom: 14 }}>
-            <style>{CSS2}</style>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#E24B4A", animation: "blink2 1.5s infinite" }} />
-                <span style={{ fontSize: 13, fontWeight: 500, color: "#0A0A0A" }}>Next over intelligence</span>
-                <span style={{ fontSize: 12, color: "#64748B" }}>Over {ov1.over} - {ov1.phase}</span>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
-                <div style={{ background: "#fff", border: "2px solid #378ADD", borderRadius: 12, padding: 14 }}>
-                    <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8, letterSpacing: 0.5, textTransform: "uppercase" }}>Over {ov1.over} - now</div>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
-                        <span style={{ fontSize: 28, fontWeight: 500, color: "#0A0A0A" }}>{ov1.runRange}</span>
-                        <span style={{ fontSize: 13, color: "#64748B" }}>runs expected</span>
-                    </div>
-                    <div style={{ background: "#EEF2FF", borderRadius: 8, padding: "8px 10px", marginBottom: 10 }}>
-                        <div style={{ fontSize: 11, color: "#64748B", marginBottom: 3 }}>Bowling quality</div>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: "#0A0A0A" }}>{bowlerQuality}</div>
-                        <div style={{ fontSize: 12, color: "#64748B" }}>Factor {pred.bowlingFactor?.toFixed(2) || "1.00"}</div>
-                    </div>
-                    <div style={{ marginBottom: 10 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
-                            <span style={{ fontSize: 12, color: "#64748B" }}>Wicket risk</span>
-                            <span style={{ fontSize: 12, fontWeight: 500, color: wicketColor1 }}>{wicketLabel1} - {ov1.wicketProb}%</span>
-                        </div>
-                        <div style={{ height: 4, background: "#EEF2FF", borderRadius: 4, overflow: "hidden" }}>
-                            <div style={{ width: `${ov1.wicketProb}%`, height: "100%", background: wicketBg1, borderRadius: 4 }} />
-                        </div>
-                    </div>
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                        {spinBoost > 5 && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#FAEEDA", color: "#854F0B" }}>Spin +{spinBoost}%</span>}
-                        {!dewSoon && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#EEF2FF", color: "#64748B" }}>No dew</span>}
-                        {dewSoon && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#E6F1FB", color: "#185FA5" }}>Dew incoming</span>}
-                    </div>
+        <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>⚡ LIVE SCORECARD</div>
+            <div style={{ marginBottom: batters.length > 0 ? 10 : 0 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, marginBottom: 5, padding: "0 2px" }}>
+                    <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>BATTER</span>
+                    <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>R</span>
+                    <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>B</span>
+                    <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>SR</span>
                 </div>
-                <div style={{ background: "#fff", border: "0.5px solid #E2E8F0", borderRadius: 12, padding: 14 }}>
-                    <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8, letterSpacing: 0.5, textTransform: "uppercase" }}>Over {ov2.over} - {phase2}</div>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
-                        <span style={{ fontSize: 28, fontWeight: 500, color: "#0A0A0A" }}>{ov2.runRange}</span>
-                        <span style={{ fontSize: 13, color: "#64748B" }}>runs expected</span>
-                    </div>
-                    <div style={{ background: "#EEF2FF", borderRadius: 8, padding: "8px 10px", marginBottom: 10 }}>
-                        <div style={{ fontSize: 11, color: "#64748B", marginBottom: 3 }}>Batting quality</div>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: "#0A0A0A" }}>{batQuality}</div>
-                        <div style={{ fontSize: 12, color: "#64748B" }}>Factor {pred.battingFactor?.toFixed(2) || "1.00"}</div>
-                    </div>
-                    <div style={{ marginBottom: 10 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
-                            <span style={{ fontSize: 12, color: "#64748B" }}>Wicket risk</span>
-                            <span style={{ fontSize: 12, fontWeight: 500, color: wicketColor2 }}>{wicketLabel2} - {ov2.wicketProb}%</span>
+                {batters.map((b, i) => (
+                    <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, padding: "5px 2px", borderTop: "1px solid rgba(255,255,255,0.05)", alignItems: "center" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                            {b.isStriker && <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22C55E", display: "inline-block", flexShrink: 0 }} />}
+                            <span style={{ fontSize: 11, fontWeight: b.isStriker ? 700 : 400, color: b.isStriker ? "#E2E8F0" : "#94A3B8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{b.name}</span>
                         </div>
-                        <div style={{ height: 4, background: "#EEF2FF", borderRadius: 4, overflow: "hidden" }}>
-                            <div style={{ width: `${ov2.wicketProb}%`, height: "100%", background: wicketBg2, borderRadius: 4 }} />
-                        </div>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0", textAlign: "right" }}>{b.runs}</span>
+                        <span style={{ fontSize: 11, color: "#94A3B8", textAlign: "right" }}>{b.balls}</span>
+                        <span style={{ fontSize: 11, fontWeight: 600, textAlign: "right", color: b.sr >= 150 ? "#22C55E" : b.sr >= 100 ? "#F59E0B" : "#EF4444" }}>{b.sr ? b.sr.toFixed(0) : "0"}</span>
                     </div>
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                        {ov2.phase === "DEATH OVERS" && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#FCEBEB", color: "#A32D2D" }}>Death overs</span>}
-                        {dewSoon && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#E6F1FB", color: "#185FA5" }}>Dew incoming</span>}
-                        {!dewSoon && ov2.phase !== "DEATH OVERS" && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#EEF2FF", color: "#64748B" }}>Normal</span>}
-                    </div>
-                </div>
+                ))}
             </div>
-            {hasHistory && (
-                <div style={{ background: "#fff", border: "0.5px solid #E2E8F0", borderRadius: 12, padding: 14, marginBottom: 12 }}>
-                    <div style={{ fontSize: 12, color: "#64748B", marginBottom: 12 }}>Run rate trend</div>
-                    <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 56 }}>
-                        {history.slice(-4).map((h, i) => (
-                            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                                <div style={{ width: "100%", borderRadius: "3px 3px 0 0", background: i === 0 ? "#B5D4F4" : i === 1 ? "#85B7EB" : "#378ADD", height: `${barHeights[i]}px` }} />
-                                <span style={{ fontSize: 10, color: "#64748B" }}>ov {h.over}</span>
-                            </div>
-                        ))}
-                        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, opacity: 0.7 }}>
-                            <div style={{ width: "100%", borderRadius: "3px 3px 0 0", background: "rgba(24,95,165,0.15)", border: "1.5px dashed #185FA5", height: `${predBarH}px` }} />
-                            <span style={{ fontSize: 10, color: "#1E2D6B", fontWeight: 600 }}>ov {ov1.over}</span>
-                        </div>
+            {bowler && bowler.name && (
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 8 }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 30px 30px 28px 44px", gap: 4, marginBottom: 4, padding: "0 2px" }}>
+                        <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>BOWLER</span>
+                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>O</span>
+                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>R</span>
+                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>W</span>
+                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>ECO</span>
+                    </div>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 30px 30px 28px 44px", gap: 4, padding: "5px 2px", borderTop: "1px solid rgba(255,255,255,0.05)", alignItems: "center" }}>
+                        <span style={{ fontSize: 11, fontWeight: 600, color: "#E2E8F0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{bowler.name}</span>
+                        <span style={{ fontSize: 11, color: "#94A3B8", textAlign: "right" }}>{bowler.overs}</span>
+                        <span style={{ fontSize: 11, color: "#94A3B8", textAlign: "right" }}>{bowler.runs}</span>
+                        <span style={{ fontSize: 12, fontWeight: 700, textAlign: "right", color: bowler.wickets > 0 ? "#22C55E" : "#E2E8F0" }}>{bowler.wickets}</span>
+                        <span style={{ fontSize: 11, fontWeight: 600, textAlign: "right", color: bowler.economy <= 7 ? "#22C55E" : bowler.economy <= 10 ? "#F59E0B" : "#EF4444" }}>{bowler.economy ? bowler.economy.toFixed(1) : "0.0"}</span>
                     </div>
                 </div>
             )}
-            <div style={{ background: "#fff", border: "0.5px solid #E2E8F0", borderRadius: 12, padding: 14 }}>
-                <div style={{ fontSize: 12, color: "#64748B", marginBottom: 10 }}>Pitch behaviour now</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                    <div style={{ textAlign: "center", padding: "10px 6px", background: "#EEF2FF", borderRadius: 8 }}>
-                        <div style={{ fontSize: 18, fontWeight: 500, color: spinBoost > 5 ? "#BA7517" : "#64748B" }}>{spinBoost > 0 ? `+${spinBoost}%` : "-"}</div>
-                        <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>Spin turn</div>
-                    </div>
-                    <div style={{ textAlign: "center", padding: "10px 6px", background: "#EEF2FF", borderRadius: 8 }}>
-                        <div style={{ fontSize: 18, fontWeight: 500, color: "#0A0A0A" }}>{pitchCond.split(" ")[0]}</div>
-                        <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>Surface</div>
-                    </div>
-                    <div style={{ textAlign: "center", padding: "10px 6px", background: dewSoon ? "#E6F1FB" : "#EEF2FF", borderRadius: 8 }}>
-                        <div style={{ fontSize: 18, fontWeight: 500, color: dewSoon ? "#185FA5" : "#64748B" }}>{dewSoon ? "Soon" : "None"}</div>
-                        <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>Dew factor</div>
-                    </div>
-                </div>
-            </div>
         </div>
     );
 }
 
-function MatchPill({ m, selected, onClick }) {
-    return (
-        <div className={`match-pill ${selected ? "sel" : ""}`} onClick={() => { onClick(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ opacity: m.status === "ENDED" ? 0.75 : 1 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: 10, color: "#64748B" }}>{m.day} - {m.detail?.split("")[0]?.trim().slice(0, 18)}</span>
-                <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 5, background: m.status === "LIVE" ? "#FFF0F0" : m.status === "UPCOMING" ? "#EFF6FF" : "#F0F0F0", color: m.status === "LIVE" ? "#E53E3E" : m.status === "UPCOMING" ? "#1E2D6B" : "#64748B" }}>
-                    {m.status === "LIVE" ? "LIVE" : m.status === "UPCOMING" ? "SOON" : "ENDED"}
-                </span>
-            </div>
-            {[{ n: m.t1, s: m.t1Score, w: m.t1Wkts, b: true, imgId: m.t1ImageId || 0 }, { n: m.t2, s: m.t2Score, b: false, imgId: m.t2ImageId || 0 }].map(({ n, s, w, b, imgId }) => (
-                <div key={n} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 3 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <TeamLogo name={n} size={16} imageId={imgId} />
-                        <span style={{ fontSize: 11, fontWeight: b ? 600 : 400, color: b ? "#0A0A0A" : "#64748B" }}>{n}</span>
-                    </div>
-                    {s != null && <span style={{ fontSize: 11, fontWeight: b ? 700 : 400, color: b ? "#0A0A0A" : "#64748B" }}>{w != null ? `${s}/${w}` : s}</span>}
-                </div>
-            ))}
-        </div>
-    );
-}
-
-function MatchCard({ m, onClick }) {
-    return (
-        <div className="card" style={{ padding: 16, marginBottom: 10, cursor: "pointer", opacity: m.status === "ENDED" ? 0.8 : 1 }} onClick={onClick}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                <span style={{ fontSize: 11, color: "#64748B" }}>{m.day} - {m.detail?.split("")[0]?.trim()}</span>
-                <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: m.status === "LIVE" ? "#FFF0F0" : m.status === "UPCOMING" ? "#EFF6FF" : "#F0F0F0", color: m.status === "LIVE" ? "#E53E3E" : m.status === "UPCOMING" ? "#1E2D6B" : "#64748B" }}>
-                    {m.status === "LIVE" ? "LIVE" : m.status === "UPCOMING" ? "UPCOMING" : "ENDED"}
-                </span>
-            </div>
-            {[{ n: m.t1, s: m.t1Score, w: m.t1Wkts, b: true, imgId: m.t1ImageId || 0 }, { n: m.t2, s: m.t2Score, b: false, imgId: m.t2ImageId || 0 }].map(({ n, s, w, b, imgId }) => (
-                <div key={n} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <TeamLogo name={n} size={32} imageId={imgId || 0} />
-                        <span style={{ fontSize: 16, fontWeight: b ? 700 : 400, color: b ? "#0A0A0A" : "#64748B" }}>{n}</span>
-                    </div>
-                    {s != null && <span style={{ fontSize: 16, fontWeight: b ? 700 : 400, color: b ? "#0A0A0A" : "#64748B" }}>{w != null ? `${s}/${w}` : s}</span>}
-                </div>
-            ))}
-            <div style={{ fontSize: 12, fontWeight: 600, marginTop: 6, color: m.status === "ENDED" ? "#64748B" : m.status === "UPCOMING" ? "#1E2D6B" : "#00B894" }}>
-                {m.status === "ENDED" ? "View result" : m.status === "UPCOMING" ? "Pre-match prediction" : "View live prediction"}
-            </div>
-        </div>
-    );
-}
-
-function MediaSection() {
-    const fallbackNews = [
-        { tag: "IPL 2025", title: "IPL 2025: Full schedule and match predictions", time: "2h ago", url: "https://www.espncricinfo.com", source: "ESPNcricinfo" },
-        { tag: "T20", title: "NZ vs SA T20I series - match preview and predictions", time: "3h ago", url: "https://www.cricbuzz.com", source: "Cricbuzz" },
-        { tag: "ANALYSIS", title: "How AI is transforming cricket match predictions", time: "6h ago", url: "https://cricintelligence.com", source: "CricIntelligence" },
-        { tag: "WOMEN", title: "Australia Women dominate WI series - key stats", time: "1d ago", url: "https://www.espncricinfo.com", source: "ESPNcricinfo" },
-        { tag: "IPL", title: "IPL 2025 schedule: Complete fixtures and venues", time: "1d ago", url: "https://www.iplt20.com", source: "IPL Official" },
-        { tag: "STATS", title: "T20 death over specialists - top bowlers in 2025", time: "2d ago", url: "https://www.cricbuzz.com", source: "Cricbuzz" },
-    ];
-    const C2 = { bg: "#EEF2FF", surface: "#fff", border: "#E2E8F0", accent: "#1E2D6B", muted: "#64748B", text: "#0A0A0A", navy: "#1E2D6B" };
-    return (
-        <div className="fade" style={{ maxWidth: 680, margin: "0 auto", padding: "22px 16px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-                <div style={{ fontSize: 20, fontWeight: 800 }}>Cricket News and Insights</div>
-                <div style={{ fontSize: 11, color: C2.muted }}>Updated live</div>
-            </div>
-            <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
-                {[{ label: "ESPNcricinfo", url: "https://www.espncricinfo.com/cricket-news" }, { label: "Cricbuzz", url: "https://www.cricbuzz.com/cricket-news" }, { label: "ICC", url: "https://www.icc-cricket.com/media-releases" }, { label: "IPL Official", url: "https://www.iplt20.com/news" }].map(({ label, url }) => (
-                    <a key={label} href={url} target="_blank" rel="noreferrer" style={{ fontSize: 12, padding: "6px 14px", borderRadius: 20, background: C2.navy, color: "#fff", textDecoration: "none", fontWeight: 600 }}>{label}</a>
-                ))}
-            </div>
-            {fallbackNews.map(({ tag, title, time, url, source }, i) => (
-                <a key={i} href={url || "#"} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
-                    <div className="card" style={{ padding: 16, marginBottom: 10, cursor: "pointer" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                            <span style={{ fontSize: 10, fontWeight: 700, color: C2.accent, letterSpacing: 1, background: `${C2.accent}12`, padding: "2px 8px", borderRadius: 4 }}>{tag}</span>
-                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                {source && <span style={{ fontSize: 10, color: C2.muted }}>{source}</span>}
-                                <span style={{ fontSize: 11, color: C2.muted }}>{time}</span>
-                            </div>
-                        </div>
-                        <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.5, color: C2.text }}>{title}</div>
-                        <div style={{ fontSize: 11, color: C2.accent, marginTop: 6 }}>Read more</div>
-                    </div>
-                </a>
-            ))}
-        </div>
-    );
-}
-
-function NoMatchesScreen() {
-    return (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 32px", textAlign: "center" }}>
-            <div style={{ fontSize: 64, marginBottom: 20 }}></div>
-            <div style={{ fontSize: 24, fontWeight: 800, color: C.navy, marginBottom: 10 }}>No Live Matches Right Now</div>
-            <div style={{ fontSize: 15, color: C.muted, lineHeight: 1.7, maxWidth: 380, marginBottom: 24 }}>
-                IPL and international matches will appear here automatically when they go live.
-            </div>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginBottom: 32 }}>
-                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "14px 20px", minWidth: 120, textAlign: "center" }}>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: C.navy }}>877</div>
-                    <div style={{ fontSize: 11, color: C.muted, marginTop: 3 }}>Venues tracked</div>
-                </div>
-                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "14px 20px", minWidth: 120, textAlign: "center" }}>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: C.navy }}>1.7M</div>
-                    <div style={{ fontSize: 11, color: C.muted, marginTop: 3 }}>Historical matches</div>
-                </div>
-                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "14px 20px", minWidth: 120, textAlign: "center" }}>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: C.navy }}>78.2%</div>
-                    <div style={{ fontSize: 11, color: C.muted, marginTop: 3 }}>Accuracy</div>
-                </div>
-            </div>
-            <div style={{ fontSize: 12, color: C.muted, background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "12px 20px" }}>
-                Page auto-refreshes every 10 seconds
-            </div>
-        </div>
-    );
-}
-
-export default 
 function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
     const [showLanding, setShowLanding] = useState(() => { try { return !localStorage.getItem("ci_v2"); } catch { return false; } });
@@ -920,6 +599,7 @@ body { background: ${C.bg}; }
                                                 )}
                                             </div>
                                         )}
+                                        {pred && pred.batters && pred.batters.length > 0 && <LiveScorecard batters={pred.batters} bowler={pred.bowler || {}} />}
                                         <div className="card" style={{ padding: 22 }}>
                                             <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WIN PROBABILITY</div>
                                             <div style={{ fontSize: 15, fontWeight: 800, color: winColor, marginBottom: 8, letterSpacing: 0.3 }}>{winMsg}</div>
