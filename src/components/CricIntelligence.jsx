@@ -427,7 +427,7 @@ export default function CricIntelligence() {
                 else setPred(null);
             }
         } catch { }
-    }, []);
+    }, [selectedMatch]);
 
     useEffect(() => { fetchPred(); }, [selectedMatch, ticker]);
 
