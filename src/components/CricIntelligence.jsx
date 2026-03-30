@@ -369,7 +369,7 @@ function LiveScorecard({ batters, bowler }) {
     if (!batters || batters.length === 0) return null;
     return (
         <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"â¡ LIVE SCORECARD"}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"Ã¢ÂÂ¡ LIVE SCORECARD"}</div>
             <div style={{ marginBottom: 10 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, marginBottom: 5 }}>
                     <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BATTER"}</span>
@@ -517,7 +517,7 @@ export default function CricIntelligence() {
                 setLiveStatus("live");
                 const live = mapped.find(m => m.status === "LIVE");
                 const upcoming = mapped.find(m => m.status === "UPCOMING");
-                const best = live || upcoming;
+                const best = live || upcoming || mapped[0];
                 if (best && !hasUserSelectedRef.current) setSelectedMatch(best);
             }
         } catch { setLiveStatus("mock"); }
