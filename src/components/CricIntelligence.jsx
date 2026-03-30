@@ -412,6 +412,67 @@ function LiveScorecard({ batters, bowler }) {
 }
 
 
+function ScoreProjection({ pred }) {
+    if (!pred || !pred.overs || pred.overs.length === 0) return null;
+    const C = COLORS;
+    const curRuns = pred.score || 0;
+    const curOvers = parseFloat(pred.overs) || 0;
+    const crr = pred.currentRunRate || 0;
+    const phase = pred.currentPhase || "";
+    const pitch = pred.pitchCondition || "";
+    const weather = pred.weather || {};
+
+    // Pitch wear factor - from backend data
+    const pitchFactor = pred.deteriorationFactor || 1.0;
+    // Weather factor - dew helps batting
+    const dewFactor = (weather.condition || "").toLowerCase().includes("dew") ? 1.08 : 1.0;
+    // Phase factor
+    const deathFactor = (pred.overs || []).slice(0,3).reduce((a,o) => a + (o.expectedRuns||0), 0) / 3 || crr;
+
+    // Project at different milestones
+    const milestones = [6, 10, 12, 15].map(targetOv => {
+        const oversLeft = Math.max(targetOv - curOvers, 0);
+        if(oversLeft <= 0) return null;
+        // Use average of next over predictions if available
+        const nextOvPreds = (pred.overs || []).filter(o => o.over <= targetOv);
+        let projRuns;
+        if(nextOvPreds.length > 0) {
+            const predRuns = nextOvPreds.reduce((a,o) => a + (o.expectedRuns||crr), 0);
+            projRuns = curRuns + predRuns;
+        } else {
+            projRuns = curRuns + (crr * oversLeft * pitchFactor * dewFactor);
+        }
+        return {
+            overs: targetOv,
+            projected: Math.round(projRuns),
+            confidence: nextOvPreds.length > 0 ? "ML" : "CRR",
+        };
+    }).filter(Boolean);
+
+    if(milestones.length === 0) return null;
+
+    return (
+        <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 12 }}>{"Ã°ÂÂÂ SCORE PROJECTION"}</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+                {milestones.map((m, i) => (
+                    <div key={i} style={{ background: "rgba(255,255,255,0.05)", borderRadius: 8, padding: "8px 6px", textAlign: "center" }}>
+                        <div style={{ fontSize: 9, color: "#64748B", fontWeight: 600, marginBottom: 4 }}>{"OV " + m.overs}</div>
+                        <div style={{ fontSize: 18, fontWeight: 800, color: "#E2E8F0", lineHeight: 1 }}>{m.projected}</div>
+                        <div style={{ fontSize: 8, color: m.confidence === "ML" ? "#22C55E" : "#F59E0B", marginTop: 3, fontWeight: 600 }}>{m.confidence}</div>
+                    </div>
+                ))}
+            </div>
+            <div style={{ marginTop: 10, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {pitchFactor > 1.1 && <span style={{ fontSize: 9, background: "rgba(239,68,68,0.15)", color: "#EF4444", borderRadius: 4, padding: "2px 6px", fontWeight: 600 }}>{"PITCH WORN -" + Math.round((pitchFactor-1)*100) + "% scoring"}</span>}
+                {dewFactor > 1 && <span style={{ fontSize: 9, background: "rgba(34,197,94,0.15)", color: "#22C55E", borderRadius: 4, padding: "2px 6px", fontWeight: 600 }}>{"DEW +8% batting"}</span>}
+                <span style={{ fontSize: 9, background: "rgba(148,163,184,0.1)", color: "#94A3B8", borderRadius: 4, padding: "2px 6px" }}>{pitch || "LIVE PITCH"}</span>
+            </div>
+        </div>
+    );
+}
+
+
 function DecisionPanel({ pred }) {
     if (!pred || !pred.team1) return null;
     const batters = pred.batters || [];
@@ -422,40 +483,32 @@ function DecisionPanel({ pred }) {
     const detr = pred.deteriorationFactor || 1.0;
     const wearPct = Math.min(Math.round((detr - 1.0) * 100), 99);
     const isDew = (weather.humidity > 80 && overs > 12);
+    const temp = weather.temp || "--";
+    const humidity = weather.humidity || "--";
+    const weatherCond = weather.condition || "CLEAR";
     const bowlOvers = parseFloat(bowler.overs || 0);
-    const maxSpell = totalOvers === 20 ? 4 : 10;
-
-    // Simple pitch label
     const pitchAge = overs / totalOvers;
     const pitchText = pitchAge < 0.3 ? "Pitch is fresh — ball doing a lot" :
-                      pitchAge < 0.6 ? "Pitch settling down — good for batting" :
-                      wearPct > 15 ? "Pitch is old — spinners & uneven bounce" :
-                      "Pitch is getting tired — harder to bat";
+                      pitchAge < 0.6 ? "Pitch settling — good for batting" :
+                      wearPct > 15 ? "Pitch is old — spinners and uneven bounce" :
+                      "Pitch getting tired — harder to bat";
     const pitchColor = pitchAge < 0.3 ? "#F59E0B" : pitchAge < 0.6 ? "#22C55E" : wearPct > 15 ? "#EF4444" : "#F59E0B";
-
-    // Simple bowler label
     const bowlerText = bowlOvers === 0 ? "New bowler — watch first few balls" :
                        bowlOvers <= 1.3 ? "Bowler just started — finding rhythm" :
                        bowlOvers <= 3.3 ? "Bowler in full flow — hard to score" :
                        "Last overs for this bowler — might take risk";
     const bowlerColor = bowlOvers <= 1.3 ? "#F59E0B" : bowlOvers <= 3.3 ? "#EF4444" : "#94A3B8";
-
-    // Simple key read — one line
     const keyRead = bowlOvers >= 2 && bowlOvers <= 3.3 && (bowler.economy||9) < 7 ?
-        "🔴 Bowler controlling — bet on low scoring over" :
+        "🔴 Bowler controlling — expect dot balls this over" :
         isDew ? "🟢 Dew on pitch — batting side getting easier" :
         wearPct > 15 ? "🟡 Old pitch — spinner or sharp ball can take wicket" :
         batters[0]?.sr > 150 ? "🟢 Batsman hitting freely — big over possible" :
         batters[0]?.sr < 80 ? "🔴 Batsman struggling — dot balls or wicket likely" :
-        "⚪ Normal — go with your gut";
-
+        "⚪ Normal situation — go with your read";
     const srColor = (sr) => sr >= 150 ? "#22C55E" : sr >= 100 ? "#F59E0B" : "#EF4444";
-
     return (
         <div style={{ background: "rgba(10,15,35,0.8)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: "16px", marginBottom: 14 }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 2, marginBottom: 14 }}>{"🧠 MATCH READ"}</div>
-
-            {/* Pitch */}
             <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
                 <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 6, letterSpacing: 1 }}>{"PITCH"}</div>
                 <div style={{ fontSize: 12, color: pitchColor, fontWeight: 600, lineHeight: 1.4 }}>{pitchText}</div>
@@ -464,16 +517,10 @@ function DecisionPanel({ pred }) {
                 </div>
                 <div style={{ fontSize: 9, color: "#64748B", marginTop: 4 }}>{"Over " + Math.floor(overs) + " of " + totalOvers}</div>
             </div>
-
-            {/* Weather */}
-            {isDew && (
-                <div style={{ background: "rgba(34,197,94,0.08)", border: "1px solid rgba(34,197,94,0.2)", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
-                    <div style={{ fontSize: 12, color: "#22C55E", fontWeight: 600 }}>{"🌊 Dew on the ground — ball getting wet, harder to grip"}</div>
-                    <div style={{ fontSize: 10, color: "#94A3B8", marginTop: 4 }}>{"Batting team benefits — easier to hit"}</div>
-                </div>
-            )}
-
-            {/* Batters */}
+            <div style={{ background: isDew ? "rgba(34,197,94,0.08)" : "rgba(255,255,255,0.04)", border: isDew ? "1px solid rgba(34,197,94,0.2)" : "none", borderRadius: 10, padding: "8px 12px", marginBottom: 10 }}>
+                {isDew && <div style={{ fontSize: 12, color: "#22C55E", fontWeight: 600, marginBottom: 4 }}>{"🌊 Dew on ground — ball getting wet, harder to grip"}</div>}
+                <div style={{ fontSize: 10, color: isDew ? "#94A3B8" : "#E2E8F0" }}>{weatherCond + " · " + temp + "°C · " + humidity + "% humid"}</div>
+            </div>
             {batters.length > 0 && (
                 <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
                     <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>{"WHO IS BATTING"}</div>
@@ -485,34 +532,24 @@ function DecisionPanel({ pred }) {
                                 {b.isStriker && <span style={{ fontSize: 9, color: "#64748B" }}>{"(facing)"}</span>}
                             </div>
                             <div style={{ textAlign: "right" }}>
-                                <div style={{ fontSize: 12, fontWeight: 700, color: srColor(b.sr||0) }}>
-                                    {b.sr >= 150 ? "🔥 Hitting" : b.sr >= 100 ? "😐 Steady" : "🐢 Slow"}
-                                </div>
+                                <div style={{ fontSize: 12, fontWeight: 700, color: srColor(b.sr||0) }}>{(b.sr||0) >= 150 ? "🔥 Hitting" : (b.sr||0) >= 100 ? "😐 Steady" : "🐢 Slow"}</div>
                                 <div style={{ fontSize: 9, color: "#64748B" }}>{b.runs + " off " + b.balls + " balls"}</div>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
-
-            {/* Bowler */}
             {bowler.name && (
                 <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
                     <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 6, letterSpacing: 1 }}>{"WHO IS BOWLING"}</div>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
                         <span style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0" }}>{bowler.name}</span>
-                        <span style={{ fontSize: 11, color: bowler.wickets > 0 ? "#22C55E" : "#94A3B8", fontWeight: 700 }}>
-                            {bowler.wickets > 0 ? bowler.wickets + " wicket" + (bowler.wickets > 1 ? "s" : "") + " today" : "No wickets yet"}
-                        </span>
+                        <span style={{ fontSize: 11, color: bowler.wickets > 0 ? "#22C55E" : "#94A3B8", fontWeight: 700 }}>{bowler.wickets > 0 ? bowler.wickets + " wicket" + (bowler.wickets > 1 ? "s" : "") + " today" : "No wickets yet"}</span>
                     </div>
                     <div style={{ fontSize: 11, color: bowlerColor, lineHeight: 1.4 }}>{bowlerText}</div>
-                    <div style={{ fontSize: 9, color: "#64748B", marginTop: 4 }}>
-                        {"Giving " + (bowler.economy||0).toFixed(1) + " runs per over today"}
-                    </div>
+                    <div style={{ fontSize: 9, color: "#64748B", marginTop: 4 }}>{"Giving " + (bowler.economy||0).toFixed(1) + " runs per over today"}</div>
                 </div>
             )}
-
-            {/* Key Read */}
             <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px" }}>
                 <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 6, letterSpacing: 1 }}>{"WHAT TO WATCH"}</div>
                 <div style={{ fontSize: 12, color: "#E2E8F0", lineHeight: 1.5 }}>{keyRead}</div>
@@ -521,128 +558,6 @@ function DecisionPanel({ pred }) {
     );
 }
 
-
-function DecisionPanel({ pred }) {
-    if (!pred || !pred.team1) return null;
-    const batters = pred.batters || [];
-    const bowler = pred.bowler || {};
-    const weather = pred.weather || {};
-    const pitch = pred.pitchCondition || "";
-    const pitchLabel = pred.pitchLabel || "";
-    const detr = pred.deteriorationFactor || 1.0;
-    const wearPct = Math.min(Math.round((detr - 1.0) * 100), 99);
-    const overs = parseFloat(pred.overs) || 0;
-    const totalOvers = pred.matchType === "odi" ? 50 : 20;
-    const pitchPhasePct = Math.min(Math.round((overs / totalOvers) * 100), 100);
-    const isDew = (weather.condition || "").toLowerCase().includes("dew") || 
-                  (weather.humidity > 80 && overs > 12);
-    const temp = weather.temp || "--";
-    const humidity = weather.humidity || "--";
-    const weatherCond = weather.condition || "CLEAR";
-
-    // Bowler spell status
-    const bowlOvers = parseFloat(bowler.overs || 0);
-    const maxSpell = totalOvers === 20 ? 4 : 10;
-    const spellPct = Math.min(Math.round((bowlOvers / maxSpell) * 100), 100);
-    const isFreshBowler = bowlOvers <= 1;
-    const isPeakSpell = bowlOvers >= 2 && bowlOvers <= 3.3;
-    const isEndingSpell = bowlOvers >= maxSpell - 1;
-    const spellLabel = isFreshBowler ? "FRESH" : isPeakSpell ? "PEAK" : isEndingSpell ? "LAST OV" : "MID SPELL";
-    const spellColor = isFreshBowler ? "#F59E0B" : isPeakSpell ? "#EF4444" : isEndingSpell ? "#94A3B8" : "#E2E8F0";
-
-    // Pitch wear color
-    const wearColor = wearPct > 20 ? "#EF4444" : wearPct > 10 ? "#F59E0B" : "#22C55E";
-
-    // SR color
-    const srColor = (sr) => sr >= 150 ? "#22C55E" : sr >= 100 ? "#F59E0B" : "#EF4444";
-
-    return (
-        <div style={{ background: "rgba(10,15,35,0.8)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: "16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 2, marginBottom: 14 }}>{"ð§  DECISION PANEL"}</div>
-
-            {/* Row 1: Pitch + Weather */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
-                {/* Pitch */}
-                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px" }}>
-                    <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>{"PITCH"}</div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: wearColor, marginBottom: 6 }}>{pitch || pitchLabel || "READING..."}</div>
-                    {/* Wear bar */}
-                    <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 3, height: 4, marginBottom: 4 }}>
-                        <div style={{ width: pitchPhasePct + "%", height: "100%", background: wearColor, borderRadius: 3, transition: "width 0.5s" }} />
-                    </div>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span style={{ fontSize: 9, color: "#64748B" }}>{"Over " + Math.floor(overs) + "/" + totalOvers}</span>
-                        {wearPct > 0 && <span style={{ fontSize: 9, color: wearColor, fontWeight: 700 }}>{"WORN +" + wearPct + "%"}</span>}
-                    </div>
-                </div>
-
-                {/* Weather */}
-                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px" }}>
-                    <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>{"WEATHER"}</div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: isDew ? "#22C55E" : "#E2E8F0", marginBottom: 6 }}>
-                        {isDew ? "ð DEW" : weatherCond}
-                    </div>
-                    <div style={{ fontSize: 10, color: "#94A3B8" }}>{temp + "Â°C Â· " + humidity + "% humid"}</div>
-                    {isDew && <div style={{ fontSize: 9, color: "#22C55E", marginTop: 4, fontWeight: 600 }}>{"Batting easier â"}</div>}
-                    {!isDew && overs > 12 && <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 4 }}>{"No dew effect"}</div>}
-                </div>
-            </div>
-
-            {/* Row 2: Batters */}
-            {batters.length > 0 && (
-                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
-                    <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>{"BATTING NOW"}</div>
-                    {batters.map((b, i) => (
-                        <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: i < batters.length-1 ? 8 : 0 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                {b.isStriker && <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22C55E", display: "inline-block" }} />}
-                                <span style={{ fontSize: 12, fontWeight: b.isStriker ? 700 : 400, color: b.isStriker ? "#E2E8F0" : "#94A3B8" }}>{b.name}</span>
-                            </div>
-                            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                                <span style={{ fontSize: 11, color: "#94A3B8" }}>{b.runs + "(" + b.balls + ")"}</span>
-                                <span style={{ fontSize: 12, fontWeight: 700, color: srColor(b.sr || 0) }}>{"SR " + (b.sr ? Math.round(b.sr) : 0)}</span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
-
-            {/* Row 3: Bowler */}
-            {bowler.name && (
-                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
-                    <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>{"BOWLING NOW"}</div>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0" }}>{bowler.name}</span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: spellColor, background: "rgba(255,255,255,0.06)", borderRadius: 4, padding: "2px 8px" }}>{spellLabel}</span>
-                    </div>
-                    <div style={{ display: "flex", gap: 16 }}>
-                        <span style={{ fontSize: 11, color: "#94A3B8" }}>{"Eco " + (bowler.economy || "--")}</span>
-                        <span style={{ fontSize: 11, color: "#94A3B8" }}>{bowler.overs + " ov"}</span>
-                        <span style={{ fontSize: 11, color: bowler.wickets > 0 ? "#22C55E" : "#94A3B8", fontWeight: bowler.wickets > 0 ? 700 : 400 }}>{bowler.wickets + " wkt"}</span>
-                    </div>
-                    {/* Spell progress bar */}
-                    <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 3, height: 3, marginTop: 8 }}>
-                        <div style={{ width: spellPct + "%", height: "100%", background: spellColor, borderRadius: 3 }} />
-                    </div>
-                    <div style={{ fontSize: 9, color: "#64748B", marginTop: 3 }}>{bowlOvers.toFixed(1) + " of " + maxSpell + " max overs"}</div>
-                </div>
-            )}
-
-            {/* Row 4: Your Edge - key insight */}
-            <div style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.15)", borderRadius: 10, padding: "10px 12px" }}>
-                <div style={{ fontSize: 9, color: "#22C55E", fontWeight: 700, marginBottom: 6, letterSpacing: 1 }}>{"â¡ KEY READ"}</div>
-                <div style={{ fontSize: 11, color: "#E2E8F0", lineHeight: 1.5 }}>
-                    {isPeakSpell && bowler.economy < 7 ? "Bowler in peak spell + tight economy â expect dot balls" :
-                     isDew ? "Dew active â batting side advantage, boundaries easier" :
-                     wearPct > 15 ? "Pitch heavily worn â spinners/irregular bounce, batting tough" :
-                     isEndingSpell ? "Bowler ending spell â captain may bring fresh bowler" :
-                     batters.length > 0 && batters[0]?.sr > 150 ? "Striker in hot form â aggressive batting likely" :
-                     "Match situation normal â play by conditions"}
-                </div>
-            </div>
-        </div>
-    );
-}
 
 export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
