@@ -369,7 +369,7 @@ function LiveScorecard({ batters, bowler }) {
     if (!batters || batters.length === 0) return null;
     return (
         <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"Ã¢ÂÂ¡ LIVE SCORECARD"}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"ÃÂ¢ÃÂÃÂ¡ LIVE SCORECARD"}</div>
             <div style={{ marginBottom: 10 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, marginBottom: 5 }}>
                     <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BATTER"}</span>
@@ -453,7 +453,7 @@ function ScoreProjection({ pred }) {
 
     return (
         <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 12 }}>{"ð SCORE PROJECTION"}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 12 }}>{"Ã°ÂÂÂ SCORE PROJECTION"}</div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
                 {milestones.map((m, i) => (
                     <div key={i} style={{ background: "rgba(255,255,255,0.05)", borderRadius: 8, padding: "8px 6px", textAlign: "center" }}>
@@ -478,122 +478,123 @@ function DecisionPanel({ pred }) {
     const batters = pred.batters || [];
     const bowler = pred.bowler || {};
     const weather = pred.weather || {};
-    const pitch = pred.pitchCondition || "";
-    const pitchLabel = pred.pitchLabel || "";
-    const detr = pred.deteriorationFactor || 1.0;
-    const wearPct = Math.min(Math.round((detr - 1.0) * 100), 99);
     const overs = parseFloat(pred.overs) || 0;
     const totalOvers = pred.matchType === "odi" ? 50 : 20;
-    const pitchPhasePct = Math.min(Math.round((overs / totalOvers) * 100), 100);
-    const isDew = (weather.condition || "").toLowerCase().includes("dew") || 
-                  (weather.humidity > 80 && overs > 12);
+    const detr = pred.deteriorationFactor || 1.0;
+    const wearPct = Math.min(Math.round((detr - 1.0) * 100), 99);
+    const isDew = weather.humidity > 80 && overs > 12;
+    const humidity = weather.humidity || 0;
     const temp = weather.temp || "--";
-    const humidity = weather.humidity || "--";
     const weatherCond = weather.condition || "CLEAR";
-
-    // Bowler spell status
     const bowlOvers = parseFloat(bowler.overs || 0);
     const maxSpell = totalOvers === 20 ? 4 : 10;
-    const spellPct = Math.min(Math.round((bowlOvers / maxSpell) * 100), 100);
-    const isFreshBowler = bowlOvers <= 1;
-    const isPeakSpell = bowlOvers >= 2 && bowlOvers <= 3.3;
-    const isEndingSpell = bowlOvers >= maxSpell - 1;
-    const spellLabel = isFreshBowler ? "FRESH" : isPeakSpell ? "PEAK" : isEndingSpell ? "LAST OV" : "MID SPELL";
-    const spellColor = isFreshBowler ? "#F59E0B" : isPeakSpell ? "#EF4444" : isEndingSpell ? "#94A3B8" : "#E2E8F0";
+    const spellLabel = bowlOvers === 0 ? "FRESH" : bowlOvers <= 1.3 ? "STARTING" : bowlOvers <= 3.3 ? "IN FLOW" : "LAST OV";
+    const spellColor = bowlOvers <= 1.3 ? "#F59E0B" : bowlOvers <= 3.3 ? "#EF4444" : "#94A3B8";
+    const pitchAge = Math.min(overs / totalOvers, 1);
+    const pitchWearBar = Math.round(pitchAge * 10);
+    const spinEffect = wearPct > 0 ? "+" + wearPct + "%" : "normal";
+    const paceEffect = wearPct > 0 ? "-" + Math.round(wearPct * 0.6) + "%" : "normal";
 
-    // Pitch wear color
-    const wearColor = wearPct > 20 ? "#EF4444" : wearPct > 10 ? "#F59E0B" : "#22C55E";
+    // YOUR EDGE logic
+    const edges = [];
+    if (bowlOvers >= 2 && bowlOvers <= 3.3 && (bowler.economy || 9) < 7)
+        edges.push("Next over: TIGHT (bowler peak spell)");
+    if (!isDew && overs > 12)
+        edges.push("Dew absent: batting harder after over " + Math.floor(overs));
+    if (isDew)
+        edges.push("Dew active: batting side advantage — easier to hit");
+    if (batters[0]?.sr > 150)
+        edges.push("Striker in form — big over likely");
+    if (batters[0]?.sr < 80)
+        edges.push("Striker struggling — wicket or dot ball likely");
+    if (wearPct > 20)
+        edges.push("Pitch heavily worn — spinners dangerous");
+    if (edges.length === 0) edges.push("Normal conditions — trust your read");
 
-    // SR color
-    const srColor = (sr) => sr >= 150 ? "#22C55E" : sr >= 100 ? "#F59E0B" : "#EF4444";
+    const srIcon = (sr) => sr >= 150 ? "🔥" : sr >= 100 ? "😐" : "🐢";
+    const C = COLORS;
 
     return (
-        <div style={{ background: "rgba(10,15,35,0.8)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: "16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 2, marginBottom: 14 }}>{"🧠 DECISION PANEL"}</div>
+        <div style={{ fontFamily: "monospace", background: "rgba(10,15,35,0.85)", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, padding: "14px 16px", marginBottom: 14, fontSize: 11 }}>
+            <div style={{ color: "#94A3B8", fontWeight: 700, letterSpacing: 2, marginBottom: 12, fontSize: 10 }}>{"🧠 DECISION PANEL"}</div>
 
-            {/* Row 1: Pitch + Weather */}
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
-                {/* Pitch */}
-                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px" }}>
-                    <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>{"PITCH"}</div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: wearColor, marginBottom: 6 }}>{pitch || pitchLabel || "READING..."}</div>
-                    {/* Wear bar */}
-                    <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 3, height: 4, marginBottom: 4 }}>
-                        <div style={{ width: pitchPhasePct + "%", height: "100%", background: wearColor, borderRadius: 3, transition: "width 0.5s" }} />
+            {/* Row 1: PITCH + WEATHER side by side */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+                {/* PITCH */}
+                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "8px 10px" }}>
+                    <div style={{ color: "#64748B", fontSize: 9, fontWeight: 700, marginBottom: 6 }}>{"PITCH (Over " + Math.floor(overs) + " of " + totalOvers + ")"}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 4 }}>
+                        <span style={{ color: wearPct > 20 ? "#EF4444" : wearPct > 10 ? "#F59E0B" : "#22C55E" }}>
+                            {"█".repeat(pitchWearBar) + "░".repeat(10 - pitchWearBar)}
+                        </span>
+                        <span style={{ color: "#E2E8F0", fontWeight: 700 }}>{" " + wearPct + "%"}</span>
                     </div>
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <span style={{ fontSize: 9, color: "#64748B" }}>{"Over " + Math.floor(overs) + "/" + totalOvers}</span>
-                        {wearPct > 0 && <span style={{ fontSize: 9, color: wearColor, fontWeight: 700 }}>{"WORN +" + wearPct + "%"}</span>}
+                    <div style={{ color: "#94A3B8", fontSize: 10 }}>
+                        <span style={{ color: "#F59E0B" }}>{"Spin " + spinEffect}</span>
+                        {" | "}
+                        <span style={{ color: "#64748B" }}>{"Pace " + paceEffect}</span>
                     </div>
                 </div>
 
-                {/* Weather */}
-                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px" }}>
-                    <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>{"WEATHER"}</div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: isDew ? "#22C55E" : "#E2E8F0", marginBottom: 6 }}>
-                        {isDew ? "🌊 DEW" : weatherCond}
+                {/* WEATHER */}
+                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "8px 10px" }}>
+                    <div style={{ color: "#64748B", fontSize: 9, fontWeight: 700, marginBottom: 6 }}>{"WEATHER"}</div>
+                    <div style={{ color: isDew ? "#22C55E" : "#E2E8F0", fontWeight: 700, marginBottom: 4 }}>
+                        {isDew ? "🌊 Dew" : "🌙 No Dew"}
                     </div>
-                    <div style={{ fontSize: 10, color: "#94A3B8" }}>{temp + "°C · " + humidity + "% humid"}</div>
-                    {isDew && <div style={{ fontSize: 9, color: "#22C55E", marginTop: 4, fontWeight: 600 }}>{"Batting easier →"}</div>}
-                    {!isDew && overs > 12 && <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 4 }}>{"No dew effect"}</div>}
+                    <div style={{ color: "#94A3B8", fontSize: 10 }}>{"Humid " + humidity + "%"}</div>
+                    <div style={{ color: "#64748B", fontSize: 9 }}>{temp + "°C · " + weatherCond}</div>
                 </div>
             </div>
 
-            {/* Row 2: Batters */}
+            {/* BATTING NOW */}
             {batters.length > 0 && (
-                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
-                    <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>{"BATTING NOW"}</div>
+                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "8px 10px", marginBottom: 10 }}>
+                    <div style={{ color: "#64748B", fontSize: 9, fontWeight: 700, marginBottom: 8 }}>{"BATTING NOW"}</div>
                     {batters.map((b, i) => (
-                        <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: i < batters.length-1 ? 8 : 0 }}>
+                        <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: i < batters.length - 1 ? 6 : 0 }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                {b.isStriker && <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22C55E", display: "inline-block" }} />}
-                                <span style={{ fontSize: 12, fontWeight: b.isStriker ? 700 : 400, color: b.isStriker ? "#E2E8F0" : "#94A3B8" }}>{b.name}</span>
+                                {b.isStriker && <span style={{ color: "#22C55E" }}>{"▶"}</span>}
+                                <span style={{ color: b.isStriker ? "#E2E8F0" : "#94A3B8", fontWeight: b.isStriker ? 700 : 400 }}>{b.name}</span>
                             </div>
-                            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                                <span style={{ fontSize: 11, color: "#94A3B8" }}>{b.runs + "(" + b.balls + ")"}</span>
-                                <span style={{ fontSize: 12, fontWeight: 700, color: srColor(b.sr || 0) }}>{"SR " + (b.sr ? Math.round(b.sr) : 0)}</span>
+                            <div style={{ display: "flex", gap: 12, color: "#94A3B8" }}>
+                                <span>{"SR last: " + Math.round(b.sr || 0)}</span>
+                                <span>{"Form: " + srIcon(b.sr || 0)}</span>
                             </div>
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* Row 3: Bowler */}
+            {/* BOWLING NOW */}
             {bowler.name && (
-                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
-                    <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 8, letterSpacing: 1 }}>{"BOWLING NOW"}</div>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0" }}>{bowler.name}</span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: spellColor, background: "rgba(255,255,255,0.06)", borderRadius: 4, padding: "2px 8px" }}>{spellLabel}</span>
+                <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "8px 10px", marginBottom: 10 }}>
+                    <div style={{ color: "#64748B", fontSize: 9, fontWeight: 700, marginBottom: 8 }}>{"BOWLING NOW"}</div>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                        <span style={{ color: "#E2E8F0", fontWeight: 700 }}>{bowler.name}</span>
+                        <div style={{ display: "flex", gap: 10, color: "#94A3B8" }}>
+                            <span>{"This match: " + (bowler.economy || 0).toFixed(1) + " eco"}</span>
+                            <span>{"Wkts: " + (bowler.wickets || 0)}</span>
+                        </div>
                     </div>
-                    <div style={{ display: "flex", gap: 16 }}>
-                        <span style={{ fontSize: 11, color: "#94A3B8" }}>{"Eco " + (bowler.economy || "--")}</span>
-                        <span style={{ fontSize: 11, color: "#94A3B8" }}>{bowler.overs + " ov"}</span>
-                        <span style={{ fontSize: 11, color: bowler.wickets > 0 ? "#22C55E" : "#94A3B8", fontWeight: bowler.wickets > 0 ? 700 : 400 }}>{bowler.wickets + " wkt"}</span>
+                    <div style={{ display: "flex", gap: 12, color: "#94A3B8", fontSize: 10 }}>
+                        <span>{"Spell: Over " + bowlOvers.toFixed(1) + " of " + maxSpell}</span>
+                        <span style={{ color: spellColor, fontWeight: 700 }}>{"Fresh: " + (bowlOvers < 1 ? "Yes" : "No") + " · " + spellLabel}</span>
                     </div>
-                    {/* Spell progress bar */}
-                    <div style={{ background: "rgba(255,255,255,0.08)", borderRadius: 3, height: 3, marginTop: 8 }}>
-                        <div style={{ width: spellPct + "%", height: "100%", background: spellColor, borderRadius: 3 }} />
-                    </div>
-                    <div style={{ fontSize: 9, color: "#64748B", marginTop: 3 }}>{bowlOvers.toFixed(1) + " of " + maxSpell + " max overs"}</div>
                 </div>
             )}
 
-            {/* Row 4: Your Edge - key insight */}
-            <div style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.15)", borderRadius: 10, padding: "10px 12px" }}>
-                <div style={{ fontSize: 9, color: "#22C55E", fontWeight: 700, marginBottom: 6, letterSpacing: 1 }}>{"⚡ KEY READ"}</div>
-                <div style={{ fontSize: 11, color: "#E2E8F0", lineHeight: 1.5 }}>
-                    {isPeakSpell && bowler.economy < 7 ? "Bowler in peak spell + tight economy — expect dot balls" :
-                     isDew ? "Dew active — batting side advantage, boundaries easier" :
-                     wearPct > 15 ? "Pitch heavily worn — spinners/irregular bounce, batting tough" :
-                     isEndingSpell ? "Bowler ending spell — captain may bring fresh bowler" :
-                     batters.length > 0 && batters[0]?.sr > 150 ? "Striker in hot form — aggressive batting likely" :
-                     "Match situation normal — play by conditions"}
-                </div>
+            {/* YOUR EDGE */}
+            <div style={{ background: "rgba(34,197,94,0.06)", border: "1px solid rgba(34,197,94,0.15)", borderRadius: 8, padding: "8px 10px" }}>
+                <div style={{ color: "#22C55E", fontSize: 9, fontWeight: 700, marginBottom: 6 }}>{"YOUR EDGE"}</div>
+                {edges.map((e, i) => (
+                    <div key={i} style={{ color: "#E2E8F0", marginBottom: i < edges.length - 1 ? 4 : 0 }}>{"▸ " + e}</div>
+                ))}
             </div>
         </div>
     );
 }
+
 
 export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
