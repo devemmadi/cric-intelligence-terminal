@@ -124,6 +124,74 @@ function isMatchEnded(status) {
         s.includes("draw") || s.includes("no result") || s.includes("abandoned");
 }
 
+
+function DecisionPanel({ pred }) {
+    if (!pred) return null;
+    const pc = pred.playerContext || {};
+    const sr = pc.strikerSR || 0;
+    const eco = pc.bowlerEco || 8;
+    const bnd = pc.boundaryPct || 0;
+    const batForm = sr > 150 ? "🔥" : sr > 120 ? "⚡" : sr > 90 ? "✅" : "🧊";
+    const batLabel = sr > 150 ? "Attacking" : sr > 120 ? "Fluent" : sr > 90 ? "Steady" : "Struggling";
+    const ecoLabel = eco < 6 ? "Tight" : eco < 8 ? "Average" : "Expensive";
+    const ecoColor = eco < 6 ? "#00B894" : eco < 8 ? "#F59E0B" : "#E53E3E";
+    const pitchWear = pred.pitchWear || 0;
+    const pitchColor = pred.pitchCondition === "WORN" ? "#E53E3E" : pred.pitchCondition === "DRY" ? "#F59E0B" : "#00B894";
+    let edge = "";
+    if (sr > 150 && eco > 8.5) edge = "Batter vs weak bowler — back runs heavily";
+    else if (sr > 140 && bnd > 20) edge = "High SR + boundary threat — expect fireworks";
+    else if (eco < 6) edge = "Bowler in control — wicket window open";
+    else if (pred.pitchCondition === "WORN" && eco < 7) edge = "Worn pitch + tight bowling — low over likely";
+    else if (pred.pressureScore > 70) edge = "High pressure — expect conservative play";
+    else if (pc.last3Runs > 25) edge = "Hot momentum — batting team in flow";
+    else edge = (pred.weatherImpact && pred.weatherImpact.tip) ? pred.weatherImpact.tip : "Balanced — trust the ML range";
+    return (
+        <div className="card" style={{ padding: 18 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.5, marginBottom: 12 }}>MATCH READ</div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
+                <div style={{ background: C.bg, borderRadius: 10, padding: "10px 12px" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>PITCH</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{pred.pitchLabel || "—"}</div>
+                    <div style={{ height: 4, background: C.border, borderRadius: 4, marginTop: 6, overflow: "hidden" }}>
+                        <div style={{ height: "100%", width: Math.min((pitchWear || 0) * 5, 100) + "%", background: pitchColor, borderRadius: 4, transition: "width 0.5s" }} />
+                    </div>
+                    <div style={{ fontSize: 10, color: pitchColor, fontWeight: 700, marginTop: 3 }}>{pred.pitchCondition || "FRESH"}</div>
+                </div>
+                <div style={{ background: C.bg, borderRadius: 10, padding: "10px 12px" }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WEATHER</div>
+                    <div style={{ fontSize: 20 }}>{(pred.weatherImpact && pred.weatherImpact.emoji) ? pred.weatherImpact.emoji : "🌤️"}</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{(pred.weather && pred.weather.temp) ? pred.weather.temp : "—"}°C</div>
+                    <div style={{ fontSize: 10, color: C.muted }}>{(pred.weather && pred.weather.condition) ? pred.weather.condition : ""}</div>
+                </div>
+            </div>
+            <div style={{ background: C.bg, borderRadius: 10, padding: "10px 12px", marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 2 }}>BATTING NOW</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>SR {sr > 0 ? Math.round(sr) : "—"}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 24 }}>{batForm}</div>
+                    <div style={{ fontSize: 10, fontWeight: 600, color: C.muted }}>{batLabel}</div>
+                </div>
+            </div>
+            <div style={{ background: C.bg, borderRadius: 10, padding: "10px 12px", marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 2 }}>BOWLING NOW</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>Eco {eco > 0 ? eco.toFixed(1) : "—"}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                    <div style={{ fontSize: 12, fontWeight: 800, color: ecoColor, background: ecoColor + "22", borderRadius: 6, padding: "3px 8px" }}>{ecoLabel}</div>
+                    <div style={{ fontSize: 10, color: C.muted, marginTop: 3 }}>spell status</div>
+                </div>
+            </div>
+            <div style={{ background: "linear-gradient(135deg, #1E2D6B, #2A3F82)", borderRadius: 10, padding: "12px 14px" }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 1.5, marginBottom: 4 }}>YOUR EDGE</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: "#C8961E", lineHeight: 1.4 }}>{edge}</div>
+            </div>
+        </div>
+    );
+}
+
 function NextOverIntelligence({ pred }) {
     if (!pred || !pred.nextOvers || pred.nextOvers.length < 2) return null;
     const ov1 = pred.nextOvers[0];
@@ -369,7 +437,7 @@ function LiveScorecard({ batters, bowler }) {
     if (!batters || batters.length === 0) return null;
     return (
         <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"⚡ LIVE SCORECARD"}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"â¡ LIVE SCORECARD"}</div>
             <div style={{ marginBottom: 10 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, marginBottom: 5 }}>
                     <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BATTER"}</span>
@@ -965,6 +1033,7 @@ body { background: ${C.bg}; }
                                                 </div>
                                             </div>
                                             <div style={{ background: C.bg, borderRadius: 8, padding: "10px 12px", fontSize: 12, color: C.muted }}>{pred.weatherImpact?.tip || "Bright conditions favour batters."}</div>                        </div>
+                                        <DecisionPanel pred={pred} />
                                     </div>
 
                                     <NextOverIntelligence pred={pred} />
