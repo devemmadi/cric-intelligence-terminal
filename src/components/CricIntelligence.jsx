@@ -131,27 +131,27 @@ function DecisionPanel({ pred }) {
     const sr = pc.strikerSR || 0;
     const eco = pc.bowlerEco || 8;
     const bnd = pc.boundaryPct || 0;
-    const batForm = sr > 150 ? "🔥" : sr > 120 ? "⚡" : sr > 90 ? "✅" : "🧊";
+    const batForm = sr > 150 ? "ð¥" : sr > 120 ? "â¡" : sr > 90 ? "â" : "ð§";
     const batLabel = sr > 150 ? "Attacking" : sr > 120 ? "Fluent" : sr > 90 ? "Steady" : "Struggling";
     const ecoLabel = eco < 6 ? "Tight" : eco < 8 ? "Average" : "Expensive";
     const ecoColor = eco < 6 ? "#00B894" : eco < 8 ? "#F59E0B" : "#E53E3E";
     const pitchWear = pred.pitchWear || 0;
     const pitchColor = pred.pitchCondition === "WORN" ? "#E53E3E" : pred.pitchCondition === "DRY" ? "#F59E0B" : "#00B894";
     let edge = "";
-    if (sr > 150 && eco > 8.5) edge = "Batter vs weak bowler — back runs heavily";
-    else if (sr > 140 && bnd > 20) edge = "High SR + boundary threat — expect fireworks";
-    else if (eco < 6) edge = "Bowler in control — wicket window open";
-    else if (pred.pitchCondition === "WORN" && eco < 7) edge = "Worn pitch + tight bowling — low over likely";
-    else if (pred.pressureScore > 70) edge = "High pressure — expect conservative play";
-    else if (pc.last3Runs > 25) edge = "Hot momentum — batting team in flow";
-    else edge = (pred.weatherImpact && pred.weatherImpact.tip) ? pred.weatherImpact.tip : "Balanced — trust the ML range";
+    if (sr > 150 && eco > 8.5) edge = "Batter vs weak bowler â back runs heavily";
+    else if (sr > 140 && bnd > 20) edge = "High SR + boundary threat â expect fireworks";
+    else if (eco < 6) edge = "Bowler in control â wicket window open";
+    else if (pred.pitchCondition === "WORN" && eco < 7) edge = "Worn pitch + tight bowling â low over likely";
+    else if (pred.pressureScore > 70) edge = "High pressure â expect conservative play";
+    else if (pc.last3Runs > 25) edge = "Hot momentum â batting team in flow";
+    else edge = (pred.weatherImpact && pred.weatherImpact.tip) ? pred.weatherImpact.tip : "Balanced â trust the ML range";
     return (
         <div className="card" style={{ padding: 18 }}>
             <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.5, marginBottom: 12 }}>MATCH READ</div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
                 <div style={{ background: C.bg, borderRadius: 10, padding: "10px 12px" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>PITCH</div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{pred.pitchLabel || "—"}</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{pred.pitchLabel || "â"}</div>
                     <div style={{ height: 4, background: C.border, borderRadius: 4, marginTop: 6, overflow: "hidden" }}>
                         <div style={{ height: "100%", width: Math.min((pitchWear || 0) * 5, 100) + "%", background: pitchColor, borderRadius: 4, transition: "width 0.5s" }} />
                     </div>
@@ -159,15 +159,15 @@ function DecisionPanel({ pred }) {
                 </div>
                 <div style={{ background: C.bg, borderRadius: 10, padding: "10px 12px" }}>
                     <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WEATHER</div>
-                    <div style={{ fontSize: 20 }}>{(pred.weatherImpact && pred.weatherImpact.emoji) ? pred.weatherImpact.emoji : "🌤️"}</div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{(pred.weather && pred.weather.temp) ? pred.weather.temp : "—"}°C</div>
+                    <div style={{ fontSize: 20 }}>{(pred.weatherImpact && pred.weatherImpact.emoji) ? pred.weatherImpact.emoji : "ð¤ï¸"}</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{(pred.weather && pred.weather.temp) ? pred.weather.temp : "â"}Â°C</div>
                     <div style={{ fontSize: 10, color: C.muted }}>{(pred.weather && pred.weather.condition) ? pred.weather.condition : ""}</div>
                 </div>
             </div>
             <div style={{ background: C.bg, borderRadius: 10, padding: "10px 12px", marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                     <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 2 }}>BATTING NOW</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>SR {sr > 0 ? Math.round(sr) : "—"}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>SR {sr > 0 ? Math.round(sr) : "â"}</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 24 }}>{batForm}</div>
@@ -177,7 +177,7 @@ function DecisionPanel({ pred }) {
             <div style={{ background: C.bg, borderRadius: 10, padding: "10px 12px", marginBottom: 8, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                     <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 2 }}>BOWLING NOW</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>Eco {eco > 0 ? eco.toFixed(1) : "—"}</div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>Eco {eco > 0 ? eco.toFixed(1) : "â"}</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
                     <div style={{ fontSize: 12, fontWeight: 800, color: ecoColor, background: ecoColor + "22", borderRadius: 6, padding: "3px 8px" }}>{ecoLabel}</div>
@@ -437,7 +437,7 @@ function LiveScorecard({ batters, bowler }) {
     if (!batters || batters.length === 0) return null;
     return (
         <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"â¡ LIVE SCORECARD"}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"Ã¢ÂÂ¡ LIVE SCORECARD"}</div>
             <div style={{ marginBottom: 10 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, marginBottom: 5 }}>
                     <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BATTER"}</span>
@@ -1049,23 +1049,69 @@ body { background: ${C.bg}; }
                                     )}
 
                                                                         </div>                                </div>
-<div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-                                        <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                            <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || ""}</span>
-                                            <div>
-                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>WEATHER</div>
-                                                <div style={{ fontSize: 20, fontWeight: 800 }}>{pred.weather?.temp || ""}C</div>
-                                                <div style={{ fontSize: 11, color: C.muted }}>{pred.weather?.condition || ""}</div>
+{/* ===== DECISION PANEL ===== */}
+                                    <div style={{ marginBottom: 14 }}>
+                                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+                                            <div className="card" style={{ padding: 16 }}>
+                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 8 }}>PITCH</div>
+                                                <div style={{ fontSize: 14, fontWeight: 800, color: C.text, marginBottom: 4 }}>{pred.pitchLabel || "Unknown"}</div>
+                                                <div style={{ height: 6, background: C.bg, borderRadius: 3, overflow: "hidden", marginBottom: 4 }}>
+                                                    <div style={{ height: "100%", borderRadius: 3, width: pred.pitchCondition === "Very Dry" ? "90%" : pred.pitchCondition === "Dry" ? "70%" : pred.pitchCondition === "Fresh" ? "30%" : "50%", background: pred.pitchCondition === "Very Dry" ? C.red : pred.pitchCondition === "Dry" ? C.amber : C.green, transition: "width 0.6s ease" }} />
+                                                </div>
+                                                <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || "Normal"}</div>
+                                            </div>
+                                            <div className="card" style={{ padding: 16, display: "flex", gap: 10, alignItems: "center" }}>
+                                                <span style={{ fontSize: 28 }}>{pred.weatherImpact?.emoji || "🌤️"}</span>
+                                                <div>
+                                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WEATHER</div>
+                                                    <div style={{ fontSize: 18, fontWeight: 800 }}>{pred.weather?.temp || "--"}°C</div>
+                                                    <div style={{ fontSize: 11, color: C.muted }}>{pred.weather?.condition || ""}</div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                            <div>
-                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PITCH</div>
-                                                <div style={{ fontSize: 15, fontWeight: 700 }}>{pred.pitchLabel || ""}</div>
-                                                <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || ""}</div>
+                                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+                                            <div className="card" style={{ padding: 16 }}>
+                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 8 }}>BATTING NOW</div>
+                                                {(() => {
+                                                    const bat = pred.currentBatters?.[0];
+                                                    const sr = bat?.strikeRate ?? null;
+                                                    const form = sr === null ? "⬜" : sr >= 160 ? "🔥" : sr >= 130 ? "✅" : sr >= 100 ? "⚠️" : "❌";
+                                                    const quality = pred.battingFactor ? (pred.battingFactor >= 1.15 ? "Strong" : pred.battingFactor >= 1.0 ? "Good" : pred.battingFactor >= 0.85 ? "Average" : "Struggling") : "—";
+                                                    return (<><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}><span style={{ fontSize: 22 }}>{form}</span><span style={{ fontSize: 12, fontWeight: 700, color: sr >= 130 ? C.green : sr >= 100 ? C.amber : C.red }}>SR {sr !== null ? sr.toFixed(0) : "—"}</span></div><div style={{ fontSize: 12, fontWeight: 600, color: C.text }}>{quality}</div>{bat && <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{bat.name?.split(" ").pop() || ""} batting</div>}</>);
+                                                })()}
+                                            </div>
+                                            <div className="card" style={{ padding: 16 }}>
+                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 8 }}>BOWLING NOW</div>
+                                                {(() => {
+                                                    const bowl = pred.currentBowler;
+                                                    const eco = bowl?.economy ?? null;
+                                                    const sp = bowl?.overs ?? null;
+                                                    const spellStatus = sp === null ? "—" : sp <= 2 ? "Fresh spell" : sp <= 4 ? "Mid spell" : "Long spell";
+                                                    const quality = pred.bowlingFactor ? (pred.bowlingFactor <= 0.82 ? "Elite" : pred.bowlingFactor <= 0.95 ? "Good" : pred.bowlingFactor <= 1.1 ? "Average" : "Expensive") : "—";
+                                                    return (<><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}><span style={{ fontSize: 12, fontWeight: 700, color: eco !== null && eco <= 7 ? C.green : eco <= 9 ? C.amber : C.red }}>ECO {eco !== null ? eco.toFixed(1) : "—"}</span><span style={{ fontSize: 11, color: C.muted }}>{spellStatus}</span></div><div style={{ fontSize: 12, fontWeight: 600, color: C.text }}>{quality}</div>{bowl && <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{bowl.name?.split(" ").pop() || ""} bowling</div>}</>);
+                                                })()}
+                                            </div>
+                                        </div>
+                                        <div className="card" style={{ padding: 16, background: C.navy, border: "none" }}>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 1.5, marginBottom: 8 }}>YOUR EDGE</div>
+                                            <div style={{ fontSize: 13, fontWeight: 600, color: "#fff", lineHeight: 1.6 }}>
+                                                {(() => {
+                                                    const bat = pred.battingFactor || 1;
+                                                    const bowl = pred.bowlingFactor || 1;
+                                                    const pitch = pred.pitchCondition || "";
+                                                    const prob = pred.aiProbability || 50;
+                                                    if (pitch.includes("Dry") && bowl <= 0.9) return "🎯 Spin-friendly surface + elite bowling — back tight next over";
+                                                    if (bat >= 1.15 && prob >= 65) return "🔥 Batting unit in form + strong position — back aggressive total";
+                                                    if (bowl <= 0.82 && bat <= 0.85) return "⚡ Elite bowling vs struggling batting — expect wicket burst";
+                                                    if (prob >= 70) return "✅ Strong win probability — high confidence position";
+                                                    if (prob <= 35) return "⚠️ Under pressure — wait for stabilization before backing";
+                                                    if (pitch.includes("Fresh") && bat >= 1.0) return "🏏 Fresh pitch + good batting — batting-friendly conditions";
+                                                    return "📊 Mixed signals — monitor next over before committing";
+                                                })()}
                                             </div>
                                         </div>
                                     </div>
+                                    {/* ===== END DECISION PANEL ===== */}
 
                             </>
                         )}
