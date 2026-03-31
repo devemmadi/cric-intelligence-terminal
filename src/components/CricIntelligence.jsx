@@ -369,7 +369,7 @@ function LiveScorecard({ batters, bowler }) {
     if (!batters || batters.length === 0) return null;
     return (
         <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"ÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ LIVE SCORECARD"}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ LIVE SCORECARD"}</div>
             <div style={{ marginBottom: 10 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, marginBottom: 5 }}>
                     <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BATTER"}</span>
@@ -459,20 +459,35 @@ export default function CricIntelligence() {
     };
 
     const fetchPred = useCallback(async (matchId) => {
+        const mid = matchId || selectedMatch?.matchId;
+        if (!mid) return;
         try {
-            const r = await fetch(`${API_BASE}/predict${(matchId || selectedMatch?.matchId) ? "?match_id=" + (matchId || selectedMatch?.matchId) : ""}`);
-            if (r.ok) {
-                const d = await r.json();
-                if (d && d.team1) {
-                    // Merge imageIds from /matches into pred
+            // Try /match/<id> first (full ML data)
+            const r1 = await fetch(`${API_BASE}/match/${mid}`);
+            if (r1.ok) {
+                const d1 = await r1.json();
+                if (d1 && d1.team1 && !d1.error) {
                     const mList = window.__matchList || [];
-                    const mMatch = mList.find(mx => mx.team1 === d.team1 || mx.t1 === d.team1);
-                    d.team1ImageId = mMatch?.t1ImageId || mMatch?.team1ImageId || 0;
-                    d.team2ImageId = mMatch?.t2ImageId || mMatch?.team2ImageId || 0;
-                    setPred(d);
+                    const mMatch = mList.find(mx => mx.team1 === d1.team1 || mx.t1 === d1.team1);
+                    d1.team1ImageId = mMatch?.t1ImageId || mMatch?.team1ImageId || 0;
+                    d1.team2ImageId = mMatch?.t2ImageId || mMatch?.team2ImageId || 0;
+                    setPred(d1); return;
                 }
-                else setPred(null);
             }
+            // Fallback: /predict?match_id=
+            const r2 = await fetch(`${API_BASE}/predict?match_id=${mid}`);
+            if (r2.ok) {
+                const d2 = await r2.json();
+                if (d2 && d2.team1 && !d2.error) {
+                    const mList = window.__matchList || [];
+                    const mMatch = mList.find(mx => mx.team1 === d2.team1 || mx.t1 === d2.team1);
+                    d2.team1ImageId = mMatch?.t1ImageId || mMatch?.team1ImageId || 0;
+                    d2.team2ImageId = mMatch?.t2ImageId || mMatch?.team2ImageId || 0;
+                    setPred(d2); return;
+                }
+            }
+            // Both failed — don't set null if we already have pred data
+            if (!selectedMatch) setPred(null);
         } catch { }
     }, [selectedMatch]);
 
@@ -658,8 +673,15 @@ body { background: ${C.bg}; }
                     </aside>
 
                     <main className="mc" style={{ padding: 0, overflowY: "auto", overflow: "visible" }}>
-                        {!pred ? (
+                        {!pred && !selectedMatch ? (
                             <NoMatchesScreen />
+                        ) : !pred && selectedMatch ? (
+                            <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:60, gap:16 }}>
+                                <div style={{ fontSize:32 }}>🏏</div>
+                                <div style={{ fontSize:16, fontWeight:700, color:"#1E2D6B" }}>{selectedMatch.t1} vs {selectedMatch.t2}</div>
+                                <div style={{ fontSize:13, color:"#64748B" }}>{selectedMatch.rawStatus || "Fetching live data..."}</div>
+                                <div style={{ fontSize:11, color:"#64748B", marginTop:4 }}>Connecting to backend... auto-refreshes every 10s</div>
+                            </div>
                         ) : (
                             <>
                                 <div style={{ background: "linear-gradient(160deg,#1a2760 0%,#253580 100%)", padding: "16px 24px 20px", position: "sticky", top: 0, zIndex: 100 }}>
