@@ -369,7 +369,7 @@ function LiveScorecard({ batters, bowler }) {
     if (!batters || batters.length === 0) return null;
     return (
         <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ LIVE SCORECARD"}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ LIVE SCORECARD"}</div>
             <div style={{ marginBottom: 10 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, marginBottom: 5 }}>
                     <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BATTER"}</span>
@@ -461,53 +461,40 @@ export default function CricIntelligence() {
     const fetchPred = useCallback(async (matchId) => {
         const mid = matchId || selectedMatch?.matchId;
         if (!mid) return;
-        const mList = window.__matchList || [];
         const sel = selectedMatch;
+        const mList = window.__matchList || [];
+        // Build query params from selectedMatch so backend never fails
+        const t1 = sel?.t1 || '';
+        const t2 = sel?.t2 || '';
+        const venue = sel?.detail || '';
+        const mt = (sel?.day || 'T20').toLowerCase();
+        const qp = `?t1=${encodeURIComponent(t1)}&t2=${encodeURIComponent(t2)}&venue=${encodeURIComponent(venue)}&mt=${mt}`;
         try {
-            // Try /match/<id> first
-            const r1 = await fetch(`${API_BASE}/match/${mid}`);
+            const r1 = await fetch(`${API_BASE}/match/${mid}${qp}`);
             if (r1.ok) {
                 const d1 = await r1.json();
                 if (d1 && d1.team1 && !d1.error) {
                     const mm = mList.find(mx => mx.team1 === d1.team1 || mx.t1 === d1.team1);
-                    d1.team1ImageId = mm?.t1ImageId || 0;
-                    d1.team2ImageId = mm?.t2ImageId || 0;
+                    d1.team1ImageId = mm?.t1ImageId || sel?.t1ImageId || 0;
+                    d1.team2ImageId = mm?.t2ImageId || sel?.t2ImageId || 0;
                     setPred(d1); return;
                 }
             }
-            // Try /predict fallback
-            const r2 = await fetch(`${API_BASE}/predict?match_id=${mid}`);
-            if (r2.ok) {
-                const d2 = await r2.json();
-                if (d2 && d2.team1 && !d2.error) {
-                    const mm = mList.find(mx => mx.team1 === d2.team1 || mx.t1 === d2.team1);
-                    d2.team1ImageId = mm?.t1ImageId || 0;
-                    d2.team2ImageId = mm?.t2ImageId || 0;
-                    setPred(d2); return;
-                }
-            }
-            // FALLBACK: Build basic pred from selectedMatch so site never shows NoMatchesScreen
-            if (sel && sel.matchId) {
-                const mm = mList.find(mx => mx.id === sel.id || mx.matchId === sel.matchId);
-                setPred({
-                    team1: sel.t1, team2: sel.t2,
-                    team1ImageId: mm?.t1ImageId || 0,
-                    team2ImageId: mm?.t2ImageId || 0,
-                    displayScore: sel.t1Score != null ? `${sel.t1Score}/${sel.t1Wkts}` : "— / —",
-                    score: sel.t1Score || 0, wickets: sel.t1Wkts || 0,
-                    overs: 0, currentRunRate: 0,
-                    status: sel.rawStatus || "Live",
-                    aiProbability: 50,
-                    venue: sel.detail || "",
-                    matchType: (sel.day || "T20").toLowerCase(),
-                    nextOvers: [], overHistory: [],
-                    dataSource: "Live match detected — backend syncing...",
-                    modelInfo: { mlUsed: false, accuracy: 78.2 },
-                    liveData: true,
-                    _fallback: true
-                });
-            }
         } catch { }
+        // Frontend fallback — never show NoMatchesScreen for live match
+        if (sel?.matchId) {
+            setPred({
+                team1: t1, team2: t2,
+                team1ImageId: sel?.t1ImageId || 0,
+                team2ImageId: sel?.t2ImageId || 0,
+                displayScore: '— / —', score: 0, wickets: 0, overs: 0,
+                currentRunRate: 0, status: sel?.rawStatus || 'Live',
+                aiProbability: 50, venue: venue, matchType: mt,
+                nextOvers: [], overHistory: [],
+                dataSource: 'Live — syncing...', liveData: true,
+                modelInfo: { mlUsed: false, accuracy: 78.2 }, _fallback: true
+            });
+        }
     }, [selectedMatch]);
 
     useEffect(() => { fetchPred(); }, [selectedMatch, ticker]);
@@ -696,7 +683,7 @@ body { background: ${C.bg}; }
                             <NoMatchesScreen />
                         ) : !pred && selectedMatch ? (
                             <div style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:60, gap:16 }}>
-                                <div style={{ fontSize:32 }}>ð</div>
+                                <div style={{ fontSize:32 }}>Ã°ÂÂÂ</div>
                                 <div style={{ fontSize:16, fontWeight:700, color:"#1E2D6B" }}>{selectedMatch.t1} vs {selectedMatch.t2}</div>
                                 <div style={{ fontSize:13, color:"#64748B" }}>{selectedMatch.rawStatus || "Fetching live data..."}</div>
                                 <div style={{ fontSize:11, color:"#64748B", marginTop:4 }}>Connecting to backend... auto-refreshes every 10s</div>
