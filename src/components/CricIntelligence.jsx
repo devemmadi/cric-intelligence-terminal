@@ -369,7 +369,7 @@ function LiveScorecard({ batters, bowler }) {
     if (!batters || batters.length === 0) return null;
     return (
         <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ LIVE SCORECARD"}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¡ LIVE SCORECARD"}</div>
             <div style={{ marginBottom: 10 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, marginBottom: 5 }}>
                     <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BATTER"}</span>
@@ -494,8 +494,53 @@ Be sharp, specific, bold. No vague statements.`;
                 </div>
             )}
             {analysis && (
-                <div style={{ fontSize: 13, lineHeight: 1.9, color: "#CBD5E1", whiteSpace: "pre-wrap", borderTop: "1px solid rgba(139,92,246,0.2)", paddingTop: 14 }}>
-                    {analysis}
+                <div style={{ borderTop: "1px solid rgba(139,92,246,0.2)", paddingTop: 14 }}>
+                    {analysis.split("\n\n").map((block, i) => {
+                        // Section headers like ## 1. WIN PREDICTION
+                        if (block.startsWith("## ")) {
+                            const title = block.replace(/^##\s*\d*\.?\s*/, "");
+                            const icons = {"WIN PREDICTION":"win", "NEXT":"over", "GAME-CHANGER":"key", "STRATEGY":"tip"};
+                            const icon = Object.entries(icons).find(([k])=>title.toUpperCase().includes(k));
+                            const colors = {win:"#00B894", over:"#60a5fa", key:"#fbbf24", tip:"#a78bfa"};
+                            const col = colors[icon?.[1]] || "#a78bfa";
+                            return (
+                                <div key={i} style={{ marginBottom: 14, background: "rgba(0,0,0,0.2)", borderRadius: 10, padding: "12px 14px", borderLeft: `3px solid ${col}` }}>
+                                    <div style={{ fontSize: 11, fontWeight: 800, color: col, letterSpacing: 1.5, marginBottom: 8, textTransform: "uppercase" }}>{title}</div>
+                                    {analysis.split("\n\n")[i+1] && !analysis.split("\n\n")[i+1].startsWith("## ") && !analysis.split("\n\n")[i+1].startsWith("---") ? null : null}
+                                </div>
+                            );
+                        }
+                        // Separator lines
+                        if (block.trim() === "---") return <div key={i} style={{height:1, background:"rgba(139,92,246,0.15)", margin:"8px 0"}} />;
+                        // Bold lines **text**
+                        const lines = block.split("\n").filter(l => l.trim());
+                        if (!lines.length) return null;
+                        return (
+                            <div key={i} style={{ marginBottom: 10 }}>
+                                {lines.map((line, j) => {
+                                    // Bold **text**
+                                    const isBold = line.startsWith("**") && line.includes("**:");
+                                    const isItem = line.startsWith("- ");
+                                    if (isBold) {
+                                        const [label, ...rest] = line.replace(/\*\*/g,"").split(":");
+                                        return (
+                                            <div key={j} style={{ marginBottom: 6 }}>
+                                                <span style={{ fontSize: 11, fontWeight: 800, color: "#a78bfa", textTransform: "uppercase", letterSpacing: 0.5 }}>{label}: </span>
+                                                <span style={{ fontSize: 13, color: "#e2e8f0", lineHeight: 1.7 }}>{rest.join(":").trim()}</span>
+                                            </div>
+                                        );
+                                    }
+                                    if (isItem) return (
+                                        <div key={j} style={{ display:"flex", gap: 8, alignItems:"flex-start", marginBottom: 4, paddingLeft: 8 }}>
+                                            <span style={{ color:"#a78bfa", marginTop:2, flexShrink:0 }}>•</span>
+                                            <span style={{ fontSize: 13, color: "#cbd5e1", lineHeight: 1.7 }}>{line.substring(2)}</span>
+                                        </div>
+                                    );
+                                    return <p key={j} style={{ fontSize: 13, color: "#cbd5e1", lineHeight: 1.8, margin: "0 0 4px" }}>{line}</p>;
+                                })}
+                            </div>
+                        );
+                    })}
                 </div>
             )}
             <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
