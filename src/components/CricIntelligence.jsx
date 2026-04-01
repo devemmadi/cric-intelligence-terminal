@@ -369,7 +369,7 @@ function LiveScorecard({ batters, bowler }) {
     if (!batters || batters.length === 0) return null;
     return (
         <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"Ã¢ÂÂ¡ LIVE SCORECARD"}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"ÃÂ¢ÃÂÃÂ¡ LIVE SCORECARD"}</div>
             <div style={{ marginBottom: 10 }}>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, marginBottom: 5 }}>
                     <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BATTER"}</span>
@@ -437,7 +437,7 @@ MATCH: ${pred.team1} vs ${pred.team2} (${pred.matchType?.toUpperCase()||"T20"})
 VENUE: ${pred.venue||"Unknown"}
 SCORE: ${pred.displayScore} | CRR: ${pred.currentRunRate} | Overs: ${pred.overs}
 PITCH: ${pred.pitchLabel||"Unknown"} (${pred.pitchCondition||""})
-WEATHER: ${pred.weather?.condition||""} ${pred.weather?.temp||""}°C Humidity:${pred.weather?.humidity||""}%
+WEATHER: ${pred.weather?.condition||""} ${pred.weather?.temp||""}Â°C Humidity:${pred.weather?.humidity||""}%
 AT CREASE: ${batters}
 BOWLING: ${bowler}
 PRESSURE INDEX: ${pred.pressureScore||50}/100
@@ -445,10 +445,10 @@ ML WIN PROBABILITY: ${pred.aiProbability}% for ${pred.team1}
 ${pred.target ? `TARGET: ${pred.target} runs | Need: ${pred.runsNeeded} in ${pred.overs} overs | RRR: ${pred.requiredRunRate}` : ""}
 
 Give me:
-1. **WIN PREDICTION** — who wins and why (be confident, give %)
-2. **NEXT 5 OVERS** — exact runs range expected, wicket risk
-3. **GAME-CHANGER** — one factor that will decide this match
-4. **STRATEGY CALL** — what should batting/bowling team do RIGHT NOW
+1. **WIN PREDICTION** â who wins and why (be confident, give %)
+2. **NEXT 5 OVERS** â exact runs range expected, wicket risk
+3. **GAME-CHANGER** â one factor that will decide this match
+4. **STRATEGY CALL** â what should batting/bowling team do RIGHT NOW
 
 Be sharp, specific, bold. No vague statements.`;
         try {
@@ -476,17 +476,17 @@ Be sharp, specific, bold. No vague statements.`;
         <div className="card" style={{ margin: "0 20px 16px", padding: 20, border: "1px solid rgba(139,92,246,0.3)", background: "linear-gradient(135deg,rgba(139,92,246,0.05),rgba(99,102,241,0.05))" }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 18 }}>✦</span>
+                    <span style={{ fontSize: 18 }}>â¦</span>
                     <span style={{ fontWeight: 800, fontSize: 13, color: "#7C3AED", letterSpacing: 1 }}>CLAUDE AI ANALYSIS</span>
                     <span style={{ fontSize: 10, background: "rgba(139,92,246,0.15)", color: "#a78bfa", padding: "2px 8px", borderRadius: 20, fontWeight: 600 }}>BETA</span>
                 </div>
                 <button onClick={askClaude} disabled={loading} style={{ background: loading ? "#334155" : "linear-gradient(135deg,#7C3AED,#6366f1)", border: "none", color: "#fff", padding: "8px 18px", borderRadius: 8, cursor: loading ? "not-allowed" : "pointer", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}>
-                    {loading ? <><span style={{ display: "inline-block", width: 10, height: 10, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }}></span> Analyzing...</> : asked ? "↻ Refresh" : "⚡ Get AI Analysis"}
+                    {loading ? <><span style={{ display: "inline-block", width: 10, height: 10, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }}></span> Analyzing...</> : asked ? "â» Refresh" : "â¡ Get AI Analysis"}
                 </button>
             </div>
             {!asked && !loading && (
                 <div style={{ textAlign: "center", padding: "20px 0", color: "#64748B", fontSize: 13 }}>
-                    Click <strong style={{color:"#a78bfa"}}>Get AI Analysis</strong> — Claude will analyze live match data and give you sharp predictions
+                    Click <strong style={{color:"#a78bfa"}}>Get AI Analysis</strong> â Claude will analyze live match data and give you sharp predictions
                 </div>
             )}
             {loading && (
@@ -715,7 +715,7 @@ body { background: ${C.bg}; }
             </nav>
 
             {activeTab === "predict" && (
-                <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px minmax(0,1fr) 240px", minHeight: "calc(100vh - 54px)" }}>
+                <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px minmax(0,1fr) 240px", minHeight: "calc(100vh - 54px)", width: "100%", overflow: "hidden" }}>
                     <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, background: C.surface, padding: "18px 14px", overflowY: "auto" }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.navy, letterSpacing: 1.5, marginBottom: 12, padding: "6px 10px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
                             {liveStatus === "live" ? "LIVE DATA" : "MATCHES"}
