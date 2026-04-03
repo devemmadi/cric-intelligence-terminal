@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect, useCallback } from "react";
 
-const API_BASE = "https://cricintel-backend-staging.up.railway.app";
+const API_BASE = "https://web-production-91f0.up.railway.app";
 
 const C = {
     bg: "#EEF2FF", surface: "#FFFFFF", border: "#E2E8F0",
@@ -88,163 +88,193 @@ function TeamLogo({ name, size = 32, imageId = 0 }) {
             style={{ width: size, height: size, objectFit: "contain", borderRadius: "50%", background: "#fff", padding: 2, flexShrink: 0, border: "2px solid " + teamBg, boxShadow: "0 2px 8px rgba(0,0,0,0.2)" }} />
     );
 }
-function WinArc({ value }) {
-    const r = 54, cx = 64, cy = 64, circ = Math.PI * r;
-    const pct = Math.min(Math.max(value, 0), 100) / 100;
+function WinArc({ value, team1, team2 }) {
+    const pct = Math.min(Math.max(value, 0), 100);
     const color = value >= 65 ? C.green : value >= 45 ? C.amber : C.red;
+    const t2pct = 100 - pct;
+    const angle = -90 + (pct / 100) * 180;
+    const rad = (angle * Math.PI) / 180;
+    const cx = 64, cy = 68, r = 52;
+    const nx = cx + 44 * Math.cos(rad);
+    const ny = cy + 44 * Math.sin(rad);
+    const arcPct = pct / 100;
+    const circ = Math.PI * r;
     return (
-        <svg width={128} height={80} viewBox="0 0 128 80">
-            <path d={`M ${cx - r},${cy} A ${r},${r} 0 0 1 ${cx + r},${cy}`} fill="none" stroke={C.border} strokeWidth={8} strokeLinecap="round" />
-            <path d={`M ${cx - r},${cy} A ${r},${r} 0 0 1 ${cx + r},${cy}`} fill="none" stroke={color} strokeWidth={8} strokeLinecap="round" strokeDasharray={`${circ * pct} ${circ}`} />
-            <text x={cx} y={cy - 6} textAnchor="middle" fontSize={22} fontWeight={700} fill={C.text} fontFamily="Inter, system-ui">{value}%</text>
-            <text x={cx} y={cy + 10} textAnchor="middle" fontSize={9} fill={C.muted} fontFamily="Inter, system-ui" letterSpacing={1}>WIN PROB</text>
-        </svg>
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+            <div style={{ flexShrink: 0, textAlign: 'center' }}>
+                <svg width={128} height={82} viewBox="0 0 128 82">
+                    <path d={`M ${cx - r},${cy} A ${r},${r} 0 0 1 ${cx + r},${cy}`}
+                        fill="none" stroke={C.border} strokeWidth={10} strokeLinecap="round" />
+                    <path d={`M ${cx - r},${cy} A ${r},${r} 0 0 1 ${cx + r},${cy}`}
+                        fill="none" stroke={color} strokeWidth={10} strokeLinecap="round"
+                        strokeDasharray={circ} strokeDashoffset={circ * (1 - arcPct)} opacity={0.9} />
+                    <circle cx={cx} cy={cy} r={4} fill={C.muted} opacity={0.4} />
+                    <line x1={cx} y1={cy} x2={nx} y2={ny}
+                        stroke={C.navy} strokeWidth={2.5} strokeLinecap="round" />
+                    <circle cx={cx} cy={cy} r={2.5} fill={C.navy} />
+                    <text x={cx} y={cy - 8} textAnchor="middle" fontSize={22} fontWeight={800}
+                        fill={color} fontFamily="Inter, system-ui">{value}%</text>
+                    <text x={cx} y={cy + 8} textAnchor="middle" fontSize={8} fill={C.muted}
+                        fontFamily="Inter, system-ui" letterSpacing={1}>WIN PROB</text>
+                </svg>
+            </div>
+            <div style={{ flex: 1, paddingTop: 6 }}>
+                <div style={{ marginBottom: 10 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: C.navy }}>{team1 || 'Team 1'}</span>
+                        <span style={{ fontSize: 13, fontWeight: 800, color: C.navy }}>{pct}%</span>
+                    </div>
+                    <div style={{ height: 10, background: C.bg, borderRadius: 5, border: `1px solid ${C.border}`, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: pct + '%', borderRadius: 5,
+                            background: `linear-gradient(90deg, ${C.navy}, ${C.navyLight})`, transition: 'width 1s ease' }} />
+                    </div>
+                </div>
+                <div style={{ marginBottom: 10 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: C.gold }}>{team2 || 'Team 2'}</span>
+                        <span style={{ fontSize: 13, fontWeight: 800, color: C.gold }}>{t2pct}%</span>
+                    </div>
+                    <div style={{ height: 10, background: C.bg, borderRadius: 5, border: `1px solid ${C.border}`, overflow: 'hidden' }}>
+                        <div style={{ height: '100%', width: t2pct + '%', borderRadius: 5,
+                            background: `linear-gradient(90deg, ${C.gold}, ${C.amber})`, transition: 'width 1s ease' }} />
+                    </div>
+                </div>
+                <div style={{ fontSize: 9, color: C.muted, borderTop: `1px solid ${C.border}`, paddingTop: 6 }}>
+                    4 ML models · XGBoost · 1.7M matches
+                </div>
+            </div>
+        </div>
     );
-}
-
-function Spark({ data }) {
-    if (!data || data.length < 2) return null;
-    const vals = data.map(d => d.runs);
-    const min = Math.min(...vals), max = Math.max(...vals);
-    const w = 160, h = 40;
-    const pts = vals.map((v, i) => [(i / (vals.length - 1)) * w, h - ((v - min) / (max - min || 1)) * (h - 8) - 4]);
-    return (
-        <svg width={w} height={h}>
-            <polyline points={pts.map(p => p.join(",")).join(" ")} fill="none" stroke={C.accent} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx={pts[pts.length - 1][0]} cy={pts[pts.length - 1][1]} r={4} fill={C.accent} />
-        </svg>
-    );
-}
-
-function isMatchEnded(status) {
-    if (!status) return false;
-    const s = status.toLowerCase();
-    return s === "ended" ||
-        s.includes("won") || s.includes("win") || s.includes("tied") ||
-        s.includes("draw") || s.includes("no result") || s.includes("abandoned");
 }
 
 function NextOverIntelligence({ pred }) {
     if (!pred || !pred.nextOvers || pred.nextOvers.length < 2) return null;
-    const ov1 = pred.nextOvers[0];
-    const ov2 = pred.nextOvers[1];
+    const overs = pred.nextOvers.slice(0, 5);
     const detr = pred.deteriorationFactor || 1.0;
-    const spinBoost = Math.round((detr - 1.0) * 100);
     const dewSoon = pred.weatherImpact?.dewFactor < 0.9;
     const pitchCond = pred.pitchCondition || "FRESH";
     const history = pred.overHistory || [];
-    const hasHistory = history.length >= 2;
-    const bowlerQuality = pred.bowlingFactor ? (pred.bowlingFactor <= 0.82 ? "Elite" : pred.bowlingFactor <= 0.92 ? "Good" : "Average") : "Average";
-    const batQuality = pred.battingFactor ? (pred.battingFactor >= 1.15 ? "Strong" : pred.battingFactor >= 0.95 ? "Average" : "Weak") : "Average";
-    const wicketColor1 = ov1.wicketProb > 40 ? "#A32D2D" : ov1.wicketProb > 25 ? "#BA7517" : "#3B6D11";
-    const wicketLabel1 = ov1.wicketProb > 40 ? "High" : ov1.wicketProb > 25 ? "Medium" : "Low";
-    const wicketBg1 = ov1.wicketProb > 40 ? "#E24B4A" : ov1.wicketProb > 25 ? "#EF9F27" : "#639922";
-    const wicketColor2 = ov2.wicketProb > 40 ? "#A32D2D" : ov2.wicketProb > 25 ? "#BA7517" : "#3B6D11";
-    const wicketLabel2 = ov2.wicketProb > 40 ? "High" : ov2.wicketProb > 25 ? "Medium" : "Low";
-    const wicketBg2 = ov2.wicketProb > 40 ? "#E24B4A" : ov2.wicketProb > 25 ? "#EF9F27" : "#639922";
-    const phase2 = ov2.phase === "DEATH OVERS" ? "DEATH" : ov2.phase === "POWERPLAY" ? "PP" : "MID";
-    const barHeights = history.slice(-4).map(h => {
-        const rr = h.over > 0 ? h.runs / h.over : 8;
-        return Math.max(8, Math.round((rr / 16) * 44));
-    });
-    const predBarH = Math.max(8, Math.round((ov1.expectedRuns / 16) * 44));
-    const CSS2 = `@keyframes blink2 { 0%,100%{opacity:1} 50%{opacity:0.3} }`;
+    const crr = pred.currentRunRate || 0;
+
+    const getColor = (runs) => {
+        if (runs >= 12) return C.red;
+        if (runs >= 8) return C.gold;
+        return C.navyMid;
+    };
+    const getBg = (runs) => {
+        if (runs >= 12) return 'rgba(229,62,62,0.05)';
+        if (runs >= 8) return 'rgba(245,158,11,0.05)';
+        return 'rgba(42,63,130,0.05)';
+    };
+    const getBorder = (runs) => {
+        if (runs >= 12) return 'rgba(229,62,62,0.3)';
+        if (runs >= 8) return 'rgba(245,158,11,0.3)';
+        return 'rgba(42,63,130,0.25)';
+    };
+    const getBarColor = (runs) => {
+        if (runs >= 12) return C.red;
+        if (runs >= 8) return C.amber;
+        return C.navyMid;
+    };
+
+    // Projected total remaining
+    const projRuns = overs.reduce((s, o) => s + (o.predicted || 0), 0);
+    const projLow = overs.reduce((s, o) => s + (o.low || 0), 0);
+    const projHigh = overs.reduce((s, o) => s + (o.high || 0), 0);
+
+    // Spark for history
+    const histVals = history.length >= 2 ? history.map(h => h.runs) : null;
+    const histMin = histVals ? Math.min(...histVals) : 0;
+    const histMax = histVals ? Math.max(...histVals) : 1;
+    const sparkW = 340, sparkH = 36;
+    const sparkPts = histVals ? histVals.map((v, i) => [
+        (i / (histVals.length - 1)) * sparkW,
+        sparkH - ((v - histMin) / (histMax - histMin || 1)) * (sparkH - 8) - 4
+    ]) : [];
+    const sparkPath = sparkPts.map((p, i) => (i === 0 ? 'M' : 'L') + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+    const sparkArea = sparkPath + ' L' + sparkW + ',' + sparkH + ' L0,' + sparkH + ' Z';
+
     return (
-        <div style={{ padding: "0 0 4px 0", marginBottom: 14 }}>
-            <style>{CSS2}</style>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#E24B4A", animation: "blink2 1.5s infinite" }} />
-                <span style={{ fontSize: 13, fontWeight: 500, color: "#0A0A0A" }}>Next over intelligence</span>
-                <span style={{ fontSize: 12, color: "#64748B" }}>Over {ov1.over} - {ov1.phase}</span>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
-                <div style={{ background: "#fff", border: "2px solid #378ADD", borderRadius: 12, padding: 14 }}>
-                    <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8, letterSpacing: 0.5, textTransform: "uppercase" }}>Over {ov1.over} - now</div>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
-                        <span style={{ fontSize: 28, fontWeight: 500, color: "#0A0A0A" }}>{ov1.runRange}</span>
-                        <span style={{ fontSize: 13, color: "#64748B" }}>runs expected</span>
-                    </div>
-                    <div style={{ background: "#EEF2FF", borderRadius: 8, padding: "8px 10px", marginBottom: 10 }}>
-                        <div style={{ fontSize: 11, color: "#64748B", marginBottom: 3 }}>Bowling quality</div>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: "#0A0A0A" }}>{bowlerQuality}</div>
-                        <div style={{ fontSize: 12, color: "#64748B" }}>Factor {pred.bowlingFactor?.toFixed(2) || "1.00"}</div>
-                    </div>
-                    <div style={{ marginBottom: 10 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
-                            <span style={{ fontSize: 12, color: "#64748B" }}>Wicket risk</span>
-                            <span style={{ fontSize: 12, fontWeight: 500, color: wicketColor1 }}>{wicketLabel1} - {ov1.wicketProb}%</span>
-                        </div>
-                        <div style={{ height: 4, background: "#EEF2FF", borderRadius: 4, overflow: "hidden" }}>
-                            <div style={{ width: `${ov1.wicketProb}%`, height: "100%", background: wicketBg1, borderRadius: 4 }} />
-                        </div>
-                    </div>
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                        {spinBoost > 5 && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#FAEEDA", color: "#854F0B" }}>Spin +{spinBoost}%</span>}
-                        {!dewSoon && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#EEF2FF", color: "#64748B" }}>No dew</span>}
-                        {dewSoon && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#E6F1FB", color: "#185FA5" }}>Dew incoming</span>}
-                    </div>
-                </div>
-                <div style={{ background: "#fff", border: "0.5px solid #E2E8F0", borderRadius: 12, padding: 14 }}>
-                    <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8, letterSpacing: 0.5, textTransform: "uppercase" }}>Over {ov2.over} - {phase2}</div>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
-                        <span style={{ fontSize: 28, fontWeight: 500, color: "#0A0A0A" }}>{ov2.runRange}</span>
-                        <span style={{ fontSize: 13, color: "#64748B" }}>runs expected</span>
-                    </div>
-                    <div style={{ background: "#EEF2FF", borderRadius: 8, padding: "8px 10px", marginBottom: 10 }}>
-                        <div style={{ fontSize: 11, color: "#64748B", marginBottom: 3 }}>Batting quality</div>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: "#0A0A0A" }}>{batQuality}</div>
-                        <div style={{ fontSize: 12, color: "#64748B" }}>Factor {pred.battingFactor?.toFixed(2) || "1.00"}</div>
-                    </div>
-                    <div style={{ marginBottom: 10 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
-                            <span style={{ fontSize: 12, color: "#64748B" }}>Wicket risk</span>
-                            <span style={{ fontSize: 12, fontWeight: 500, color: wicketColor2 }}>{wicketLabel2} - {ov2.wicketProb}%</span>
-                        </div>
-                        <div style={{ height: 4, background: "#EEF2FF", borderRadius: 4, overflow: "hidden" }}>
-                            <div style={{ width: `${ov2.wicketProb}%`, height: "100%", background: wicketBg2, borderRadius: 4 }} />
-                        </div>
-                    </div>
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                        {ov2.phase === "DEATH OVERS" && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#FCEBEB", color: "#A32D2D" }}>Death overs</span>}
-                        {dewSoon && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#E6F1FB", color: "#185FA5" }}>Dew incoming</span>}
-                        {!dewSoon && ov2.phase !== "DEATH OVERS" && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#EEF2FF", color: "#64748B" }}>Normal</span>}
-                    </div>
+        <div style={{ background: C.surface, border: `1.5px solid ${C.border}`, borderRadius: 10, padding: 14, marginBottom: 10 }}>
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, color: C.muted, textTransform: 'uppercase' }}>
+                    Next Over Intelligence
+                </span>
+                <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    {dewSoon && <span style={{ fontSize: 9, fontWeight: 700, color: C.amber, background: 'rgba(245,158,11,0.1)', border: `1px solid rgba(245,158,11,0.25)`, padding: '2px 7px', borderRadius: 4 }}>DEW EXPECTED</span>}
+                    <span style={{ fontSize: 9, fontWeight: 700, color: C.green, background: 'rgba(0,184,148,0.1)', border: `1px solid rgba(0,184,148,0.2)`, padding: '2px 7px', borderRadius: 4 }}>ML POWERED</span>
                 </div>
             </div>
-            {hasHistory && (
-                <div style={{ background: "#fff", border: "0.5px solid #E2E8F0", borderRadius: 12, padding: 14, marginBottom: 12 }}>
-                    <div style={{ fontSize: 12, color: "#64748B", marginBottom: 12 }}>Run rate trend</div>
-                    <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 56 }}>
-                        {history.slice(-4).map((h, i) => (
-                            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                                <div style={{ width: "100%", borderRadius: "3px 3px 0 0", background: i === 0 ? "#B5D4F4" : i === 1 ? "#85B7EB" : "#378ADD", height: `${barHeights[i]}px` }} />
-                                <span style={{ fontSize: 10, color: "#64748B" }}>ov {h.over}</span>
+
+            {/* Over Cards Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 7, marginBottom: 10 }}>
+                {overs.map((ov, i) => {
+                    const runs = ov.predicted || 0;
+                    const conf = ov.confidence || 65;
+                    const wktRisk = ov.wicketProb > 0.25;
+                    return (
+                        <div key={i} style={{ border: `1.5px solid ${getBorder(runs)}`, borderRadius: 8, padding: '9px 6px', textAlign: 'center', background: getBg(runs) }}>
+                            <div style={{ fontSize: 8, fontWeight: 700, color: C.muted, letterSpacing: 0.8, marginBottom: 3, textTransform: 'uppercase' }}>
+                                Ov {ov.over || (i + 1)}
                             </div>
-                        ))}
-                        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, opacity: 0.7 }}>
-                            <div style={{ width: "100%", borderRadius: "3px 3px 0 0", background: "rgba(24,95,165,0.15)", border: "1.5px dashed #185FA5", height: `${predBarH}px` }} />
-                            <span style={{ fontSize: 10, color: "#1E2D6B", fontWeight: 600 }}>ov {ov1.over}</span>
+                            <div style={{ fontSize: 22, fontWeight: 800, lineHeight: 1, color: getColor(runs), marginBottom: 2 }}>
+                                {runs}
+                            </div>
+                            <div style={{ fontSize: 9, color: C.muted, marginBottom: 6 }}>
+                                {ov.low || runs - 2}–{ov.high || runs + 2} runs
+                            </div>
+                            {/* Confidence bar */}
+                            <div style={{ height: 4, background: C.bg, borderRadius: 2, overflow: 'hidden', marginBottom: 4 }}>
+                                <div style={{ height: '100%', width: conf + '%', borderRadius: 2, background: getBarColor(runs) }} />
+                            </div>
+                            <span style={{ fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 3,
+                                background: wktRisk ? 'rgba(229,62,62,0.1)' : C.bg,
+                                color: wktRisk ? C.red : C.muted }}>
+                                {wktRisk ? 'WKT RISK' : 'STABLE'}
+                            </span>
                         </div>
+                    );
+                })}
+            </div>
+
+            {/* Projection row */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 7, marginBottom: 10 }}>
+                <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 7, padding: '7px 10px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 9, color: C.muted, fontWeight: 600, marginBottom: 2 }}>Projected</div>
+                    <div style={{ fontSize: 16, fontWeight: 800, color: C.gold }}>+{projRuns}</div>
+                    <div style={{ fontSize: 9, color: C.muted }}>{projLow}–{projHigh} runs</div>
+                </div>
+                <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 7, padding: '7px 10px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 9, color: C.muted, fontWeight: 600, marginBottom: 2 }}>Pitch</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: C.navy }}>{pitchCond}</div>
+                    <div style={{ fontSize: 9, color: C.muted }}>Detr: {Math.round((detr - 1) * 100)}%</div>
+                </div>
+                <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 7, padding: '7px 10px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 9, color: C.muted, fontWeight: 600, marginBottom: 2 }}>Bowler</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: pred.bowlingFactor <= 0.82 ? C.red : C.navy }}>
+                        {pred.bowlingFactor <= 0.82 ? 'Elite' : pred.bowlingFactor <= 0.92 ? 'Good' : 'Average'}
+                    </div>
+                    <div style={{ fontSize: 9, color: C.muted }}>Economy impact</div>
+                </div>
+            </div>
+
+            {/* Trend sparkline */}
+            {histVals && (
+                <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 7, padding: '10px 12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                        <span style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1, textTransform: 'uppercase' }}>Scoring Trend</span>
+                        <span style={{ fontSize: 9, fontWeight: 700, color: C.green, background: 'rgba(0,184,148,0.1)', padding: '2px 7px', borderRadius: 3, border: `1px solid rgba(0,184,148,0.2)` }}>RISING</span>
+                    </div>
+                    <svg width="100%" height={sparkH + 8} viewBox={`0 0 ${sparkW} ${sparkH + 8}`} preserveAspectRatio="none">
+                        <path d={sparkArea} fill={`rgba(30,45,107,0.07)`} stroke="none" />
+                        <path d={sparkPath} fill="none" stroke={C.navyLight} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 9, color: C.muted, marginTop: 2 }}>
+                        <span>PP</span><span>MID</span><span>DEATH</span>
                     </div>
                 </div>
             )}
-            <div style={{ background: "#fff", border: "0.5px solid #E2E8F0", borderRadius: 12, padding: 14 }}>
-                <div style={{ fontSize: 12, color: "#64748B", marginBottom: 10 }}>Pitch behaviour now</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                    <div style={{ textAlign: "center", padding: "10px 6px", background: "#EEF2FF", borderRadius: 8 }}>
-                        <div style={{ fontSize: 18, fontWeight: 500, color: spinBoost > 5 ? "#BA7517" : "#64748B" }}>{spinBoost > 0 ? `+${spinBoost}%` : "-"}</div>
-                        <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>Spin turn</div>
-                    </div>
-                    <div style={{ textAlign: "center", padding: "10px 6px", background: "#EEF2FF", borderRadius: 8 }}>
-                        <div style={{ fontSize: 18, fontWeight: 500, color: "#0A0A0A" }}>{pitchCond.split(" ")[0]}</div>
-                        <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>Surface</div>
-                    </div>
-                    <div style={{ textAlign: "center", padding: "10px 6px", background: dewSoon ? "#E6F1FB" : "#EEF2FF", borderRadius: 8 }}>
-                        <div style={{ fontSize: 18, fontWeight: 500, color: dewSoon ? "#185FA5" : "#64748B" }}>{dewSoon ? "Soon" : "None"}</div>
-                        <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>Dew factor</div>
-                    </div>
-                </div>
-            </div>
         </div>
     );
 }
