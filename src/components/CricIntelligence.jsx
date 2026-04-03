@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect, useCallback } from "react";
 
-const API_BASE = "https://web-production-91f0.up.railway.app";
+const API_BASE = "https://cricintel-backend-staging.up.railway.app";
 
 const C = {
     bg: "#EEF2FF", surface: "#FFFFFF", border: "#E2E8F0",
