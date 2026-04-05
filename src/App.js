@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import CricIntelligence from './components/CricIntelligence';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsAndConditions from './components/TermsAndConditions';
+import OddsCalculator from './components/OddsCalculator';
 import './App.css';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
                 <Route path="/dashboard" element={<CricIntelligence />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsAndConditions />} />
+                <Route path="/odds" element={<OddsCalculator />} />
                 <Route path="*" element={<CricIntelligence />} />
             </Routes>
         </Router>
