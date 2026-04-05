@@ -742,8 +742,8 @@ body { background: ${C.bg}; }
                     </div>
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
-                    {[["predict", "Predictions"], ["matches", "Matches"], ["media", "Media"]].map(([k, l]) => (
-                        <button key={k} className={`tab-btn ${activeTab === k ? "on" : ""}`} onClick={() => setActiveTab(k)}>{l}</button>
+                    {[["predict", "Predictions"], ["matches", "Matches"], ["media", "Media"], ["odds", "Odds 🎯"]].map(([k, l]) => (
+                        <button key={k} className={`tab-btn ${activeTab === k ? "on" : ""}`} onClick={() => { if (k === "odds") { window.location.href = "/odds"; } else { setActiveTab(k); } }}>{l}</button>
                     ))}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
