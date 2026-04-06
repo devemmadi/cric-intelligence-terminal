@@ -162,6 +162,7 @@ Website: cricintelligence.com`
                 {/* Footer links */}
                 <div style={{ marginTop: 48, paddingTop: 24, borderTop: `1px solid ${C.border}`, display: "flex", gap: 24, flexWrap: "wrap" }}>
                     <a href="/privacy" style={{ fontSize: 13, color: C.navy, textDecoration: "none", fontWeight: 600 }}>Privacy Policy</a>
+                    <a href="/about" style={{ fontSize: 13, color: C.navy, textDecoration: "none", fontWeight: 600 }}>About Us</a>
                     <a href="/" style={{ fontSize: 13, color: C.muted, textDecoration: "none" }}>← Back to CricIntelligence</a>
                 </div>
 

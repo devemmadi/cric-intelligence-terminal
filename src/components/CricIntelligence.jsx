@@ -1313,7 +1313,9 @@ body { background: ${C.bg}; }
                         </div>
                                                 <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center", marginTop: "auto" }}>
                             {pred?.dataSource || "877 venues - 1.7M records"}<br />
-                            <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>emmadi.dev@gmail.com</a>
+                            <a href="/about" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>About Us</a>
+                            <span style={{ color: C.border, margin: "0 6px" }}>·</span>
+                            <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>Contact</a>
                         </div>
                     </aside>
                 </div>

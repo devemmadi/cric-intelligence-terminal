@@ -5,6 +5,7 @@ import CricIntelligence from './components/CricIntelligence';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsAndConditions from './components/TermsAndConditions';
 import OddsCalculator from './components/OddsCalculator';
+import AboutUs from './components/AboutUs';
 import './App.css';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms" element={<TermsAndConditions />} />
                 <Route path="/odds" element={<OddsCalculator />} />
+                <Route path="/about" element={<AboutUs />} />
                 <Route path="*" element={<CricIntelligence />} />
             </Routes>
         </Router>
