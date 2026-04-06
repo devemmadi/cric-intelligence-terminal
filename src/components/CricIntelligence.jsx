@@ -1361,7 +1361,42 @@ body { background: ${C.bg}; }
                                 </div>
                             ))}
                         </div>
-                                                <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center", marginTop: "auto" }}>
+
+                        {/* Betting Widget — affiliate links */}
+                        {pred && pred.team1 && (
+                            <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 12, overflow: "hidden" }}>
+                                <div style={{ background: C.navy, padding: "8px 12px", display: "flex", alignItems: "center", gap: 6 }}>
+                                    <span style={{ fontSize: 10, fontWeight: 800, color: "#C8961E", letterSpacing: 1 }}>🎯 BET ON THIS MATCH</span>
+                                </div>
+                                <div style={{ padding: "10px 12px", display: "flex", flexDirection: "column", gap: 8 }}>
+                                    <div style={{ fontSize: 10, color: C.muted, marginBottom: 2 }}>
+                                        AI gives <strong style={{ color: C.navy }}>{pred.team1 ? pred.team1.split(",")[0] : ""}</strong> {prob}% win probability
+                                    </div>
+                                    {[
+                                        { name: "Betway", badge: "⭐ Top Pick", color: "#00A859", bg: "#E6F7EF", href: "https://www.betway.com/sports/evt/cricket/?btag=a_XXXXX" },
+                                        { name: "bet365", badge: "Most Popular", color: "#027B5B", bg: "#E6F4F0", href: "https://www.bet365.com/?btag=a_XXXXX" },
+                                        { name: "1xBet", badge: "Best Odds", color: "#1E3A8A", bg: "#EFF6FF", href: "https://1xbet.com/?btag=a_XXXXX" },
+                                    ].map(b => (
+                                        <a key={b.name} href={b.href} target="_blank" rel="noreferrer noopener"
+                                            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: b.bg, border: `1px solid ${b.color}22`, borderRadius: 8, padding: "8px 10px", textDecoration: "none", transition: "opacity .15s" }}
+                                            onMouseOver={e => e.currentTarget.style.opacity = "0.85"}
+                                            onMouseOut={e => e.currentTarget.style.opacity = "1"}
+                                        >
+                                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                                <span style={{ fontSize: 13, fontWeight: 800, color: b.color }}>{b.name}</span>
+                                                <span style={{ fontSize: 9, fontWeight: 700, color: b.color, background: `${b.color}18`, padding: "1px 5px", borderRadius: 4 }}>{b.badge}</span>
+                                            </div>
+                                            <span style={{ fontSize: 11, fontWeight: 700, color: b.color }}>Bet Now →</span>
+                                        </a>
+                                    ))}
+                                    <div style={{ fontSize: 9, color: C.muted, textAlign: "center", marginTop: 2, lineHeight: 1.5 }}>
+                                        18+ · Gamble responsibly · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: C.muted }}>BeGambleAware.org</a>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center", marginTop: "auto" }}>
                             {pred?.dataSource || "877 venues - 1.7M records"}<br />
                             <a href="/about" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>About Us</a>
                             <span style={{ color: C.border, margin: "0 6px" }}>·</span>
