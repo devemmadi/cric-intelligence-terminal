@@ -8,6 +8,9 @@ const C = {
     navy: "#354D97", gold: "#C8961E",
 };
 
+// Set page title
+if (typeof document !== "undefined") document.title = "Terms & Conditions | CricIntelligence";
+
 export default function TermsAndConditions() {
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>

@@ -8,6 +8,9 @@ const C = {
     navy: "#1E2D6B", gold: "#C8961E", green: "#00B894",
 };
 
+// Set page title
+if (typeof document !== "undefined") document.title = "About CricIntelligence — AI Cricket Predictions Platform";
+
 export default function AboutUs() {
     const [copied, setCopied] = useState(false);
 

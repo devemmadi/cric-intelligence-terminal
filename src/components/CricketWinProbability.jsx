@@ -14,6 +14,9 @@ const FACTORS = [
     { icon: "🔄", title: "Phase Transitions", weight: "13%", desc: "Powerplay to middle overs, and middle to death — each transition creates momentum shifts. The model weights these phase changes explicitly." },
 ];
 
+// Set page title
+if (typeof document !== "undefined") document.title = "Cricket Win Probability Explained — How AI Predicts Matches | CricIntelligence";
+
 export default function CricketWinProbability() {
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>

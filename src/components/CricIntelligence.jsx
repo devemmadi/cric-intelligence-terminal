@@ -754,6 +754,18 @@ export default function CricIntelligence() {
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
 
+    // Dynamic page title — improves CTR in Google + browser tab
+    useEffect(() => {
+        if (pred?.team1 && pred?.team2) {
+            const t1 = pred.team1.split(",")[0].trim();
+            const t2 = pred.team2.split(",")[0].trim();
+            const prob = pred.aiProbability || 50;
+            document.title = `${t1} vs ${t2} — AI: ${prob}% Win Probability | CricIntelligence`;
+        } else {
+            document.title = "CricIntelligence — Free IPL 2026 Cricket Predictions & Live Win Probability";
+        }
+    }, [pred?.team1, pred?.team2, pred?.aiProbability]);
+
     useEffect(() => {
         try {
             const params = new URLSearchParams(window.location.search);

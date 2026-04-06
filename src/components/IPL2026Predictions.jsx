@@ -24,6 +24,9 @@ const FAQS = [
     { q: "Can I use these predictions for betting?", a: "CricIntelligence predictions are for informational and entertainment purposes only. They do not constitute betting advice. Always gamble responsibly and only with licensed operators. 18+ only." },
 ];
 
+// Set page title
+if (typeof document !== "undefined") document.title = "IPL 2026 Predictions & Win Probability — AI Cricket Analysis | CricIntelligence";
+
 export default function IPL2026Predictions() {
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>

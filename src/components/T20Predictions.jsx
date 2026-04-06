@@ -20,6 +20,9 @@ const T20_LEAGUES = [
     { name: "PSL", country: "🇵🇰", flag: "Pakistan", months: "Feb–Mar 2026", teams: 6, matches: 34, covered: true },
 ];
 
+// Set page title
+if (typeof document !== "undefined") document.title = "T20 Cricket Predictions — AI Over-by-Over Analysis | CricIntelligence";
+
 export default function T20Predictions() {
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
