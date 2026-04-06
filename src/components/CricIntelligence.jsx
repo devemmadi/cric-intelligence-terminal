@@ -775,10 +775,10 @@ export default function CricIntelligence() {
     };
 
     // Single unified fetch — runs every 5s, fetches matches + prediction + scorecard in parallel
-    const fetchLiveData = useCallback(async () => {
+    const fetchLiveData = useCallback(async (overrideMatchId) => {
         if (document.hidden) return;
         try {
-            const curMatchId = selectedMatchRef.current?.matchId;
+            const curMatchId = overrideMatchId || selectedMatchRef.current?.matchId;
 
             // Always fetch matches list
             const matchesPromise = fetch(`${API_BASE}/matches`).then(r => r.ok ? r.json() : null).catch(() => null);
@@ -875,8 +875,12 @@ export default function CricIntelligence() {
     }, [fetchLiveData]);
 
     // Re-fetch immediately when user selects a different match
+    // Pass matchId directly — don't rely on ref update timing
     useEffect(() => {
-        if (selectedMatch?.matchId) fetchLiveData();
+        if (selectedMatch?.matchId) {
+            selectedMatchRef.current = selectedMatch;
+            fetchLiveData(selectedMatch.matchId);
+        }
     }, [selectedMatch?.matchId]);
 
     const prob = pred?.aiProbability || 50;
@@ -971,7 +975,7 @@ body { background: ${C.bg}; }
                                     <div style={{ width: 5, height: 5, borderRadius: "50%", background: C.red, animation: "pulse 2s infinite" }} />LIVE NOW
                                 </div>
                                 {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setSelectedMatch(m); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setPred(null); setSelectedMatch(m); }} />
                                 ))}
                             </>
                         )}
@@ -979,7 +983,7 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 9, fontWeight: 700, color: C.accent, letterSpacing: 1.5, margin: "10px 0 6px" }}>UPCOMING</div>
                                 {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setSelectedMatch(m); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setPred(null); setSelectedMatch(m); }} />
                                 ))}
                             </>
                         )}
@@ -987,7 +991,7 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1.5, margin: "10px 0 6px" }}>RECENT</div>
                                 {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setSelectedMatch(m); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setPred(null); setSelectedMatch(m); }} />
                                 ))}
                             </>
                         )}
