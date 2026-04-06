@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect, useCallback } from "react";
 import Logo from "./Logo";
+import RGFooter from "./RGFooter";
 
 const API_BASE = "https://web-production-91f0.up.railway.app";
 
@@ -1409,6 +1410,8 @@ body { background: ${C.bg}; }
             )}
 
             {activeTab === "media" && <MediaSection />}
+
+            <RGFooter />
 
             <nav className="mn">
                 {[["Predict", "predict"], ["Matches", "matches"], ["Media", "media"]].map(([label, key]) => (

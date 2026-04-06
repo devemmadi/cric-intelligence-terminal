@@ -6,21 +6,30 @@ import PrivacyPolicy from './components/PrivacyPolicy';
 import TermsAndConditions from './components/TermsAndConditions';
 import OddsCalculator from './components/OddsCalculator';
 import AboutUs from './components/AboutUs';
+import AgeGate from './components/AgeGate';
+import IPL2026Predictions from './components/IPL2026Predictions';
+import CricketWinProbability from './components/CricketWinProbability';
+import T20Predictions from './components/T20Predictions';
 import './App.css';
 
 function App() {
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<CricIntelligence />} />
-                <Route path="/dashboard" element={<CricIntelligence />} />
-                <Route path="/privacy" element={<PrivacyPolicy />} />
-                <Route path="/terms" element={<TermsAndConditions />} />
-                <Route path="/odds" element={<OddsCalculator />} />
-                <Route path="/about" element={<AboutUs />} />
-                <Route path="*" element={<CricIntelligence />} />
-            </Routes>
-        </Router>
+        <AgeGate>
+            <Router>
+                <Routes>
+                    <Route path="/" element={<CricIntelligence />} />
+                    <Route path="/dashboard" element={<CricIntelligence />} />
+                    <Route path="/privacy" element={<PrivacyPolicy />} />
+                    <Route path="/terms" element={<TermsAndConditions />} />
+                    <Route path="/odds" element={<OddsCalculator />} />
+                    <Route path="/about" element={<AboutUs />} />
+                    <Route path="/predictions/ipl-2026" element={<IPL2026Predictions />} />
+                    <Route path="/predictions/cricket-win-probability" element={<CricketWinProbability />} />
+                    <Route path="/predictions/t20-predictions" element={<T20Predictions />} />
+                    <Route path="*" element={<CricIntelligence />} />
+                </Routes>
+            </Router>
+        </AgeGate>
     );
 }
 
