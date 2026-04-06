@@ -1,6 +1,6 @@
 {
   "short_name": "CricIntelligence",
-  "name": "CricIntelligence - Live Cricket Predictions",
+  "name": "CricIntelligence - Free IPL 2026 Cricket Predictions",
   "icons": [
     {
       "src": "favicon.ico",
@@ -10,16 +10,19 @@
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#1E2D6B",
-  "background_color": "#EEF2FF"
+  "background_color": "#EEF2FF",
+  "description": "Free AI cricket predictions for IPL 2026. Live win probability updated every ball."
 }
