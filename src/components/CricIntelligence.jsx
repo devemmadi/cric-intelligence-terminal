@@ -501,45 +501,96 @@ function NoMatchesScreen() {
 function LiveScorecard({ batters, bowler }) {
     if (!batters || batters.length === 0) return null;
     return (
-        <div style={{ background: "rgba(15,23,42,0.6)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "14px 16px", marginBottom: 14 }}>
-            <div style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1.5, marginBottom: 10 }}>{"LIVE SCORECARD"}</div>
-            <div style={{ marginBottom: 10 }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, marginBottom: 5 }}>
-                    <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BATTER"}</span>
-                    <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"R"}</span>
-                    <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"B"}</span>
-                    <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"SR"}</span>
-                </div>
-                {batters.map(function(b, i) { return (
-                    <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 32px 32px 52px", gap: 4, padding: "5px 0", borderTop: "1px solid rgba(255,255,255,0.05)", alignItems: "center" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                            {b.isStriker && <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#22C55E", display: "inline-block" }} />}
-                            <span style={{ fontSize: 11, fontWeight: b.isStriker ? 700 : 400, color: b.isStriker ? "#E2E8F0" : "#94A3B8", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 90 }}>{b.name}</span>
-                        </div>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0", textAlign: "right" }}>{b.runs}</span>
-                        <span style={{ fontSize: 11, color: "#94A3B8", textAlign: "right" }}>{b.balls}</span>
-                        <span style={{ fontSize: 11, fontWeight: 600, textAlign: "right", color: b.sr >= 150 ? "#22C55E" : b.sr >= 100 ? "#F59E0B" : "#EF4444" }}>{b.sr ? Math.round(b.sr) : 0}</span>
-                    </div>
-                ); })}
+        <div style={{ background: "#0F172A", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 14, overflow: "hidden", marginBottom: 14 }}>
+
+            {/* Header */}
+            <div style={{ background: "rgba(200,150,30,0.15)", borderBottom: "1px solid rgba(200,150,30,0.25)", padding: "8px 14px", display: "flex", alignItems: "center", gap: 7 }}>
+                <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#EF4444", display: "inline-block", boxShadow: "0 0 6px #EF4444", animation: "pulse 1.5s infinite" }} />
+                <span style={{ fontSize: 11, fontWeight: 800, color: "#C8961E", letterSpacing: 1.5 }}>LIVE SCORECARD</span>
             </div>
-            {bowler && bowler.name && (
-                <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 8 }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 30px 30px 28px 44px", gap: 4, marginBottom: 4 }}>
-                        <span style={{ fontSize: 9, color: "#64748B", fontWeight: 600 }}>{"BOWLER"}</span>
-                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"O"}</span>
-                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"R"}</span>
-                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"W"}</span>
-                        <span style={{ fontSize: 9, color: "#64748B", textAlign: "right" }}>{"ECO"}</span>
+
+            <div style={{ padding: "12px 14px" }}>
+                {/* Batting section */}
+                <div style={{ marginBottom: 12 }}>
+                    {/* Column headers */}
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 36px 36px 52px", gap: 4, marginBottom: 6, padding: "0 4px" }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", letterSpacing: 0.8 }}>BATTER</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textAlign: "right" }}>R</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textAlign: "right" }}>B</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textAlign: "right" }}>SR</span>
                     </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 30px 30px 28px 44px", gap: 4, padding: "5px 0", borderTop: "1px solid rgba(255,255,255,0.05)", alignItems: "center" }}>
-                        <span style={{ fontSize: 11, fontWeight: 600, color: "#E2E8F0", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 90 }}>{bowler.name}</span>
-                        <span style={{ fontSize: 11, color: "#94A3B8", textAlign: "right" }}>{bowler.overs}</span>
-                        <span style={{ fontSize: 11, color: "#94A3B8", textAlign: "right" }}>{bowler.runs}</span>
-                        <span style={{ fontSize: 12, fontWeight: 700, textAlign: "right", color: bowler.wickets > 0 ? "#22C55E" : "#E2E8F0" }}>{bowler.wickets}</span>
-                        <span style={{ fontSize: 11, fontWeight: 600, textAlign: "right", color: bowler.economy <= 7 ? "#22C55E" : bowler.economy <= 10 ? "#F59E0B" : "#EF4444" }}>{bowler.economy ? bowler.economy.toFixed(1) : "0.0"}</span>
-                    </div>
+
+                    {batters.map(function(b, i) {
+                        const srColor = b.sr >= 150 ? "#22C55E" : b.sr >= 120 ? "#F59E0B" : b.sr >= 80 ? "#E2E8F0" : "#EF4444";
+                        const srBg = b.sr >= 150 ? "rgba(34,197,94,0.12)" : b.sr >= 120 ? "rgba(245,158,11,0.12)" : "transparent";
+                        return (
+                            <div key={i} style={{
+                                display: "grid", gridTemplateColumns: "1fr 36px 36px 52px", gap: 4,
+                                padding: "8px 4px", borderRadius: 8,
+                                background: b.isStriker ? "rgba(255,255,255,0.05)" : "transparent",
+                                marginBottom: 4, alignItems: "center"
+                            }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                    {b.isStriker
+                                        ? <span style={{ fontSize: 10, color: "#22C55E", fontWeight: 900 }}>▶</span>
+                                        : <span style={{ width: 10, display: "inline-block" }} />
+                                    }
+                                    <div>
+                                        <div style={{ fontSize: 12, fontWeight: b.isStriker ? 800 : 500, color: b.isStriker ? "#FFFFFF" : "#94A3B8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 85 }}>
+                                            {b.name}
+                                        </div>
+                                        {b.isStriker && <div style={{ fontSize: 9, color: "#22C55E", fontWeight: 600, letterSpacing: 0.5 }}>ON STRIKE</div>}
+                                    </div>
+                                </div>
+                                <span style={{ fontSize: 15, fontWeight: 900, color: "#FFFFFF", textAlign: "right" }}>{b.runs ?? 0}</span>
+                                <span style={{ fontSize: 12, color: "#94A3B8", textAlign: "right" }}>{b.balls ?? 0}</span>
+                                <div style={{ textAlign: "right" }}>
+                                    <span style={{ fontSize: 12, fontWeight: 700, color: srColor, background: srBg, padding: "2px 5px", borderRadius: 5 }}>
+                                        {b.sr ? Math.round(b.sr) : 0}
+                                    </span>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
-            )}
+
+                {/* Divider */}
+                <div style={{ height: 1, background: "rgba(255,255,255,0.08)", marginBottom: 10 }} />
+
+                {/* Bowling section */}
+                {bowler && bowler.name && (
+                    <div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 28px 28px 24px 44px", gap: 4, marginBottom: 6, padding: "0 4px" }}>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", letterSpacing: 0.8 }}>BOWLER</span>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textAlign: "right" }}>O</span>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textAlign: "right" }}>R</span>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textAlign: "right" }}>W</span>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textAlign: "right" }}>ECO</span>
+                        </div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 28px 28px 24px 44px", gap: 4, padding: "8px 4px", borderRadius: 8, background: "rgba(255,255,255,0.05)", alignItems: "center" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                                <span style={{ fontSize: 10, color: "#F59E0B", fontWeight: 900 }}>⚡</span>
+                                <div>
+                                    <div style={{ fontSize: 12, fontWeight: 700, color: "#FFFFFF", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 80 }}>{bowler.name}</div>
+                                    <div style={{ fontSize: 9, color: "#F59E0B", fontWeight: 600, letterSpacing: 0.5 }}>BOWLING</div>
+                                </div>
+                            </div>
+                            <span style={{ fontSize: 12, color: "#CBD5E1", textAlign: "right" }}>{bowler.overs ?? 0}</span>
+                            <span style={{ fontSize: 12, color: "#CBD5E1", textAlign: "right" }}>{bowler.runs ?? 0}</span>
+                            <span style={{ fontSize: 15, fontWeight: 900, textAlign: "right", color: bowler.wickets > 0 ? "#22C55E" : "#E2E8F0" }}>{bowler.wickets ?? 0}</span>
+                            <div style={{ textAlign: "right" }}>
+                                <span style={{ fontSize: 12, fontWeight: 700,
+                                    color: bowler.economy <= 6 ? "#22C55E" : bowler.economy <= 9 ? "#F59E0B" : "#EF4444",
+                                    background: bowler.economy <= 6 ? "rgba(34,197,94,0.12)" : bowler.economy <= 9 ? "rgba(245,158,11,0.12)" : "rgba(239,68,68,0.12)",
+                                    padding: "2px 5px", borderRadius: 5
+                                }}>
+                                    {bowler.economy ? bowler.economy.toFixed(1) : "0.0"}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }
