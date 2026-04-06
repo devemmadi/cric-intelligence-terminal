@@ -149,7 +149,7 @@ Our total liability to you shall not exceed the amount you paid us in the 12 mon
                         title: "13. Contact",
                         content: `For any questions regarding these Terms and Conditions:
 
-Email: legal@cricintelligence.com
+Email: emmadi.dev@gmail.com
 Website: cricintelligence.com`
                     },
                 ].map(({ title, content }) => (

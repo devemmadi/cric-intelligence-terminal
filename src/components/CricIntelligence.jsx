@@ -1313,7 +1313,7 @@ body { background: ${C.bg}; }
                         </div>
                                                 <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center", marginTop: "auto" }}>
                             {pred?.dataSource || "877 venues - 1.7M records"}<br />
-                            <span style={{ color: C.red, fontWeight: 600 }}>18+ - BeGambleAware.org</span>
+                            <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>emmadi.dev@gmail.com</a>
                         </div>
                     </aside>
                 </div>

@@ -102,7 +102,7 @@ You can control cookies through your browser settings. Disabling cookies may aff
 • Right to data portability
 • Right to object to processing
 
-To exercise any of these rights, contact us at: privacy@cricintelligence.com`
+To exercise any of these rights, contact us at: emmadi.dev@gmail.com`
                     },
                     {
                         title: "8. Gambling & Responsible Gaming",
@@ -131,7 +131,7 @@ We do not accept advertising from unlicensed gambling operators.`
                         title: "12. Contact Us",
                         content: `If you have questions about this Privacy Policy, please contact us:
 
-Email: privacy@cricintelligence.com
+Email: emmadi.dev@gmail.com
 Website: cricintelligence.com`
                     },
                 ].map(({ title, content }) => (
