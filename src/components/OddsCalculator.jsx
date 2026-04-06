@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Logo from './Logo';
 
 const OddsCalculator = () => {
   const [aiProb, setAiProb] = useState('');
@@ -35,12 +36,7 @@ const OddsCalculator = () => {
 
       {/* Header — same as main site */}
       <div style={navStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-          <div style={logoStyle} onClick={() => window.location.href = '/'}>
-            <span style={{ fontWeight: 800, fontSize: 13, color: '#fff', letterSpacing: 2, fontFamily: 'Georgia,serif' }}>CRIC</span>
-            <span style={{ fontWeight: 400, fontSize: 9, color: '#C8961E', letterSpacing: 3.5, fontFamily: 'Georgia,serif' }}>INTELLIGENCE</span>
-          </div>
-        </div>
+        <Logo />
         <div style={{ display: 'flex', gap: 4 }}>
           {tabs.map(([k, l]) => (
             <button key={k}

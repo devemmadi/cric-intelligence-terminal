@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect, useCallback } from "react";
+import Logo from "./Logo";
 
 const API_BASE = "https://web-production-91f0.up.railway.app";
 
@@ -889,11 +890,8 @@ body { background: ${C.bg}; }
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
             <nav style={{ background: C.navy, borderBottom: `1px solid ${C.navyLight}`, padding: "0 20px", height: 54, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 9, cursor: "pointer" }} onClick={() => { setActiveTab("predict"); window.scrollTo(0,0); }}>
-                    <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
-                        <span style={{ fontWeight: 800, fontSize: 13, color: "#fff", letterSpacing: 2, fontFamily: "Georgia,serif" }}>CRIC</span>
-                        <span style={{ fontWeight: 400, fontSize: 9, color: "#C8961E", letterSpacing: 3.5, fontFamily: "Georgia,serif" }}>INTELLIGENCE</span>
-                    </div>
+                <div onClick={() => { setActiveTab("predict"); window.scrollTo(0,0); }} style={{ cursor: "pointer" }}>
+                    <Logo href="/" />
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
                     {[["predict", "Predictions"], ["matches", "Matches"], ["media", "Media"], ["odds", "Odds 🎯"]].map(([k, l]) => (
