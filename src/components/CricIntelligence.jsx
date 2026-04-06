@@ -695,17 +695,11 @@ export default function CricIntelligence() {
     const [paymentStep, setPaymentStep] = useState("plans");
     const [checkingPayment, setCheckingPayment] = useState(false);
     const [liveTime, setLiveTime] = useState(new Date());
-    const [ticker, setTicker] = useState(0);
     const [activeOver, setActiveOver] = useState(0);
+    const selectedMatchRef = React.useRef(selectedMatch);
+    React.useEffect(() => { selectedMatchRef.current = selectedMatch; }, [selectedMatch]);
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
-
-    useEffect(() => {
-        const t = setInterval(() => {
-            if (!document.hidden) setTicker(p => p + 1);
-        }, 10000);
-        return () => clearInterval(t);
-    }, []);
 
     useEffect(() => {
         try {
@@ -727,82 +721,110 @@ export default function CricIntelligence() {
         } catch { } finally { setCheckingPayment(false); }
     };
 
-    const fetchPred = useCallback(async (matchId) => {
+    // Single unified fetch — runs every 5s, fetches matches + prediction + scorecard in parallel
+    const fetchLiveData = useCallback(async () => {
+        if (document.hidden) return;
         try {
-            const r = await fetch(`${API_BASE}/predict${(matchId || selectedMatch?.matchId) ? "?match_id=" + (matchId || selectedMatch?.matchId) : ""}`);
-            if (r.ok) {
-                const d = await r.json();
-                if (d && d.team1) {
-                    // Merge imageIds from /matches into pred
-                    const mList = window.__matchList || [];
-                    const mMatch = mList.find(mx => mx.team1 === d.team1 || mx.t1 === d.team1);
-                    d.team1ImageId = mMatch?.t1ImageId || mMatch?.team1ImageId || 0;
-                    d.team2ImageId = mMatch?.t2ImageId || mMatch?.team2ImageId || 0;
-                    setPred(d);
+            const curMatchId = selectedMatchRef.current?.matchId;
+
+            // Always fetch matches list
+            const matchesPromise = fetch(`${API_BASE}/matches`).then(r => r.ok ? r.json() : null).catch(() => null);
+
+            // Fetch prediction and scorecard in parallel if we have a match
+            const predPromise = fetch(`${API_BASE}/predict${curMatchId ? "?match_id=" + curMatchId : ""}`)
+                .then(r => r.ok ? r.json() : null).catch(() => null);
+
+            const scorecardPromise = curMatchId
+                ? fetch(`${API_BASE}/match/${curMatchId}`).then(r => r.ok ? r.json() : null).catch(() => null)
+                : Promise.resolve(null);
+
+            // All three fire at the same time
+            const [matchesData, predData, scorecardData] = await Promise.all([matchesPromise, predPromise, scorecardPromise]);
+
+            // Update matches list
+            if (matchesData) {
+                const list = Array.isArray(matchesData) ? matchesData : matchesData.data || [];
+                if (list.length) {
+                    const mapped = list.slice(0, 20).map((m, i) => {
+                        const rawStatus = m.status || "";
+                        let status;
+                        if (isMatchEnded(rawStatus)) {
+                            status = "ENDED";
+                        } else if (
+                            (m.matchStarted && !m.matchEnded) ||
+                            ["need", "opt", "batting", "bowling", "over", "ov)", "day", "session", "innings", "require", "trail", "lead"].some(kw => rawStatus.toLowerCase().includes(kw))
+                        ) {
+                            status = "LIVE";
+                        } else {
+                            status = "UPCOMING";
+                        }
+                        return {
+                            id: m.id || i,
+                            matchId: m.id,
+                            t1: cleanTeam(m.team1 || m.teams?.[0] || "TBD"),
+                            t2: cleanTeam(m.team2 || m.teams?.[1] || "TBD"),
+                            t1ImageId: m.team1ImageId || 0,
+                            t2ImageId: m.team2ImageId || 0,
+                            status, rawStatus,
+                            day: m.matchType?.toUpperCase() || "T20",
+                            detail: m.name || "",
+                            t1Score: m.score?.[0]?.r ?? null,
+                            t1Wkts: m.score?.[0]?.w ?? null,
+                            t2Score: m.score?.[1]?.r ?? null,
+                        };
+                    });
+                    setLiveMatches(mapped);
+                    window.__matchList = mapped;
+                    setLiveStatus("live");
+                    const live = mapped.find(m => m.status === "LIVE");
+                    const upcoming = mapped.find(m => m.status === "UPCOMING");
+                    const best = live || upcoming;
+                    if (best && !hasUserSelectedRef.current) setSelectedMatch(best);
                 }
-                else setPred(null);
             }
-        } catch { }
-    }, [selectedMatch]);
 
-    useEffect(() => { fetchPred(); }, [selectedMatch, ticker]);
-
-    const fetchMatches = useCallback(async () => {
-        try {
-            const r = await fetch(`${API_BASE}/matches`);
-            const d = await r.json();
-            const list = Array.isArray(d) ? d : d.data || [];
-            if (list.length) {
-                const mapped = list.slice(0, 20).map((m, i) => {
-                    const rawStatus = m.status || "";
-                    let status;
-                    if (isMatchEnded(rawStatus)) {
-                        status = "ENDED";
-                    } else if (
-                        (m.matchStarted && !m.matchEnded) ||
-                        ["need", "opt", "batting", "bowling", "over", "ov)", "day", "session", "innings", "require", "trail", "lead"].some(kw => rawStatus.toLowerCase().includes(kw))
-                    ) {
-                        status = "LIVE";
-                    } else {
-                        status = "UPCOMING";
-                    }
-                    return {
-                        id: m.id || i,
-                        matchId: m.id,
-                        t1: cleanTeam(m.team1 || m.teams?.[0] || "TBD"),
-                        t2: cleanTeam(m.team2 || m.teams?.[1] || "TBD"),
-                        t1ImageId: m.team1ImageId || 0,
-                        t2ImageId: m.team2ImageId || 0,
-                        status, rawStatus,
-                        day: m.matchType?.toUpperCase() || "T20",
-                        detail: m.name || "",
-                        t1Score: m.score?.[0]?.r ?? null,
-                        t1Wkts: m.score?.[0]?.w ?? null,
-                        t2Score: m.score?.[1]?.r ?? null,
-                    };
-                });
-                setLiveMatches(mapped);
-        window.__matchList = mapped;
-                setLiveStatus("live");
-                const live = mapped.find(m => m.status === "LIVE");
-                const upcoming = mapped.find(m => m.status === "UPCOMING");
-                const best = live || upcoming;
-                if (best && !hasUserSelectedRef.current) setSelectedMatch(best);
+            // Merge scorecard into pred — both arrive together, no lag
+            if (scorecardData && !scorecardData.error && scorecardData.team1) {
+                // Scorecard data takes priority (fresher), merge pred on top
+                const merged = { ...scorecardData };
+                if (predData && predData.team1) {
+                    merged.aiProbability = predData.aiProbability ?? scorecardData.aiProbability;
+                    merged.nextOvers = predData.nextOvers ?? scorecardData.nextOvers;
+                    merged.overHistory = predData.overHistory ?? scorecardData.overHistory;
+                    merged.pitchCondition = predData.pitchCondition ?? scorecardData.pitchCondition;
+                    merged.weatherImpact = predData.weatherImpact ?? scorecardData.weatherImpact;
+                    merged.bowlingFactor = predData.bowlingFactor ?? scorecardData.bowlingFactor;
+                    merged.battingFactor = predData.battingFactor ?? scorecardData.battingFactor;
+                    merged.deteriorationFactor = predData.deteriorationFactor ?? scorecardData.deteriorationFactor;
+                    merged.currentPhase = predData.currentPhase ?? scorecardData.currentPhase;
+                    merged.playerContext = predData.playerContext ?? scorecardData.playerContext;
+                }
+                const mList = window.__matchList || [];
+                const mMatch = mList.find(mx => mx.t1 === merged.team1 || mx.team1 === merged.team1);
+                merged.team1ImageId = mMatch?.t1ImageId || 0;
+                merged.team2ImageId = mMatch?.t2ImageId || 0;
+                setPred(merged);
+            } else if (predData && predData.team1) {
+                const mList = window.__matchList || [];
+                const mMatch = mList.find(mx => mx.t1 === predData.team1 || mx.team1 === predData.team1);
+                predData.team1ImageId = mMatch?.t1ImageId || 0;
+                predData.team2ImageId = mMatch?.t2ImageId || 0;
+                setPred(predData);
             }
         } catch { setLiveStatus("mock"); }
     }, []);
 
-    useEffect(() => { fetchMatches(); }, []);
-    useEffect(() => { const t = setInterval(fetchMatches, 30000); return () => clearInterval(t); }, []);
-
+    // Initial load + 5s refresh (scorecard + prediction always in sync)
     useEffect(() => {
-        if (selectedMatch?.matchId) {
-            fetch(`${API_BASE}/match/${selectedMatch.matchId}`)
-                .then(r => r.ok ? r.json() : null)
-                .then(d => { if (d && !d.error && d.team1) setPred(d); })
-                .catch(() => { });
-        }
-    }, [selectedMatch]);
+        fetchLiveData();
+        const t = setInterval(fetchLiveData, 5000);
+        return () => clearInterval(t);
+    }, [fetchLiveData]);
+
+    // Re-fetch immediately when user selects a different match
+    useEffect(() => {
+        if (selectedMatch?.matchId) fetchLiveData();
+    }, [selectedMatch?.matchId]);
 
     const prob = pred?.aiProbability || 50;
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
