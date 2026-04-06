@@ -1,1 +1,6 @@
-/* /index.html   200
+# Static SEO pages — serve HTML directly (Google can crawl these)
+/predictions/ipl-2026        /predictions/ipl-2026.html    200
+/predictions/t20-predictions  /predictions/t20-predictions.html  200
+
+# All other routes — React SPA
+/*  /index.html  200
