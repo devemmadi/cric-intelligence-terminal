@@ -863,6 +863,14 @@ export default function CricIntelligence() {
                     merged.deteriorationFactor = predData.deteriorationFactor ?? scorecardData.deteriorationFactor;
                     merged.currentPhase = predData.currentPhase ?? scorecardData.currentPhase;
                     merged.playerContext = predData.playerContext ?? scorecardData.playerContext;
+                    // Score always from scorecard (fresher) — never override with pred's 0/0
+                    if (scorecardData.score > 0 || scorecardData.overs > 0) {
+                        merged.displayScore = scorecardData.displayScore;
+                        merged.score = scorecardData.score;
+                        merged.wickets = scorecardData.wickets;
+                        merged.overs = scorecardData.overs;
+                        merged.currentRunRate = scorecardData.currentRunRate;
+                    }
                 }
                 const mList = window.__matchList || [];
                 const mMatch = mList.find(mx => mx.t1 === merged.team1 || mx.team1 === merged.team1);
