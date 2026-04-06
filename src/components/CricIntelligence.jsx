@@ -383,8 +383,12 @@ const TEAM_FORM = [
     { team: "DC",  p: 10, w: 4, l: 6, nrr: "-0.28", form: ["L","L","W","L","W"] },
 ];
 
-function NoMatchesScreen() {
+function NoMatchesScreen({ upcomingMatches }) {
     const [tab, setTab] = React.useState("schedule");
+
+    // Use live upcoming matches if available, else show message
+    const scheduleMatches = upcomingMatches && upcomingMatches.length > 0 ? upcomingMatches : [];
+
     return (
         <div style={{ maxWidth: 860, margin: "0 auto", padding: "28px 20px 60px" }}>
 
@@ -393,7 +397,7 @@ function NoMatchesScreen() {
                 <div style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", letterSpacing: 2, marginBottom: 8, textTransform: "uppercase" }}>IPL 2026 · AI Predictions</div>
                 <h2 style={{ fontSize: 26, fontWeight: 900, margin: "0 0 8px", lineHeight: 1.2 }}>No Live Matches Right Now</h2>
                 <p style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", margin: "0 0 20px", lineHeight: 1.6, maxWidth: 480 }}>
-                    Live predictions appear automatically when matches go live. Meanwhile, explore the IPL 2026 schedule, team form & cricket analysis below.
+                    Live predictions appear automatically when matches go live. Meanwhile, explore upcoming fixtures & cricket analysis below.
                 </p>
                 <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                     {[["877", "Venues tracked"], ["1.7M", "Matches analysed"], ["78.2%", "AI accuracy"]].map(([v, l]) => (
@@ -407,7 +411,7 @@ function NoMatchesScreen() {
 
             {/* Tabs */}
             <div style={{ display: "flex", gap: 8, marginBottom: 20, borderBottom: `1px solid ${C.border}`, paddingBottom: 0 }}>
-                {[["schedule", "📅 IPL 2026 Schedule"], ["form", "📊 Team Form"], ["insights", "💡 Cricket Insights"]].map(([k, l]) => (
+                {[["schedule", "📅 Upcoming Matches"], ["form", "📊 Team Form"], ["insights", "💡 Cricket Insights"]].map(([k, l]) => (
                     <button key={k} onClick={() => setTab(k)} style={{
                         background: "none", border: "none", cursor: "pointer", padding: "10px 16px",
                         fontSize: 13, fontWeight: tab === k ? 700 : 500,
@@ -418,30 +422,34 @@ function NoMatchesScreen() {
                 ))}
             </div>
 
-            {/* Schedule Tab */}
+            {/* Schedule Tab - Live upcoming matches */}
             {tab === "schedule" && (
                 <div>
-                    <div style={{ fontSize: 13, color: C.muted, marginBottom: 16 }}>Upcoming IPL 2026 fixtures — predictions go live at match start</div>
-                    {IPL_2026_SCHEDULE.map((m, i) => (
+                    <div style={{ fontSize: 13, color: C.muted, marginBottom: 16 }}>
+                        {scheduleMatches.length > 0 ? "Upcoming fixtures — predictions go live at match start" : "No upcoming matches found — check back soon"}
+                    </div>
+                    {scheduleMatches.length > 0 ? scheduleMatches.map((m, i) => (
                         <div key={i} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "16px 20px", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                                <div style={{ textAlign: "center", minWidth: 42 }}>
-                                    <div style={{ fontSize: 16, fontWeight: 900, color: C.navy }}>{m.t1}</div>
-                                </div>
+                                <div style={{ fontSize: 16, fontWeight: 900, color: C.navy }}>{m.t1}</div>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, background: C.bg, borderRadius: 6, padding: "3px 8px" }}>vs</div>
-                                <div style={{ textAlign: "center", minWidth: 42 }}>
-                                    <div style={{ fontSize: 16, fontWeight: 900, color: C.navy }}>{m.t2}</div>
-                                </div>
+                                <div style={{ fontSize: 16, fontWeight: 900, color: C.navy }}>{m.t2}</div>
                             </div>
                             <div style={{ textAlign: "right" }}>
-                                <div style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{m.date} · {m.time}</div>
-                                <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{m.venue}</div>
+                                <div style={{ fontSize: 13, fontWeight: 600, color: C.text }}>{m.detail || m.day || "IPL 2026"}</div>
+                                <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{m.rawStatus || "Upcoming"}</div>
                             </div>
                             <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 8, padding: "5px 12px", fontSize: 11, fontWeight: 700, color: C.navy }}>
                                 Prediction ready at start
                             </div>
                         </div>
-                    ))}
+                    )) : (
+                        <div style={{ textAlign: "center", padding: "40px 20px", color: C.muted }}>
+                            <div style={{ fontSize: 32, marginBottom: 12 }}>🏏</div>
+                            <div style={{ fontSize: 15, fontWeight: 600 }}>No upcoming matches scheduled</div>
+                            <div style={{ fontSize: 13, marginTop: 8 }}>Live predictions will appear here automatically when IPL 2026 matches are scheduled</div>
+                        </div>
+                    )}
                 </div>
             )}
 
@@ -1023,7 +1031,7 @@ body { background: ${C.bg}; }
 
                     <main className="mc" style={{ padding: 0, overflowY: "auto", overflow: "visible" }}>
                         {!pred ? (
-                            <NoMatchesScreen />
+                            <NoMatchesScreen upcomingMatches={liveMatches.filter(m => m.status === "UPCOMING")} />
                         ) : (
                             <>
                                 <div style={{ background: "linear-gradient(160deg,#1a2760 0%,#253580 100%)", padding: "16px 24px 20px", position: "sticky", top: 0, zIndex: 100, color: "#fff" }}>
