@@ -1405,9 +1405,7 @@ body { background: ${C.bg}; }
                                         AI gives <strong style={{ color: C.navy }}>{pred.team1 ? pred.team1.split(",")[0] : ""}</strong> {prob}% win probability
                                     </div>
                                     {[
-                                        { name: "Betway", badge: "⭐ Top Pick", color: "#00A859", bg: "#E6F7EF", href: "https://www.betway.com/sports/evt/cricket/?btag=a_XXXXX" },
-                                        { name: "bet365", badge: "Most Popular", color: "#027B5B", bg: "#E6F4F0", href: "https://www.bet365.com/?btag=a_XXXXX" },
-                                        { name: "1xBet", badge: "Best Odds", color: "#1E3A8A", bg: "#EFF6FF", href: "https://1xbet.com/?btag=a_XXXXX" },
+                                        { name: "1xBet", badge: "⭐ Best Odds", color: "#1E3A8A", bg: "#EFF6FF", href: "https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" },
                                     ].map(b => (
                                         <a key={b.name} href={b.href} target="_blank" rel="noreferrer noopener"
                                             style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: b.bg, border: `1px solid ${b.color}22`, borderRadius: 8, padding: "8px 10px", textDecoration: "none", transition: "opacity .15s" }}
