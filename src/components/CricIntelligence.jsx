@@ -166,10 +166,14 @@ function NextOverIntelligence({ pred }) {
                         <span style={{ fontSize: 28, fontWeight: 500, color: "#0A0A0A" }}>{ov1.runRange}</span>
                         <span style={{ fontSize: 13, color: "#64748B" }}>runs expected</span>
                     </div>
-                    <div style={{ background: "#EEF2FF", borderRadius: 8, padding: "8px 10px", marginBottom: 10 }}>
-                        <div style={{ fontSize: 11, color: "#64748B", marginBottom: 3 }}>Bowling quality</div>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: "#0A0A0A" }}>{bowlerQuality}</div>
-                        <div style={{ fontSize: 12, color: "#64748B" }}>Factor {pred.bowlingFactor?.toFixed(2) || "1.00"}</div>
+                    <div style={{ marginBottom: 10 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                            <span style={{ fontSize: 11, color: "#64748B" }}>Bowling</span>
+                            <span style={{ fontSize: 11, fontWeight: 700, color: pred.bowlingFactor <= 0.85 ? "#3B6D11" : pred.bowlingFactor >= 1.1 ? "#A32D2D" : "#64748B" }}>{bowlerQuality}</span>
+                        </div>
+                        <div style={{ height: 5, background: "#EEF2FF", borderRadius: 3, overflow: "hidden" }}>
+                            <div style={{ width: `${Math.min(100, (pred.bowlingFactor || 1) * 60)}%`, height: "100%", background: pred.bowlingFactor <= 0.85 ? "#639922" : pred.bowlingFactor >= 1.1 ? "#E24B4A" : "#378ADD", borderRadius: 3 }} />
+                        </div>
                     </div>
                     <div style={{ marginBottom: 10 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
@@ -192,10 +196,14 @@ function NextOverIntelligence({ pred }) {
                         <span style={{ fontSize: 28, fontWeight: 500, color: "#0A0A0A" }}>{ov2.runRange}</span>
                         <span style={{ fontSize: 13, color: "#64748B" }}>runs expected</span>
                     </div>
-                    <div style={{ background: "#EEF2FF", borderRadius: 8, padding: "8px 10px", marginBottom: 10 }}>
-                        <div style={{ fontSize: 11, color: "#64748B", marginBottom: 3 }}>Batting quality</div>
-                        <div style={{ fontSize: 13, fontWeight: 500, color: "#0A0A0A" }}>{batQuality}</div>
-                        <div style={{ fontSize: 12, color: "#64748B" }}>Factor {pred.battingFactor?.toFixed(2) || "1.00"}</div>
+                    <div style={{ marginBottom: 10 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                            <span style={{ fontSize: 11, color: "#64748B" }}>Batting</span>
+                            <span style={{ fontSize: 11, fontWeight: 700, color: pred.battingFactor >= 1.15 ? "#3B6D11" : pred.battingFactor <= 0.85 ? "#A32D2D" : "#64748B" }}>{batQuality}</span>
+                        </div>
+                        <div style={{ height: 5, background: "#EEF2FF", borderRadius: 3, overflow: "hidden" }}>
+                            <div style={{ width: `${Math.min(100, (pred.battingFactor || 1) * 60)}%`, height: "100%", background: pred.battingFactor >= 1.15 ? "#639922" : pred.battingFactor <= 0.85 ? "#E24B4A" : "#378ADD", borderRadius: 3 }} />
+                        </div>
                     </div>
                     <div style={{ marginBottom: 10 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
@@ -291,8 +299,16 @@ function MatchCard({ m, onClick }) {
                     {s != null && <span style={{ fontSize: 16, fontWeight: b ? 700 : 400, color: b ? "#0A0A0A" : "#64748B" }}>{w != null ? `${s}/${w}` : s}</span>}
                 </div>
             ))}
-            <div style={{ fontSize: 12, fontWeight: 600, marginTop: 6, color: m.status === "ENDED" ? "#64748B" : m.status === "UPCOMING" ? "#1E2D6B" : "#00B894" }}>
-                {m.status === "ENDED" ? "View result" : m.status === "UPCOMING" ? "Pre-match prediction" : "View live prediction"}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8, paddingTop: 8, borderTop: "0.5px solid #E2E8F0" }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: m.status === "ENDED" ? "#64748B" : m.status === "UPCOMING" ? "#1E2D6B" : "#00B894" }}>
+                    {m.status === "ENDED" ? "View result →" : m.status === "UPCOMING" ? "Pre-match prediction →" : "View live prediction →"}
+                </div>
+                {m.status === "LIVE" && (
+                    <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, color: "#E53E3E", fontWeight: 700 }}>
+                        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#E53E3E", animation: "pulse 2s infinite" }} />
+                        LIVE
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -319,21 +335,29 @@ function MediaSection() {
                     <a key={label} href={url} target="_blank" rel="noreferrer" style={{ fontSize: 12, padding: "6px 14px", borderRadius: 20, background: C2.navy, color: "#fff", textDecoration: "none", fontWeight: 600 }}>{label}</a>
                 ))}
             </div>
-            {fallbackNews.map(({ tag, title, time, url, source }, i) => (
+            {fallbackNews.map(({ tag, title, time, url, source }, i) => {
+                const tagColors = { "IPL 2026": ["#1E2D6B","#EFF6FF"], "T20": ["#185FA5","#E6F1FB"], "ANALYSIS": ["#854F0B","#FAEEDA"], "WOMEN": ["#6B21A8","#F3E8FF"], "IPL": ["#1E2D6B","#EFF6FF"], "STATS": ["#166534","#DCFCE7"] };
+                const [tc, tbg] = tagColors[tag] || ["#64748B","#F1F5F9"];
+                const thumbColors = ["#1E2D6B","#185FA5","#854F0B","#166534","#6B21A8","#A32D2D"];
+                return (
                 <a key={i} href={url || "#"} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
-                    <div className="card" style={{ padding: 16, marginBottom: 10, cursor: "pointer" }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                            <span style={{ fontSize: 10, fontWeight: 700, color: C2.accent, letterSpacing: 1, background: `${C2.accent}12`, padding: "2px 8px", borderRadius: 4 }}>{tag}</span>
-                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                {source && <span style={{ fontSize: 10, color: C2.muted }}>{source}</span>}
-                                <span style={{ fontSize: 11, color: C2.muted }}>{time}</span>
-                            </div>
+                    <div className="card" style={{ padding: 0, marginBottom: 10, cursor: "pointer", display: "flex", overflow: "hidden", minHeight: 80 }}>
+                        <div style={{ width: 80, minWidth: 80, background: thumbColors[i % thumbColors.length], display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 4 }}>
+                            <div style={{ fontSize: 20 }}>🏏</div>
+                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.6)", textAlign: "center", padding: "0 4px" }}>{source}</div>
                         </div>
-                        <div style={{ fontSize: 14, fontWeight: 600, lineHeight: 1.5, color: C2.text }}>{title}</div>
-                        <div style={{ fontSize: 11, color: C2.accent, marginTop: 6 }}>Read more</div>
+                        <div style={{ padding: "12px 14px", flex: 1 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                                <span style={{ fontSize: 10, fontWeight: 700, color: tc, background: tbg, padding: "2px 8px", borderRadius: 4 }}>{tag}</span>
+                                <span style={{ fontSize: 10, color: C2.muted }}>{time}</span>
+                            </div>
+                            <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.45, color: C2.text }}>{title}</div>
+                            <div style={{ fontSize: 11, color: C2.accent, marginTop: 5, fontWeight: 500 }}>Read more →</div>
+                        </div>
                     </div>
                 </a>
-            ))}
+                );
+            })}
         </div>
     );
 }
@@ -1076,6 +1100,8 @@ body { background: ${C.bg}; }
                                           const last3rr = pred?.playerContext?.last3RR || 0;
                                           const pship = pred?.playerContext?.partnershipRuns || 0;
                                           const sincewkt = pred?.playerContext?.oversSinceWkt || 0;
+                                          const srColor = batSR >= 150 ? "#22c55e" : batSR >= 100 ? "#f59e0b" : "#ef4444";
+                                          const ecoColor = bowlEco <= 6 ? "#22c55e" : bowlEco <= 9 ? "#f59e0b" : "#ef4444";
                                           const phaseColor = ov.phase === "POWERPLAY" ? C.accent : ov.phase === "DEATH OVERS" ? C.red : C.amber;
                                           return (
                                             <div key={i} onClick={() => setActiveOver(i)} style={{
