@@ -1154,55 +1154,70 @@ body { background: ${C.bg}; }
                                                     );
                                                   })()}
 
-                                                  {/* Row 2: Batsman + Bowler live stats */}
-                                                  <div style={{ display: "flex", gap: 8, marginBottom: 12, flexWrap: "wrap" }}>
+                                                  {/* Row 2: Stats as progress bars */}
+                                                  <div style={{ marginBottom: 12 }}>
                                                     {batSR > 0 && (
-                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
-                                                        <span style={{ fontSize: 13 }}></span>
-                                                        <div>
-                                                          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 0.5 }}>BATSMAN SR</div>
-                                                          <div style={{ fontSize: 16, fontWeight: 900, color: batSR > 130 ? C.green : batSR < 80 ? C.red : C.amber, lineHeight: 1.1 }}>{batSR}</div>
-                                                          <div style={{ fontSize: 9, fontWeight: 800, color: batSR > 130 ? C.green : batSR < 80 ? C.red : C.amber, marginTop: 1 }}>{batSR > 150 ? "EXPLOSIVE" : batSR > 130 ? "AGGRESSIVE" : batSR > 100 ? "STEADY" : "STRUGGLING"}</div>
+                                                      <div style={{ marginBottom: 8 }}>
+                                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Batter SR</span>
+                                                          <span style={{ fontSize: 11, fontWeight: 700, color: batSR >= 150 ? "#22c55e" : batSR >= 100 ? "#f59e0b" : "#ef4444" }}>
+                                                            {batSR} · {batSR >= 150 ? "Explosive" : batSR >= 100 ? "Aggressive" : "Struggling"}
+                                                          </span>
+                                                        </div>
+                                                        <div style={{ height: 5, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, batSR / 2)}%`, height: "100%", background: batSR >= 150 ? "#22c55e" : batSR >= 100 ? "#f59e0b" : "#ef4444", borderRadius: 3 }} />
                                                         </div>
                                                       </div>
                                                     )}
                                                     {bowlEco > 0 && (
-                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
-                                                        <span style={{ fontSize: 13 }}></span>
-                                                        <div>
-                                                          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 0.5 }}>BOWL ECO</div>
-                                                          <div style={{ fontSize: 16, fontWeight: 900, color: bowlEco < 7 ? C.green : bowlEco > 10 ? C.red : C.amber, lineHeight: 1.1 }}>{bowlEco}</div>
-                                                          <div style={{ fontSize: 9, fontWeight: 800, color: bowlEco < 7 ? C.green : bowlEco > 10 ? C.red : C.amber, marginTop: 1 }}>{bowlEco < 6 ? "TIGHT" : bowlEco < 8 ? "DECENT" : bowlEco < 10 ? "EXPENSIVE" : "HAMMERED"}</div>
+                                                      <div style={{ marginBottom: 8 }}>
+                                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Bowl eco</span>
+                                                          <span style={{ fontSize: 11, fontWeight: 700, color: bowlEco <= 6 ? "#22c55e" : bowlEco <= 9 ? "#f59e0b" : "#ef4444" }}>
+                                                            {bowlEco} · {bowlEco <= 6 ? "Tight" : bowlEco <= 9 ? "Average" : "Expensive"}
+                                                          </span>
+                                                        </div>
+                                                        <div style={{ height: 5, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, bowlEco * 7)}%`, height: "100%", background: bowlEco <= 6 ? "#22c55e" : bowlEco <= 9 ? "#f59e0b" : "#ef4444", borderRadius: 3 }} />
                                                         </div>
                                                       </div>
                                                     )}
                                                     {bndPct > 0 && (
-                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
-                                                        <span style={{ fontSize: 13 }}></span>
-                                                        <div>
-                                                          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 0.5 }}>BOUNDARY</div>
-                                                          <div style={{ fontSize: 16, fontWeight: 900, color: bndPct > 40 ? C.green : bndPct > 25 ? C.amber : C.muted, lineHeight: 1.1 }}>{bndPct}%</div>
-                                                          <div style={{ fontSize: 9, fontWeight: 800, color: bndPct > 40 ? C.green : bndPct > 25 ? C.amber : C.muted, marginTop: 1 }}>{bndPct > 40 ? "FIRING" : bndPct > 25 ? "ACTIVE" : "QUIET"}</div>
+                                                      <div style={{ marginBottom: 8 }}>
+                                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Boundary %</span>
+                                                          <span style={{ fontSize: 11, fontWeight: 700, color: bndPct >= 40 ? "#22c55e" : bndPct >= 20 ? "#f59e0b" : "#94a3b8" }}>
+                                                            {bndPct}% · {bndPct >= 40 ? "Firing" : bndPct >= 20 ? "Active" : "Dry"}
+                                                          </span>
+                                                        </div>
+                                                        <div style={{ height: 5, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, bndPct * 2)}%`, height: "100%", background: bndPct >= 40 ? "#22c55e" : bndPct >= 20 ? "#f59e0b" : "#94a3b8", borderRadius: 3 }} />
                                                         </div>
                                                       </div>
                                                     )}
                                                     {last3r > 0 && (
-                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
-                                                        <span style={{ fontSize: 13 }}></span>
-                                                        <div>
-                                                          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 0.5 }}>LAST 3 OV</div>
-                                                          <div style={{ fontSize: 16, fontWeight: 900, color: last3r > 25 ? C.green : last3r > 15 ? C.amber : C.muted, lineHeight: 1.1 }}>{last3r}r {last3w}w</div>
-                                                          <div style={{ fontSize: 9, fontWeight: 800, color: last3r > 25 ? C.green : last3r > 15 ? C.amber : C.muted, marginTop: 1 }}>{last3r > 25 ? "HOT" : last3r > 15 ? "MOVING" : "DRY"}</div>
+                                                      <div style={{ marginBottom: 8 }}>
+                                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Last 3 overs</span>
+                                                          <span style={{ fontSize: 11, fontWeight: 700, color: last3r > 25 ? "#22c55e" : last3r > 15 ? "#f59e0b" : "#94a3b8" }}>
+                                                            {last3r}r {last3w > 0 ? `${last3w}w` : ""} · {last3r > 25 ? "Hot" : last3r > 15 ? "Moving" : "Dry"}
+                                                          </span>
+                                                        </div>
+                                                        <div style={{ height: 5, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, last3r * 3)}%`, height: "100%", background: last3r > 25 ? "#22c55e" : last3r > 15 ? "#f59e0b" : "#94a3b8", borderRadius: 3 }} />
                                                         </div>
                                                       </div>
                                                     )}
                                                     {pship > 0 && (
-                                                      <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 8, padding: "6px 10px" }}>
-                                                        <span style={{ fontSize: 13 }}></span>
-                                                        <div>
-                                                          <div style={{ fontSize: 9, color: C.muted, letterSpacing: 0.5 }}>PARTNERSHIP</div>
-                                                          <div style={{ fontSize: 16, fontWeight: 900, color: pship > 50 ? C.red : pship > 25 ? C.amber : C.muted, lineHeight: 1.1 }}>{pship}</div>
-                                                          <div style={{ fontSize: 9, fontWeight: 800, color: pship > 50 ? C.red : pship > 25 ? C.amber : C.muted, marginTop: 1 }}>{pship > 50 ? "DANGEROUS" : pship > 25 ? "BUILDING" : "NEW"}</div>
+                                                      <div>
+                                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Partnership</span>
+                                                          <span style={{ fontSize: 11, fontWeight: 700, color: pship > 50 ? "#ef4444" : pship > 25 ? "#f59e0b" : "#94a3b8" }}>
+                                                            {pship} · {pship > 50 ? "Dangerous" : pship > 25 ? "Building" : "New"}
+                                                          </span>
+                                                        </div>
+                                                        <div style={{ height: 5, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, pship)}%`, height: "100%", background: pship > 50 ? "#ef4444" : pship > 25 ? "#f59e0b" : "#94a3b8", borderRadius: 3 }} />
                                                         </div>
                                                       </div>
                                                     )}
