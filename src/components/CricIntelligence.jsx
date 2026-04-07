@@ -916,26 +916,31 @@ export default function CricIntelligence() {
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
 
     const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: ${C.bg}; }
 ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: ${C.border}; border-radius: 4px; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
-.fade { animation: fadeUp .4s ease forwards; }
-.card { background: ${C.surface}; border: 1px solid ${C.border}; border-radius: 16px; transition: box-shadow .2s; }
-.card:hover { box-shadow: 0 4px 20px rgba(30,45,107,0.10); }
-.match-pill { transition: all .2s; cursor: pointer; border-radius: 12px; border: 1.5px solid ${C.border}; padding: 12px 14px; background: ${C.surface}; margin-bottom: 8px; }
-.match-pill:hover { border-color: ${C.accent}60; }
-.match-pill.sel { border-color: ${C.accent}; background: #F0F7FF; }
+@keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+@keyframes slideIn { from{opacity:0;transform:translateX(-8px)} to{opacity:1;transform:translateX(0)} }
+.fade { animation: fadeUp .35s cubic-bezier(.22,.68,0,1.2) forwards; }
+.card { background: ${C.surface}; border: 1px solid ${C.border}; border-radius: 16px; transition: box-shadow .25s, transform .25s; }
+.card:hover { box-shadow: 0 8px 28px rgba(30,45,107,0.12); transform: translateY(-1px); }
+.match-pill { transition: all .2s cubic-bezier(.22,.68,0,1.2); cursor: pointer; border-radius: 12px; border: 1.5px solid ${C.border}; padding: 12px 14px; background: ${C.surface}; margin-bottom: 8px; }
+.match-pill:hover { border-color: ${C.accent}80; background: #F8FAFF; transform: translateX(2px); }
+.match-pill.sel { border-color: ${C.accent}; background: linear-gradient(135deg, #F0F7FF, #E8F0FF); box-shadow: 0 2px 12px rgba(30,45,107,0.1); }
 .tab-btn { background: none; border: none; cursor: pointer; padding: 8px 16px; border-radius: 8px; font-family: Inter, system-ui; font-size: 13px; font-weight: 500; transition: all .2s; color: rgba(255,255,255,0.55); }
-.tab-btn.on { background: rgba(255,255,255,0.15); color: #fff; }
-.over-card { border-radius: 14px; border: 1.5px solid ${C.border}; padding: 14px 10px; text-align: center; background: ${C.surface}; transition: all .2s; cursor: pointer; position: relative; overflow: hidden; }
-.over-card:hover { border-color: ${C.accent}60; transform: translateY(-2px); }
-.over-card.sel { border-color: ${C.accent}; background: #F0F7FF; }
-.lock { position: absolute; inset: 0; border-radius: 14px; background: rgba(249,249,249,0.93); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; }
-.btn-p { background: ${C.text}; color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-family: Inter, system-ui; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; }
-.btn-p:hover { background: #222; }
+.tab-btn:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.08); }
+.tab-btn.on { background: rgba(255,255,255,0.18); color: #fff; font-weight: 700; }
+.over-card { border-radius: 14px; border: 1.5px solid ${C.border}; padding: 14px 10px; text-align: center; background: ${C.surface}; transition: all .2s cubic-bezier(.22,.68,0,1.2); cursor: pointer; position: relative; overflow: hidden; }
+.over-card:hover { border-color: ${C.accent}80; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(30,45,107,0.12); }
+.over-card.sel { border-color: ${C.accent}; background: #F0F7FF; box-shadow: 0 4px 16px rgba(30,45,107,0.15); }
+.lock { position: absolute; inset: 0; border-radius: 14px; background: rgba(249,249,249,0.93); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; backdrop-filter: blur(2px); }
+.btn-p { background: linear-gradient(135deg, ${C.text}, #333); color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-family: Inter, system-ui; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: opacity .2s, transform .1s; }
+.btn-p:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-p:active { transform: translateY(0); }
 @media (max-width: 768px) {
     .sl { display: none !important; }
     .sr { display: none !important; }
@@ -946,29 +951,11 @@ body { background: ${C.bg}; }
     .mc { padding: 16px !important; padding-bottom: 80px !important; }
     .hn { font-size: 30px !important; }
 }
-.mn { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: ${C.navy}; border-top: 1px solid ${C.navyLight}; padding: 8px 0 18px; z-index: 200; }
+.mn { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: ${C.navy}; border-top: 1px solid ${C.navyLight}; padding: 8px 0 18px; z-index: 200; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); }
 .mt { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0; font-family: Inter, system-ui; }
-    `;
 
-    if (showLanding) return (
-        <div style={{ minHeight: "100vh", background: "#F9F9F9", fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
-            <style>{CSS}</style>
-            <div style={{ background: "#1E2D6B" }}>
-                <nav style={{ padding: "18px 32px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div style={{ fontWeight: 700, fontSize: 17, color: "#fff" }}>CricIntelligence</div>
-                    <button onClick={() => { try { localStorage.setItem("ci_v2", "1"); } catch {} setShowLanding(false); }} style={{ background: "#C8961E", color: "#000", border: "none", borderRadius: 8, padding: "10px 20px", fontSize: 13, fontWeight: 700, cursor: "pointer" }}>Open App</button>
-                </nav>
-                <div style={{ maxWidth: 700, margin: "0 auto", padding: "50px 32px 60px" }}>
-                    <h1 style={{ fontSize: "clamp(34px, 5.5vw, 60px)", fontWeight: 800, letterSpacing: -2, lineHeight: 1.05, marginBottom: 16, color: "#fff" }}>
-                        Know who wins<br /><span style={{ color: "#C8961E" }}>before the over ends.</span>
-                    </h1>
-                    <p style={{ fontSize: 16, color: "rgba(255,255,255,0.65)", lineHeight: 1.7, maxWidth: 460, marginBottom: 28 }}>AI predictions built on 1.7M data points across 877 venues. Over-by-over accuracy at 78.2%.</p>
-                    <button onClick={() => { try { localStorage.setItem("ci_v2", "1"); } catch {} setShowLanding(false); }} style={{ background: "#C8961E", color: "#000", border: "none", borderRadius: 8, padding: "12px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>Get Free Predictions</button>
-                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.35)", marginTop: 10 }}>Free - No credit card - Cancel anytime</div>
-                </div>
-            </div>
-        </div>
-    );
+
+    if (false) return null; // Landing page removed - show app directly
 
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
@@ -994,13 +981,13 @@ body { background: ${C.bg}; }
             {activeTab === "predict" && (
                 <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px minmax(0,1fr) 240px", minHeight: "calc(100vh - 54px)", width: "100%" }}>
                     <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, background: C.surface, padding: "18px 14px", overflowY: "auto" }}>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: C.navy, letterSpacing: 1.5, marginBottom: 12, padding: "6px 10px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
-                            {liveStatus === "live" ? "LIVE DATA" : "MATCHES"}
+                        <div style={{ fontSize: 11, fontWeight: 700, color: C.navy, letterSpacing: 0.5, marginBottom: 14, padding: "6px 12px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
+                            {liveStatus === "live" ? "Live Data" : "Matches"}
                         </div>
                         {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
                             <>
-                                <div style={{ fontSize: 9, fontWeight: 700, color: C.red, letterSpacing: 1.5, marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}>
-                                    <div style={{ width: 5, height: 5, borderRadius: "50%", background: C.red, animation: "pulse 2s infinite" }} />LIVE NOW
+                                <div style={{ fontSize: 11, fontWeight: 700, color: C.red, letterSpacing: 1, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.red, animation: "pulse 2s infinite" }} />Live now
                                 </div>
                                 {liveMatches.filter(m => m.status === "LIVE").map(m => (
                                     <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setPred(null); setSelectedMatch(m); }} />
@@ -1009,7 +996,7 @@ body { background: ${C.bg}; }
                         )}
                         {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
                             <>
-                                <div style={{ fontSize: 9, fontWeight: 700, color: C.accent, letterSpacing: 1.5, margin: "10px 0 6px" }}>UPCOMING</div>
+                                <div style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: 1, margin: "14px 0 8px" }}>Upcoming</div>
                                 {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
                                     <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setPred(null); setSelectedMatch(m); }} />
                                 ))}
@@ -1017,7 +1004,7 @@ body { background: ${C.bg}; }
                         )}
                         {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
                             <>
-                                <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1.5, margin: "10px 0 6px" }}>RECENT</div>
+                                <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "14px 0 8px" }}>Recent</div>
                                 {liveMatches.filter(m => m.status === "ENDED").map(m => (
                                     <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setPred(null); setSelectedMatch(m); }} />
                                 ))}
@@ -1068,8 +1055,8 @@ body { background: ${C.bg}; }
                                       {/* NEXT 3 OVERS - header */}
                                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
                                         <div>
-                                          <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>{`NEXT ${(pred.nextOvers || []).length} OVERS PREDICTION`}</div>
-                                          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 2 }}>{pred?.currentPhase || ""}</div>
+                                          <div style={{ fontSize: 13, fontWeight: 700, color: C.text, letterSpacing: 0 }}>{`Next ${(pred.nextOvers || []).length} overs prediction`}</div>
+                                          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 3, fontWeight: 500 }}>{pred?.currentPhase || ""}</div>
                                         </div>
                                         
                                       </div>
@@ -1108,7 +1095,7 @@ body { background: ${C.bg}; }
                                                   {/* Row 1: Over number + phase */}
                                                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                                                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                                      <span style={{ fontSize: 14, fontWeight: 900, color: "#fff" }}>OVER {ov.over}</span>
+                                                      <span style={{ fontSize: 16, fontWeight: 900, color: "#fff" }}>Over {ov.over}</span>
                                                       <span style={{ fontSize: 9, fontWeight: 700, color: "#fff", background: phaseColor, padding: "2px 8px", borderRadius: 20, fontWeight: 800 }}>{ov.phase}</span>
                                                     </div>
                                                     <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: 4 }}>{ov.confidence}% conf</span>
@@ -1301,15 +1288,15 @@ body { background: ${C.bg}; }
                                             <LiveScorecard batters={pred.batters} bowler={pred.bowler || {}} />
                                         )}
                                         <div className="card" style={{ padding: 22 }}>
-                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>WIN PROBABILITY</div>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>Win probability</div>
                                             <div style={{ fontSize: 15, fontWeight: 800, color: winColor, marginBottom: 8, letterSpacing: 0.3 }}>{winMsg}</div>
                                             <div style={{ display: "flex", justifyContent: "center", margin: "4px 0 10px" }}><WinArc value={prob} /></div>
                                             <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>
-                                                <strong style={{ color: C.text }}>{cleanTeam(pred.team1)}</strong> has a <strong style={{ color: winColor }}>{prob}% chance</strong> of winning based on current score, pitch and 1.7M historical matches.
+                                                Based on current innings, pitch conditions, and 21,300 historical T20 matches — updated every ball.
                                             </div>
                                         </div>
                                         <div className="card" style={{ padding: 22 }}>
-                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>MATCH INTEL</div>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>Match intel</div>
                                             {pred.pressureScore !== undefined && (
                                                 <div style={{ marginBottom: 14 }}>
                                                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
@@ -1379,44 +1366,51 @@ body { background: ${C.bg}; }
                     </main>
 
                     <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14 }}>
-                        <div>
-                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.5, marginBottom: 12 }}>AI ENGINE</div>
-                            {[["Accuracy", "78.2%", 78], ["Confidence", `${prob}%`, prob], ["Records", "1.7M", 85], ["Venues", "877", 90]].map(([l, v, p]) => (
-                                <div key={l} style={{ marginBottom: 12 }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                                        <span style={{ fontSize: 11, color: C.muted }}>{l}</span>
-                                        <span style={{ fontSize: 11, fontWeight: 700 }}>{v}</span>
-                                    </div>
-                                    <div style={{ height: 3, background: C.bg, borderRadius: 3, overflow: "hidden" }}>
-                                        <div style={{ height: "100%", width: `${p}%`, background: C.accent, borderRadius: 3 }} />
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
 
-                        {/* Betting Widget — affiliate links */}
+                        {/* Match Context */}
                         {pred && pred.team1 && (
-                            <div style={{ background: C.bg, border: `1px solid ${C.border}`, borderRadius: 12, overflow: "hidden" }}>
-                                <div style={{ background: C.navy, padding: "8px 12px", display: "flex", alignItems: "center", gap: 6 }}>
-                                    <span style={{ fontSize: 10, fontWeight: 800, color: "#C8961E", letterSpacing: 1 }}>🎯 BET ON THIS MATCH</span>
-                                </div>
-                                <div style={{ padding: "10px 12px", display: "flex", flexDirection: "column", gap: 8 }}>
-                                    <div style={{ fontSize: 10, color: C.muted, marginBottom: 2 }}>
-                                        AI gives <strong style={{ color: C.navy }}>{pred.team1 ? pred.team1.split(",")[0] : ""}</strong> {prob}% win probability
+                            <div style={{ background: C.bg, borderRadius: 12, padding: "14px" }}>
+                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.5, marginBottom: 12 }}>MATCH CONTEXT</div>
+                                {[
+                                    ["Format", pred.matchType?.toUpperCase() || "T20"],
+                                    ["Phase", pred.currentPhase || "—"],
+                                    ["Pitch", pred.pitchLabel || "—"],
+                                    ["Weather", pred.weatherImpact?.condition || "—"],
+                                ].map(([l, v]) => (
+                                    <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
+                                        <span style={{ fontSize: 11, color: C.muted }}>{l}</span>
+                                        <span style={{ fontSize: 11, fontWeight: 700, color: C.text, maxWidth: 110, textAlign: "right" }}>{v}</span>
                                     </div>
+                                ))}
+                                {pred.toss && (
+                                    <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9, marginTop: 4 }}>
+                                        <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>TOSS</div>
+                                        <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{pred.toss.winner} won · {pred.toss.decision}</div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Betting Widget */}
+                        {pred && pred.team1 && (
+                            <div style={{ border: `1px solid ${C.border}`, borderRadius: 12, overflow: "hidden" }}>
+                                <div style={{ background: C.navy, padding: "10px 14px" }}>
+                                    <div style={{ fontSize: 11, fontWeight: 800, color: "#C8961E", marginBottom: 2 }}>Bet on this match</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.55)" }}>
+                                        AI: <strong style={{ color: "#fff" }}>{cleanTeam(pred.team1)}</strong> {prob}% win probability
+                                    </div>
+                                </div>
+                                <div style={{ padding: "12px 14px", background: C.bg }}>
                                     <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97"
                                         target="_blank" rel="noreferrer noopener"
-                                        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#EFF6FF", border: "1px solid #1E3A8A22", borderRadius: 8, padding: "10px 12px", textDecoration: "none", transition: "opacity .15s" }}
-                                        onMouseOver={e => e.currentTarget.style.opacity = "0.85"}
+                                        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#1E3A8A", borderRadius: 8, padding: "11px 14px", textDecoration: "none" }}
+                                        onMouseOver={e => e.currentTarget.style.opacity = "0.88"}
                                         onMouseOut={e => e.currentTarget.style.opacity = "1"}
                                     >
-                                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                            <span style={{ fontSize: 13, fontWeight: 800, color: "#1E3A8A" }}>1xBet</span>
-                                            <span style={{ fontSize: 9, fontWeight: 700, color: "#1E3A8A", background: "#1E3A8A18", padding: "1px 5px", borderRadius: 4 }}>⭐ Best Odds</span>
-                                        </div>
-                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#1E3A8A" }}>Bet Now →</span>
+                                        <span style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>1xBet</span>
+                                        <span style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>Bet Now →</span>
                                     </a>
-                                    <div style={{ fontSize: 9, color: C.muted, textAlign: "center", marginTop: 2, lineHeight: 1.5 }}>
+                                    <div style={{ fontSize: 9, color: C.muted, textAlign: "center", marginTop: 8, lineHeight: 1.5 }}>
                                         18+ · Gamble responsibly · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: C.muted }}>BeGambleAware.org</a>
                                     </div>
                                 </div>
@@ -1424,7 +1418,6 @@ body { background: ${C.bg}; }
                         )}
 
                         <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center", marginTop: "auto" }}>
-                            {pred?.dataSource || "877 venues - 1.7M records"}<br />
                             <a href="/about" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>About Us</a>
                             <span style={{ color: C.border, margin: "0 6px" }}>·</span>
                             <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>Contact</a>
