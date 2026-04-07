@@ -1404,10 +1404,6 @@ body { background: ${C.bg}; }
                                     <div style={{ fontSize: 10, color: C.muted, marginBottom: 2 }}>
                                         AI gives <strong style={{ color: C.navy }}>{pred.team1 ? pred.team1.split(",")[0] : ""}</strong> {prob}% win probability
                                     </div>
-                                    <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
-                                        <div style={{ fontSize: 12, color: "#1E40AF", fontWeight: 600, marginBottom: 4 }}>🔜 UK Betting Partners Coming Soon</div>
-                                        <div style={{ fontSize: 11, color: "#64748B" }}>Betway & bet365 integration in progress</div>
-                                    </div>
                                     <div style={{ fontSize: 9, color: C.muted, textAlign: "center", marginTop: 2, lineHeight: 1.5 }}>
                                         18+ · Gamble responsibly · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: C.muted }}>BeGambleAware.org</a>
                                     </div>
