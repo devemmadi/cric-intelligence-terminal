@@ -160,28 +160,28 @@ function NextOverIntelligence({ pred }) {
                 <span style={{ fontSize: 12, color: "#64748B" }}>Over {ov1.over} - {ov1.phase}</span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
-                <div style={{ background: "#fff", border: "2px solid #378ADD", borderRadius: 12, padding: 14 }}>
-                    <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8, letterSpacing: 0.5, textTransform: "uppercase" }}>Over {ov1.over} - now</div>
+                <div style={{ background: "#1E2D6B", border: "2px solid #60A5FA", borderRadius: 12, padding: 14, boxShadow: "0 0 16px rgba(96,165,250,0.3)" }}>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>NOW · Over {ov1.over}</div>
                     <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
-                        <span style={{ fontSize: 28, fontWeight: 500, color: "#0A0A0A" }}>{ov1.runRange}</span>
-                        <span style={{ fontSize: 13, color: "#64748B" }}>runs expected</span>
+                        <span style={{ fontSize: 32, fontWeight: 900, color: "#FFFFFF" }}>{ov1.runRange}</span>
+                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)" }}>runs expected</span>
                     </div>
                     <div style={{ marginBottom: 10 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                            <span style={{ fontSize: 11, color: "#64748B" }}>Bowling</span>
+                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>Bowling</span>
                             <span style={{ fontSize: 11, fontWeight: 700, color: pred.bowlingFactor <= 0.85 ? "#3B6D11" : pred.bowlingFactor >= 1.1 ? "#A32D2D" : "#64748B" }}>{bowlerQuality}</span>
                         </div>
-                        <div style={{ height: 5, background: "#EEF2FF", borderRadius: 3, overflow: "hidden" }}>
-                            <div style={{ width: `${Math.min(100, (pred.bowlingFactor || 1) * 60)}%`, height: "100%", background: pred.bowlingFactor <= 0.85 ? "#639922" : pred.bowlingFactor >= 1.1 ? "#E24B4A" : "#378ADD", borderRadius: 3 }} />
+                        <div style={{ height: 6, background: "rgba(255,255,255,0.12)", borderRadius: 3, overflow: "hidden" }}>
+                            <div style={{ width: `${Math.min(100, (pred.bowlingFactor || 1) * 60)}%`, height: "100%", background: pred.bowlingFactor <= 0.85 ? "#22c55e" : pred.bowlingFactor >= 1.1 ? "#ef4444" : "#60A5FA", borderRadius: 3 }} />
                         </div>
                     </div>
                     <div style={{ marginBottom: 10 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
-                            <span style={{ fontSize: 12, color: "#64748B" }}>Wicket risk</span>
-                            <span style={{ fontSize: 12, fontWeight: 500, color: wicketColor1 }}>{wicketLabel1} - {ov1.wicketProb}%</span>
+                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>Wicket risk</span>
+                            <span style={{ fontSize: 13, fontWeight: 800, color: ov1.wicketProb > 40 ? "#ef4444" : ov1.wicketProb > 25 ? "#f59e0b" : "#22c55e" }}>{wicketLabel1} · {ov1.wicketProb}%</span>
                         </div>
-                        <div style={{ height: 4, background: "#EEF2FF", borderRadius: 4, overflow: "hidden" }}>
-                            <div style={{ width: `${ov1.wicketProb}%`, height: "100%", background: wicketBg1, borderRadius: 4 }} />
+                        <div style={{ height: 6, background: "rgba(255,255,255,0.12)", borderRadius: 4, overflow: "hidden" }}>
+                            <div style={{ width: `${ov1.wicketProb}%`, height: "100%", background: ov1.wicketProb > 40 ? "#ef4444" : ov1.wicketProb > 25 ? "#f59e0b" : "#22c55e", borderRadius: 4 }} />
                         </div>
                     </div>
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -190,11 +190,11 @@ function NextOverIntelligence({ pred }) {
                         {dewSoon && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#E6F1FB", color: "#185FA5" }}>Dew incoming</span>}
                     </div>
                 </div>
-                <div style={{ background: "#fff", border: "0.5px solid #E2E8F0", borderRadius: 12, padding: 14 }}>
-                    <div style={{ fontSize: 11, color: "#64748B", marginBottom: 8, letterSpacing: 0.5, textTransform: "uppercase" }}>Over {ov2.over} - {phase2}</div>
+                <div style={{ background: "#F8FAFF", border: "1px solid #CBD5E1", borderRadius: 12, padding: 14 }}>
+                    <div style={{ fontSize: 10, color: "#94A3B8", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>NEXT · Over {ov2.over}</div>
                     <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
-                        <span style={{ fontSize: 28, fontWeight: 500, color: "#0A0A0A" }}>{ov2.runRange}</span>
-                        <span style={{ fontSize: 13, color: "#64748B" }}>runs expected</span>
+                        <span style={{ fontSize: 28, fontWeight: 800, color: "#1E2D6B" }}>{ov2.runRange}</span>
+                        <span style={{ fontSize: 12, color: "#64748B" }}>runs expected</span>
                     </div>
                     <div style={{ marginBottom: 10 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
@@ -207,11 +207,11 @@ function NextOverIntelligence({ pred }) {
                     </div>
                     <div style={{ marginBottom: 10 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
-                            <span style={{ fontSize: 12, color: "#64748B" }}>Wicket risk</span>
-                            <span style={{ fontSize: 12, fontWeight: 500, color: wicketColor2 }}>{wicketLabel2} - {ov2.wicketProb}%</span>
+                            <span style={{ fontSize: 11, color: "#64748B" }}>Wicket risk</span>
+                            <span style={{ fontSize: 13, fontWeight: 800, color: ov2.wicketProb > 40 ? "#ef4444" : ov2.wicketProb > 25 ? "#f59e0b" : "#22c55e" }}>{wicketLabel2} · {ov2.wicketProb}%</span>
                         </div>
-                        <div style={{ height: 4, background: "#EEF2FF", borderRadius: 4, overflow: "hidden" }}>
-                            <div style={{ width: `${ov2.wicketProb}%`, height: "100%", background: wicketBg2, borderRadius: 4 }} />
+                        <div style={{ height: 6, background: "#EEF2FF", borderRadius: 4, overflow: "hidden" }}>
+                            <div style={{ width: `${ov2.wicketProb}%`, height: "100%", background: ov2.wicketProb > 40 ? "#ef4444" : ov2.wicketProb > 25 ? "#f59e0b" : "#22c55e", borderRadius: 4 }} />
                         </div>
                     </div>
                     <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -697,9 +697,25 @@ Be sharp, specific, bold. No vague statements.`;
                     {loading ? <><span style={{ display: "inline-block", width: 10, height: 10, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }}></span> Analyzing...</> : asked ? "Refresh" : "Get AI Analysis"}
                 </button>
             </div>
-            {!asked && !loading && (
-                <div style={{ textAlign: "center", padding: "20px 0", color: "#64748B", fontSize: 13 }}>
-                    Click <strong style={{color:"#a78bfa"}}>Get AI Analysis</strong> -- Claude will analyze live match data and give you sharp predictions
+            {!asked && !loading && pred && (
+                <div style={{ padding: "4px 0" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
+                        {[
+                            { label: "Win probability", value: `${pred.aiProbability || 50}%`, sub: pred.team1?.split(",")[0] || "Team 1", color: pred.aiProbability >= 60 ? "#22c55e" : pred.aiProbability <= 40 ? "#ef4444" : "#f59e0b" },
+                            { label: "Pressure index", value: `${pred.pressureScore || 0}/100`, sub: pred.pressureScore > 70 ? "Critical" : pred.pressureScore > 45 ? "High" : "Low", color: pred.pressureScore > 70 ? "#ef4444" : pred.pressureScore > 45 ? "#f59e0b" : "#22c55e" },
+                            { label: "Current RR", value: pred.currentRunRate || "—", sub: "runs/over", color: "#60A5FA" },
+                            { label: "Phase", value: pred.currentPhase?.split(" ")[0] || "—", sub: pred.matchType?.toUpperCase() || "T20", color: "#a78bfa" },
+                        ].map(({ label, value, sub, color }) => (
+                            <div key={label} style={{ background: "rgba(139,92,246,0.08)", borderRadius: 8, padding: "10px 12px" }}>
+                                <div style={{ fontSize: 10, color: "#94A3B8", marginBottom: 3 }}>{label}</div>
+                                <div style={{ fontSize: 20, fontWeight: 900, color, lineHeight: 1 }}>{value}</div>
+                                <div style={{ fontSize: 10, color: "#64748B", marginTop: 2 }}>{sub}</div>
+                            </div>
+                        ))}
+                    </div>
+                    <div style={{ fontSize: 11, color: "#94A3B8", textAlign: "center" }}>
+                        Click <strong style={{color:"#a78bfa"}}>Get AI Analysis</strong> for live match breakdown
+                    </div>
                 </div>
             )}
             {loading && (
@@ -1164,8 +1180,8 @@ body { background: ${C.bg}; }
                                                             {batSR} · {batSR >= 150 ? "Explosive" : batSR >= 100 ? "Aggressive" : "Struggling"}
                                                           </span>
                                                         </div>
-                                                        <div style={{ height: 5, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, batSR / 2)}%`, height: "100%", background: batSR >= 150 ? "#22c55e" : batSR >= 100 ? "#f59e0b" : "#ef4444", borderRadius: 3 }} />
+                                                        <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, batSR / 2)}%`, height: "100%", background: batSR >= 150 ? "#22c55e" : batSR >= 100 ? "#f59e0b" : "#ef4444", borderRadius: 4 }} />
                                                         </div>
                                                       </div>
                                                     )}
@@ -1177,8 +1193,8 @@ body { background: ${C.bg}; }
                                                             {bowlEco} · {bowlEco <= 6 ? "Tight" : bowlEco <= 9 ? "Average" : "Expensive"}
                                                           </span>
                                                         </div>
-                                                        <div style={{ height: 5, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, bowlEco * 7)}%`, height: "100%", background: bowlEco <= 6 ? "#22c55e" : bowlEco <= 9 ? "#f59e0b" : "#ef4444", borderRadius: 3 }} />
+                                                        <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, bowlEco * 7)}%`, height: "100%", background: bowlEco <= 6 ? "#22c55e" : bowlEco <= 9 ? "#f59e0b" : "#ef4444", borderRadius: 4 }} />
                                                         </div>
                                                       </div>
                                                     )}
@@ -1190,8 +1206,8 @@ body { background: ${C.bg}; }
                                                             {bndPct}% · {bndPct >= 40 ? "Firing" : bndPct >= 20 ? "Active" : "Dry"}
                                                           </span>
                                                         </div>
-                                                        <div style={{ height: 5, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, bndPct * 2)}%`, height: "100%", background: bndPct >= 40 ? "#22c55e" : bndPct >= 20 ? "#f59e0b" : "#94a3b8", borderRadius: 3 }} />
+                                                        <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, bndPct * 2)}%`, height: "100%", background: bndPct >= 40 ? "#22c55e" : bndPct >= 20 ? "#f59e0b" : "#94a3b8", borderRadius: 4 }} />
                                                         </div>
                                                       </div>
                                                     )}
