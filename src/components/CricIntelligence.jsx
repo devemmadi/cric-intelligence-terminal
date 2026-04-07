@@ -796,10 +796,28 @@ Be sharp, specific, bold. No vague statements.`;
 export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
     const [showLanding, setShowLanding] = useState(() => { try { return !localStorage.getItem("ci_v2"); } catch { return false; } });
-    const [liveMatches, setLiveMatches] = useState([]);
+    // Load cached data instantly on mount
+    const [liveMatches, setLiveMatches] = useState(() => {
+        try {
+            const cached = localStorage.getItem("ci_matches_cache");
+            if (cached) return JSON.parse(cached);
+        } catch {}
+        return [];
+    });
     const [selectedMatch, setSelectedMatch] = useState(null);
-    const [pred, setPred] = useState(null);
-    const [liveStatus, setLiveStatus] = useState("connecting");
+    const [pred, setPred] = useState(() => {
+        try {
+            const cached = localStorage.getItem("ci_pred_cache");
+            if (cached) return JSON.parse(cached);
+        } catch {}
+        return null;
+    });
+    const [liveStatus, setLiveStatus] = useState(() => {
+        try { return localStorage.getItem("ci_matches_cache") ? "cached" : "connecting"; } catch { return "connecting"; }
+    });
+    const [isFirstLoad, setIsFirstLoad] = useState(() => {
+        try { return !localStorage.getItem("ci_matches_cache"); } catch { return true; }
+    });
         const [isPremium, setIsPremium] = useState(true);
     const hasUserSelectedRef = React.useRef(false);
     const [showPaywall, setShowPaywall] = useState(false);
@@ -901,6 +919,8 @@ export default function CricIntelligence() {
                     setLiveMatches(mapped);
                     window.__matchList = mapped;
                     setLiveStatus("live");
+                    setIsFirstLoad(false);
+                    try { localStorage.setItem("ci_matches_cache", JSON.stringify(mapped)); } catch {}
                     const live = mapped.find(m => m.status === "LIVE");
                     const upcoming = mapped.find(m => m.status === "UPCOMING");
                     const best = live || upcoming;
@@ -937,6 +957,7 @@ export default function CricIntelligence() {
                 merged.team1ImageId = mMatch?.t1ImageId || 0;
                 merged.team2ImageId = mMatch?.t2ImageId || 0;
                 setPred(merged);
+                try { localStorage.setItem("ci_pred_cache", JSON.stringify(merged)); } catch {}
             } else if (predData && predData.team1) {
                 const mList = window.__matchList || [];
                 const mMatch = mList.find(mx => mx.t1 === predData.team1 || mx.team1 === predData.team1);
@@ -1072,7 +1093,20 @@ body { background: ${C.bg}; }
 
                     <main className="mc" style={{ padding: 0, overflowY: "auto", overflow: "visible" }}>
                         {!pred ? (
+                            isFirstLoad ? (
+                                <div style={{ padding: "24px 20px" }}>
+                                    {[1,2,3].map(i => (
+                                        <div key={i} style={{ background: "#fff", borderRadius: 14, padding: 20, marginBottom: 14, border: "1px solid #E2E8F0" }}>
+                                            <div style={{ height: 12, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 6, width: "40%", marginBottom: 12 }} />
+                                            <div style={{ height: 32, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 8, width: "70%", marginBottom: 12 }} />
+                                            <div style={{ height: 8, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 4, width: "100%", marginBottom: 8 }} />
+                                            <div style={{ height: 8, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 4, width: "60%" }} />
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
                             <NoMatchesScreen upcomingMatches={liveMatches.filter(m => m.status === "UPCOMING")} />
+                            )
                         ) : (
                             <>
                                 <div style={{ background: "linear-gradient(160deg,#1a2760 0%,#253580 100%)", padding: "16px 24px 20px", position: "sticky", top: 0, zIndex: 100, color: "#fff" }}>
