@@ -1404,21 +1404,10 @@ body { background: ${C.bg}; }
                                     <div style={{ fontSize: 10, color: C.muted, marginBottom: 2 }}>
                                         AI gives <strong style={{ color: C.navy }}>{pred.team1 ? pred.team1.split(",")[0] : ""}</strong> {prob}% win probability
                                     </div>
-                                    {[
-                                        { name: "1xBet", badge: "⭐ Best Odds", color: "#1E3A8A", bg: "#EFF6FF", href: "https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" },
-                                    ].map(b => (
-                                        <a key={b.name} href={b.href} target="_blank" rel="noreferrer noopener"
-                                            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: b.bg, border: `1px solid ${b.color}22`, borderRadius: 8, padding: "8px 10px", textDecoration: "none", transition: "opacity .15s" }}
-                                            onMouseOver={e => e.currentTarget.style.opacity = "0.85"}
-                                            onMouseOut={e => e.currentTarget.style.opacity = "1"}
-                                        >
-                                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                                <span style={{ fontSize: 13, fontWeight: 800, color: b.color }}>{b.name}</span>
-                                                <span style={{ fontSize: 9, fontWeight: 700, color: b.color, background: `${b.color}18`, padding: "1px 5px", borderRadius: 4 }}>{b.badge}</span>
-                                            </div>
-                                            <span style={{ fontSize: 11, fontWeight: 700, color: b.color }}>Bet Now →</span>
-                                        </a>
-                                    ))}
+                                    <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 8, padding: "10px 12px", textAlign: "center" }}>
+                                        <div style={{ fontSize: 12, color: "#1E40AF", fontWeight: 600, marginBottom: 4 }}>🔜 UK Betting Partners Coming Soon</div>
+                                        <div style={{ fontSize: 11, color: "#64748B" }}>Betway & bet365 integration in progress</div>
+                                    </div>
                                     <div style={{ fontSize: 9, color: C.muted, textAlign: "center", marginTop: 2, lineHeight: 1.5 }}>
                                         18+ · Gamble responsibly · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: C.muted }}>BeGambleAware.org</a>
                                     </div>
