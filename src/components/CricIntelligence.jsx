@@ -150,7 +150,7 @@ function NextOverIntelligence({ pred }) {
         return Math.max(8, Math.round((rr / 16) * 44));
     });
     const predBarH = Math.max(8, Math.round((ov1.expectedRuns / 16) * 44));
-    const CSS2 = `@keyframes blink2 { 0%,100%{opacity:1} 50%{opacity:0.3} }`;
+    const CSS2 = `@keyframes blink2 { 0%,100%{opacity:1} 50%{opacity:0.3} } @keyframes labelPulse { 0%,100%{box-shadow: 0 0 12px currentColor, 0 2px 8px rgba(0,0,0,0.2)} 50%{box-shadow: 0 0 24px currentColor, 0 4px 16px rgba(0,0,0,0.3)} }`;
     return (
         <div style={{ padding: "0 0 4px 0", marginBottom: 14 }}>
             <style>{CSS2}</style>
@@ -190,7 +190,7 @@ function NextOverIntelligence({ pred }) {
                         {dewSoon && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#E6F1FB", color: "#185FA5" }}>Dew incoming</span>}
                     </div>
                 </div>
-                <div style={{ background: "#151F4A", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, padding: 14 }}>
+                <div style={{ background: "#111A3E", border: "1.5px dashed rgba(255,255,255,0.2)", borderRadius: 12, padding: 14, opacity: 0.85 }}>
                     <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>NEXT · Over {ov2.over}</div>
                     <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
                         <span style={{ fontSize: 32, fontWeight: 900, color: "rgba(255,255,255,0.7)" }}>{ov2.runRange}</span>
@@ -223,17 +223,26 @@ function NextOverIntelligence({ pred }) {
             </div>
             {hasHistory && (
                 <div style={{ background: "#fff", border: "0.5px solid #E2E8F0", borderRadius: 12, padding: 14, marginBottom: 12 }}>
-                    <div style={{ fontSize: 12, color: "#64748B", marginBottom: 12 }}>Run rate trend</div>
-                    <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 56 }}>
-                        {history.slice(-4).map((h, i) => (
-                            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-                                <div style={{ width: "100%", borderRadius: "3px 3px 0 0", background: i === 0 ? "#B5D4F4" : i === 1 ? "#85B7EB" : "#378ADD", height: `${barHeights[i]}px` }} />
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                        <span style={{ fontSize: 12, color: "#64748B" }}>Run rate trend</span>
+                        <span style={{ fontSize: 10, color: "#94A3B8" }}>runs / over</span>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 80 }}>
+                        {history.slice(-4).map((h, i) => {
+                            const rr = h.over > 0 ? (h.runs / h.over).toFixed(1) : "—";
+                            const bh = Math.max(12, Math.round((parseFloat(rr) / 16) * 70));
+                            return (
+                            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+                                <span style={{ fontSize: 9, color: "#94A3B8", fontWeight: 600 }}>{rr}</span>
+                                <div style={{ width: "100%", borderRadius: "4px 4px 0 0", background: i === 0 ? "#B5D4F4" : i === 1 ? "#85B7EB" : "#378ADD", height: `${bh}px` }} />
                                 <span style={{ fontSize: 10, color: "#64748B" }}>ov {h.over}</span>
                             </div>
-                        ))}
-                        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 4, opacity: 0.7 }}>
-                            <div style={{ width: "100%", borderRadius: "3px 3px 0 0", background: "rgba(24,95,165,0.15)", border: "1.5px dashed #185FA5", height: `${predBarH}px` }} />
-                            <span style={{ fontSize: 10, color: "#1E2D6B", fontWeight: 600 }}>ov {ov1.over}</span>
+                            );
+                        })}
+                        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+                            <span style={{ fontSize: 9, color: "#60A5FA", fontWeight: 700 }}>{ov1.expectedRuns.toFixed(1)}</span>
+                            <div style={{ width: "100%", borderRadius: "4px 4px 0 0", background: "rgba(96,165,250,0.15)", border: "1.5px dashed #60A5FA", height: `${predBarH}px` }} />
+                            <span style={{ fontSize: 10, color: "#60A5FA", fontWeight: 700 }}>ov {ov1.over}</span>
                         </div>
                     </div>
                 </div>
@@ -693,7 +702,7 @@ Be sharp, specific, bold. No vague statements.`;
                     <span style={{ fontWeight: 800, fontSize: 13, color: "#7C3AED", letterSpacing: 1 }}>CLAUDE AI ANALYSIS</span>
                     <span style={{ fontSize: 10, background: "rgba(139,92,246,0.15)", color: "#a78bfa", padding: "2px 8px", borderRadius: 20, fontWeight: 600 }}>BETA</span>
                 </div>
-                <button onClick={askClaude} disabled={loading} style={{ background: loading ? "#334155" : "linear-gradient(135deg,#7C3AED,#6366f1)", border: "none", color: "#fff", padding: "8px 18px", borderRadius: 8, cursor: loading ? "not-allowed" : "pointer", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", gap: 6 }}>
+                <button onClick={askClaude} disabled={loading} style={{ background: loading ? "#334155" : "#FFB800", border: "none", color: loading ? "#fff" : "#1A1A1A", padding: "8px 18px", borderRadius: 8, cursor: loading ? "not-allowed" : "pointer", fontSize: 12, fontWeight: 800, display: "flex", alignItems: "center", gap: 6 }}>
                     {loading ? <><span style={{ display: "inline-block", width: 10, height: 10, border: "2px solid #fff", borderTopColor: "transparent", borderRadius: "50%", animation: "spin 0.8s linear infinite" }}></span> Analyzing...</> : asked ? "Refresh" : "Get AI Analysis"}
                 </button>
             </div>
@@ -717,7 +726,7 @@ Be sharp, specific, bold. No vague statements.`;
                         ))}
                     </div>
                     <div style={{ fontSize: 11, color: "#94A3B8", textAlign: "center" }}>
-                        Click <strong style={{color:"#a78bfa"}}>Get AI Analysis</strong> for live match breakdown
+                        Click <strong style={{color:"#FFB800"}}>Get AI Analysis</strong> for live match breakdown
                     </div>
                 </div>
             )}
@@ -1025,7 +1034,8 @@ body { background: ${C.bg}; }
             {activeTab === "predict" && (
                 <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px minmax(0,1fr) 240px", minHeight: "calc(100vh - 54px)", width: "100%" }}>
                     <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, background: C.surface, padding: "18px 14px", overflowY: "auto" }}>
-                        <div style={{ fontSize: 11, fontWeight: 700, color: C.navy, letterSpacing: 0.5, marginBottom: 14, padding: "6px 12px", background: `${C.navy}10`, borderRadius: 8, display: "inline-block" }}>
+                        <div style={{ fontSize: 11, fontWeight: 800, color: "#fff", letterSpacing: 1, marginBottom: 14, padding: "6px 12px", background: liveStatus === "live" ? C.red : C.navy, borderRadius: 8, display: "inline-flex", alignItems: "center", gap: 6 }}>
+                            {liveStatus === "live" && <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 1.5s infinite", display: "inline-block" }} />}
                             {liveStatus === "live" ? "Live Data" : "Matches"}
                         </div>
                         {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
@@ -1167,7 +1177,7 @@ body { background: ${C.bg}; }
                                                       vText = 'STEADY OVER'; vColor = '#FFFFFF'; vBg = '#1D4ED8';
                                                     }
                                                     return (
-                                                      <div style={{ display: 'inline-block', marginTop: 8, marginBottom: 4, padding: '6px 16px', background: vBg, borderRadius: 20, boxShadow: '0 3px 10px rgba(0,0,0,0.25)' }}>
+                                                      <div style={{ display: 'inline-block', marginTop: 8, marginBottom: 4, padding: '6px 16px', background: vBg, borderRadius: 20, boxShadow: `0 0 16px ${vBg}88, 0 3px 10px rgba(0,0,0,0.25)`, animation: 'labelPulse 2s ease-in-out infinite' }}>
                                                         <span style={{ fontSize: 11, fontWeight: 900, color: vColor, letterSpacing: 1.2, textTransform: "uppercase" }}>{vText}</span>
                                                       </div>
                                                     );
