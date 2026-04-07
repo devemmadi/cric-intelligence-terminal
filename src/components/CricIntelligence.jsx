@@ -190,19 +190,19 @@ function NextOverIntelligence({ pred }) {
                         {dewSoon && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#E6F1FB", color: "#185FA5" }}>Dew incoming</span>}
                     </div>
                 </div>
-                <div style={{ background: "#F8FAFF", border: "1px solid #CBD5E1", borderRadius: 12, padding: 14 }}>
-                    <div style={{ fontSize: 10, color: "#94A3B8", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>NEXT · Over {ov2.over}</div>
+                <div style={{ background: "#151F4A", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 12, padding: 14 }}>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>NEXT · Over {ov2.over}</div>
                     <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
-                        <span style={{ fontSize: 28, fontWeight: 800, color: "#1E2D6B" }}>{ov2.runRange}</span>
-                        <span style={{ fontSize: 12, color: "#64748B" }}>runs expected</span>
+                        <span style={{ fontSize: 32, fontWeight: 900, color: "rgba(255,255,255,0.7)" }}>{ov2.runRange}</span>
+                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>runs expected</span>
                     </div>
                     <div style={{ marginBottom: 10 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                            <span style={{ fontSize: 11, color: "#64748B" }}>Batting</span>
+                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>Batting</span>
                             <span style={{ fontSize: 11, fontWeight: 700, color: pred.battingFactor >= 1.15 ? "#3B6D11" : pred.battingFactor <= 0.85 ? "#A32D2D" : "#64748B" }}>{batQuality}</span>
                         </div>
-                        <div style={{ height: 5, background: "#EEF2FF", borderRadius: 3, overflow: "hidden" }}>
-                            <div style={{ width: `${Math.min(100, (pred.battingFactor || 1) * 60)}%`, height: "100%", background: pred.battingFactor >= 1.15 ? "#639922" : pred.battingFactor <= 0.85 ? "#E24B4A" : "#378ADD", borderRadius: 3 }} />
+                        <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
+                            <div style={{ width: `${Math.min(100, (pred.battingFactor || 1) * 60)}%`, height: "100%", background: pred.battingFactor >= 1.15 ? "#00FF94" : pred.battingFactor <= 0.85 ? "#FF4444" : "#60A5FA", borderRadius: 4 }} />
                         </div>
                     </div>
                     <div style={{ marginBottom: 10 }}>
@@ -701,15 +701,18 @@ Be sharp, specific, bold. No vague statements.`;
                 <div style={{ padding: "4px 0" }}>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
                         {[
-                            { label: "Win probability", value: `${pred.aiProbability || 50}%`, sub: pred.team1?.split(",")[0] || "Team 1", color: pred.aiProbability >= 60 ? "#22c55e" : pred.aiProbability <= 40 ? "#ef4444" : "#f59e0b" },
-                            { label: "Pressure index", value: `${pred.pressureScore || 0}/100`, sub: pred.pressureScore > 70 ? "Critical" : pred.pressureScore > 45 ? "High" : "Low", color: pred.pressureScore > 70 ? "#ef4444" : pred.pressureScore > 45 ? "#f59e0b" : "#22c55e" },
-                            { label: "Current RR", value: pred.currentRunRate || "—", sub: "runs/over", color: "#60A5FA" },
-                            { label: "Phase", value: pred.currentPhase?.split(" ")[0] || "—", sub: pred.matchType?.toUpperCase() || "T20", color: "#a78bfa" },
-                        ].map(({ label, value, sub, color }) => (
-                            <div key={label} style={{ background: "rgba(139,92,246,0.08)", borderRadius: 8, padding: "10px 12px" }}>
-                                <div style={{ fontSize: 10, color: "#94A3B8", marginBottom: 3 }}>{label}</div>
-                                <div style={{ fontSize: 20, fontWeight: 900, color, lineHeight: 1 }}>{value}</div>
-                                <div style={{ fontSize: 10, color: "#64748B", marginTop: 2 }}>{sub}</div>
+                            { icon: "🎯", label: "WIN PROB", value: `${pred.aiProbability || 50}%`, sub: pred.team1?.split(",")[0] || "Team 1", color: pred.aiProbability >= 60 ? "#00FF94" : pred.aiProbability <= 40 ? "#FF4444" : "#FFB800" },
+                            { icon: "⚡", label: "PRESSURE", value: `${pred.pressureScore || 0}/100`, sub: pred.pressureScore > 70 ? "Critical" : pred.pressureScore > 45 ? "High" : "Low", color: pred.pressureScore > 70 ? "#FF4444" : pred.pressureScore > 45 ? "#FFB800" : "#00FF94" },
+                            { icon: "📈", label: "RUN RATE", value: pred.currentRunRate || "—", sub: "runs / over", color: "#60A5FA" },
+                            { icon: "🏏", label: "PHASE", value: pred.currentPhase?.split(" ")[0] || "—", sub: pred.matchType?.toUpperCase() || "T20", color: "#a78bfa" },
+                        ].map(({ icon, label, value, sub, color }) => (
+                            <div key={label} style={{ background: "rgba(139,92,246,0.1)", borderRadius: 10, padding: "14px 16px", border: "1px solid rgba(139,92,246,0.25)" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 8 }}>
+                                    <span style={{ fontSize: 14 }}>{icon}</span>
+                                    <span style={{ fontSize: 9, color: "#94A3B8", fontWeight: 700, letterSpacing: 1 }}>{label}</span>
+                                </div>
+                                <div style={{ fontSize: 24, fontWeight: 900, color, lineHeight: 1, marginBottom: 3 }}>{value}</div>
+                                <div style={{ fontSize: 11, color: "#64748B" }}>{sub}</div>
                             </div>
                         ))}
                     </div>
@@ -968,7 +971,7 @@ body { background: ${C.bg}; }
 .fade { animation: fadeUp .35s cubic-bezier(.22,.68,0,1.2) forwards; }
 .card { background: ${C.surface}; border: 1px solid ${C.border}; border-radius: 16px; transition: box-shadow .25s, transform .25s; }
 .card:hover { box-shadow: 0 8px 28px rgba(30,45,107,0.12); transform: translateY(-1px); }
-.match-pill { transition: all .2s cubic-bezier(.22,.68,0,1.2); cursor: pointer; border-radius: 12px; border: 1.5px solid ${C.border}; padding: 12px 14px; background: ${C.surface}; margin-bottom: 8px; }
+.match-pill { transition: all .2s cubic-bezier(.22,.68,0,1.2); cursor: pointer; border-radius: 10px; border: 1px solid ${C.border}; padding: 8px 12px; background: ${C.surface}; margin-bottom: 5px; }
 .match-pill:hover { border-color: ${C.accent}80; background: #F8FAFF; transform: translateX(2px); }
 .match-pill.sel { border-color: ${C.accent}; background: linear-gradient(135deg, #F0F7FF, #E8F0FF); box-shadow: 0 2px 12px rgba(30,45,107,0.1); }
 .tab-btn { background: none; border: none; cursor: pointer; padding: 8px 16px; border-radius: 8px; font-family: Inter, system-ui; font-size: 13px; font-weight: 500; transition: all .2s; color: rgba(255,255,255,0.55); }
@@ -1176,12 +1179,12 @@ body { background: ${C.bg}; }
                                                       <div style={{ marginBottom: 8 }}>
                                                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                                                           <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Batter SR</span>
-                                                          <span style={{ fontSize: 11, fontWeight: 700, color: batSR >= 150 ? "#22c55e" : batSR >= 100 ? "#f59e0b" : "#ef4444" }}>
+                                                          <span style={{ fontSize: 11, fontWeight: 700, color: batSR >= 150 ? "#00FF94" : batSR >= 100 ? "#FFB800" : "#FF4444" }}>
                                                             {batSR} · {batSR >= 150 ? "Explosive" : batSR >= 100 ? "Aggressive" : "Struggling"}
                                                           </span>
                                                         </div>
-                                                        <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, batSR / 2)}%`, height: "100%", background: batSR >= 150 ? "#22c55e" : batSR >= 100 ? "#f59e0b" : "#ef4444", borderRadius: 4 }} />
+                                                        <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, batSR / 2)}%`, height: "100%", background: batSR >= 150 ? "#00FF94" : batSR >= 100 ? "#FFB800" : "#FF4444", borderRadius: 6, boxShadow: batSR >= 150 ? "0 0 8px rgba(0,255,148,0.6)" : batSR < 80 ? "0 0 8px rgba(255,68,68,0.6)" : "none" }} />
                                                         </div>
                                                       </div>
                                                     )}
@@ -1189,12 +1192,12 @@ body { background: ${C.bg}; }
                                                       <div style={{ marginBottom: 8 }}>
                                                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                                                           <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Bowl eco</span>
-                                                          <span style={{ fontSize: 11, fontWeight: 700, color: bowlEco <= 6 ? "#22c55e" : bowlEco <= 9 ? "#f59e0b" : "#ef4444" }}>
+                                                          <span style={{ fontSize: 11, fontWeight: 700, color: bowlEco <= 6 ? "#00FF94" : bowlEco <= 9 ? "#FFB800" : "#FF4444" }}>
                                                             {bowlEco} · {bowlEco <= 6 ? "Tight" : bowlEco <= 9 ? "Average" : "Expensive"}
                                                           </span>
                                                         </div>
-                                                        <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, bowlEco * 7)}%`, height: "100%", background: bowlEco <= 6 ? "#22c55e" : bowlEco <= 9 ? "#f59e0b" : "#ef4444", borderRadius: 4 }} />
+                                                        <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, bowlEco * 7)}%`, height: "100%", background: bowlEco <= 6 ? "#00FF94" : bowlEco <= 9 ? "#FFB800" : "#FF4444", borderRadius: 6, boxShadow: bowlEco <= 6 ? "0 0 8px rgba(0,255,148,0.6)" : bowlEco > 10 ? "0 0 8px rgba(255,68,68,0.6)" : "none" }} />
                                                         </div>
                                                       </div>
                                                     )}
@@ -1202,12 +1205,12 @@ body { background: ${C.bg}; }
                                                       <div style={{ marginBottom: 8 }}>
                                                         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                                                           <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Boundary %</span>
-                                                          <span style={{ fontSize: 11, fontWeight: 700, color: bndPct >= 40 ? "#22c55e" : bndPct >= 20 ? "#f59e0b" : "#94a3b8" }}>
+                                                          <span style={{ fontSize: 11, fontWeight: 700, color: bndPct >= 40 ? "#00FF94" : bndPct >= 20 ? "#FFB800" : "#94A3B8" }}>
                                                             {bndPct}% · {bndPct >= 40 ? "Firing" : bndPct >= 20 ? "Active" : "Dry"}
                                                           </span>
                                                         </div>
-                                                        <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, bndPct * 2)}%`, height: "100%", background: bndPct >= 40 ? "#22c55e" : bndPct >= 20 ? "#f59e0b" : "#94a3b8", borderRadius: 4 }} />
+                                                        <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, bndPct * 2)}%`, height: "100%", background: bndPct >= 40 ? "#00FF94" : bndPct >= 20 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
                                                         </div>
                                                       </div>
                                                     )}
@@ -1219,8 +1222,8 @@ body { background: ${C.bg}; }
                                                             {last3r}r {last3w > 0 ? `${last3w}w` : ""} · {last3r > 25 ? "Hot" : last3r > 15 ? "Moving" : "Dry"}
                                                           </span>
                                                         </div>
-                                                        <div style={{ height: 5, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, last3r * 3)}%`, height: "100%", background: last3r > 25 ? "#22c55e" : last3r > 15 ? "#f59e0b" : "#94a3b8", borderRadius: 3 }} />
+                                                        <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, last3r * 3)}%`, height: "100%", background: last3r > 25 ? "#00FF94" : last3r > 15 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
                                                         </div>
                                                       </div>
                                                     )}
@@ -1232,8 +1235,8 @@ body { background: ${C.bg}; }
                                                             {pship} · {pship > 50 ? "Dangerous" : pship > 25 ? "Building" : "New"}
                                                           </span>
                                                         </div>
-                                                        <div style={{ height: 5, background: "rgba(255,255,255,0.1)", borderRadius: 3, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, pship)}%`, height: "100%", background: pship > 50 ? "#ef4444" : pship > 25 ? "#f59e0b" : "#94a3b8", borderRadius: 3 }} />
+                                                        <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
+                                                          <div style={{ width: `${Math.min(100, pship)}%`, height: "100%", background: pship > 50 ? "#FF4444" : pship > 25 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
                                                         </div>
                                                       </div>
                                                     )}
@@ -1451,25 +1454,28 @@ body { background: ${C.bg}; }
 
                         {/* Betting Widget */}
                         {pred && pred.team1 && (
-                            <div style={{ border: `1px solid ${C.border}`, borderRadius: 12, overflow: "hidden" }}>
-                                <div style={{ background: C.navy, padding: "10px 14px" }}>
-                                    <div style={{ fontSize: 11, fontWeight: 800, color: "#C8961E", marginBottom: 2 }}>Bet on this match</div>
-                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.55)" }}>
-                                        AI: <strong style={{ color: "#fff" }}>{cleanTeam(pred.team1)}</strong> {prob}% win probability
+                            <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,184,0,0.3)", background: "linear-gradient(135deg, #1A2560, #1E3A8A)" }}>
+                                <div style={{ padding: "12px 14px" }}>
+                                    <div style={{ fontSize: 9, color: "rgba(255,184,0,0.7)", fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>LIVE ODDS</div>
+                                    <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginBottom: 2 }}>
+                                        {cleanTeam(pred.team1)} win
                                     </div>
-                                </div>
-                                <div style={{ padding: "12px 14px", background: C.bg }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
+                                        <div style={{ fontSize: 28, fontWeight: 900, color: prob >= 60 ? "#00FF94" : prob <= 40 ? "#FF4444" : "#FFB800", lineHeight: 1 }}>{prob}%</div>
+                                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>AI<br/>probability</div>
+                                    </div>
                                     <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97"
                                         target="_blank" rel="noreferrer noopener"
-                                        style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#1E3A8A", borderRadius: 8, padding: "11px 14px", textDecoration: "none" }}
-                                        onMouseOver={e => e.currentTarget.style.opacity = "0.88"}
+                                        style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#FFB800", borderRadius: 8, padding: "10px 14px", textDecoration: "none", fontWeight: 800, fontSize: 13, color: "#1A1A1A" }}
+                                        onMouseOver={e => e.currentTarget.style.opacity = "0.9"}
                                         onMouseOut={e => e.currentTarget.style.opacity = "1"}
                                     >
-                                        <span style={{ fontSize: 14, fontWeight: 800, color: "#fff" }}>1xBet</span>
-                                        <span style={{ fontSize: 12, fontWeight: 700, color: "#fff" }}>Bet Now →</span>
+                                        Bet on 1xBet →
                                     </a>
-                                    <div style={{ fontSize: 9, color: C.muted, textAlign: "center", marginTop: 8, lineHeight: 1.5 }}>
-                                        18+ · Gamble responsibly · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: C.muted }}>BeGambleAware.org</a>
+                                </div>
+                                <div style={{ padding: "6px 14px 10px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                                    <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", textAlign: "center", lineHeight: 1.5 }}>
+                                        18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: "rgba(255,255,255,0.3)" }}>BeGambleAware.org</a>
                                     </div>
                                 </div>
                             </div>
