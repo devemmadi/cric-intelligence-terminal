@@ -960,7 +960,10 @@ export default function CricIntelligence() {
                 merged.team2ImageId = mMatch?.t2ImageId || 0;
                 setPred(merged);
                 setIsPredLoading(false);
-                try { localStorage.setItem("ci_pred_cache", JSON.stringify(merged)); } catch {}
+                try {
+                    localStorage.setItem("ci_pred_cache", JSON.stringify(merged));
+                    if (merged.id) localStorage.setItem("ci_pred_" + merged.id, JSON.stringify(merged));
+                } catch {}
             } else if (predData && predData.team1) {
                 const mList = window.__matchList || [];
                 const mMatch = mList.find(mx => mx.t1 === predData.team1 || mx.team1 === predData.team1);
@@ -1068,7 +1071,18 @@ body { background: ${C.bg}; }
                                     <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.red, animation: "pulse 2s infinite" }} />Live now
                                 </div>
                                 {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setIsPredLoading(true); fetchLiveData(m.matchId); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
+                                            hasUserSelectedRef.current = true;
+                                            selectedMatchRef.current = m;
+                                            setSelectedMatch(m);
+                                            // Show cached pred immediately if available
+                                            try {
+                                                const cached = localStorage.getItem("ci_pred_" + m.matchId);
+                                                if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); }
+                                                else setIsPredLoading(true);
+                                            } catch { setIsPredLoading(true); }
+                                            fetchLiveData(m.matchId);
+                                        }} />
                                 ))}
                             </>
                         )}
@@ -1076,7 +1090,18 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: 1, margin: "14px 0 8px" }}>Upcoming</div>
                                 {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setIsPredLoading(true); fetchLiveData(m.matchId); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
+                                            hasUserSelectedRef.current = true;
+                                            selectedMatchRef.current = m;
+                                            setSelectedMatch(m);
+                                            // Show cached pred immediately if available
+                                            try {
+                                                const cached = localStorage.getItem("ci_pred_" + m.matchId);
+                                                if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); }
+                                                else setIsPredLoading(true);
+                                            } catch { setIsPredLoading(true); }
+                                            fetchLiveData(m.matchId);
+                                        }} />
                                 ))}
                             </>
                         )}
@@ -1084,7 +1109,18 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "14px 0 8px" }}>Recent</div>
                                 {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setIsPredLoading(true); fetchLiveData(m.matchId); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
+                                            hasUserSelectedRef.current = true;
+                                            selectedMatchRef.current = m;
+                                            setSelectedMatch(m);
+                                            // Show cached pred immediately if available
+                                            try {
+                                                const cached = localStorage.getItem("ci_pred_" + m.matchId);
+                                                if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); }
+                                                else setIsPredLoading(true);
+                                            } catch { setIsPredLoading(true); }
+                                            fetchLiveData(m.matchId);
+                                        }} />
                                 ))}
                             </>
                         )}
