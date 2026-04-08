@@ -818,6 +818,7 @@ export default function CricIntelligence() {
     const [isFirstLoad, setIsFirstLoad] = useState(() => {
         try { return !localStorage.getItem("ci_matches_cache"); } catch { return true; }
     });
+    const [isPredLoading, setIsPredLoading] = useState(false);
         const [isPremium, setIsPremium] = useState(true);
     const hasUserSelectedRef = React.useRef(false);
     const [showPaywall, setShowPaywall] = useState(false);
@@ -869,6 +870,7 @@ export default function CricIntelligence() {
         if (document.hidden) return;
         try {
             const curMatchId = overrideMatchId || selectedMatchRef.current?.matchId;
+            if (overrideMatchId) setIsPredLoading(true);
 
             // Always fetch matches list
             const matchesPromise = fetch(`${API_BASE}/matches`).then(r => r.ok ? r.json() : null).catch(() => null);
@@ -957,6 +959,7 @@ export default function CricIntelligence() {
                 merged.team1ImageId = mMatch?.t1ImageId || 0;
                 merged.team2ImageId = mMatch?.t2ImageId || 0;
                 setPred(merged);
+                setIsPredLoading(false);
                 try { localStorage.setItem("ci_pred_cache", JSON.stringify(merged)); } catch {}
             } else if (predData && predData.team1) {
                 const mList = window.__matchList || [];
@@ -1065,7 +1068,7 @@ body { background: ${C.bg}; }
                                     <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.red, animation: "pulse 2s infinite" }} />Live now
                                 </div>
                                 {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setPred(null); setSelectedMatch(m); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setSelectedMatch(m); fetchLiveData(m.matchId); }} />
                                 ))}
                             </>
                         )}
@@ -1073,7 +1076,7 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: 1, margin: "14px 0 8px" }}>Upcoming</div>
                                 {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setPred(null); setSelectedMatch(m); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setSelectedMatch(m); fetchLiveData(m.matchId); }} />
                                 ))}
                             </>
                         )}
@@ -1081,7 +1084,7 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "14px 0 8px" }}>Recent</div>
                                 {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setPred(null); setSelectedMatch(m); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setSelectedMatch(m); fetchLiveData(m.matchId); }} />
                                 ))}
                             </>
                         )}
@@ -1093,7 +1096,7 @@ body { background: ${C.bg}; }
 
                     <main className="mc" style={{ padding: 0, overflowY: "auto", overflow: "visible" }}>
                         {!pred ? (
-                            isFirstLoad ? (
+                            isFirstLoad || isPredLoading ? (
                                 <div style={{ padding: "24px 20px" }}>
                                     {[1,2,3].map(i => (
                                         <div key={i} style={{ background: "#fff", borderRadius: 14, padding: 20, marginBottom: 14, border: "1px solid #E2E8F0" }}>
