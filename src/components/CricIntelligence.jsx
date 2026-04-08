@@ -1068,7 +1068,7 @@ body { background: ${C.bg}; }
                                     <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.red, animation: "pulse 2s infinite" }} />Live now
                                 </div>
                                 {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setSelectedMatch(m); fetchLiveData(m.matchId); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setIsPredLoading(true); fetchLiveData(m.matchId); }} />
                                 ))}
                             </>
                         )}
@@ -1076,7 +1076,7 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: 1, margin: "14px 0 8px" }}>Upcoming</div>
                                 {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setSelectedMatch(m); fetchLiveData(m.matchId); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setIsPredLoading(true); fetchLiveData(m.matchId); }} />
                                 ))}
                             </>
                         )}
@@ -1084,7 +1084,7 @@ body { background: ${C.bg}; }
                             <>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "14px 0 8px" }}>Recent</div>
                                 {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; setSelectedMatch(m); fetchLiveData(m.matchId); }} />
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setIsPredLoading(true); fetchLiveData(m.matchId); }} />
                                 ))}
                             </>
                         )}
