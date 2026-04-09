@@ -1056,7 +1056,8 @@ body { background: ${C.bg}; }
                                             <button onClick={() => { const t = `${cleanTeam(pred.team1)} vs ${cleanTeam(pred.team2)} - AI: ${prob}% win probability. cricintelligence.com`; try { navigator.clipboard?.writeText(t).then(() => alert("Copied!")); } catch { } }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share</button>
                                         </div>
                                     </div>
-                                </div>
+                                    </div>
+                                
                                 <div style={{ padding: "20px 24px" }}>
                                     <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
                                         <div className="card" style={{ padding: 22, marginBottom: 14 }}>
@@ -1320,11 +1321,11 @@ body { background: ${C.bg}; }
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <ClaudeAnalysis pred={pred} selectedMatch={selectedMatch} />
+                                    <ClaudeAnalysis pred={pred} selectedMatch={selectedMatch} />
+                                    
                         )}
-
-                            </main>
+                                    </main>
+                            
                         <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14 }}>
                             {pred && pred.team1 && (
                                 <div style={{ background: C.bg, borderRadius: 12, padding: "14px" }}>
@@ -1374,7 +1375,8 @@ body { background: ${C.bg}; }
                                 <span style={{ color: C.border, margin: "0 6px" }}>·</span>
                                 <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>Contact</a>
                             </div>
-                        </aside>
+                                    </aside>
+                                </>
                 </div>
             )}
             {activeTab === "matches" && (
