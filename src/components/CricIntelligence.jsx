@@ -289,7 +289,8 @@ function NextOverIntelligence({ pred }) {
       </div>
     </div>
   )}
-</div>
+            </div>
+        </div>
     );
 }
 function MatchPill({ m, selected, onClick }) {
