@@ -890,7 +890,7 @@ export default function CricIntelligence() {
             if (matchesData) {
                 const list = Array.isArray(matchesData) ? matchesData : matchesData.data || [];
                 if (list.length) {
-                    const mapped = list.slice(0, 20).map((m, i) => {
+                    const rawMapped = list.slice(0, 40).map((m, i) => {
                         const rawStatus = m.status || "";
                         let status;
                         if (isMatchEnded(rawStatus)) {
@@ -917,6 +917,20 @@ export default function CricIntelligence() {
                             t1Wkts: m.score?.[0]?.w ?? null,
                             t2Score: m.score?.[1]?.r ?? null,
                         };
+                    });
+                    // Deduplicate by team pair — keep latest entry
+                    const seen = new Set();
+                    let endedCount = 0;
+                    const mapped = rawMapped.filter(m => {
+                        const key = [m.t1, m.t2].sort().join("_");
+                        if (seen.has(key)) return false;
+                        seen.add(key);
+                        // Limit ENDED matches to 8
+                        if (m.status === "ENDED") {
+                            endedCount++;
+                            if (endedCount > 8) return false;
+                        }
+                        return true;
                     });
                     setLiveMatches(mapped);
                     window.__matchList = mapped;
