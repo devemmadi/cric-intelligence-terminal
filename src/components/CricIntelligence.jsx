@@ -1320,7 +1320,6 @@ body { background: ${C.bg}; }
                                                 <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || ""}</div>
                                             </div>
                                         </div>
-                                    </div>
                                     <ClaudeAnalysis pred={pred} selectedMatch={selectedMatch} />
                                     
                         )}
