@@ -1303,28 +1303,31 @@ body { background: ${C.bg}; }
                                                 </div>
                                             </div>
                                         )}
+                                        </div>  </div>
+                                <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
+                                    <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
+                                        <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || ""}</span>
+                                        <div>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>WEATHER</div>
+                                            <div style={{ fontSize: 20, fontWeight: 800 }}>{pred.weather?.temp || ""}C</div>
+                                            <div style={{ fontSize: 11, color: C.muted }}>{pred.weather?.condition || ""}</div>
+                                        </div>
                                     </div>
-                                    <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-                                        <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                            <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || ""}</span>
-                                            <div>
-                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>WEATHER</div>
-                                                <div style={{ fontSize: 20, fontWeight: 800 }}>{pred.weather?.temp || ""}C</div>
-                                                <div style={{ fontSize: 11, color: C.muted }}>{pred.weather?.condition || ""}</div>
-                                            </div>
+                                    <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
+                                        <div>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PITCH</div>
+                                            <div style={{ fontSize: 15, fontWeight: 700 }}>{pred.pitchLabel || ""}</div>
+                                            <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || ""}</div>
                                         </div>
-                                        <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                            <div>
-                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PITCH</div>
-                                                <div style={{ fontSize: 15, fontWeight: 700 }}>{pred.pitchLabel || ""}</div>
-                                                <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || ""}</div>
-                                            </div>
-                                            </div>
-                                        </div>
-                                    <ClaudeAnalysis pred={pred} selectedMatch={selectedMatch} />
-                                        </>
+                                    </div>
+                                </div>
+
+
+                                {/* ===== CLAUDE AI ANALYSIS SECTION ===== */}
+                                <ClaudeAnalysis pred={pred} selectedMatch={selectedMatch} />
+                            </>
                         )}
-                                    </main>
+                    </main>
                         <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14 }}>
                             {pred && pred.team1 && (
                                 <div style={{ background: C.bg, borderRadius: 12, padding: "14px" }}>
