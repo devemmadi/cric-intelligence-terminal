@@ -69,7 +69,7 @@ const TEAM_COLORS = {
 function TeamLogo({ name, size = 32, imageId = 0 }) {
     const [imgError, setImgError] = React.useState(false);
     const abbr = (name || "?").replace(/[^A-Za-z]/g, "").substring(0, 3).toUpperCase() || "???";
-    const colors = ["#1E2D6B","#C8961E","#00B894","#E53E3E","#6B21A8","#DD6B20","#0369A1","#065F46"];
+    const colors = ["#1E2D6B", "#C8961E", "#00B894", "#E53E3E", "#6B21A8", "#DD6B20", "#0369A1", "#065F46"];
     const teamBg = colors[(abbr.charCodeAt(0) || 65) % colors.length];
     const proxyUrl = imageId ? "https://web-production-91f0.up.railway.app/team-image/" + imageId : null;
     if (!proxyUrl || imgError) {
@@ -215,11 +215,11 @@ function NextOverIntelligence({ pred }) {
                             const rr = h.over > 0 ? (h.runs / h.over).toFixed(1) : "—";
                             const bh = Math.max(12, Math.round((parseFloat(rr) / 16) * 70));
                             return (
-                            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
-                                <span style={{ fontSize: 9, color: "#94A3B8", fontWeight: 600 }}>{rr}</span>
-                                <div style={{ width: "100%", borderRadius: "4px 4px 0 0", background: i === 0 ? "#B5D4F4" : i === 1 ? "#85B7EB" : "#378ADD", height: `${bh}px` }} />
-                                <span style={{ fontSize: 10, color: "#64748B" }}>ov {h.over}</span>
-                            </div>
+                                <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+                                    <span style={{ fontSize: 9, color: "#94A3B8", fontWeight: 600 }}>{rr}</span>
+                                    <div style={{ width: "100%", borderRadius: "4px 4px 0 0", background: i === 0 ? "#B5D4F4" : i === 1 ? "#85B7EB" : "#378ADD", height: `${bh}px` }} />
+                                    <span style={{ fontSize: 10, color: "#64748B" }}>ov {h.over}</span>
+                                </div>
                             );
                         })}
                         <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
@@ -230,65 +230,71 @@ function NextOverIntelligence({ pred }) {
                     </div>
                 </div>
             )}
-           <div style={{background:'#fff', border:'0.5px solid #E2E8F0', borderRadius:12, padding:14}}>
-  <div style={{fontSize:12, color:'#64748B', marginBottom:8}}>Pitch behaviour now</div>
-  {pitchData ? (
-    <div>
-      <div style={{fontSize:11, fontWeight:600, color:'#334155', marginBottom:6}}>
-        🏟️ {pitchData.soil_type} · Bounce: {pitchData.bounce}
-      </div>
-      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:6, marginBottom:8}}>
-        <div style={{textAlign:'center', padding:'8px 4px', background:'#EEF2FF', borderRadius:8}}>
-          <div style={{fontSize:15, fontWeight:600, color:'#7C3AED'}}>{pitchData.pace_factor}</div>
-          <div style={{fontSize:10, color:'#64748B'}}>Pace</div>
-        </div>
-        <div style={{textAlign:'center', padding:'8px 4px', background:'#EEF2FF', borderRadius:8}}>
-          <div style={{fontSize:15, fontWeight:600, color:'#0891B2'}}>{pitchData.spin_factor}</div>
-          <div style={{fontSize:10, color:'#64748B'}}>Spin · ov {pitchData.spin_starts_over}+</div>
-        </div>
-        <div style={{textAlign:'center', padding:'8px 4px',
-          background: pitchData.evolution?.dew_active ? '#E6F1FB' : '#EEF2FF', borderRadius:8}}>
-          <div style={{fontSize:13, fontWeight:600,
-            color: pitchData.evolution?.dew_active ? '#185FA5' : '#64748B'}}>
-            {pitchData.dew_risk}
-          </div>
-          <div style={{fontSize:10, color:'#64748B'}}>Dew risk</div>
-        </div>
-      </div>
-      <div style={{fontSize:11, fontWeight:600, marginBottom:4}}>
-        {pitchData.evolution?.dominant_type === 'Spin' ? '🌀' :
-         pitchData.evolution?.dominant_type === 'Pace' ? '⚡' : '🔄'} {pitchData.evolution?.dominant_type}
-      </div>
-      {pitchData.evolution?.key_factors?.map((f, i) => (
-        <div key={i} style={{fontSize:10, color:'#475569', marginBottom:2}}>• {f}</div>
-      ))}
-      <div style={{marginTop:6, padding:'4px 8px', background:'#F1F5F9', borderRadius:6}}>
-        <span style={{fontSize:11, color:'#334155'}}>
-          📊 Next 3 overs: <strong>{pitchData.expected_runs_next_3_overs} runs</strong>
-        </span>
-      </div>
-    </div>
-  ) : (
-    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8}}>
-      <div style={{textAlign:'center', padding:'10px 6px', background:'#EEF2FF', borderRadius:8}}>
-        <div style={{fontSize:18, fontWeight:500, color: spinBoost > 5 ? '#BA7517':'#64748B'}}>
-          {spinBoost > 0 ? `+${spinBoost}%` : '-'}
-        </div>
-        <div style={{fontSize:11, color:'#64748B', marginTop:3}}>Spin turn</div>
-      </div>
-      <div style={{textAlign:'center', padding:'10px 6px', background:'#EEF2FF', borderRadius:8}}>
-        <div style={{fontSize:18, fontWeight:500}}>{(pred.pitchCondition || '').split(' ')[0]}</div>
-        <div style={{fontSize:11, color:'#64748B', marginTop:3}}>Surface</div>
-      </div>
-      <div style={{textAlign:'center', padding:'10px 6px',
-        background: dewSoon ? '#E6F1FB':'#EEF2FF', borderRadius:8}}>
-        <div style={{fontSize:18, fontWeight:500, color: dewSoon ? '#185FA5':'#64748B'}}>
-          {dewSoon ? 'Soon' : 'None'}
-        </div>
-        <div style={{fontSize:11, color:'#64748B', marginTop:3}}>Dew factor</div>
-      </div>
-    </div>
-  )}
+            <div style={{ background: '#fff', border: '0.5px solid #E2E8F0', borderRadius: 12, padding: 14 }}>
+                <div style={{ fontSize: 12, color: '#64748B', marginBottom: 8 }}>Pitch behaviour now</div>
+                {pitchData ? (
+                    <div>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: '#334155', marginBottom: 6 }}>
+                            🏟️ {pitchData.soil_type} · Bounce: {pitchData.bounce}
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, marginBottom: 8 }}>
+                            <div style={{ textAlign: 'center', padding: '8px 4px', background: '#EEF2FF', borderRadius: 8 }}>
+                                <div style={{ fontSize: 15, fontWeight: 600, color: '#7C3AED' }}>{pitchData.pace_factor}</div>
+                                <div style={{ fontSize: 10, color: '#64748B' }}>Pace</div>
+                            </div>
+                            <div style={{ textAlign: 'center', padding: '8px 4px', background: '#EEF2FF', borderRadius: 8 }}>
+                                <div style={{ fontSize: 15, fontWeight: 600, color: '#0891B2' }}>{pitchData.spin_factor}</div>
+                                <div style={{ fontSize: 10, color: '#64748B' }}>Spin · ov {pitchData.spin_starts_over}+</div>
+                            </div>
+                            <div style={{
+                                textAlign: 'center', padding: '8px 4px',
+                                background: pitchData.evolution?.dew_active ? '#E6F1FB' : '#EEF2FF', borderRadius: 8
+                            }}>
+                                <div style={{
+                                    fontSize: 13, fontWeight: 600,
+                                    color: pitchData.evolution?.dew_active ? '#185FA5' : '#64748B'
+                                }}>
+                                    {pitchData.dew_risk}
+                                </div>
+                                <div style={{ fontSize: 10, color: '#64748B' }}>Dew risk</div>
+                            </div>
+                        </div>
+                        <div style={{ fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
+                            {pitchData.evolution?.dominant_type === 'Spin' ? '🌀' :
+                                pitchData.evolution?.dominant_type === 'Pace' ? '⚡' : '🔄'} {pitchData.evolution?.dominant_type}
+                        </div>
+                        {pitchData.evolution?.key_factors?.map((f, i) => (
+                            <div key={i} style={{ fontSize: 10, color: '#475569', marginBottom: 2 }}>• {f}</div>
+                        ))}
+                        <div style={{ marginTop: 6, padding: '4px 8px', background: '#F1F5F9', borderRadius: 6 }}>
+                            <span style={{ fontSize: 11, color: '#334155' }}>
+                                📊 Next 3 overs: <strong>{pitchData.expected_runs_next_3_overs} runs</strong>
+                            </span>
+                        </div>
+                    </div>
+                ) : (
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
+                        <div style={{ textAlign: 'center', padding: '10px 6px', background: '#EEF2FF', borderRadius: 8 }}>
+                            <div style={{ fontSize: 18, fontWeight: 500, color: spinBoost > 5 ? '#BA7517' : '#64748B' }}>
+                                {spinBoost > 0 ? `+${spinBoost}%` : '-'}
+                            </div>
+                            <div style={{ fontSize: 11, color: '#64748B', marginTop: 3 }}>Spin turn</div>
+                        </div>
+                        <div style={{ textAlign: 'center', padding: '10px 6px', background: '#EEF2FF', borderRadius: 8 }}>
+                            <div style={{ fontSize: 18, fontWeight: 500 }}>{(pred.pitchCondition || '').split(' ')[0]}</div>
+                            <div style={{ fontSize: 11, color: '#64748B', marginTop: 3 }}>Surface</div>
+                        </div>
+                        <div style={{
+                            textAlign: 'center', padding: '10px 6px',
+                            background: dewSoon ? '#E6F1FB' : '#EEF2FF', borderRadius: 8
+                        }}>
+                            <div style={{ fontSize: 18, fontWeight: 500, color: dewSoon ? '#185FA5' : '#64748B' }}>
+                                {dewSoon ? 'Soon' : 'None'}
+                            </div>
+                            <div style={{ fontSize: 11, color: '#64748B', marginTop: 3 }}>Dew factor</div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -368,26 +374,26 @@ function MediaSection() {
                 ))}
             </div>
             {fallbackNews.map(({ tag, title, time, url, source }, i) => {
-                const tagColors = { "IPL 2026": ["#1E2D6B","#EFF6FF"], "T20": ["#185FA5","#E6F1FB"], "ANALYSIS": ["#854F0B","#FAEEDA"], "WOMEN": ["#6B21A8","#F3E8FF"], "IPL": ["#1E2D6B","#EFF6FF"], "STATS": ["#166534","#DCFCE7"] };
-                const [tc, tbg] = tagColors[tag] || ["#64748B","#F1F5F9"];
-                const thumbColors = ["#1E2D6B","#185FA5","#854F0B","#166534","#6B21A8","#A32D2D"];
+                const tagColors = { "IPL 2026": ["#1E2D6B", "#EFF6FF"], "T20": ["#185FA5", "#E6F1FB"], "ANALYSIS": ["#854F0B", "#FAEEDA"], "WOMEN": ["#6B21A8", "#F3E8FF"], "IPL": ["#1E2D6B", "#EFF6FF"], "STATS": ["#166534", "#DCFCE7"] };
+                const [tc, tbg] = tagColors[tag] || ["#64748B", "#F1F5F9"];
+                const thumbColors = ["#1E2D6B", "#185FA5", "#854F0B", "#166534", "#6B21A8", "#A32D2D"];
                 return (
-                <a key={i} href={url || "#"} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
-                    <div className="card" style={{ padding: 0, marginBottom: 10, cursor: "pointer", display: "flex", overflow: "hidden", minHeight: 80 }}>
-                        <div style={{ width: 80, minWidth: 80, background: thumbColors[i % thumbColors.length], display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 4 }}>
-                            <div style={{ fontSize: 20 }}>🏏</div>
-                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.6)", textAlign: "center", padding: "0 4px" }}>{source}</div>
-                        </div>
-                        <div style={{ padding: "12px 14px", flex: 1 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                                <span style={{ fontSize: 10, fontWeight: 700, color: tc, background: tbg, padding: "2px 8px", borderRadius: 4 }}>{tag}</span>
-                                <span style={{ fontSize: 10, color: C2.muted }}>{time}</span>
+                    <a key={i} href={url || "#"} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
+                        <div className="card" style={{ padding: 0, marginBottom: 10, cursor: "pointer", display: "flex", overflow: "hidden", minHeight: 80 }}>
+                            <div style={{ width: 80, minWidth: 80, background: thumbColors[i % thumbColors.length], display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 4 }}>
+                                <div style={{ fontSize: 20 }}>🏏</div>
+                                <div style={{ fontSize: 9, color: "rgba(255,255,255,0.6)", textAlign: "center", padding: "0 4px" }}>{source}</div>
                             </div>
-                            <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.45, color: C2.text }}>{title}</div>
-                            <div style={{ fontSize: 11, color: C2.accent, marginTop: 5, fontWeight: 500 }}>Read more →</div>
+                            <div style={{ padding: "12px 14px", flex: 1 }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                                    <span style={{ fontSize: 10, fontWeight: 700, color: tc, background: tbg, padding: "2px 8px", borderRadius: 4 }}>{tag}</span>
+                                    <span style={{ fontSize: 10, color: C2.muted }}>{time}</span>
+                                </div>
+                                <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.45, color: C2.text }}>{title}</div>
+                                <div style={{ fontSize: 11, color: C2.accent, marginTop: 5, fontWeight: 500 }}>Read more →</div>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
                 );
             })}
         </div>
@@ -408,12 +414,12 @@ const CRICKET_INSIGHTS = [
     { title: "Pitch Conditions & Their Impact on Match Outcomes", summary: "From the turning tracks of Chepauk to the pace-friendly surfaces of Perth, venue data accounts for up to 18% of our win probability model's final output.", tag: "Venue Intelligence", readTime: "4 min read" },
 ];
 const TEAM_FORM = [
-    { team: "MI", p: 10, w: 7, l: 3, nrr: "+0.82", form: ["W","W","L","W","W"] },
-    { team: "CSK", p: 10, w: 6, l: 4, nrr: "+0.45", form: ["L","W","W","W","L"] },
-    { team: "RCB", p: 10, w: 6, l: 4, nrr: "+0.31", form: ["W","L","W","W","W"] },
-    { team: "KKR", p: 10, w: 5, l: 5, nrr: "+0.12", form: ["W","W","L","L","W"] },
-    { team: "SRH", p: 10, w: 5, l: 5, nrr: "-0.05", form: ["L","W","L","W","W"] },
-    { team: "DC",  p: 10, w: 4, l: 6, nrr: "-0.28", form: ["L","L","W","L","W"] },
+    { team: "MI", p: 10, w: 7, l: 3, nrr: "+0.82", form: ["W", "W", "L", "W", "W"] },
+    { team: "CSK", p: 10, w: 6, l: 4, nrr: "+0.45", form: ["L", "W", "W", "W", "L"] },
+    { team: "RCB", p: 10, w: 6, l: 4, nrr: "+0.31", form: ["W", "L", "W", "W", "W"] },
+    { team: "KKR", p: 10, w: 5, l: 5, nrr: "+0.12", form: ["W", "W", "L", "L", "W"] },
+    { team: "SRH", p: 10, w: 5, l: 5, nrr: "-0.05", form: ["L", "W", "L", "W", "W"] },
+    { team: "DC", p: 10, w: 4, l: 6, nrr: "-0.28", form: ["L", "L", "W", "L", "W"] },
 ];
 function NoMatchesScreen({ upcomingMatches }) {
     const [tab, setTab] = React.useState("schedule");
@@ -472,7 +478,7 @@ function NoMatchesScreen({ upcomingMatches }) {
                     <div style={{ fontSize: 13, color: C.muted, marginBottom: 16 }}>IPL 2026 points table & recent form (last 5 matches)</div>
                     <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, overflow: "hidden" }}>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 40px 40px 40px 80px 100px", gap: 0, background: C.bg, padding: "10px 20px", borderBottom: `1px solid ${C.border}` }}>
-                            {["Team","P","W","L","NRR","Form"].map(h => (
+                            {["Team", "P", "W", "L", "NRR", "Form"].map(h => (
                                 <div key={h} style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>{h}</div>
                             ))}
                         </div>
@@ -532,7 +538,7 @@ function LiveScorecard({ batters, bowler }) {
                         <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textAlign: "right" }}>B</span>
                         <span style={{ fontSize: 10, fontWeight: 700, color: "#64748B", textAlign: "right" }}>SR</span>
                     </div>
-                    {batters.map(function(b, i) {
+                    {batters.map(function (b, i) {
                         const srColor = b.sr >= 150 ? "#22C55E" : b.sr >= 120 ? "#F59E0B" : b.sr >= 80 ? "#E2E8F0" : "#EF4444";
                         const srBg = b.sr >= 150 ? "rgba(34,197,94,0.12)" : b.sr >= 120 ? "rgba(245,158,11,0.12)" : "transparent";
                         return (
@@ -592,23 +598,23 @@ function ClaudeAnalysis({ pred, selectedMatch }) {
     const [asked, setAsked] = React.useState(false);
     const [matchKey, setMatchKey] = React.useState("");
     React.useEffect(() => {
-        const key = (pred?.team1||"") + (pred?.team2||"") + (selectedMatch?.matchId||"");
+        const key = (pred?.team1 || "") + (pred?.team2 || "") + (selectedMatch?.matchId || "");
         if (key !== matchKey) { setAnalysis(""); setAsked(false); setMatchKey(key); }
     }, [pred, selectedMatch]);
     async function askClaude() {
         if (!pred || loading) return;
         setLoading(true); setAsked(true); setAnalysis("");
-        const batters = (pred.batters||[]).map(b=>`${b.name} ${b.runs}(${b.balls}) SR:${b.sr}`).join(", ") || "N/A";
+        const batters = (pred.batters || []).map(b => `${b.name} ${b.runs}(${b.balls}) SR:${b.sr}`).join(", ") || "N/A";
         const bowler = pred.bowler ? `${pred.bowler.name} ${pred.bowler.overs}ov ECO:${pred.bowler.economy} ${pred.bowler.wickets}wkts` : "N/A";
         const prompt = `You are an elite cricket analyst. Analyze this LIVE match and give sharp, specific predictions.
-MATCH: ${pred.team1} vs ${pred.team2} (${pred.matchType?.toUpperCase()||"T20"})
-VENUE: ${pred.venue||"Unknown"}
+MATCH: ${pred.team1} vs ${pred.team2} (${pred.matchType?.toUpperCase() || "T20"})
+VENUE: ${pred.venue || "Unknown"}
 SCORE: ${pred.displayScore} | CRR: ${pred.currentRunRate} | Overs: ${pred.overs}
-PITCH: ${pred.pitchLabel||"Unknown"} (${pred.pitchCondition||""})
-WEATHER: ${pred.weather?.condition||""} ${pred.weather?.temp||""}C Humidity:${pred.weather?.humidity||""}%
+PITCH: ${pred.pitchLabel || "Unknown"} (${pred.pitchCondition || ""})
+WEATHER: ${pred.weather?.condition || ""} ${pred.weather?.temp || ""}C Humidity:${pred.weather?.humidity || ""}%
 AT CREASE: ${batters}
 BOWLING: ${bowler}
-PRESSURE INDEX: ${pred.pressureScore||50}/100
+PRESSURE INDEX: ${pred.pressureScore || 50}/100
 ML WIN PROBABILITY: ${pred.aiProbability}% for ${pred.team1}
 ${pred.target ? `TARGET: ${pred.target} runs | Need: ${pred.runsNeeded} in ${pred.overs} overs | RRR: ${pred.requiredRunRate}` : ""}
 Give me:
@@ -620,9 +626,9 @@ Be sharp, specific, bold. No vague statements.`;
         try {
             const res = await fetch(API_BASE + "/claude-analysis", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
             const data = await res.json();
-            const text = (data.content||[]).map(c=>c.text||"").join("") || data.error || "No response.";
+            const text = (data.content || []).map(c => c.text || "").join("") || data.error || "No response.";
             setAnalysis(text);
-        } catch(e) { setAnalysis("Error: " + e.message); }
+        } catch (e) { setAnalysis("Error: " + e.message); }
         setLoading(false);
     }
     if (!pred || !pred.team1) return null;
@@ -657,7 +663,7 @@ Be sharp, specific, bold. No vague statements.`;
                             </div>
                         ))}
                     </div>
-                    <div style={{ fontSize: 11, color: "#94A3B8", textAlign: "center" }}>Click <strong style={{color:"#FFB800"}}>Get AI Analysis</strong> for live match breakdown</div>
+                    <div style={{ fontSize: 11, color: "#94A3B8", textAlign: "center" }}>Click <strong style={{ color: "#FFB800" }}>Get AI Analysis</strong> for live match breakdown</div>
                 </div>
             )}
             {loading && (
@@ -673,9 +679,9 @@ Be sharp, specific, bold. No vague statements.`;
                     {analysis.split("\n\n").map((block, i) => {
                         if (block.startsWith("## ")) {
                             const title = block.replace(/^##\s*\d*\.?\s*/, "");
-                            const icons = {"WIN PREDICTION":"win", "NEXT":"over", "GAME-CHANGER":"key", "STRATEGY":"tip"};
-                            const icon = Object.entries(icons).find(([k])=>title.toUpperCase().includes(k));
-                            const colors = {win:"#00B894", over:"#60a5fa", key:"#fbbf24", tip:"#a78bfa"};
+                            const icons = { "WIN PREDICTION": "win", "NEXT": "over", "GAME-CHANGER": "key", "STRATEGY": "tip" };
+                            const icon = Object.entries(icons).find(([k]) => title.toUpperCase().includes(k));
+                            const colors = { win: "#00B894", over: "#60a5fa", key: "#fbbf24", tip: "#a78bfa" };
                             const col = colors[icon?.[1]] || "#a78bfa";
                             return (
                                 <div key={i} style={{ marginBottom: 14, background: "rgba(0,0,0,0.2)", borderRadius: 10, padding: "12px 14px", borderLeft: `3px solid ${col}` }}>
@@ -683,7 +689,7 @@ Be sharp, specific, bold. No vague statements.`;
                                 </div>
                             );
                         }
-                        if (block.trim() === "---") return <div key={i} style={{height:1, background:"rgba(139,92,246,0.15)", margin:"8px 0"}} />;
+                        if (block.trim() === "---") return <div key={i} style={{ height: 1, background: "rgba(139,92,246,0.15)", margin: "8px 0" }} />;
                         const lines = block.split("\n").filter(l => l.trim());
                         if (!lines.length) return null;
                         return (
@@ -692,7 +698,7 @@ Be sharp, specific, bold. No vague statements.`;
                                     const isBold = line.startsWith("**") && line.includes("**:");
                                     const isItem = line.startsWith("- ");
                                     if (isBold) {
-                                        const [label, ...rest] = line.replace(/\*\*/g,"").split(":");
+                                        const [label, ...rest] = line.replace(/\*\*/g, "").split(":");
                                         return (
                                             <div key={j} style={{ marginBottom: 6 }}>
                                                 <span style={{ fontSize: 11, fontWeight: 800, color: "#a78bfa", textTransform: "uppercase", letterSpacing: 0.5 }}>{label}: </span>
@@ -701,8 +707,8 @@ Be sharp, specific, bold. No vague statements.`;
                                         );
                                     }
                                     if (isItem) return (
-                                        <div key={j} style={{ display:"flex", gap: 8, alignItems:"flex-start", marginBottom: 4, paddingLeft: 8 }}>
-                                            <span style={{ color:"#a78bfa", marginTop:2, flexShrink:0 }}></span>
+                                        <div key={j} style={{ display: "flex", gap: 8, alignItems: "flex-start", marginBottom: 4, paddingLeft: 8 }}>
+                                            <span style={{ color: "#a78bfa", marginTop: 2, flexShrink: 0 }}></span>
                                             <span style={{ fontSize: 13, color: "#cbd5e1", lineHeight: 1.7 }}>{line.substring(2)}</span>
                                         </div>
                                     );
@@ -721,12 +727,12 @@ export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
     const [showLanding, setShowLanding] = useState(() => { try { return !localStorage.getItem("ci_v2"); } catch { return false; } });
     const [liveMatches, setLiveMatches] = useState(() => {
-        try { const cached = localStorage.getItem("ci_matches_cache"); if (cached) return JSON.parse(cached); } catch {}
+        try { const cached = localStorage.getItem("ci_matches_cache"); if (cached) return JSON.parse(cached); } catch { }
         return [];
     });
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [pred, setPred] = useState(() => {
-        try { const cached = localStorage.getItem("ci_pred_cache"); if (cached) return JSON.parse(cached); } catch {}
+        try { const cached = localStorage.getItem("ci_pred_cache"); if (cached) return JSON.parse(cached); } catch { }
         return null;
     });
     const [liveStatus, setLiveStatus] = useState(() => {
@@ -766,7 +772,7 @@ export default function CricIntelligence() {
                 localStorage.setItem("cricintel_premium", "true");
                 window.history.replaceState({}, "", window.location.pathname);
             }
-        } catch {}
+        } catch { }
     }, []);
     const handleCheckout = async (plan) => {
         setCheckingPayment(true);
@@ -794,7 +800,7 @@ export default function CricIntelligence() {
             const currentPred = predRef.current;
             const pitchPromise = curMatchId
                 ? fetch(`${API_BASE}/match/${curMatchId}/pitch-analysis?venue=${encodeURIComponent((currentPred && currentPred.venue) || '')}&over=${(currentPred && currentPred.overs) || 1}`)
-                  .then(r => r.ok ? r.json() : null).catch(() => null)
+                    .then(r => r.ok ? r.json() : null).catch(() => null)
                 : Promise.resolve(null);
             const [matchesData, predData, scorecardData] = await Promise.all([matchesPromise, predPromise, scorecardPromise]);
             if (matchesData) {
@@ -838,7 +844,7 @@ export default function CricIntelligence() {
                     window.__matchList = mapped;
                     setLiveStatus("live");
                     setIsFirstLoad(false);
-                    try { localStorage.setItem("ci_matches_cache", JSON.stringify(mapped)); } catch {}
+                    try { localStorage.setItem("ci_matches_cache", JSON.stringify(mapped)); } catch { }
                     const live = mapped.find(m => m.status === "LIVE");
                     const upcoming = mapped.find(m => m.status === "UPCOMING");
                     const best = live || upcoming;
@@ -878,7 +884,7 @@ export default function CricIntelligence() {
                 try {
                     localStorage.setItem("ci_pred_cache", JSON.stringify(merged));
                     if (merged.id) localStorage.setItem("ci_pred_" + merged.id, JSON.stringify(merged));
-                } catch {}
+                } catch { }
             } else if (predData && predData.team1) {
                 const mList = window.__matchList || [];
                 const mMatch = mList.find(mx => mx.t1 === predData.team1 || mx.team1 === predData.team1);
@@ -944,7 +950,7 @@ body { background: ${C.bg}; }
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
             <nav style={{ background: C.navy, borderBottom: `1px solid ${C.navyLight}`, padding: "0 20px", height: 54, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>
-                <div onClick={() => { setActiveTab("predict"); window.scrollTo(0,0); }} style={{ cursor: "pointer" }}>
+                <div onClick={() => { setActiveTab("predict"); window.scrollTo(0, 0); }} style={{ cursor: "pointer" }}>
                     <Logo href="/" />
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
@@ -1010,7 +1016,7 @@ body { background: ${C.bg}; }
                         {!pred ? (
                             isFirstLoad || isPredLoading ? (
                                 <div style={{ padding: "24px 20px" }}>
-                                    {[1,2,3].map(i => (
+                                    {[1, 2, 3].map(i => (
                                         <div key={i} style={{ background: "#fff", borderRadius: 14, padding: 20, marginBottom: 14, border: "1px solid #E2E8F0" }}>
                                             <div style={{ height: 12, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 6, width: "40%", marginBottom: 12 }} />
                                             <div style={{ height: 32, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 8, width: "70%", marginBottom: 12 }} />
@@ -1047,255 +1053,255 @@ body { background: ${C.bg}; }
                                                     {pred.momentum > 0 ? "+" : ""}{pred.momentum ? pred.momentum.toFixed(1) : "0"} vs avg
                                                 </span>
                                             )}
-                                            <button onClick={() => { const t = `${cleanTeam(pred.team1)} vs ${cleanTeam(pred.team2)} - AI: ${prob}% win probability. cricintelligence.com`; try { navigator.clipboard?.writeText(t).then(() => alert("Copied!")); } catch {} }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share</button>
+                                            <button onClick={() => { const t = `${cleanTeam(pred.team1)} vs ${cleanTeam(pred.team2)} - AI: ${prob}% win probability. cricintelligence.com`; try { navigator.clipboard?.writeText(t).then(() => alert("Copied!")); } catch { } }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share</button>
                                         </div>
                                     </div>
                                 </div>
                                 <div style={{ padding: "20px 24px" }}>
                                     <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
-                                    <div className="card" style={{ padding: 22, marginBottom: 14 }}>
-                                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-                                        <div>
-                                          <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>{`Next ${(pred.nextOvers || []).length} overs prediction`}</div>
-                                          <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 3, fontWeight: 500 }}>{pred?.currentPhase || ""}</div>
-                                        </div>
-                                      </div>
-                                      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                                        {(pred.nextOvers || []).slice(0, 3).map((ov, i) => {
-                                          const isLocked = false;
-                                          const wc = ov.wicketProb > 40 ? C.red : ov.wicketProb > 25 ? C.amber : C.green;
-                                          const runFill = Math.min(100, (ov.expectedRuns / 18) * 100);
-                                          const batSR = pred?.playerContext?.strikerSR || 0;
-                                          const bowlEco = pred?.playerContext?.bowlerEco || 0;
-                                          const bndPct = pred?.playerContext?.boundaryPct || 0;
-                                          const last3r = pred?.playerContext?.last3Runs || 0;
-                                          const last3w = pred?.playerContext?.last3Wkts || 0;
-                                          const last3rr = pred?.playerContext?.last3RR || 0;
-                                          const pship = pred?.playerContext?.partnershipRuns || 0;
-                                          const sincewkt = pred?.playerContext?.oversSinceWkt || 0;
-                                          const phaseColor = ov.phase === "POWERPLAY" ? C.accent : ov.phase === "DEATH OVERS" ? C.red : C.amber;
-                                          return (
-                                            <div key={i} onClick={() => setActiveOver(i)} style={{
-                                              background: activeOver === i ? "#2A3F82" : "#1B2A6B",
-                                              border: `2px solid ${activeOver === i ? "#fff" : "rgba(255,255,255,0.18)"}`,
-                                              borderLeft: `4px solid ${activeOver === i ? "#fff" : phaseColor}`,
-                                              borderRadius: 12, padding: "14px 16px",
-                                              cursor: "pointer", opacity: isLocked ? 0.45 : 1,
-                                              transition: "all 0.2s"
-                                            }}>
-                                              {isLocked ? (
-                                                <div style={{ textAlign: "center", padding: 8 }}>
-                                                  <span style={{ fontSize: 20 }}></span>
-                                                  <div style={{ fontSize: 11, color: C.muted, marginTop: 4 }}>Premium</div>
+                                        <div className="card" style={{ padding: 22, marginBottom: 14 }}>
+                                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                                                <div>
+                                                    <div style={{ fontSize: 13, fontWeight: 700, color: C.text }}>{`Next ${(pred.nextOvers || []).length} overs prediction`}</div>
+                                                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 3, fontWeight: 500 }}>{pred?.currentPhase || ""}</div>
                                                 </div>
-                                              ) : (
-                                                <>
-                                                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                                                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                                      <span style={{ fontSize: 16, fontWeight: 900, color: "#fff" }}>Over {ov.over}</span>
-                                                      <span style={{ fontSize: 9, fontWeight: 800, color: "#fff", background: phaseColor, padding: "2px 8px", borderRadius: 20 }}>{ov.phase}</span>
-                                                    </div>
-                                                    <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: 4 }}>{ov.confidence}% conf</span>
-                                                  </div>
-                                                  {(() => {
-                                                    const sr = pred && pred.playerContext ? (pred.playerContext.strikerSR || 0) : 0;
-                                                    const eco = pred && pred.playerContext ? (pred.playerContext.bowlerEco || 8) : 8;
-                                                    const bnd = pred && pred.playerContext ? (pred.playerContext.boundaryPct || 0) : 0;
-                                                    const l3r = pred && pred.playerContext ? (pred.playerContext.last3Runs || 0) : 0;
-                                                    const phase = ov.phase || '';
-                                                    let vText, vColor, vBg;
-                                                    if (sr > 150 && eco > 8.5) { vText = 'BIG SCORING OVER'; vColor = '#FFFFFF'; vBg = '#E53E3E'; }
-                                                    else if (sr > 150 || (eco > 8 && bnd > 35)) { vText = 'RUNS LIKELY'; vColor = '#FFFFFF'; vBg = '#DD6B20'; }
-                                                    else if (sr < 100 && eco < 6.5) { vText = 'TIGHT OVER'; vColor = '#FFFFFF'; vBg = '#276749'; }
-                                                    else if (l3r > 25 || phase === 'DEATH OVERS') { vText = 'HOT MOMENTUM'; vColor = '#FFFFFF'; vBg = '#6B21A8'; }
-                                                    else { vText = 'STEADY OVER'; vColor = '#FFFFFF'; vBg = '#1D4ED8'; }
-                                                    return (
-                                                      <div style={{ display: 'inline-block', marginTop: 8, marginBottom: 4, padding: '6px 16px', background: vBg, borderRadius: 20, boxShadow: `0 0 16px ${vBg}88, 0 3px 10px rgba(0,0,0,0.25)`, animation: 'labelPulse 2s ease-in-out infinite' }}>
-                                                        <span style={{ fontSize: 11, fontWeight: 900, color: vColor, letterSpacing: 1.2, textTransform: "uppercase" }}>{vText}</span>
-                                                      </div>
-                                                    );
-                                                  })()}
-                                                  <div style={{ marginBottom: 12 }}>
-                                                    {batSR > 0 && (
-                                                      <div style={{ marginBottom: 8 }}>
-                                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Batter SR</span>
-                                                          <span style={{ fontSize: 11, fontWeight: 700, color: batSR >= 150 ? "#00FF94" : batSR >= 100 ? "#FFB800" : "#FF4444" }}>{batSR} · {batSR >= 150 ? "Explosive" : batSR >= 100 ? "Aggressive" : "Struggling"}</span>
-                                                        </div>
-                                                        <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, batSR / 2)}%`, height: "100%", background: batSR >= 150 ? "#00FF94" : batSR >= 100 ? "#FFB800" : "#FF4444", borderRadius: 6 }} />
-                                                        </div>
-                                                      </div>
-                                                    )}
-                                                    {bowlEco > 0 && (
-                                                      <div style={{ marginBottom: 8 }}>
-                                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Bowl eco</span>
-                                                          <span style={{ fontSize: 11, fontWeight: 700, color: bowlEco <= 6 ? "#00FF94" : bowlEco <= 9 ? "#FFB800" : "#FF4444" }}>{bowlEco} · {bowlEco <= 6 ? "Tight" : bowlEco <= 9 ? "Average" : "Expensive"}</span>
-                                                        </div>
-                                                        <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, bowlEco * 7)}%`, height: "100%", background: bowlEco <= 6 ? "#00FF94" : bowlEco <= 9 ? "#FFB800" : "#FF4444", borderRadius: 6 }} />
-                                                        </div>
-                                                      </div>
-                                                    )}
-                                                    {bndPct > 0 && (
-                                                      <div style={{ marginBottom: 8 }}>
-                                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Boundary %</span>
-                                                          <span style={{ fontSize: 11, fontWeight: 700, color: bndPct >= 40 ? "#00FF94" : bndPct >= 20 ? "#FFB800" : "#94A3B8" }}>{bndPct}% · {bndPct >= 40 ? "Firing" : bndPct >= 20 ? "Active" : "Dry"}</span>
-                                                        </div>
-                                                        <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, bndPct * 2)}%`, height: "100%", background: bndPct >= 40 ? "#00FF94" : bndPct >= 20 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
-                                                        </div>
-                                                      </div>
-                                                    )}
-                                                    {last3r > 0 && (
-                                                      <div style={{ marginBottom: 8 }}>
-                                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Last 3 overs</span>
-                                                          <span style={{ fontSize: 11, fontWeight: 700, color: last3r > 25 ? "#22c55e" : last3r > 15 ? "#f59e0b" : "#94a3b8" }}>{last3r}r {last3w > 0 ? `${last3w}w` : ""} · {last3r > 25 ? "Hot" : last3r > 15 ? "Moving" : "Dry"}</span>
-                                                        </div>
-                                                        <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, last3r * 3)}%`, height: "100%", background: last3r > 25 ? "#00FF94" : last3r > 15 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
-                                                        </div>
-                                                      </div>
-                                                    )}
-                                                    {pship > 0 && (
-                                                      <div>
-                                                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                                                          <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Partnership</span>
-                                                          <span style={{ fontSize: 11, fontWeight: 700, color: pship > 50 ? "#ef4444" : pship > 25 ? "#f59e0b" : "#94a3b8" }}>{pship} · {pship > 50 ? "Dangerous" : pship > 25 ? "Building" : "New"}</span>
-                                                        </div>
-                                                        <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
-                                                          <div style={{ width: `${Math.min(100, pship)}%`, height: "100%", background: pship > 50 ? "#FF4444" : pship > 25 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
-                                                        </div>
-                                                      </div>
-                                                    )}
-                                                  </div>
-                                                  <div style={{ marginBottom: 10 }}>
-                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
-                                                      <span style={{ fontSize: 36, fontWeight: 900, color: "#FFFFFF", lineHeight: 1, textShadow: "0 2px 12px rgba(255,255,255,0.4)", letterSpacing: -1 }}>{ov.runRange}</span>
-                                                      <span style={{ fontSize: 12, color: "#CBD5E1" }}>runs expected</span>
-                                                    </div>
-                                                    <div style={{ height: 5, background: C.border, borderRadius: 3 }}>
-                                                      <div style={{ height: "100%", width: runFill + "%", background: "linear-gradient(90deg, #4A90E2, #00D4AA)", borderRadius: 3, boxShadow: "0 0 8px rgba(0,212,170,0.5)", transition: "width 0.4s" }} />
-                                                    </div>
-                                                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 5 }}>
-                                                      <span style={{ fontSize: 11, fontWeight: 700, color: "#FFFFFF" }}>Expected: {ov.expectedRuns} runs</span>
-                                                      <span style={{ fontSize: 11, fontWeight: 700, color: wc }}>{ov.wicketProb}% wicket</span>
-                                                    </div>
-                                                  </div>
-                                                  {(() => {
-                                                    const pc = pred && pred.playerContext ? pred.playerContext : null;
-                                                    const curRuns = pc ? pc.currentOverRuns : null;
-                                                    const curBalls = pc ? (pc.currentOverBalls || 0) : 0;
-                                                    const isCurrentOv = curRuns !== null && curBalls > 0 && ov.over === (pred.nextOvers && pred.nextOvers[0] ? pred.nextOvers[0].over : -1);
-                                                    if (!isCurrentOv) return null;
-                                                    const projected = curBalls > 0 ? Math.round((curRuns / curBalls) * 6) : 0;
-                                                    const lo = parseInt((ov.runRange || '0-0').split('-')[0]);
-                                                    const hi = parseInt((ov.runRange || '0-0').split('-')[1]);
-                                                    const status = projected > hi ? 'AHEAD' : projected < lo ? 'BEHIND' : 'ON TRACK';
-                                                    const sc = status === 'AHEAD' ? '#00B894' : status === 'BEHIND' ? '#E53E3E' : '#F59E0B';
-                                                    return (
-                                                      <div style={{ marginTop: 8, marginBottom: 6, padding: '7px 10px', background: 'rgba(30,45,107,0.07)', borderRadius: 6, border: '1px solid rgba(30,45,107,0.18)' }}>
-                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                          <span style={{ fontSize: 11, color: '#64748B', fontWeight: 700 }}>LIVE: {curRuns}r in {curBalls} {curBalls === 1 ? 'ball' : 'balls'}</span>
-                                                          <span style={{ fontSize: 11, fontWeight: 800, color: sc }}>{status}</span>
-                                                        </div>
-                                                        <div style={{ fontSize: 10, color: '#64748B', marginTop: 2 }}>Projected: ~{projected} runs this over</div>
-                                                      </div>
-                                                    );
-                                                  })()}
-                                                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
-                                                    <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "3px 8px" }}>
-                                                      <span style={{ fontSize: 10, color: C.muted }}>{pred?.pitchLabel || ""}</span>
-                                                      <span style={{ fontSize: 9, color: pred?.pitchCondition === "WORN" ? C.red : pred?.pitchCondition === "DRY" ? C.amber : C.green, fontWeight: 700 }}>{pred?.pitchCondition || ""}</span>
-                                                    </div>
-                                                    <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "3px 8px" }}>
-                                                      <span style={{ fontSize: 10, color: C.muted }}>{pred?.weather?.temp}C {pred?.weather?.condition}</span>
-                                                    </div>
-                                                  </div>
-                                                  <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 8, marginTop: 2 }}>
-                                                    <span style={{ fontSize: 13, color: C.accent, fontStyle: "italic", fontWeight: 600 }}>{ov.tip && ov.tip.trim() ? '"' + ov.tip + '"' : ""}</span>
-                                                    {(() => {
-                                                      const sr = pred && pred.playerContext ? (pred.playerContext.strikerSR || 0) : 0;
-                                                      const eco = pred && pred.playerContext ? (pred.playerContext.bowlerEco || 8) : 8;
-                                                      const bnd = pred && pred.playerContext ? (pred.playerContext.boundaryPct || 0) : 0;
-                                                      const l3r = pred && pred.playerContext ? (pred.playerContext.last3Runs || 0) : 0;
-                                                      const wkp = ov.wicketProb || 0;
-                                                      let eng;
-                                                      if (sr > 150 && eco > 8.5) { eng = 'Batter on fire (SR ' + Math.round(sr) + ') vs expensive bowler  -  big over incoming'; }
-                                                      else if (sr > 150) { eng = 'Aggressive batter (SR ' + Math.round(sr) + ') in control  -  expect ' + ov.runRange + ' runs'; }
-                                                      else if (eco < 6) { eng = 'Bowler on top (Eco ' + eco.toFixed(1) + ')  -  tough to score freely'; }
-                                                      else if (wkp > 25) { eng = 'Wicket danger (' + wkp + '%)  -  could be a turning point'; }
-                                                      else if (l3r > 25) { eng = 'Last 3 overs were HOT (' + l3r + 'r)  -  momentum with batting team'; }
-                                                      else { eng = 'Balanced contest  -  ML predicts ' + ov.runRange + ' runs'; }
-                                                      return (
-                                                        <div style={{ marginTop: 6, padding: '6px 10px', background: 'rgba(255,255,255,0.07)', borderRadius: 6, borderLeft: '3px solid #4A90D9' }}>
-                                                          <span style={{ fontSize: 12, color: "#FFFFFF", fontWeight: 600 }}>{eng}</span>
-                                                        </div>
-                                                      );
-                                                    })()}
-                                                  </div>
-                                                </>
-                                              )}
                                             </div>
-                                          );
-                                        })}
-                                      </div>
-                                    </div>
-                                    <div style={{ position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 14 }}>
-                                        {pred && pred.batters && pred.batters.length > 0 && (
-                                            <LiveScorecard batters={pred.batters} bowler={pred.bowler || {}} />
-                                        )}
-                                        <div className="card" style={{ padding: 22 }}>
-                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>Win probability</div>
-                                            <div style={{ fontSize: 15, fontWeight: 800, color: winColor, marginBottom: 8, letterSpacing: 0.3 }}>{winMsg}</div>
-                                            <div style={{ display: "flex", justifyContent: "center", margin: "4px 0 10px" }}><WinArc value={prob} /></div>
-                                            <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>Based on current innings, pitch conditions, and 21,300 historical T20 matches — updated every ball.</div>
+                                            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                                                {(pred.nextOvers || []).slice(0, 3).map((ov, i) => {
+                                                    const isLocked = false;
+                                                    const wc = ov.wicketProb > 40 ? C.red : ov.wicketProb > 25 ? C.amber : C.green;
+                                                    const runFill = Math.min(100, (ov.expectedRuns / 18) * 100);
+                                                    const batSR = pred?.playerContext?.strikerSR || 0;
+                                                    const bowlEco = pred?.playerContext?.bowlerEco || 0;
+                                                    const bndPct = pred?.playerContext?.boundaryPct || 0;
+                                                    const last3r = pred?.playerContext?.last3Runs || 0;
+                                                    const last3w = pred?.playerContext?.last3Wkts || 0;
+                                                    const last3rr = pred?.playerContext?.last3RR || 0;
+                                                    const pship = pred?.playerContext?.partnershipRuns || 0;
+                                                    const sincewkt = pred?.playerContext?.oversSinceWkt || 0;
+                                                    const phaseColor = ov.phase === "POWERPLAY" ? C.accent : ov.phase === "DEATH OVERS" ? C.red : C.amber;
+                                                    return (
+                                                        <div key={i} onClick={() => setActiveOver(i)} style={{
+                                                            background: activeOver === i ? "#2A3F82" : "#1B2A6B",
+                                                            border: `2px solid ${activeOver === i ? "#fff" : "rgba(255,255,255,0.18)"}`,
+                                                            borderLeft: `4px solid ${activeOver === i ? "#fff" : phaseColor}`,
+                                                            borderRadius: 12, padding: "14px 16px",
+                                                            cursor: "pointer", opacity: isLocked ? 0.45 : 1,
+                                                            transition: "all 0.2s"
+                                                        }}>
+                                                            {isLocked ? (
+                                                                <div style={{ textAlign: "center", padding: 8 }}>
+                                                                    <span style={{ fontSize: 20 }}></span>
+                                                                    <div style={{ fontSize: 11, color: C.muted, marginTop: 4 }}>Premium</div>
+                                                                </div>
+                                                            ) : (
+                                                                <>
+                                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                                                                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                                                            <span style={{ fontSize: 16, fontWeight: 900, color: "#fff" }}>Over {ov.over}</span>
+                                                                            <span style={{ fontSize: 9, fontWeight: 800, color: "#fff", background: phaseColor, padding: "2px 8px", borderRadius: 20 }}>{ov.phase}</span>
+                                                                        </div>
+                                                                        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: 4 }}>{ov.confidence}% conf</span>
+                                                                    </div>
+                                                                    {(() => {
+                                                                        const sr = pred && pred.playerContext ? (pred.playerContext.strikerSR || 0) : 0;
+                                                                        const eco = pred && pred.playerContext ? (pred.playerContext.bowlerEco || 8) : 8;
+                                                                        const bnd = pred && pred.playerContext ? (pred.playerContext.boundaryPct || 0) : 0;
+                                                                        const l3r = pred && pred.playerContext ? (pred.playerContext.last3Runs || 0) : 0;
+                                                                        const phase = ov.phase || '';
+                                                                        let vText, vColor, vBg;
+                                                                        if (sr > 150 && eco > 8.5) { vText = 'BIG SCORING OVER'; vColor = '#FFFFFF'; vBg = '#E53E3E'; }
+                                                                        else if (sr > 150 || (eco > 8 && bnd > 35)) { vText = 'RUNS LIKELY'; vColor = '#FFFFFF'; vBg = '#DD6B20'; }
+                                                                        else if (sr < 100 && eco < 6.5) { vText = 'TIGHT OVER'; vColor = '#FFFFFF'; vBg = '#276749'; }
+                                                                        else if (l3r > 25 || phase === 'DEATH OVERS') { vText = 'HOT MOMENTUM'; vColor = '#FFFFFF'; vBg = '#6B21A8'; }
+                                                                        else { vText = 'STEADY OVER'; vColor = '#FFFFFF'; vBg = '#1D4ED8'; }
+                                                                        return (
+                                                                            <div style={{ display: 'inline-block', marginTop: 8, marginBottom: 4, padding: '6px 16px', background: vBg, borderRadius: 20, boxShadow: `0 0 16px ${vBg}88, 0 3px 10px rgba(0,0,0,0.25)`, animation: 'labelPulse 2s ease-in-out infinite' }}>
+                                                                                <span style={{ fontSize: 11, fontWeight: 900, color: vColor, letterSpacing: 1.2, textTransform: "uppercase" }}>{vText}</span>
+                                                                            </div>
+                                                                        );
+                                                                    })()}
+                                                                    <div style={{ marginBottom: 12 }}>
+                                                                        {batSR > 0 && (
+                                                                            <div style={{ marginBottom: 8 }}>
+                                                                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Batter SR</span>
+                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: batSR >= 150 ? "#00FF94" : batSR >= 100 ? "#FFB800" : "#FF4444" }}>{batSR} · {batSR >= 150 ? "Explosive" : batSR >= 100 ? "Aggressive" : "Struggling"}</span>
+                                                                                </div>
+                                                                                <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
+                                                                                    <div style={{ width: `${Math.min(100, batSR / 2)}%`, height: "100%", background: batSR >= 150 ? "#00FF94" : batSR >= 100 ? "#FFB800" : "#FF4444", borderRadius: 6 }} />
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                        {bowlEco > 0 && (
+                                                                            <div style={{ marginBottom: 8 }}>
+                                                                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Bowl eco</span>
+                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: bowlEco <= 6 ? "#00FF94" : bowlEco <= 9 ? "#FFB800" : "#FF4444" }}>{bowlEco} · {bowlEco <= 6 ? "Tight" : bowlEco <= 9 ? "Average" : "Expensive"}</span>
+                                                                                </div>
+                                                                                <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
+                                                                                    <div style={{ width: `${Math.min(100, bowlEco * 7)}%`, height: "100%", background: bowlEco <= 6 ? "#00FF94" : bowlEco <= 9 ? "#FFB800" : "#FF4444", borderRadius: 6 }} />
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                        {bndPct > 0 && (
+                                                                            <div style={{ marginBottom: 8 }}>
+                                                                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Boundary %</span>
+                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: bndPct >= 40 ? "#00FF94" : bndPct >= 20 ? "#FFB800" : "#94A3B8" }}>{bndPct}% · {bndPct >= 40 ? "Firing" : bndPct >= 20 ? "Active" : "Dry"}</span>
+                                                                                </div>
+                                                                                <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
+                                                                                    <div style={{ width: `${Math.min(100, bndPct * 2)}%`, height: "100%", background: bndPct >= 40 ? "#00FF94" : bndPct >= 20 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                        {last3r > 0 && (
+                                                                            <div style={{ marginBottom: 8 }}>
+                                                                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Last 3 overs</span>
+                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: last3r > 25 ? "#22c55e" : last3r > 15 ? "#f59e0b" : "#94a3b8" }}>{last3r}r {last3w > 0 ? `${last3w}w` : ""} · {last3r > 25 ? "Hot" : last3r > 15 ? "Moving" : "Dry"}</span>
+                                                                                </div>
+                                                                                <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
+                                                                                    <div style={{ width: `${Math.min(100, last3r * 3)}%`, height: "100%", background: last3r > 25 ? "#00FF94" : last3r > 15 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                        {pship > 0 && (
+                                                                            <div>
+                                                                                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
+                                                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Partnership</span>
+                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: pship > 50 ? "#ef4444" : pship > 25 ? "#f59e0b" : "#94a3b8" }}>{pship} · {pship > 50 ? "Dangerous" : pship > 25 ? "Building" : "New"}</span>
+                                                                                </div>
+                                                                                <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
+                                                                                    <div style={{ width: `${Math.min(100, pship)}%`, height: "100%", background: pship > 50 ? "#FF4444" : pship > 25 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                    <div style={{ marginBottom: 10 }}>
+                                                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
+                                                                            <span style={{ fontSize: 36, fontWeight: 900, color: "#FFFFFF", lineHeight: 1, textShadow: "0 2px 12px rgba(255,255,255,0.4)", letterSpacing: -1 }}>{ov.runRange}</span>
+                                                                            <span style={{ fontSize: 12, color: "#CBD5E1" }}>runs expected</span>
+                                                                        </div>
+                                                                        <div style={{ height: 5, background: C.border, borderRadius: 3 }}>
+                                                                            <div style={{ height: "100%", width: runFill + "%", background: "linear-gradient(90deg, #4A90E2, #00D4AA)", borderRadius: 3, boxShadow: "0 0 8px rgba(0,212,170,0.5)", transition: "width 0.4s" }} />
+                                                                        </div>
+                                                                        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 5 }}>
+                                                                            <span style={{ fontSize: 11, fontWeight: 700, color: "#FFFFFF" }}>Expected: {ov.expectedRuns} runs</span>
+                                                                            <span style={{ fontSize: 11, fontWeight: 700, color: wc }}>{ov.wicketProb}% wicket</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    {(() => {
+                                                                        const pc = pred && pred.playerContext ? pred.playerContext : null;
+                                                                        const curRuns = pc ? pc.currentOverRuns : null;
+                                                                        const curBalls = pc ? (pc.currentOverBalls || 0) : 0;
+                                                                        const isCurrentOv = curRuns !== null && curBalls > 0 && ov.over === (pred.nextOvers && pred.nextOvers[0] ? pred.nextOvers[0].over : -1);
+                                                                        if (!isCurrentOv) return null;
+                                                                        const projected = curBalls > 0 ? Math.round((curRuns / curBalls) * 6) : 0;
+                                                                        const lo = parseInt((ov.runRange || '0-0').split('-')[0]);
+                                                                        const hi = parseInt((ov.runRange || '0-0').split('-')[1]);
+                                                                        const status = projected > hi ? 'AHEAD' : projected < lo ? 'BEHIND' : 'ON TRACK';
+                                                                        const sc = status === 'AHEAD' ? '#00B894' : status === 'BEHIND' ? '#E53E3E' : '#F59E0B';
+                                                                        return (
+                                                                            <div style={{ marginTop: 8, marginBottom: 6, padding: '7px 10px', background: 'rgba(30,45,107,0.07)', borderRadius: 6, border: '1px solid rgba(30,45,107,0.18)' }}>
+                                                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                                    <span style={{ fontSize: 11, color: '#64748B', fontWeight: 700 }}>LIVE: {curRuns}r in {curBalls} {curBalls === 1 ? 'ball' : 'balls'}</span>
+                                                                                    <span style={{ fontSize: 11, fontWeight: 800, color: sc }}>{status}</span>
+                                                                                </div>
+                                                                                <div style={{ fontSize: 10, color: '#64748B', marginTop: 2 }}>Projected: ~{projected} runs this over</div>
+                                                                            </div>
+                                                                        );
+                                                                    })()}
+                                                                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 8 }}>
+                                                                        <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "3px 8px" }}>
+                                                                            <span style={{ fontSize: 10, color: C.muted }}>{pred?.pitchLabel || ""}</span>
+                                                                            <span style={{ fontSize: 9, color: pred?.pitchCondition === "WORN" ? C.red : pred?.pitchCondition === "DRY" ? C.amber : C.green, fontWeight: 700 }}>{pred?.pitchCondition || ""}</span>
+                                                                        </div>
+                                                                        <div style={{ display: "flex", alignItems: "center", gap: 4, background: C.navyLight, borderRadius: 6, padding: "3px 8px" }}>
+                                                                            <span style={{ fontSize: 10, color: C.muted }}>{pred?.weather?.temp}C {pred?.weather?.condition}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 8, marginTop: 2 }}>
+                                                                        <span style={{ fontSize: 13, color: C.accent, fontStyle: "italic", fontWeight: 600 }}>{ov.tip && ov.tip.trim() ? '"' + ov.tip + '"' : ""}</span>
+                                                                        {(() => {
+                                                                            const sr = pred && pred.playerContext ? (pred.playerContext.strikerSR || 0) : 0;
+                                                                            const eco = pred && pred.playerContext ? (pred.playerContext.bowlerEco || 8) : 8;
+                                                                            const bnd = pred && pred.playerContext ? (pred.playerContext.boundaryPct || 0) : 0;
+                                                                            const l3r = pred && pred.playerContext ? (pred.playerContext.last3Runs || 0) : 0;
+                                                                            const wkp = ov.wicketProb || 0;
+                                                                            let eng;
+                                                                            if (sr > 150 && eco > 8.5) { eng = 'Batter on fire (SR ' + Math.round(sr) + ') vs expensive bowler  -  big over incoming'; }
+                                                                            else if (sr > 150) { eng = 'Aggressive batter (SR ' + Math.round(sr) + ') in control  -  expect ' + ov.runRange + ' runs'; }
+                                                                            else if (eco < 6) { eng = 'Bowler on top (Eco ' + eco.toFixed(1) + ')  -  tough to score freely'; }
+                                                                            else if (wkp > 25) { eng = 'Wicket danger (' + wkp + '%)  -  could be a turning point'; }
+                                                                            else if (l3r > 25) { eng = 'Last 3 overs were HOT (' + l3r + 'r)  -  momentum with batting team'; }
+                                                                            else { eng = 'Balanced contest  -  ML predicts ' + ov.runRange + ' runs'; }
+                                                                            return (
+                                                                                <div style={{ marginTop: 6, padding: '6px 10px', background: 'rgba(255,255,255,0.07)', borderRadius: 6, borderLeft: '3px solid #4A90D9' }}>
+                                                                                    <span style={{ fontSize: 12, color: "#FFFFFF", fontWeight: 600 }}>{eng}</span>
+                                                                                </div>
+                                                                            );
+                                                                        })()}
+                                                                    </div>
+                                                                </>
+                                                            )}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
                                         </div>
-                                        <div className="card" style={{ padding: 22 }}>
-                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>Match intel</div>
-                                            {pred.pressureScore !== undefined && (
-                                                <div style={{ marginBottom: 14 }}>
-                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                                                        <span style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PRESSURE INDEX</span>
-                                                        <span style={{ fontSize: 13, fontWeight: 900, color: pred.pressureScore > 70 ? C.red : pred.pressureScore > 45 ? C.amber : C.green }}>
-                                                            {pred.pressureScore > 75 ? "CRITICAL" : pred.pressureScore > 55 ? "HIGH" : pred.pressureScore > 35 ? "MODERATE" : "LOW"} {pred.pressureScore}/100
-                                                        </span>
-                                                    </div>
-                                                    <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 6, overflow: "hidden" }}>
-                                                        <div style={{ height: "100%", width: pred.pressureScore + "%", borderRadius: 6, transition: "width 0.6s ease", background: pred.pressureScore > 70 ? "linear-gradient(90deg,#E53E3E,#FF6B6B)" : pred.pressureScore > 45 ? "linear-gradient(90deg,#DD6B20,#F6AD55)" : "linear-gradient(90deg,#276749,#68D391)" }} />
-                                                    </div>
-                                                </div>
+                                        <div style={{ position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 14 }}>
+                                            {pred && pred.batters && pred.batters.length > 0 && (
+                                                <LiveScorecard batters={pred.batters} bowler={pred.bowler || {}} />
                                             )}
-                                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
-                                                <div>
-                                                    <div style={{ fontSize: 10, color: C.green, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>STRENGTHS</div>
-                                                    {(pred.strengths || pred.pitchStrengths || []).map((s, i) => (
-                                                        <div key={i} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.green }}>+</span>{s}</div>
-                                                    ))}
+                                            <div className="card" style={{ padding: 22 }}>
+                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>Win probability</div>
+                                                <div style={{ fontSize: 15, fontWeight: 800, color: winColor, marginBottom: 8, letterSpacing: 0.3 }}>{winMsg}</div>
+                                                <div style={{ display: "flex", justifyContent: "center", margin: "4px 0 10px" }}><WinArc value={prob} /></div>
+                                                <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>Based on current innings, pitch conditions, and 21,300 historical T20 matches — updated every ball.</div>
+                                            </div>
+                                            <div className="card" style={{ padding: 22 }}>
+                                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>Match intel</div>
+                                                {pred.pressureScore !== undefined && (
+                                                    <div style={{ marginBottom: 14 }}>
+                                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                                                            <span style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PRESSURE INDEX</span>
+                                                            <span style={{ fontSize: 13, fontWeight: 900, color: pred.pressureScore > 70 ? C.red : pred.pressureScore > 45 ? C.amber : C.green }}>
+                                                                {pred.pressureScore > 75 ? "CRITICAL" : pred.pressureScore > 55 ? "HIGH" : pred.pressureScore > 35 ? "MODERATE" : "LOW"} {pred.pressureScore}/100
+                                                            </span>
+                                                        </div>
+                                                        <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 6, overflow: "hidden" }}>
+                                                            <div style={{ height: "100%", width: pred.pressureScore + "%", borderRadius: 6, transition: "width 0.6s ease", background: pred.pressureScore > 70 ? "linear-gradient(90deg,#E53E3E,#FF6B6B)" : pred.pressureScore > 45 ? "linear-gradient(90deg,#DD6B20,#F6AD55)" : "linear-gradient(90deg,#276749,#68D391)" }} />
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+                                                    <div>
+                                                        <div style={{ fontSize: 10, color: C.green, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>STRENGTHS</div>
+                                                        {(pred.strengths || pred.pitchStrengths || []).map((s, i) => (
+                                                            <div key={i} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.green }}>+</span>{s}</div>
+                                                        ))}
+                                                    </div>
+                                                    <div>
+                                                        <div style={{ fontSize: 10, color: C.red, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>RISKS</div>
+                                                        {(pred.weaknesses || pred.pitchRisks || []).map((w, i) => (
+                                                            <div key={i} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.red }}>-</span>{w}</div>
+                                                        ))}
+                                                    </div>
                                                 </div>
+                                                <div style={{ background: C.bg, borderRadius: 8, padding: "10px 12px", fontSize: 12, color: C.muted }}>{pred.weatherImpact?.tip || "Bright conditions favour batters."}</div>
+                                            </div>
+                                        </div>
+                                        <NextOverIntelligence pred={pred} />
+                                        {pred.toss && (
+                                            <div style={{ background: "linear-gradient(135deg,#1E2D6B,#253580)", borderRadius: 14, padding: "14px 18px", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
                                                 <div>
-                                                    <div style={{ fontSize: 10, color: C.red, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>RISKS</div>
-                                                    {(pred.weaknesses || pred.pitchRisks || []).map((w, i) => (
-                                                        <div key={i} style={{ fontSize: 11, marginBottom: 5, display: "flex", gap: 5 }}><span style={{ color: C.red }}>-</span>{w}</div>
-                                                    ))}
+                                                    <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 2 }}>TOSS</div>
+                                                    <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{pred.toss.winner} won - elected to {pred.toss.decision}</div>
+                                                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>{pred.tossTip || ""}</div>
                                                 </div>
                                             </div>
-                                            <div style={{ background: C.bg, borderRadius: 8, padding: "10px 12px", fontSize: 12, color: C.muted }}>{pred.weatherImpact?.tip || "Bright conditions favour batters."}</div>
-                                        </div>
-                                    </div>
-                                    <NextOverIntelligence pred={pred} />
-                                    {pred.toss && (
-                                        <div style={{ background: "linear-gradient(135deg,#1E2D6B,#253580)", borderRadius: 14, padding: "14px 18px", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
-                                            <div>
-                                                <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 2 }}>TOSS</div>
-                                                <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{pred.toss.winner} won - elected to {pred.toss.decision}</div>
-                                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>{pred.tossTip || ""}</div>
-                                            </div>
-                                        </div>
-                                    )}
+                                        )}
                                     </div>
                                     <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
                                         <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
@@ -1315,59 +1321,59 @@ body { background: ${C.bg}; }
                                         </div>
                                     </div>
                                     <ClaudeAnalysis pred={pred} selectedMatch={selectedMatch} />
-                                </>
-                        )}
-                    </main>
-                    <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14 }}>
-                        {pred && pred.team1 && (
-                            <div style={{ background: C.bg, borderRadius: 12, padding: "14px" }}>
-                                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.5, marginBottom: 12 }}>MATCH CONTEXT</div>
-                                {[
-                                    ["Format", pred.matchType?.toUpperCase() || "T20"],
-                                    ["Phase", pred.currentPhase || "—"],
-                                    ["Pitch", pred.pitchLabel || "—"],
-                                    ["Weather", pred.weatherImpact?.condition || "—"],
-                                ].map(([l, v]) => (
-                                    <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
-                                        <span style={{ fontSize: 11, color: C.muted }}>{l}</span>
-                                        <span style={{ fontSize: 11, fontWeight: 700, color: C.text, maxWidth: 110, textAlign: "right" }}>{v}</span>
-                                    </div>
-                                ))}
-                                {pred.toss && (
-                                    <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9, marginTop: 4 }}>
-                                        <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>TOSS</div>
-                                        <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{pred.toss.winner} won · {pred.toss.decision}</div>
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                        {pred && pred.team1 && (
-                            <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,184,0,0.3)", background: "linear-gradient(135deg, #1A2560, #1E3A8A)" }}>
-                                <div style={{ padding: "12px 14px" }}>
-                                    <div style={{ fontSize: 9, color: "rgba(255,184,0,0.7)", fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>LIVE ODDS</div>
-                                    <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginBottom: 2 }}>{cleanTeam(pred.team1)} win</div>
-                                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
-                                        <div style={{ fontSize: 28, fontWeight: 900, color: prob >= 60 ? "#00FF94" : prob <= 40 ? "#FF4444" : "#FFB800", lineHeight: 1 }}>{prob}%</div>
-                                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>AI<br/>probability</div>
-                                    </div>
-                                    <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
-                                        style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#FFB800", borderRadius: 8, padding: "10px 14px", textDecoration: "none", fontWeight: 800, fontSize: 13, color: "#1A1A1A" }}>
-                                        Bet on 1xBet →
-                                    </a>
                                 </div>
-                                <div style={{ padding: "6px 14px 10px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-                                    <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", textAlign: "center", lineHeight: 1.5 }}>
-                                        18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: "rgba(255,255,255,0.3)" }}>BeGambleAware.org</a>
+                        )}
+                            </main>
+                        <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14 }}>
+                            {pred && pred.team1 && (
+                                <div style={{ background: C.bg, borderRadius: 12, padding: "14px" }}>
+                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.5, marginBottom: 12 }}>MATCH CONTEXT</div>
+                                    {[
+                                        ["Format", pred.matchType?.toUpperCase() || "T20"],
+                                        ["Phase", pred.currentPhase || "—"],
+                                        ["Pitch", pred.pitchLabel || "—"],
+                                        ["Weather", pred.weatherImpact?.condition || "—"],
+                                    ].map(([l, v]) => (
+                                        <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
+                                            <span style={{ fontSize: 11, color: C.muted }}>{l}</span>
+                                            <span style={{ fontSize: 11, fontWeight: 700, color: C.text, maxWidth: 110, textAlign: "right" }}>{v}</span>
+                                        </div>
+                                    ))}
+                                    {pred.toss && (
+                                        <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9, marginTop: 4 }}>
+                                            <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>TOSS</div>
+                                            <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{pred.toss.winner} won · {pred.toss.decision}</div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                            {pred && pred.team1 && (
+                                <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,184,0,0.3)", background: "linear-gradient(135deg, #1A2560, #1E3A8A)" }}>
+                                    <div style={{ padding: "12px 14px" }}>
+                                        <div style={{ fontSize: 9, color: "rgba(255,184,0,0.7)", fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>LIVE ODDS</div>
+                                        <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginBottom: 2 }}>{cleanTeam(pred.team1)} win</div>
+                                        <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
+                                            <div style={{ fontSize: 28, fontWeight: 900, color: prob >= 60 ? "#00FF94" : prob <= 40 ? "#FF4444" : "#FFB800", lineHeight: 1 }}>{prob}%</div>
+                                            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>AI<br />probability</div>
+                                        </div>
+                                        <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
+                                            style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#FFB800", borderRadius: 8, padding: "10px 14px", textDecoration: "none", fontWeight: 800, fontSize: 13, color: "#1A1A1A" }}>
+                                            Bet on 1xBet →
+                                        </a>
+                                    </div>
+                                    <div style={{ padding: "6px 14px 10px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                                        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", textAlign: "center", lineHeight: 1.5 }}>
+                                            18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: "rgba(255,255,255,0.3)" }}>BeGambleAware.org</a>
+                                        </div>
                                     </div>
                                 </div>
+                            )}
+                            <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center", marginTop: "auto" }}>
+                                <a href="/about" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>About Us</a>
+                                <span style={{ color: C.border, margin: "0 6px" }}>·</span>
+                                <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>Contact</a>
                             </div>
-                        )}
-                        <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center", marginTop: "auto" }}>
-                            <a href="/about" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>About Us</a>
-                            <span style={{ color: C.border, margin: "0 6px" }}>·</span>
-                            <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>Contact</a>
-                        </div>
-                    </aside>
+                        </aside>
                 </div>
             )}
             {activeTab === "matches" && (
