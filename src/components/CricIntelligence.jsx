@@ -1319,12 +1319,12 @@ body { background: ${C.bg}; }
                                                 <div style={{ fontSize: 15, fontWeight: 700 }}>{pred.pitchLabel || ""}</div>
                                                 <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || ""}</div>
                                             </div>
+                                            </div>
                                         </div>
                                     <ClaudeAnalysis pred={pred} selectedMatch={selectedMatch} />
-                                    
+                                        </>
                         )}
                                     </main>
-                            
                         <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14 }}>
                             {pred && pred.team1 && (
                                 <div style={{ background: C.bg, borderRadius: 12, padding: "14px" }}>
@@ -1375,7 +1375,6 @@ body { background: ${C.bg}; }
                                 <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>Contact</a>
                             </div>
                                     </aside>
-                                </>
                 </div>
             )}
             {activeTab === "matches" && (
