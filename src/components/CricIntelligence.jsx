@@ -149,6 +149,7 @@ function NextOverIntelligence({ pred }) {
         const rr = h.over > 0 ? h.runs / h.over : 8;
         return Math.max(8, Math.round((rr / 16) * 44));
     });
+    const [pitchData, setPitchData] = useState(null);
     const predBarH = Math.max(8, Math.round((ov1.expectedRuns / 16) * 44));
     const CSS2 = `@keyframes blink2 { 0%,100%{opacity:1} 50%{opacity:0.3} } @keyframes labelPulse { 0%,100%{box-shadow: 0 0 12px currentColor, 0 2px 8px rgba(0,0,0,0.2)} 50%{box-shadow: 0 0 24px currentColor, 0 4px 16px rgba(0,0,0,0.3)} }`;
     return (
@@ -247,24 +248,77 @@ function NextOverIntelligence({ pred }) {
                     </div>
                 </div>
             )}
-            <div style={{ background: "#fff", border: "0.5px solid #E2E8F0", borderRadius: 12, padding: 14 }}>
-                <div style={{ fontSize: 12, color: "#64748B", marginBottom: 10 }}>Pitch behaviour now</div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-                    <div style={{ textAlign: "center", padding: "10px 6px", background: "#EEF2FF", borderRadius: 8 }}>
-                        <div style={{ fontSize: 18, fontWeight: 500, color: spinBoost > 5 ? "#BA7517" : "#64748B" }}>{spinBoost > 0 ? `+${spinBoost}%` : "-"}</div>
-                        <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>Spin turn</div>
-                    </div>
-                    <div style={{ textAlign: "center", padding: "10px 6px", background: "#EEF2FF", borderRadius: 8 }}>
-                        <div style={{ fontSize: 18, fontWeight: 500, color: "#0A0A0A" }}>{pitchCond.split(" ")[0]}</div>
-                        <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>Surface</div>
-                    </div>
-                    <div style={{ textAlign: "center", padding: "10px 6px", background: dewSoon ? "#E6F1FB" : "#EEF2FF", borderRadius: 8 }}>
-                        <div style={{ fontSize: 18, fontWeight: 500, color: dewSoon ? "#185FA5" : "#64748B" }}>{dewSoon ? "Soon" : "None"}</div>
-                        <div style={{ fontSize: 11, color: "#64748B", marginTop: 3 }}>Dew factor</div>
-                    </div>
-                </div>
-            </div>
+           <div style={{background:'#fff', border:'0.5px solid #E2E8F0', borderRadius:12, padding:14}}>
+  <div style={{fontSize:12, color:'#64748B', marginBottom:8}}>Pitch behaviour now</div>
+
+  {pitchData ? (
+    <div>
+      {/* Soil + Venue */}
+      <div style={{fontSize:11, fontWeight:600, color:'#334155', marginBottom:6}}>
+        🏟️ {pitchData.soil_type} · Bounce: {pitchData.bounce}
+      </div>
+
+      {/* 3 boxes */}
+      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:6, marginBottom:8}}>
+        <div style={{textAlign:'center', padding:'8px 4px', background:'#EEF2FF', borderRadius:8}}>
+          <div style={{fontSize:15, fontWeight:600, color:'#7C3AED'}}>{pitchData.pace_factor}</div>
+          <div style={{fontSize:10, color:'#64748B'}}>Pace</div>
         </div>
+        <div style={{textAlign:'center', padding:'8px 4px', background:'#EEF2FF', borderRadius:8}}>
+          <div style={{fontSize:15, fontWeight:600, color:'#0891B2'}}>{pitchData.spin_factor}</div>
+          <div style={{fontSize:10, color:'#64748B'}}>Spin · ov {pitchData.spin_starts_over}+</div>
+        </div>
+        <div style={{textAlign:'center', padding:'8px 4px',
+          background: pitchData.evolution?.dew_active ? '#E6F1FB' : '#EEF2FF', borderRadius:8}}>
+          <div style={{fontSize:13, fontWeight:600,
+            color: pitchData.evolution?.dew_active ? '#185FA5' : '#64748B'}}>
+            {pitchData.dew_risk}
+          </div>
+          <div style={{fontSize:10, color:'#64748B'}}>Dew risk</div>
+        </div>
+      </div>
+
+      {/* Dominant */}
+      <div style={{fontSize:11, fontWeight:600, marginBottom:4}}>
+        {pitchData.evolution?.dominant_type === 'Spin' ? '🌀' :
+         pitchData.evolution?.dominant_type === 'Pace' ? '⚡' : '🔄'} {pitchData.evolution?.dominant_type}
+      </div>
+
+      {/* Factors */}
+      {pitchData.evolution?.key_factors?.map((f, i) => (
+        <div key={i} style={{fontSize:10, color:'#475569', marginBottom:2}}>• {f}</div>
+      ))}
+
+      {/* Expected runs */}
+      <div style={{marginTop:6, padding:'4px 8px', background:'#F1F5F9', borderRadius:6}}>
+        <span style={{fontSize:11, color:'#334155'}}>
+          📊 Next 3 overs: <strong>{pitchData.expected_runs_next_3_overs} runs</strong>
+        </span>
+      </div>
+    </div>
+  ) : (
+    /* Original fallback */
+    <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8}}>
+      <div style={{textAlign:'center', padding:'10px 6px', background:'#EEF2FF', borderRadius:8}}>
+        <div style={{fontSize:18, fontWeight:500, color: spinTurn > 5 ? '#BA7517':'#64748B'}}>
+          {spinTurn > 0 ? `+${spinTurn}%` : '-'}
+        </div>
+        <div style={{fontSize:11, color:'#64748B', marginTop:3}}>Spin turn</div>
+      </div>
+      <div style={{textAlign:'center', padding:'10px 6px', background:'#EEF2FF', borderRadius:8}}>
+        <div style={{fontSize:18, fontWeight:500}}>{pitchCondition?.split(' ')[0]}</div>
+        <div style={{fontSize:11, color:'#64748B', marginTop:3}}>Surface</div>
+      </div>
+      <div style={{textAlign:'center', padding:'10px 6px',
+        background: dewFactor ? '#E6F1FB':'#EEF2FF', borderRadius:8}}>
+        <div style={{fontSize:18, fontWeight:500, color: dewFactor ? '#185FA5':'#64748B'}}>
+          {dewFactor ? 'Soon' : 'None'}
+        </div>
+        <div style={{fontSize:11, color:'#64748B', marginTop:3}}>Dew factor</div>
+      </div>
+    </div>
+  )}
+</div>
     );
 }
 
@@ -882,6 +936,11 @@ export default function CricIntelligence() {
             const scorecardPromise = curMatchId
                 ? fetch(`${API_BASE}/match/${curMatchId}`).then(r => r.ok ? r.json() : null).catch(() => null)
                 : Promise.resolve(null);
+
+            const pitchPromise = curMatchId
+              ? fetch(`${API_BASE}/match/${curMatchId}/pitch-analysis?venue=${encodeURIComponent(matchVenue || '')}&over=${currentOver || 1}`)
+              .then(r => r.ok ? r.json() : null).catch(() => null)
+              : Promise.resolve(null);
 
             // All three fire at the same time
             const [matchesData, predData, scorecardData] = await Promise.all([matchesPromise, predPromise, scorecardPromise]);
