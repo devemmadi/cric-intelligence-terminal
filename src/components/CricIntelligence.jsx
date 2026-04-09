@@ -972,8 +972,12 @@ export default function CricIntelligence() {
                 const mMatch = mList.find(mx => mx.t1 === merged.team1 || mx.team1 === merged.team1);
                 merged.team1ImageId = mMatch?.t1ImageId || 0;
                 merged.team2ImageId = mMatch?.t2ImageId || 0;
-                setPred(merged);
-                setIsPredLoading(false);
+                // Only update pred if it's still the match user wants
+                const currentId = selectedMatchRef.current?.matchId;
+                if (!currentId || !merged.id || String(merged.id) === String(currentId)) {
+                    setPred(merged);
+                    setIsPredLoading(false);
+                }
                 try {
                     localStorage.setItem("ci_pred_cache", JSON.stringify(merged));
                     if (merged.id) localStorage.setItem("ci_pred_" + merged.id, JSON.stringify(merged));
@@ -1093,9 +1097,8 @@ body { background: ${C.bg}; }
                                             try {
                                                 const cached = localStorage.getItem("ci_pred_" + m.matchId);
                                                 if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); }
-                                                else setIsPredLoading(true);
-                                            } catch { setIsPredLoading(true); }
-                                            fetchLiveData(m.matchId);
+                                                else { setPred(null); setIsPredLoading(true); }
+                                            } catch { setPred(null); setIsPredLoading(true); }
                                         }} />
                                 ))}
                             </>
@@ -1112,9 +1115,8 @@ body { background: ${C.bg}; }
                                             try {
                                                 const cached = localStorage.getItem("ci_pred_" + m.matchId);
                                                 if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); }
-                                                else setIsPredLoading(true);
-                                            } catch { setIsPredLoading(true); }
-                                            fetchLiveData(m.matchId);
+                                                else { setPred(null); setIsPredLoading(true); }
+                                            } catch { setPred(null); setIsPredLoading(true); }
                                         }} />
                                 ))}
                             </>
@@ -1131,9 +1133,8 @@ body { background: ${C.bg}; }
                                             try {
                                                 const cached = localStorage.getItem("ci_pred_" + m.matchId);
                                                 if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); }
-                                                else setIsPredLoading(true);
-                                            } catch { setIsPredLoading(true); }
-                                            fetchLiveData(m.matchId);
+                                                else { setPred(null); setIsPredLoading(true); }
+                                            } catch { setPred(null); setIsPredLoading(true); }
                                         }} />
                                 ))}
                             </>
