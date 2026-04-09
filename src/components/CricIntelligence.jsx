@@ -1320,9 +1320,10 @@ body { background: ${C.bg}; }
                                             </div>
                                         </div>
                                     </div>
-                                    <ClaudeAnalysis pred={pred} selectedMatch={selectedMatch} />
                                 </div>
+                                <ClaudeAnalysis pred={pred} selectedMatch={selectedMatch} />
                         )}
+
                             </main>
                         <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14 }}>
                             {pred && pred.team1 && (
