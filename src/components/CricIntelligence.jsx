@@ -300,7 +300,7 @@ function NextOverIntelligence({ pred }) {
     );
 }
 function MatchPill({ m, selected, onClick }) {
-    const isLive = m.isLive;
+    const isLive = m.isLive || (m.matchStarted && !m.matchEnded);
     const isEnded = m.matchEnded;
     const getLeague = () => {
         const n = (m.name || '').toUpperCase();
@@ -846,6 +846,7 @@ export default function CricIntelligence() {
                             status = "UPCOMING";
                         }
                         return {
+                            ...m,
                             id: m.id || i, matchId: m.id,
                             t1: cleanTeam(m.team1 || m.teams?.[0] || "TBD"),
                             t2: cleanTeam(m.team2 || m.teams?.[1] || "TBD"),
