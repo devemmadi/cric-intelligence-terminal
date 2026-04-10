@@ -797,12 +797,12 @@ export default function CricIntelligence() {
                 ? fetch(`${API_BASE}/match/${curMatchId}`).then(r => r.ok ? r.json() : null).catch(() => null)
                 : Promise.resolve(null);
             // FIX: use predRef.current instead of undefined matchVenue/currentOver
-            const currentPred = predRef.current;
-            const pitchPromise = curMatchId
-                ? fetch(`${API_BASE}/match/${curMatchId}/pitch-analysis?venue=${encodeURIComponent(matchData?.venue || '')}&over=${matchData?.currentOver || 1}`)
-              .then(r => r.ok ? r.json() : null).catch(() => null)
-               : Promise.resolve(null);
-            const [matchesData, predData, scorecardData, pitchAnalysisData] = await Promise.all([matchesPromise, predPromise, scorecardPromise, pitchPromise]);
+            //const currentPred = predRef.current;
+            //const pitchPromise = curMatchId
+             //   ? fetch(`${API_BASE}/match/${curMatchId}/pitch-analysis?venue=${encodeURIComponent(matchData?.venue || '')}&over=${matchData?.currentOver || 1}`)
+            //  .then(r => r.ok ? r.json() : null).catch(() => null)
+           //    : Promise.resolve(null);
+           const [matchesData, predData, scorecardData] = await Promise.all([matchesPromise, predPromise, scorecardPromise]);
             if (matchesData) {
                 const list = Array.isArray(matchesData) ? matchesData : matchesData.data || [];
                 if (list.length) {
