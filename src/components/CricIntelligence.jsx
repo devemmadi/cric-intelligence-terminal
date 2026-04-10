@@ -144,7 +144,7 @@ function NextOverIntelligence({ pred }) {
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
                 <div style={{ background: "#1E2D6B", border: "2px solid #60A5FA", borderRadius: 12, padding: 14, boxShadow: "0 0 16px rgba(96,165,250,0.3)" }}>
-                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>NOW · Over {ov1.over}</div>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>NOW Â· Over {ov1.over}</div>
                     <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
                         <span style={{ fontSize: 32, fontWeight: 900, color: "#FFFFFF" }}>{ov1.runRange}</span>
                         <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)" }}>runs expected</span>
@@ -161,7 +161,7 @@ function NextOverIntelligence({ pred }) {
                     <div style={{ marginBottom: 10 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
                             <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>Wicket risk</span>
-                            <span style={{ fontSize: 13, fontWeight: 800, color: ov1.wicketProb > 40 ? "#ef4444" : ov1.wicketProb > 25 ? "#f59e0b" : "#22c55e" }}>{wicketLabel1} · {ov1.wicketProb}%</span>
+                            <span style={{ fontSize: 13, fontWeight: 800, color: ov1.wicketProb > 40 ? "#ef4444" : ov1.wicketProb > 25 ? "#f59e0b" : "#22c55e" }}>{wicketLabel1} Â· {ov1.wicketProb}%</span>
                         </div>
                         <div style={{ height: 6, background: "rgba(255,255,255,0.12)", borderRadius: 4, overflow: "hidden" }}>
                             <div style={{ width: `${ov1.wicketProb}%`, height: "100%", background: ov1.wicketProb > 40 ? "#ef4444" : ov1.wicketProb > 25 ? "#f59e0b" : "#22c55e", borderRadius: 4 }} />
@@ -174,7 +174,7 @@ function NextOverIntelligence({ pred }) {
                     </div>
                 </div>
                 <div style={{ background: "#111A3E", border: "1.5px dashed rgba(255,255,255,0.2)", borderRadius: 12, padding: 14, opacity: 0.85 }}>
-                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>NEXT · Over {ov2.over}</div>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>NEXT Â· Over {ov2.over}</div>
                     <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
                         <span style={{ fontSize: 32, fontWeight: 900, color: "rgba(255,255,255,0.7)" }}>{ov2.runRange}</span>
                         <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>runs expected</span>
@@ -191,7 +191,7 @@ function NextOverIntelligence({ pred }) {
                     <div style={{ marginBottom: 10 }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
                             <span style={{ fontSize: 11, color: "#64748B" }}>Wicket risk</span>
-                            <span style={{ fontSize: 13, fontWeight: 800, color: ov2.wicketProb > 40 ? "#ef4444" : ov2.wicketProb > 25 ? "#f59e0b" : "#22c55e" }}>{wicketLabel2} · {ov2.wicketProb}%</span>
+                            <span style={{ fontSize: 13, fontWeight: 800, color: ov2.wicketProb > 40 ? "#ef4444" : ov2.wicketProb > 25 ? "#f59e0b" : "#22c55e" }}>{wicketLabel2} Â· {ov2.wicketProb}%</span>
                         </div>
                         <div style={{ height: 6, background: "#EEF2FF", borderRadius: 4, overflow: "hidden" }}>
                             <div style={{ width: `${ov2.wicketProb}%`, height: "100%", background: ov2.wicketProb > 40 ? "#ef4444" : ov2.wicketProb > 25 ? "#f59e0b" : "#22c55e", borderRadius: 4 }} />
@@ -212,7 +212,7 @@ function NextOverIntelligence({ pred }) {
                     </div>
                     <div style={{ display: "flex", alignItems: "flex-end", gap: 6, height: 80 }}>
                         {history.slice(-4).map((h, i) => {
-                            const rr = h.over > 0 ? (h.runs / h.over).toFixed(1) : "—";
+                            const rr = h.over > 0 ? (h.runs / h.over).toFixed(1) : "â";
                             const bh = Math.max(12, Math.round((parseFloat(rr) / 16) * 70));
                             return (
                                 <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
@@ -235,7 +235,7 @@ function NextOverIntelligence({ pred }) {
                 {pitchData ? (
                     <div>
                         <div style={{ fontSize: 11, fontWeight: 600, color: '#334155', marginBottom: 6 }}>
-                            🏟️ {pitchData.soil_type} · Bounce: {pitchData.bounce}
+                            ðï¸ {pitchData.soil_type} Â· Bounce: {pitchData.bounce}
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 6, marginBottom: 8 }}>
                             <div style={{ textAlign: 'center', padding: '8px 4px', background: '#EEF2FF', borderRadius: 8 }}>
@@ -244,7 +244,7 @@ function NextOverIntelligence({ pred }) {
                             </div>
                             <div style={{ textAlign: 'center', padding: '8px 4px', background: '#EEF2FF', borderRadius: 8 }}>
                                 <div style={{ fontSize: 15, fontWeight: 600, color: '#0891B2' }}>{pitchData.spin_factor}</div>
-                                <div style={{ fontSize: 10, color: '#64748B' }}>Spin · ov {pitchData.spin_starts_over}+</div>
+                                <div style={{ fontSize: 10, color: '#64748B' }}>Spin Â· ov {pitchData.spin_starts_over}+</div>
                             </div>
                             <div style={{
                                 textAlign: 'center', padding: '8px 4px',
@@ -260,15 +260,15 @@ function NextOverIntelligence({ pred }) {
                             </div>
                         </div>
                         <div style={{ fontSize: 11, fontWeight: 600, marginBottom: 4 }}>
-                            {pitchData.evolution?.dominant_type === 'Spin' ? '🌀' :
-                                pitchData.evolution?.dominant_type === 'Pace' ? '⚡' : '🔄'} {pitchData.evolution?.dominant_type}
+                            {pitchData.evolution?.dominant_type === 'Spin' ? 'ð' :
+                                pitchData.evolution?.dominant_type === 'Pace' ? 'â¡' : 'ð'} {pitchData.evolution?.dominant_type}
                         </div>
                         {pitchData.evolution?.key_factors?.map((f, i) => (
-                            <div key={i} style={{ fontSize: 10, color: '#475569', marginBottom: 2 }}>• {f}</div>
+                            <div key={i} style={{ fontSize: 10, color: '#475569', marginBottom: 2 }}>â¢ {f}</div>
                         ))}
                         <div style={{ marginTop: 6, padding: '4px 8px', background: '#F1F5F9', borderRadius: 6 }}>
                             <span style={{ fontSize: 11, color: '#334155' }}>
-                                📊 Next 3 overs: <strong>{pitchData.expected_runs_next_3_overs} runs</strong>
+                                ð Next 3 overs: <strong>{pitchData.expected_runs_next_3_overs} runs</strong>
                             </span>
                         </div>
                     </div>
@@ -326,7 +326,7 @@ function MatchPill({ m, selected, onClick }) {
                 <span style={{ fontSize: 10, color: '#94A3B8' }}>{m.matchType?.toUpperCase()}</span>
                 <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20,
                     background: isLive ? '#FFF0F0' : '#F1F5F9', color: isLive ? '#E53E3E' : league.color }}>
-                    {isLive ? '● LIVE' : league.label}
+                    {isLive ? 'â LIVE' : league.label}
                 </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
@@ -366,7 +366,7 @@ function MatchCard({ m, onClick }) {
             ))}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8, paddingTop: 8, borderTop: "0.5px solid #E2E8F0" }}>
                 <div style={{ fontSize: 11, fontWeight: 600, color: m.status === "ENDED" ? "#64748B" : m.status === "UPCOMING" ? "#1E2D6B" : "#00B894" }}>
-                    {m.status === "ENDED" ? "View result →" : m.status === "UPCOMING" ? "Pre-match prediction →" : "View live prediction →"}
+                    {m.status === "ENDED" ? "View result â" : m.status === "UPCOMING" ? "Pre-match prediction â" : "View live prediction â"}
                 </div>
                 {m.status === "LIVE" && (
                     <div style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 10, color: "#E53E3E", fontWeight: 700 }}>
@@ -407,7 +407,7 @@ function MediaSection() {
                     <a key={i} href={url || "#"} target="_blank" rel="noreferrer" style={{ textDecoration: "none" }}>
                         <div className="card" style={{ padding: 0, marginBottom: 10, cursor: "pointer", display: "flex", overflow: "hidden", minHeight: 80 }}>
                             <div style={{ width: 80, minWidth: 80, background: thumbColors[i % thumbColors.length], display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 4 }}>
-                                <div style={{ fontSize: 20 }}>🏏</div>
+                                <div style={{ fontSize: 20 }}>ð</div>
                                 <div style={{ fontSize: 9, color: "rgba(255,255,255,0.6)", textAlign: "center", padding: "0 4px" }}>{source}</div>
                             </div>
                             <div style={{ padding: "12px 14px", flex: 1 }}>
@@ -416,7 +416,7 @@ function MediaSection() {
                                     <span style={{ fontSize: 10, color: C2.muted }}>{time}</span>
                                 </div>
                                 <div style={{ fontSize: 13, fontWeight: 600, lineHeight: 1.45, color: C2.text }}>{title}</div>
-                                <div style={{ fontSize: 11, color: C2.accent, marginTop: 5, fontWeight: 500 }}>Read more →</div>
+                                <div style={{ fontSize: 11, color: C2.accent, marginTop: 5, fontWeight: 500 }}>Read more â</div>
                             </div>
                         </div>
                     </a>
@@ -434,7 +434,7 @@ const IPL_2026_SCHEDULE = [
     { t1: "CSK", t2: "RCB", venue: "MA Chidambaram Stadium, Chennai", date: "Mar 27, 2026", time: "3:30 PM IST" },
 ];
 const CRICKET_INSIGHTS = [
-    { title: "How AI Predicts Cricket Win Probability", summary: "Machine learning models trained on over 1.7 million historical matches can identify patterns humans miss — from pitch conditions to bowling matchups. CricIntelligence uses a multi-layer model that updates every ball.", tag: "AI & Cricket", readTime: "4 min read" },
+    { title: "How AI Predicts Cricket Win Probability", summary: "Machine learning models trained on over 1.7 million historical matches can identify patterns humans miss â from pitch conditions to bowling matchups. CricIntelligence uses a multi-layer model that updates every ball.", tag: "AI & Cricket", readTime: "4 min read" },
     { title: "IPL 2026 Season Preview: Key Stats & AI Predictions", summary: "IPL 2026 promises to be one of the most competitive seasons yet. With teams reshuffled after the mega auction, our AI models have re-trained on latest form data to deliver more accurate over-by-over predictions.", tag: "IPL 2026", readTime: "5 min read" },
     { title: "Powerplay vs Death Overs: What the Data Says", summary: "Analysis of 50,000+ T20 innings reveals that death-over run rate is 40% more predictable than powerplay. Our model weights this insight to improve accuracy in the final 5 overs of any innings.", tag: "Analysis", readTime: "3 min read" },
     { title: "Pitch Conditions & Their Impact on Match Outcomes", summary: "From the turning tracks of Chepauk to the pace-friendly surfaces of Perth, venue data accounts for up to 18% of our win probability model's final output.", tag: "Venue Intelligence", readTime: "4 min read" },
@@ -453,7 +453,7 @@ function NoMatchesScreen({ upcomingMatches }) {
     return (
         <div style={{ maxWidth: 860, margin: "0 auto", padding: "28px 20px 60px" }}>
             <div style={{ background: `linear-gradient(135deg, ${C.navy} 0%, #2A3F82 100%)`, borderRadius: 18, padding: "28px 28px 24px", marginBottom: 24, color: "#fff" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", letterSpacing: 2, marginBottom: 8, textTransform: "uppercase" }}>IPL 2026 · AI Predictions</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", letterSpacing: 2, marginBottom: 8, textTransform: "uppercase" }}>IPL 2026 Â· AI Predictions</div>
                 <h2 style={{ fontSize: 26, fontWeight: 900, margin: "0 0 8px", lineHeight: 1.2 }}>No Live Matches Right Now</h2>
                 <p style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", margin: "0 0 20px", lineHeight: 1.6, maxWidth: 480 }}>
                     Live predictions appear automatically when matches go live. Meanwhile, explore upcoming fixtures & cricket analysis below.
@@ -468,14 +468,14 @@ function NoMatchesScreen({ upcomingMatches }) {
                 </div>
             </div>
             <div style={{ display: "flex", gap: 8, marginBottom: 20, borderBottom: `1px solid ${C.border}`, paddingBottom: 0 }}>
-                {[["schedule", "📅 Upcoming Matches"], ["form", "📊 Team Form"], ["insights", "💡 Cricket Insights"]].map(([k, l]) => (
+                {[["schedule", "ð Upcoming Matches"], ["form", "ð Team Form"], ["insights", "ð¡ Cricket Insights"]].map(([k, l]) => (
                     <button key={k} onClick={() => setTab(k)} style={{ background: "none", border: "none", cursor: "pointer", padding: "10px 16px", fontSize: 13, fontWeight: tab === k ? 700 : 500, color: tab === k ? C.navy : C.muted, borderBottom: tab === k ? `2px solid ${C.navy}` : "2px solid transparent", marginBottom: -1, transition: "all .15s" }}>{l}</button>
                 ))}
             </div>
             {tab === "schedule" && (
                 <div>
                     <div style={{ fontSize: 13, color: C.muted, marginBottom: 16 }}>
-                        {scheduleMatches.length > 0 ? "Upcoming fixtures — predictions go live at match start" : "No upcoming matches found — check back soon"}
+                        {scheduleMatches.length > 0 ? "Upcoming fixtures â predictions go live at match start" : "No upcoming matches found â check back soon"}
                     </div>
                     {scheduleMatches.length > 0 ? scheduleMatches.map((m, i) => (
                         <div key={i} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "16px 20px", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
@@ -492,7 +492,7 @@ function NoMatchesScreen({ upcomingMatches }) {
                         </div>
                     )) : (
                         <div style={{ textAlign: "center", padding: "40px 20px", color: C.muted }}>
-                            <div style={{ fontSize: 32, marginBottom: 12 }}>🏏</div>
+                            <div style={{ fontSize: 32, marginBottom: 12 }}>ð</div>
                             <div style={{ fontSize: 15, fontWeight: 600 }}>No upcoming matches scheduled</div>
                             <div style={{ fontSize: 13, marginTop: 8 }}>Live predictions will appear here automatically when IPL 2026 matches are scheduled</div>
                         </div>
@@ -543,7 +543,7 @@ function NoMatchesScreen({ upcomingMatches }) {
                 </div>
             )}
             <div style={{ marginTop: 28, textAlign: "center", fontSize: 12, color: C.muted }}>
-                Page refreshes automatically every 30 seconds · Live predictions activate when a match starts
+                Page refreshes automatically every 30 seconds Â· Live predictions activate when a match starts
             </div>
         </div>
     );
@@ -570,7 +570,7 @@ function LiveScorecard({ batters, bowler }) {
                         return (
                             <div key={i} style={{ display: "grid", gridTemplateColumns: "1fr 36px 36px 52px", gap: 4, padding: "8px 4px", borderRadius: 8, background: b.isStriker ? "rgba(255,255,255,0.05)" : "transparent", marginBottom: 4, alignItems: "center" }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                    {b.isStriker ? <span style={{ fontSize: 10, color: "#22C55E", fontWeight: 900 }}>▶</span> : <span style={{ width: 10, display: "inline-block" }} />}
+                                    {b.isStriker ? <span style={{ fontSize: 10, color: "#22C55E", fontWeight: 900 }}>â¶</span> : <span style={{ width: 10, display: "inline-block" }} />}
                                     <div>
                                         <div style={{ fontSize: 12, fontWeight: b.isStriker ? 800 : 500, color: b.isStriker ? "#FFFFFF" : "#94A3B8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 85 }}>{b.name}</div>
                                         {b.isStriker && <div style={{ fontSize: 9, color: "#22C55E", fontWeight: 600, letterSpacing: 0.5 }}>ON STRIKE</div>}
@@ -597,7 +597,7 @@ function LiveScorecard({ batters, bowler }) {
                         </div>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 28px 28px 24px 44px", gap: 4, padding: "8px 4px", borderRadius: 8, background: "rgba(255,255,255,0.05)", alignItems: "center" }}>
                             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                <span style={{ fontSize: 10, color: "#F59E0B", fontWeight: 900 }}>⚡</span>
+                                <span style={{ fontSize: 10, color: "#F59E0B", fontWeight: 900 }}>â¡</span>
                                 <div>
                                     <div style={{ fontSize: 12, fontWeight: 700, color: "#FFFFFF", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 80 }}>{bowler.name}</div>
                                     <div style={{ fontSize: 9, color: "#F59E0B", fontWeight: 600, letterSpacing: 0.5 }}>BOWLING</div>
@@ -674,10 +674,10 @@ Be sharp, specific, bold. No vague statements.`;
                 <div style={{ padding: "4px 0" }}>
                     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
                         {[
-                            { icon: "🎯", label: "WIN PROB", value: `${pred.aiProbability || 50}%`, sub: pred.team1?.split(",")[0] || "Team 1", color: pred.aiProbability >= 60 ? "#00FF94" : pred.aiProbability <= 40 ? "#FF4444" : "#FFB800" },
-                            { icon: "⚡", label: "PRESSURE", value: `${pred.pressureScore || 0}/100`, sub: pred.pressureScore > 70 ? "Critical" : pred.pressureScore > 45 ? "High" : "Low", color: pred.pressureScore > 70 ? "#FF4444" : pred.pressureScore > 45 ? "#FFB800" : "#00FF94" },
-                            { icon: "📈", label: "RUN RATE", value: pred.currentRunRate || "—", sub: "runs / over", color: "#60A5FA" },
-                            { icon: "🏏", label: "PHASE", value: pred.currentPhase?.split(" ")[0] || "—", sub: pred.matchType?.toUpperCase() || "T20", color: "#a78bfa" },
+                            { icon: "ð¯", label: "WIN PROB", value: `${pred.aiProbability || 50}%`, sub: pred.team1?.split(",")[0] || "Team 1", color: pred.aiProbability >= 60 ? "#00FF94" : pred.aiProbability <= 40 ? "#FF4444" : "#FFB800" },
+                            { icon: "â¡", label: "PRESSURE", value: `${pred.pressureScore || 0}/100`, sub: pred.pressureScore > 70 ? "Critical" : pred.pressureScore > 45 ? "High" : "Low", color: pred.pressureScore > 70 ? "#FF4444" : pred.pressureScore > 45 ? "#FFB800" : "#00FF94" },
+                            { icon: "ð", label: "RUN RATE", value: pred.currentRunRate || "â", sub: "runs / over", color: "#60A5FA" },
+                            { icon: "ð", label: "PHASE", value: pred.currentPhase?.split(" ")[0] || "â", sub: pred.matchType?.toUpperCase() || "T20", color: "#a78bfa" },
                         ].map(({ icon, label, value, sub, color }) => (
                             <div key={label} style={{ background: "rgba(139,92,246,0.1)", borderRadius: 10, padding: "14px 16px", border: "1px solid rgba(139,92,246,0.25)" }}>
                                 <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 8 }}>
@@ -785,7 +785,7 @@ export default function CricIntelligence() {
             const t1 = pred.team1.split(",")[0].trim();
             const t2 = pred.team2.split(",")[0].trim();
             const prob = pred.aiProbability || 50;
-            document.title = `${t1} vs ${t2} — AI: ${prob}% Win Probability | CricIntelligence`;
+            document.title = `${t1} vs ${t2} â AI: ${prob}% Win Probability | CricIntelligence`;
         } else {
             document.title = "CricIntelligence - AI Cricket Predictions | Free IPL 2026";
         }
@@ -982,7 +982,7 @@ body { background: ${C.bg}; }
                     <Logo href="/" />
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
-                    {[["predict", "Predictions"], ["matches", "Matches"], ["media", "Media"], ["odds", "Odds 🎯"]].map(([k, l]) => (
+                    {[["predict", "Predictions"], ["matches", "Matches"], ["media", "Media"], ["odds", "Odds ð¯"]].map(([k, l]) => (
                         <button key={k} className={`tab-btn ${activeTab === k ? "on" : ""}`} onClick={() => { if (k === "odds") { window.location.href = "/odds"; } else { setActiveTab(k); } }}>{l}</button>
                     ))}
                 </div>
@@ -1155,7 +1155,7 @@ body { background: ${C.bg}; }
                                                                             <div style={{ marginBottom: 8 }}>
                                                                                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                                                                                     <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Batter SR</span>
-                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: batSR >= 150 ? "#00FF94" : batSR >= 100 ? "#FFB800" : "#FF4444" }}>{batSR} · {batSR >= 150 ? "Explosive" : batSR >= 100 ? "Aggressive" : "Struggling"}</span>
+                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: batSR >= 150 ? "#00FF94" : batSR >= 100 ? "#FFB800" : "#FF4444" }}>{batSR} Â· {batSR >= 150 ? "Explosive" : batSR >= 100 ? "Aggressive" : "Struggling"}</span>
                                                                                 </div>
                                                                                 <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
                                                                                     <div style={{ width: `${Math.min(100, batSR / 2)}%`, height: "100%", background: batSR >= 150 ? "#00FF94" : batSR >= 100 ? "#FFB800" : "#FF4444", borderRadius: 6 }} />
@@ -1166,7 +1166,7 @@ body { background: ${C.bg}; }
                                                                             <div style={{ marginBottom: 8 }}>
                                                                                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                                                                                     <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Bowl eco</span>
-                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: bowlEco <= 6 ? "#00FF94" : bowlEco <= 9 ? "#FFB800" : "#FF4444" }}>{bowlEco} · {bowlEco <= 6 ? "Tight" : bowlEco <= 9 ? "Average" : "Expensive"}</span>
+                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: bowlEco <= 6 ? "#00FF94" : bowlEco <= 9 ? "#FFB800" : "#FF4444" }}>{bowlEco} Â· {bowlEco <= 6 ? "Tight" : bowlEco <= 9 ? "Average" : "Expensive"}</span>
                                                                                 </div>
                                                                                 <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
                                                                                     <div style={{ width: `${Math.min(100, bowlEco * 7)}%`, height: "100%", background: bowlEco <= 6 ? "#00FF94" : bowlEco <= 9 ? "#FFB800" : "#FF4444", borderRadius: 6 }} />
@@ -1177,7 +1177,7 @@ body { background: ${C.bg}; }
                                                                             <div style={{ marginBottom: 8 }}>
                                                                                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                                                                                     <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Boundary %</span>
-                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: bndPct >= 40 ? "#00FF94" : bndPct >= 20 ? "#FFB800" : "#94A3B8" }}>{bndPct}% · {bndPct >= 40 ? "Firing" : bndPct >= 20 ? "Active" : "Dry"}</span>
+                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: bndPct >= 40 ? "#00FF94" : bndPct >= 20 ? "#FFB800" : "#94A3B8" }}>{bndPct}% Â· {bndPct >= 40 ? "Firing" : bndPct >= 20 ? "Active" : "Dry"}</span>
                                                                                 </div>
                                                                                 <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
                                                                                     <div style={{ width: `${Math.min(100, bndPct * 2)}%`, height: "100%", background: bndPct >= 40 ? "#00FF94" : bndPct >= 20 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
@@ -1188,7 +1188,7 @@ body { background: ${C.bg}; }
                                                                             <div style={{ marginBottom: 8 }}>
                                                                                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                                                                                     <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Last 3 overs</span>
-                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: last3r > 25 ? "#22c55e" : last3r > 15 ? "#f59e0b" : "#94a3b8" }}>{last3r}r {last3w > 0 ? `${last3w}w` : ""} · {last3r > 25 ? "Hot" : last3r > 15 ? "Moving" : "Dry"}</span>
+                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: last3r > 25 ? "#22c55e" : last3r > 15 ? "#f59e0b" : "#94a3b8" }}>{last3r}r {last3w > 0 ? `${last3w}w` : ""} Â· {last3r > 25 ? "Hot" : last3r > 15 ? "Moving" : "Dry"}</span>
                                                                                 </div>
                                                                                 <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
                                                                                     <div style={{ width: `${Math.min(100, last3r * 3)}%`, height: "100%", background: last3r > 25 ? "#00FF94" : last3r > 15 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
@@ -1199,7 +1199,7 @@ body { background: ${C.bg}; }
                                                                             <div>
                                                                                 <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
                                                                                     <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Partnership</span>
-                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: pship > 50 ? "#ef4444" : pship > 25 ? "#f59e0b" : "#94a3b8" }}>{pship} · {pship > 50 ? "Dangerous" : pship > 25 ? "Building" : "New"}</span>
+                                                                                    <span style={{ fontSize: 11, fontWeight: 700, color: pship > 50 ? "#ef4444" : pship > 25 ? "#f59e0b" : "#94a3b8" }}>{pship} Â· {pship > 50 ? "Dangerous" : pship > 25 ? "Building" : "New"}</span>
                                                                                 </div>
                                                                                 <div style={{ height: 12, background: "rgba(255,255,255,0.12)", borderRadius: 6, overflow: "hidden" }}>
                                                                                     <div style={{ width: `${Math.min(100, pship)}%`, height: "100%", background: pship > 50 ? "#FF4444" : pship > 25 ? "#FFB800" : "#64748B", borderRadius: 6 }} />
@@ -1287,7 +1287,7 @@ body { background: ${C.bg}; }
                                                 <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>Win probability</div>
                                                 <div style={{ fontSize: 15, fontWeight: 800, color: winColor, marginBottom: 8, letterSpacing: 0.3 }}>{winMsg}</div>
                                                 <div style={{ display: "flex", justifyContent: "center", margin: "4px 0 10px" }}><WinArc value={prob} /></div>
-                                                <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>Based on current innings, pitch conditions, and 21,300 historical T20 matches — updated every ball.</div>
+                                                <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6 }}>Based on current innings, pitch conditions, and 21,300 historical T20 matches â updated every ball.</div>
                                             </div>
                                             <div className="card" style={{ padding: 22 }}>
                                                 <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>Match intel</div>
@@ -1362,9 +1362,9 @@ body { background: ${C.bg}; }
                                     <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.5, marginBottom: 12 }}>MATCH CONTEXT</div>
                                     {[
                                         ["Format", pred.matchType?.toUpperCase() || "T20"],
-                                        ["Phase", pred.currentPhase || "—"],
-                                        ["Pitch", pred.pitchLabel || "—"],
-                                        ["Weather", pred.weatherImpact?.condition || "—"],
+                                        ["Phase", pred.currentPhase || "â"],
+                                        ["Pitch", pred.pitchLabel || "â"],
+                                        ["Weather", pred.weatherImpact?.condition || "â"],
                                     ].map(([l, v]) => (
                                         <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
                                             <span style={{ fontSize: 11, color: C.muted }}>{l}</span>
@@ -1374,7 +1374,7 @@ body { background: ${C.bg}; }
                                     {pred.toss && (
                                         <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9, marginTop: 4 }}>
                                             <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>TOSS</div>
-                                            <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{pred.toss.winner} won · {pred.toss.decision}</div>
+                                            <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{pred.toss.winner} won Â· {pred.toss.decision}</div>
                                         </div>
                                     )}
                                 </div>
@@ -1390,19 +1390,19 @@ body { background: ${C.bg}; }
                                         </div>
                                         <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
                                             style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#FFB800", borderRadius: 8, padding: "10px 14px", textDecoration: "none", fontWeight: 800, fontSize: 13, color: "#1A1A1A" }}>
-                                            Bet on 1xBet →
+                                            Bet on 1xBet â
                                         </a>
                                     </div>
                                     <div style={{ padding: "6px 14px 10px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
                                         <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", textAlign: "center", lineHeight: 1.5 }}>
-                                            18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: "rgba(255,255,255,0.3)" }}>BeGambleAware.org</a>
+                                            18+ Â· <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: "rgba(255,255,255,0.3)" }}>BeGambleAware.org</a>
                                         </div>
                                     </div>
                                 </div>
                             )}
                             <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center", marginTop: "auto" }}>
                                 <a href="/about" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>About Us</a>
-                                <span style={{ color: C.border, margin: "0 6px" }}>·</span>
+                                <span style={{ color: C.border, margin: "0 6px" }}>Â·</span>
                                 <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>Contact</a>
                             </div>
                                     </aside>
@@ -1423,7 +1423,7 @@ body { background: ${C.bg}; }
                                 <span style={{ fontSize: 13, fontWeight: 700, color: C.red, letterSpacing: 1 }}>LIVE NOW</span>
                             </div>
                             {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setCurMatchId(m.id || m.matchId || null); setSelectedMatch(m); setActiveTab("predict"); }} />
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
                             ))}
                         </div>
                     )}
@@ -1431,7 +1431,7 @@ body { background: ${C.bg}; }
                         <div style={{ marginBottom: 24 }}>
                             <div style={{ fontSize: 13, fontWeight: 700, color: C.accent, letterSpacing: 1, marginBottom: 12 }}>UPCOMING</div>
                             {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setActiveTab("predict"); }} />
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
                             ))}
                         </div>
                     )}
@@ -1439,7 +1439,7 @@ body { background: ${C.bg}; }
                         <div>
                             <div style={{ fontSize: 13, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 12 }}>RECENT RESULTS</div>
                             {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setActiveTab("predict"); }} />
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
                             ))}
                         </div>
                     )}
