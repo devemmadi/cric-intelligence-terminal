@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Logo from "./Logo";
 import RGFooter from "./RGFooter";
-const API_BASE = "https://web-production-91f0.up.railway.app";
+const API_BASE = "https://cricintel-backend-production.up.railway.app";
 const C = {
     bg: "#EEF2FF", surface: "#FFFFFF", border: "#E2E8F0",
     text: "#0A0A0A", muted: "#64748B", accent: "#1E2D6B",
