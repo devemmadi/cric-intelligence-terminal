@@ -817,7 +817,7 @@ export default function CricIntelligence() {
             const curMatchId = overrideMatchId || selectedMatchRef.current?.matchId;
             if (overrideMatchId) setIsPredLoading(true);
             const matchesPromise = fetch(`${API_BASE}/matches`).then(r => r.ok ? r.json() : null).catch(() => null);
-            const predPromise = fetch(`${API_BASE}/predict${(overrideMatchId || curMatchId) ? "?match_id=" + (overrideMatchId || curMatchId) : ""}`)
+            const predPromise = fetch(`${API_BASE}/predict${curMatchId ? "?match_id=" + curMatchId : ""}`)
                 .then(r => r.ok ? r.json() : null).catch(() => null);
             const scorecardPromise = curMatchId
                 ? fetch(`${API_BASE}/match/${curMatchId}`).then(r => r.ok ? r.json() : null).catch(() => null)
@@ -1408,46 +1408,43 @@ body { background: ${C.bg}; }
                                     </aside>
                 </div>
             )}
-            activeTab === "matches" && (
-            <div className="fade" style={{ maxWidth: 760, margin: "0 auto", padding: "22px 16px" }}>
-                {/* IPL 2026 Section */}
-                {liveMatches.filter(m => m.t1==="RCB"||m.t2==="RCB"||m.t1==="RR"||m.t2==="RR"||m.t1==="MI"||m.t2==="MI"||m.t1==="CSK"||m.t2==="CSK"||m.t1==="KKR"||m.t2==="KKR"||m.t1==="DC"||m.t2==="DC"||m.t1==="GT"||m.t2==="GT"||m.t1==="SRH"||m.t2==="SRH"||m.t1==="LSG"||m.t2==="LSG"||m.t1==="PBKS"||m.t2==="PBKS").length > 0 && (
-                <div style={{ marginBottom: 28 }}>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: "#F59E0B", letterSpacing: 1, marginBottom: 12, display:"flex", alignItems:"center", gap: 8 }}>
-                        <span style={{background:"#F59E0B",color:"#fff",padding:"2px 10px",borderRadius:20,fontSize:11}}>IPL 2026</span>
-                        Indian Premier League
-                    </div>
-                    {liveMatches.filter(m => m.t1==="RCB"||m.t2==="RCB"||m.t1==="RR"||m.t2==="RR"||m.t1==="MI"||m.t2==="MI"||m.t1==="CSK"||m.t2==="CSK"||m.t1==="KKR"||m.t2==="KKR"||m.t1==="DC"||m.t2==="DC"||m.t1==="GT"||m.t2==="GT"||m.t1==="SRH"||m.t2==="SRH"||m.t1==="LSG"||m.t2==="LSG"||m.t1==="PBKS"||m.t2==="PBKS").map(m => (
-                        <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
-                    ))}
+            {activeTab === "matches" && (
+                <div className="fade" style={{ maxWidth: 680, margin: "0 auto", padding: "22px 16px" }}>
+                    {liveMatches.length === 0 && (
+                        <div style={{ textAlign: "center", padding: 60, color: C.muted }}>
+                            <div style={{ fontSize: 40, marginBottom: 12 }}></div>
+                            <div style={{ fontSize: 18, fontWeight: 700 }}>Loading matches...</div>
+                        </div>
+                    )}
+                    {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
+                        <div style={{ marginBottom: 24 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                                <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.red, animation: "pulse 1.5s infinite" }} />
+                                <span style={{ fontSize: 13, fontWeight: 700, color: C.red, letterSpacing: 1 }}>LIVE NOW</span>
+                            </div>
+                            {liveMatches.filter(m => m.status === "LIVE").map(m => (
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
+                            ))}
+                        </div>
+                    )}
+                    {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
+                        <div style={{ marginBottom: 24 }}>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: C.accent, letterSpacing: 1, marginBottom: 12 }}>UPCOMING</div>
+                            {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
+                            ))}
+                        </div>
+                    )}
+                    {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
+                        <div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 12 }}>RECENT RESULTS</div>
+                            {liveMatches.filter(m => m.status === "ENDED").map(m => (
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
+                            ))}
+                        </div>
+                    )}
                 </div>
-                )}
-                {/* PSL 2026 Section */}
-                {liveMatches.filter(m => m.t1==="KRK"||m.t2==="KRK"||m.t1==="QTG"||m.t2==="QTG"||m.t1==="RWP"||m.t2==="RWP"||m.t1==="ISL"||m.t2==="ISL"||m.t1==="PSZ"||m.t2==="PSZ"||m.t1==="MUL"||m.t2==="MUL").length > 0 && (
-                <div style={{ marginBottom: 28 }}>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: "#10B981", letterSpacing: 1, marginBottom: 12, display:"flex", alignItems:"center", gap: 8 }}>
-                        <span style={{background:"#10B981",color:"#fff",padding:"2px 10px",borderRadius:20,fontSize:11}}>PSL 2026</span>
-                        Pakistan Super League
-                    </div>
-                    {liveMatches.filter(m => m.t1==="KRK"||m.t2==="KRK"||m.t1==="QTG"||m.t2==="QTG"||m.t1==="RWP"||m.t2==="RWP"||m.t1==="ISL"||m.t2==="ISL"||m.t1==="PSZ"||m.t2==="PSZ"||m.t1==="MUL"||m.t2==="MUL").map(m => (
-                        <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
-                    ))}
-                </div>
-                )}
-                {/* International/Other Section */}
-                {liveMatches.filter(m => ![...["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"],...["KRK","QTG","RWP","ISL","PSZ","MUL"]].some(t => m.t1===t||m.t2===t)).length > 0 && (
-                <div style={{ marginBottom: 28 }}>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: "#6366F1", letterSpacing: 1, marginBottom: 12, display:"flex", alignItems:"center", gap: 8 }}>
-                        <span style={{background:"#6366F1",color:"#fff",padding:"2px 10px",borderRadius:20,fontSize:11}}>INTERNATIONAL</span>
-                        International Cricket
-                    </div>
-                    {liveMatches.filter(m => ![...["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"],...["KRK","QTG","RWP","ISL","PSZ","MUL"]].some(t => m.t1===t||m.t2===t)).map(m => (
-                        <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
-                    ))}
-                </div>
-                )}
-            </div>
-            )
+            )}
             {activeTab === "media" && <MediaSection />}
             <RGFooter />
             <nav className="mn">
