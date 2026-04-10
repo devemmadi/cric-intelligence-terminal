@@ -300,23 +300,47 @@ function NextOverIntelligence({ pred }) {
     );
 }
 function MatchPill({ m, selected, onClick }) {
+    const isLive = m.isLive;
+    const isEnded = m.matchEnded;
+    const getLeague = () => {
+        const n = (m.name || '').toUpperCase();
+        const t = (m.matchType || '').toUpperCase();
+        if (n.includes('IPL')) return { label: 'IPL', color: '#F59E0B' };
+        if (n.includes('PSL')) return { label: 'PSL', color: '#10B981' };
+        if (n.includes('BBL')) return { label: 'BBL', color: '#EF4444' };
+        if (t === 'T20' || t === 'T20I') return { label: 'T20', color: '#6366F1' };
+        if (t === 'ODI') return { label: 'ODI', color: '#0891B2' };
+        if (t === 'TEST') return { label: 'TEST', color: '#64748B' };
+        return { label: 'T20', color: '#6366F1' };
+    };
+    const league = getLeague();
     return (
-        <div className={`match-pill ${selected ? "sel" : ""}`} onClick={() => { onClick(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} style={{ opacity: m.status === "ENDED" ? 0.75 : 1 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-                <span style={{ fontSize: 10, color: "#64748B" }}>{m.day} - {m.detail?.split("")[0]?.trim().slice(0, 18)}</span>
-                <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 6px", borderRadius: 5, background: m.status === "LIVE" ? "#FFF0F0" : m.status === "UPCOMING" ? "#EFF6FF" : "#F0F0F0", color: m.status === "LIVE" ? "#E53E3E" : m.status === "UPCOMING" ? "#1E2D6B" : "#64748B" }}>
-                    {m.status === "LIVE" ? "LIVE" : m.status === "UPCOMING" ? "SOON" : "ENDED"}
+        <div onClick={onClick} style={{
+            background: selected ? '#EEF2FF' : '#fff',
+            border: selected ? '1.5px solid #6366F1' : '1px solid #E2E8F0',
+            borderRadius: 12, padding: '12px 14px', marginBottom: 10, cursor: 'pointer'
+        }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontSize: 10, color: '#94A3B8' }}>{m.matchType?.toUpperCase()}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20,
+                    background: isLive ? '#FFF0F0' : '#F1F5F9', color: isLive ? '#E53E3E' : league.color }}>
+                    {isLive ? '● LIVE' : league.label}
                 </span>
             </div>
-            {[{ n: m.t1, s: m.t1Score, w: m.t1Wkts, b: true, imgId: m.t1ImageId || 0 }, { n: m.t2, s: m.t2Score, b: false, imgId: m.t2ImageId || 0 }].map(({ n, s, w, b, imgId }) => (
-                <div key={n} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 3 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                        <TeamLogo name={n} size={16} imageId={imgId} />
-                        <span style={{ fontSize: 11, fontWeight: b ? 600 : 400, color: b ? "#0A0A0A" : "#64748B" }}>{n}</span>
-                    </div>
-                    {s != null && <span style={{ fontSize: 11, fontWeight: b ? 700 : 400, color: b ? "#0A0A0A" : "#64748B" }}>{w != null ? `${s}/${w}` : s}</span>}
-                </div>
-            ))}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
+                <img src={`${API_BASE}/team-image/${m.team1ImageId}`}
+                    style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }}
+                    alt="" onError={e => e.target.style.display = 'none'} />
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{m.team1}</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7 }}>
+                <img src={`${API_BASE}/team-image/${m.team2ImageId}`}
+                    style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }}
+                    alt="" onError={e => e.target.style.display = 'none'} />
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{m.team2}</span>
+            </div>
+            {isEnded && m.status && <div style={{ fontSize: 10, color: '#6366F1', fontWeight: 500 }}>{m.status}</div>}
+            {!isEnded && !isLive && m.status && <div style={{ fontSize: 10, color: '#F59E0B', fontWeight: 500 }}>{m.status}</div>}
         </div>
     );
 }
