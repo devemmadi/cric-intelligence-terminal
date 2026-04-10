@@ -758,7 +758,6 @@ export default function CricIntelligence() {
     });
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [pred, setPred] = useState(() => {
-    const [isFetching, setIsFetching] = useState(false);
         try { const cached = localStorage.getItem("ci_pred_cache"); if (cached) return JSON.parse(cached); } catch { }
         return null;
     });
@@ -829,7 +828,6 @@ export default function CricIntelligence() {
              //   ? fetch(`${API_BASE}/match/${curMatchId}/pitch-analysis?venue=${encodeURIComponent(matchData?.venue || '')}&over=${matchData?.currentOver || 1}`)
             //  .then(r => r.ok ? r.json() : null).catch(() => null)
            //    : Promise.resolve(null);
-                setIsFetching(true);
            const [matchesData, predData, scorecardData] = await Promise.all([matchesPromise, predPromise, scorecardPromise]);
             if (matchesData) {
                 const list = Array.isArray(matchesData) ? matchesData : matchesData.data || [];
@@ -871,7 +869,6 @@ export default function CricIntelligence() {
                         return true;
                     });
                     setLiveMatches(mapped);
-                setIsFetching(false);
                     window.__matchList = mapped;
                     setLiveStatus("live");
                     setIsFirstLoad(false);
@@ -1089,7 +1086,6 @@ body { background: ${C.bg}; }
                                     </div>
                                     </div>
                                 
-            {isFetching ? <div style={{padding:"60px 20px",textAlign:"center"}}><div style={{color:"#6366F1",fontSize:16,fontWeight:700,marginBottom:8}}>Loading...</div><div style={{color:"#94A3B8",fontSize:13}}>Fetching latest predictions</div></div> : null}
                                 <div style={{ padding: "20px 24px" }}>
                                     <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
                                         <div className="card" style={{ padding: 22, marginBottom: 14 }}>
