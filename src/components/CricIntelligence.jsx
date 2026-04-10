@@ -1006,7 +1006,7 @@ body { background: ${C.bg}; }
                                 </div>
                                 {liveMatches.filter(m => m.status === "LIVE").map(m => (
                                     <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
-                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m);
+                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
                                         try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
                                     }} />
                                 ))}
@@ -1017,7 +1017,7 @@ body { background: ${C.bg}; }
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: 1, margin: "14px 0 8px" }}>Upcoming</div>
                                 {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
                                     <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
-                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m);
+                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
                                         try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
                                     }} />
                                 ))}
@@ -1028,7 +1028,7 @@ body { background: ${C.bg}; }
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "14px 0 8px" }}>Recent</div>
                                 {liveMatches.filter(m => m.status === "ENDED").map(m => (
                                     <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
-                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m);
+                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
                                         try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
                                     }} />
                                 ))}
@@ -1422,7 +1422,7 @@ body { background: ${C.bg}; }
                                 <span style={{ fontSize: 13, fontWeight: 700, color: C.red, letterSpacing: 1 }}>LIVE NOW</span>
                             </div>
                             {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setActiveTab("predict"); }} />
                             ))}
                         </div>
                     )}
@@ -1430,7 +1430,7 @@ body { background: ${C.bg}; }
                         <div style={{ marginBottom: 24 }}>
                             <div style={{ fontSize: 13, fontWeight: 700, color: C.accent, letterSpacing: 1, marginBottom: 12 }}>UPCOMING</div>
                             {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setActiveTab("predict"); }} />
                             ))}
                         </div>
                     )}
@@ -1438,7 +1438,7 @@ body { background: ${C.bg}; }
                         <div>
                             <div style={{ fontSize: 13, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 12 }}>RECENT RESULTS</div>
                             {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setActiveTab("predict"); }} />
                             ))}
                         </div>
                     )}
