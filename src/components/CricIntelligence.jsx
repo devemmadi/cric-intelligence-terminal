@@ -1,4 +1,4 @@
-/* eslint-disable */
+﻿/* eslint-disable */
 import React, { useState, useEffect, useCallback } from "react";
 import Logo from "./Logo";
 import RGFooter from "./RGFooter";
@@ -352,7 +352,7 @@ function MatchCard({ m, onClick }) {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <span style={{ fontSize: 11, color: "#64748B" }}>{m.day} - {m.detail?.split("")[0]?.trim()}</span>
                 <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: m.status === "LIVE" ? "#FFF0F0" : m.status === "UPCOMING" ? "#EFF6FF" : "#F0F0F0", color: m.status === "LIVE" ? "#E53E3E" : m.status === "UPCOMING" ? "#1E2D6B" : "#64748B" }}>
-                    {m.status === "LIVE" ? "LIVE" : m.status === "UPCOMING" ? "UPCOMING" : "ENDED"}
+                    {m.status === "LIVE" ? "● LIVE" : m.status === "UPCOMING" ? league.l : league.l}
                 </span>
             </div>
             {[{ n: m.t1, s: m.t1Score, w: m.t1Wkts, b: true, imgId: m.t1ImageId || 0 }, { n: m.t2, s: m.t2Score, b: false, imgId: m.t2ImageId || 0 }].map(({ n, s, w, b, imgId }) => (
@@ -1457,3 +1457,5 @@ body { background: ${C.bg}; }
         </div>
     );
 }
+
+
