@@ -330,7 +330,7 @@ function MatchPill({ m, selected, onClick }) {
                 </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
-                <img src={`${API_BASE}/team-image/${m.team1ImageId || m.img1}`}
+                <img src={`${API_BASE}/team-image/${m.t1ImageId || m.t1ImageId || m.team1ImageId || m.img1}`}
                     style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }}
                     alt="" onError={e => e.target.style.display = 'none'} />
                 <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{m.t1 || m.team1}</span>
@@ -849,7 +849,7 @@ export default function CricIntelligence() {
                             id: m.id || i, matchId: m.id,
                             t1: cleanTeam(m.team1 || m.teams?.[0] || "TBD"),
                             t2: cleanTeam(m.team2 || m.teams?.[1] || "TBD"),
-                            t1ImageId: m.team1ImageId || 0, t2ImageId: m.team2ImageId || 0,
+                            t1ImageId: m.t1ImageId || m.team1ImageId || 0, t2ImageId: m.team2ImageId || 0,
                             status, rawStatus,
                             day: m.matchType?.toUpperCase() || "T20",
                             detail: m.name || "",
