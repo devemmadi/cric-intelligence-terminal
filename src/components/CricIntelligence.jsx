@@ -755,6 +755,19 @@ export default function CricIntelligence() {
     const [liveMatches, setLiveMatches] = useState(() => {
         try { const cached = localStorage.getItem("ci_matches_cache"); if (cached) return JSON.parse(cached); } catch { }
         return [];
+
+    // Helper: detect league from match name
+    const getLeague = (m) => {
+        const n = (m.name || m.detail || "").toUpperCase();
+        const t1 = (m.t1 || m.team1 || "").toUpperCase();
+        const t2 = (m.t2 || m.team2 || "").toUpperCase();
+        const IPL = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
+        const PSL = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
+        if(IPL.some(t => t1===t || t2===t || n.includes(t))) return "IPL";
+        if(PSL.some(t => t1===t || t2===t || n.includes(t))) return "PSL";
+        return "INT";
+    };
+
     });
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [pred, setPred] = useState(() => {
@@ -1408,42 +1421,60 @@ body { background: ${C.bg}; }
                                     </aside>
                 </div>
             )}
-            {activeTab === "matches" && (
-                <div className="fade" style={{ maxWidth: 680, margin: "0 auto", padding: "22px 16px" }}>
-                    {liveMatches.length === 0 && (
-                        <div style={{ textAlign: "center", padding: 60, color: C.muted }}>
-                            <div style={{ fontSize: 40, marginBottom: 12 }}></div>
-                            <div style={{ fontSize: 18, fontWeight: 700 }}>Loading matches...</div>
-                        </div>
-                    )}
-                    {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
-                        <div style={{ marginBottom: 24 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                                <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.red, animation: "pulse 1.5s infinite" }} />
-                                <span style={{ fontSize: 13, fontWeight: 700, color: C.red, letterSpacing: 1 }}>LIVE NOW</span>
+            activeTab === "matches" && (
+            <div className="fade" style={{ maxWidth: 760, margin: "0 auto", padding: "22px 16px" }}>
+
+                {/* LIVE Section - grouped by league */}
+                {liveMatches.filter(m => m.status === "LIVE").length > 0 && <div>
+                    {["IPL","PSL","INT"].map(league => {
+                        const ms = liveMatches.filter(m => m.status === "LIVE" && getLeague(m) === league);
+                        if(ms.length === 0) return null;
+                        const lbl = league === "IPL" ? "IPL 2026" : league === "PSL" ? "PSL 2026" : "LIVE";
+                        const clr = league === "IPL" ? "#F59E0B" : league === "PSL" ? "#10B981" : "#E53E3E";
+                        return (<div key={league} style={{marginBottom:20}}>
+                            <div style={{fontSize:11,fontWeight:700,color:clr,letterSpacing:1,marginBottom:8,display:"flex",alignItems:"center",gap:6}}>
+                                <span style={{width:8,height:8,borderRadius:"50%",background:clr,display:"inline-block"}}></span>
+                                {lbl}
                             </div>
-                            {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
-                            ))}
-                        </div>
-                    )}
-                    {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
-                        <div style={{ marginBottom: 24 }}>
-                            <div style={{ fontSize: 13, fontWeight: 700, color: C.accent, letterSpacing: 1, marginBottom: 12 }}>UPCOMING</div>
-                            {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
-                            ))}
-                        </div>
-                    )}
-                    {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
-                        <div>
-                            <div style={{ fontSize: 13, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 12 }}>RECENT RESULTS</div>
-                            {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
-                            ))}
-                        </div>
-                    )}
-                </div>
+                            {ms.map(m => (<MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />))}
+                        </div>);
+                    })}
+                </div>}
+
+                {/* UPCOMING Section - grouped by league */}
+                {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && <div>
+                    {["IPL","PSL","INT"].map(league => {
+                        const ms = liveMatches.filter(m => m.status === "UPCOMING" && getLeague(m) === league);
+                        if(ms.length === 0) return null;
+                        const lbl = league === "IPL" ? "IPL 2026 - Upcoming" : league === "PSL" ? "PSL 2026 - Upcoming" : "UPCOMING";
+                        const clr = league === "IPL" ? "#F59E0B" : league === "PSL" ? "#10B981" : "#6366F1";
+                        return (<div key={league} style={{marginBottom:20}}>
+                            <div style={{fontSize:11,fontWeight:700,color:clr,letterSpacing:1,marginBottom:8}}>
+                                {lbl}
+                            </div>
+                            {ms.map(m => (<MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />))}
+                        </div>);
+                    })}
+                </div>}
+
+                {/* RECENT RESULTS - grouped by league */}
+                {liveMatches.filter(m => m.status === "ENDED").length > 0 && <div>
+                    {["IPL","PSL","INT"].map(league => {
+                        const ms = liveMatches.filter(m => m.status === "ENDED" && getLeague(m) === league);
+                        if(ms.length === 0) return null;
+                        const lbl = league === "IPL" ? "IPL 2026 - Results" : league === "PSL" ? "PSL 2026 - Results" : "RECENT RESULTS";
+                        const clr = league === "IPL" ? "#F59E0B" : league === "PSL" ? "#10B981" : "#94A3B8";
+                        return (<div key={league} style={{marginBottom:20}}>
+                            <div style={{fontSize:11,fontWeight:700,color:clr,letterSpacing:1,marginBottom:8}}>
+                                {lbl}
+                            </div>
+                            {ms.map(m => (<MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />))}
+                        </div>);
+                    })}
+                </div>}
+
+            </div>
+            )
             )}
             {activeTab === "media" && <MediaSection />}
             <RGFooter />
