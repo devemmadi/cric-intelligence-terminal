@@ -932,7 +932,7 @@ export default function CricIntelligence() {
             selectedMatchRef.current = selectedMatch;
             fetchLiveData(selectedMatch.matchId);
         }
-    }, [selectedMatch?.matchId]);
+    }, [curMatchId, selectedMatch?.matchId]);
     const prob = pred?.aiProbability || 50;
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
