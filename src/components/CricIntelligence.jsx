@@ -314,6 +314,8 @@ function MatchPill({ m, selected, onClick }) {
         return { label: 'T20', color: '#6366F1' };
     };
     const league = getLeague();
+    const team1 = m.team1 || "";
+    const team2 = m.team2 || "";
     return (
         <div onClick={onClick} style={{
             background: selected ? '#EEF2FF' : '#fff',
