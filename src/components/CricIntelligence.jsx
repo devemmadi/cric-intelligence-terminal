@@ -1422,7 +1422,7 @@ body { background: ${C.bg}; }
                                 <span style={{ fontSize: 13, fontWeight: 700, color: C.red, letterSpacing: 1 }}>LIVE NOW</span>
                             </div>
                             {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setCurMatchId(m.id || m.matchId || null); setSelectedMatch(m); setTimeout(() => setActiveTab("predict"), 50); }} />
+                                <MatchCard key={m.id} m={m} onClick={() => { setCurMatchId(m.id || m.matchId || null); setSelectedMatch(m); setActiveTab("predict"); }} />
                             ))}
                         </div>
                     )}
