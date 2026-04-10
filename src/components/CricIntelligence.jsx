@@ -330,16 +330,16 @@ function MatchPill({ m, selected, onClick }) {
                 </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
-                <img src={`${API_BASE}/team-image/${m.team1ImageId}`}
+                <img src={`${API_BASE}/team-image/${m.team1ImageId || m.img1}`}
                     style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }}
                     alt="" onError={e => e.target.style.display = 'none'} />
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{m.team1}</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{m.t1 || m.team1}</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7 }}>
                 <img src={`${API_BASE}/team-image/${m.team2ImageId}`}
                     style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }}
                     alt="" onError={e => e.target.style.display = 'none'} />
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{m.team2}</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{m.t2 || m.team2}</span>
             </div>
             {isEnded && m.status && <div style={{ fontSize: 10, color: '#6366F1', fontWeight: 500 }}>{m.status}</div>}
             {!isEnded && !isLive && m.status && <div style={{ fontSize: 10, color: '#F59E0B', fontWeight: 500 }}>{m.status}</div>}
