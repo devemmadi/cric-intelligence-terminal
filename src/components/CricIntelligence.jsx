@@ -626,7 +626,7 @@ function ClaudeAnalysis({ pred, selectedMatch }) {
     React.useEffect(() => {
         const key = (pred?.team1 || "") + (pred?.team2 || "") + (selectedMatch?.matchId || "");
         if (key !== matchKey) { setAnalysis(""); setAsked(false); setMatchKey(key); }
-    }, [pred, selectedMatch]);
+    }, [pred, selectedMatch, curMatchId]);
     async function askClaude() {
         if (!pred || loading) return;
         setLoading(true); setAsked(true); setAnalysis("");
