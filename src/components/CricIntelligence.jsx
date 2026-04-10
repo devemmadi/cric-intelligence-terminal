@@ -848,6 +848,7 @@ export default function CricIntelligence() {
                         return {
                             ...m,
                             id: m.id || i, matchId: m.id,
+                            status,
                             t1: cleanTeam(m.team1 || m.teams?.[0] || "TBD"),
                             t2: cleanTeam(m.team2 || m.teams?.[1] || "TBD"),
                             t1ImageId: m.t1ImageId || m.team1ImageId || 0, t2ImageId: m.t2ImageId || m.team2ImageId || 0,
