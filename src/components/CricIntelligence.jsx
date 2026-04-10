@@ -758,6 +758,7 @@ export default function CricIntelligence() {
     });
     const [selectedMatch, setSelectedMatch] = useState(null);
     const [pred, setPred] = useState(() => {
+    const [isFetching, setIsFetching] = useState(false);
         try { const cached = localStorage.getItem("ci_pred_cache"); if (cached) return JSON.parse(cached); } catch { }
         return null;
     });
@@ -828,6 +829,7 @@ export default function CricIntelligence() {
              //   ? fetch(`${API_BASE}/match/${curMatchId}/pitch-analysis?venue=${encodeURIComponent(matchData?.venue || '')}&over=${matchData?.currentOver || 1}`)
             //  .then(r => r.ok ? r.json() : null).catch(() => null)
            //    : Promise.resolve(null);
+                setIsFetching(true);
            const [matchesData, predData, scorecardData] = await Promise.all([matchesPromise, predPromise, scorecardPromise]);
             if (matchesData) {
                 const list = Array.isArray(matchesData) ? matchesData : matchesData.data || [];
@@ -869,6 +871,7 @@ export default function CricIntelligence() {
                         return true;
                     });
                     setLiveMatches(mapped);
+                setIsFetching(false);
                     window.__matchList = mapped;
                     setLiveStatus("live");
                     setIsFirstLoad(false);
