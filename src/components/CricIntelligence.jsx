@@ -1089,6 +1089,7 @@ body { background: ${C.bg}; }
                                     </div>
                                     </div>
                                 
+            {isFetching ? <div style={{padding:"60px 20px",textAlign:"center"}}><div style={{color:"#6366F1",fontSize:16,fontWeight:700,marginBottom:8}}>Loading...</div><div style={{color:"#94A3B8",fontSize:13}}>Fetching latest predictions</div></div> : null}
                                 <div style={{ padding: "20px 24px" }}>
                                     <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
                                         <div className="card" style={{ padding: 22, marginBottom: 14 }}>
