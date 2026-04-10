@@ -817,7 +817,7 @@ export default function CricIntelligence() {
             const curMatchId = overrideMatchId || selectedMatchRef.current?.matchId;
             if (overrideMatchId) setIsPredLoading(true);
             const matchesPromise = fetch(`${API_BASE}/matches`).then(r => r.ok ? r.json() : null).catch(() => null);
-            const predPromise = fetch(`${API_BASE}/predict${curMatchId ? "?match_id=" + curMatchId : ""}`)
+            const predPromise = fetch(`${API_BASE}/predict${(overrideMatchId || curMatchId) ? "?match_id=" + (overrideMatchId || curMatchId) : ""}`)
                 .then(r => r.ok ? r.json() : null).catch(() => null);
             const scorecardPromise = curMatchId
                 ? fetch(`${API_BASE}/match/${curMatchId}`).then(r => r.ok ? r.json() : null).catch(() => null)
