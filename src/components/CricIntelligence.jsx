@@ -626,7 +626,7 @@ function ClaudeAnalysis({ pred, selectedMatch }) {
     React.useEffect(() => {
         const key = (pred?.team1 || "") + (pred?.team2 || "") + (selectedMatch?.matchId || "");
         if (key !== matchKey) { setAnalysis(""); setAsked(false); setMatchKey(key); }
-    }, [pred, selectedMatch, curMatchId]);
+    }, [pred, selectedMatch]);
     async function askClaude() {
         if (!pred || loading) return;
         setLoading(true); setAsked(true); setAnalysis("");
@@ -932,7 +932,7 @@ export default function CricIntelligence() {
             selectedMatchRef.current = selectedMatch;
             fetchLiveData(selectedMatch.matchId);
         }
-    }, [curMatchId, selectedMatch?.matchId]);
+    }, [selectedMatch?.matchId]);
     const prob = pred?.aiProbability || 50;
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
