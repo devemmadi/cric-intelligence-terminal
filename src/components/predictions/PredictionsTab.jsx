@@ -399,6 +399,13 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     <>
                         {/* Match header — uses selectedMatch immediately, falls back to pred */}
                         <div style={{ background: "linear-gradient(160deg,#1a2760 0%,#253580 100%)", padding: "16px 24px 20px", position: "sticky", top: 0, zIndex: 100, color: "#fff" }}>
+                            {/* Thin loading bar at top */}
+                            {isPredLoading && (
+                                <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
+                                    <div style={{ height: "100%", background: "#C8961E", animation: "loadingBar 1.5s ease-in-out infinite", transformOrigin: "left" }} />
+                                </div>
+                            )}
+                            <style>{`@keyframes loadingBar { 0%{transform:scaleX(0);opacity:1} 70%{transform:scaleX(0.8);opacity:1} 100%{transform:scaleX(1);opacity:0} }`}</style>
                             <div style={{ textAlign: "center" }}>
                                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 10 }}>{pred?.venue || selectedMatch?.detail || ""}</div>
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 12 }}>
@@ -431,8 +438,8 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             </div>
                         </div>
 
-                        {/* Prediction content — skeleton while loading */}
-                        {(!pred || isPredLoading) && (
+                        {/* Skeleton only when no pred at all (first ever load) */}
+                        {!pred && isPredLoading && (
                             <div style={{ padding: "24px 20px" }}>
                                 {[1, 2, 3].map(i => (
                                     <div key={i} style={{ background: "#fff", borderRadius: 14, padding: 20, marginBottom: 14, border: "1px solid #E2E8F0" }}>
@@ -443,7 +450,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 ))}
                             </div>
                         )}
-                        {pred && !isPredLoading && <div style={{ padding: "20px 24px" }}>
+                        {pred && <div style={{ padding: "20px 24px" }}>
                             <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
                                 {/* Next overs card */}
                                 <div className="card" style={{ padding: 22, marginBottom: 14 }}>

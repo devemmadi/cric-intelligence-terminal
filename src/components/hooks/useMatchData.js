@@ -28,8 +28,7 @@ export default function useMatchData() {
     const selectMatch = useCallback((m) => {
         hasUserSelectedRef.current = true;
         selectedMatchRef.current = m;
-        setPred(null);        // Clear stale pred immediately so UI shows loading, not wrong match
-        setIsPredLoading(true);
+        setIsPredLoading(true);  // Show subtle loader only — don't wipe pred
         setSelectedMatch(m);
     }, []);
 
