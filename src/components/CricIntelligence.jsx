@@ -1413,7 +1413,7 @@ body { background: ${C.bg}; }
                                     </aside>
                 </div>
             )}
-            activeTab === "matches" && (
+            {activeTab === "matches" && (
             <div className="fade" style={{ maxWidth: 760, margin: "0 auto", padding: "22px 16px" }}>
                 {(() => {
                     const IPL_T = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
@@ -1442,7 +1442,7 @@ body { background: ${C.bg}; }
                     <div style={{ fontSize:18, fontWeight:700 }}>Loading matches...</div>
                 </div>}
             </div>
-            )
+            )}
             )}
             {activeTab === "media" && <MediaSection />}
             <RGFooter />
