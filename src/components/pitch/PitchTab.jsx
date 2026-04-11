@@ -482,7 +482,7 @@ function SegmentCard({ seg }) {
     const opacity = isPast ? 0.65 : 1;
 
     return (
-        <div style={{ background: "rgba(10,14,26,0.6)", border: `1.5px solid ${borderColor}`, borderRadius: 14, padding: "16px", position: "relative", opacity, transition: "all 0.2s" }}>
+        <div style={{ background: "#0D1117", border: `1.5px solid ${borderColor}`, borderRadius: 14, padding: "16px", position: "relative", opacity, transition: "all 0.2s" }}>
 
             {/* YOU ARE HERE */}
             {isCurrent && (
