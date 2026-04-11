@@ -467,11 +467,11 @@ function SegmentCard({ seg }) {
                     <div style={{ fontSize: 9, color: "#475569", letterSpacing: 1, marginBottom: 6, fontWeight: 700 }}>BET SIGNAL</div>
                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                         <div>
-                            <span style={{ fontSize: 9, color: "#22c55e", fontWeight: 700, letterSpacing: 0.5 }}>BACK  </span>
+                            <span style={{ fontSize: 9, color: "#22c55e", fontWeight: 700, letterSpacing: 0.5 }}>✅ BET ON  </span>
                             <span style={{ fontSize: 12, color: "#fff", fontWeight: 600 }}>{betSignal.back}</span>
                         </div>
                         <div>
-                            <span style={{ fontSize: 9, color: "#ef4444", fontWeight: 700, letterSpacing: 0.5 }}>FADE  </span>
+                            <span style={{ fontSize: 9, color: "#ef4444", fontWeight: 700, letterSpacing: 0.5 }}>❌ AVOID  </span>
                             <span style={{ fontSize: 12, color: "#fff", fontWeight: 600 }}>{betSignal.fade}</span>
                         </div>
                     </div>
