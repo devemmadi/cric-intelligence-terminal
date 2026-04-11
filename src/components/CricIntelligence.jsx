@@ -1007,28 +1007,26 @@ body { background: ${C.bg}; }
                         </div>
                         {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
                             <>
-                                <div style={{ fontSize: 11, fontWeight: 700, color: C.red, letterSpacing: 1, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
                             {(() => {
-                                const IPL_T = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
-                                const PSL_T = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
-                                const isIPL = function(m) { return IPL_T.some(function(t) { return (m.t1||"")===t||(m.t2||"")===t; }); };
-                                const isPSL = function(m) { return PSL_T.some(function(t) { return (m.t1||"")===t||(m.t2||"")===t; }); };
-                                const mk = function(m) { return function() { setSelectedMatch(m); setCurMatchId(m.id||m.matchId||null); setActiveTab("predict"); }; };
-                                const groups = [
-                                    { key:"IPL", label:"IPL 2026", color:"#F59E0B", ms: liveMatches.filter(function(m){ return isIPL(m); }) },
-                                    { key:"PSL", label:"PSL 2026", color:"#10B981", ms: liveMatches.filter(function(m){ return isPSL(m); }) },
-                                    { key:"INT", label:"International", color:"#6366F1", ms: liveMatches.filter(function(m){ return !isIPL(m) && !isPSL(m); }) },
+                                const _IPL = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
+                                const _PSL = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
+                                const _isIPL = function(m) { return _IPL.some(function(t){ return (m.t1||"")=== t||(m.t2||"")===t; }); };
+                                const _isPSL = function(m) { return _PSL.some(function(t){ return (m.t1||"")=== t||(m.t2||"")===t; }); };
+                                const _click = function(m) { return function(){ setSelectedMatch(m); setCurMatchId(m.id||m.matchId||null); setActiveTab("predict"); }; };
+                                const _groups = [
+                                    { key:"IPL", label:"IPL 2026", color:"#F59E0B", ms: liveMatches.filter(_isIPL) },
+                                    { key:"PSL", label:"PSL 2026", color:"#10B981", ms: liveMatches.filter(_isPSL) },
+                                    { key:"INT", label:"International", color:"#6366F1", ms: liveMatches.filter(function(m){ return !_isIPL(m)&&!_isPSL(m); }) },
                                 ];
-                                return groups.map(function(g) {
-                                    if (g.ms.length === 0) return null;
+                                return _groups.map(function(g) {
+                                    if(g.ms.length === 0) return null;
                                     return (
                                         <div key={g.key}>
-                                            <div style={{ fontSize: 10, fontWeight: 700, color: g.color, letterSpacing: 1, margin: "10px 0 5px", display: "flex", alignItems: "center", gap: 5 }}>
-                                                <span style={{ width: 6, height: 6, borderRadius: "50%", background: g.color, display: "inline-block" }}></span>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: g.color, letterSpacing: 1, margin: "10px 0 5px" }}>
                                                 {g.label}
                                             </div>
                                             {g.ms.map(function(m) {
-                                                return <MatchPill key={m.id} m={m} selected={selectedMatch != null && selectedMatch.id === m.id} onClick={mk(m)} />;
+                                                return <MatchPill key={m.id} m={m} selected={selectedMatch != null && selectedMatch.id === m.id} onClick={_click(m)} />;
                                             })}
                                         </div>
                                     );
