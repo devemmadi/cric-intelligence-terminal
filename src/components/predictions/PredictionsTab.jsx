@@ -389,57 +389,65 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
             {/* MAIN CONTENT */}
             <main className="mc" style={{ padding: 0, overflowY: "auto", overflow: "visible" }}>
-                {!pred ? (
-                    isFirstLoad || isPredLoading ? (
-                        <div style={{ padding: "24px 20px" }}>
-                            {[1, 2, 3].map(i => (
-                                <div key={i} style={{ background: "#fff", borderRadius: 14, padding: 20, marginBottom: 14, border: "1px solid #E2E8F0" }}>
-                                    <div style={{ height: 12, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 6, width: "40%", marginBottom: 12 }} />
-                                    <div style={{ height: 32, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 8, width: "70%", marginBottom: 12 }} />
-                                    <div style={{ height: 8, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 4, width: "100%", marginBottom: 8 }} />
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <NoMatchesScreen upcomingMatches={liveMatches.filter(m => m.status === "UPCOMING")} />
-                    )
-                ) : (
+                {/* Show NoMatchesScreen only if no match selected and not loading */}
+                {!selectedMatch && !pred && !isPredLoading && (
+                    <NoMatchesScreen upcomingMatches={liveMatches.filter(m => m.status === "UPCOMING")} />
+                )}
+
+                {/* Show header + content whenever a match is selected */}
+                {(selectedMatch || pred) && (
                     <>
-                        {/* Match header */}
+                        {/* Match header — uses selectedMatch immediately, falls back to pred */}
                         <div style={{ background: "linear-gradient(160deg,#1a2760 0%,#253580 100%)", padding: "16px 24px 20px", position: "sticky", top: 0, zIndex: 100, color: "#fff" }}>
                             <div style={{ textAlign: "center" }}>
-                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 10 }}>{pred.venue || ""}</div>
+                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 10 }}>{pred?.venue || selectedMatch?.detail || ""}</div>
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 12 }}>
                                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                        <TeamLogo name={(pred.team1 || "").toLowerCase()} size={40} imageId={pred.team1ImageId || 0} />
-                                        <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "#fff" }}>{cleanTeam(pred.team1)}</span>
+                                        <TeamLogo name={(pred?.team1 || selectedMatch?.t1 || "").toLowerCase()} size={40} imageId={pred?.team1ImageId || selectedMatch?.t1ImageId || 0} />
+                                        <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "#fff" }}>{cleanTeam(pred?.team1 || selectedMatch?.t1)}</span>
                                     </div>
                                     <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>vs</span>
                                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                        <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "rgba(255,255,255,0.55)" }}>{cleanTeam(pred.team2)}</span>
-                                        <TeamLogo name={(pred.team2 || "").toLowerCase()} size={40} imageId={pred.team2ImageId || 0} />
+                                        <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "rgba(255,255,255,0.55)" }}>{cleanTeam(pred?.team2 || selectedMatch?.t2)}</span>
+                                        <TeamLogo name={(pred?.team2 || selectedMatch?.t2 || "").toLowerCase()} size={40} imageId={pred?.team2ImageId || selectedMatch?.t2ImageId || 0} />
                                     </div>
                                 </div>
-                                <div style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
-                                    <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore || ""}</span>
-                                    <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
-                                    <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || ""}</span>
-                                    {pred.momentum !== undefined && pred.currentRunRate > 0 && (
-                                        <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: pred.momentum > 0.5 ? "rgba(0,200,150,0.25)" : pred.momentum < -0.5 ? "rgba(229,62,62,0.25)" : "rgba(255,255,255,0.1)", color: pred.momentum > 0.5 ? "#00D4AA" : pred.momentum < -0.5 ? "#FF6B6B" : "rgba(255,255,255,0.7)" }}>
-                                            {pred.momentum > 0 ? "+" : ""}{pred.momentum ? pred.momentum.toFixed(1) : "0"} vs avg
-                                        </span>
-                                    )}
-                                    <button onClick={() => { const t = `${cleanTeam(pred.team1)} vs ${cleanTeam(pred.team2)} - AI: ${prob}% win probability. cricintelligence.com`; try { navigator.clipboard?.writeText(t).then(() => alert("Copied!")); } catch { } }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share</button>
-                                </div>
+                                {pred?.displayScore && (
+                                    <div style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
+                                        <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore}</span>
+                                        <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
+                                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || ""}</span>
+                                        {pred.momentum !== undefined && pred.currentRunRate > 0 && (
+                                            <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: pred.momentum > 0.5 ? "rgba(0,200,150,0.25)" : pred.momentum < -0.5 ? "rgba(229,62,62,0.25)" : "rgba(255,255,255,0.1)", color: pred.momentum > 0.5 ? "#00D4AA" : pred.momentum < -0.5 ? "#FF6B6B" : "rgba(255,255,255,0.7)" }}>
+                                                {pred.momentum > 0 ? "+" : ""}{pred.momentum ? pred.momentum.toFixed(1) : "0"} vs avg
+                                            </span>
+                                        )}
+                                        <button onClick={() => { const t = `${cleanTeam(pred.team1)} vs ${cleanTeam(pred.team2)} - AI: ${prob}% win probability. cricintelligence.com`; try { navigator.clipboard?.writeText(t).then(() => alert("Copied!")); } catch { } }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share</button>
+                                    </div>
+                                )}
+                                {isPredLoading && !pred?.displayScore && (
+                                    <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", letterSpacing: 1 }}>Loading prediction...</div>
+                                )}
                             </div>
                         </div>
 
-                        {/* Prediction content */}
-                        <div style={{ padding: "20px 24px" }}>
+                        {/* Prediction content — skeleton while loading */}
+                        {(!pred || isPredLoading) && (
+                            <div style={{ padding: "24px 20px" }}>
+                                {[1, 2, 3].map(i => (
+                                    <div key={i} style={{ background: "#fff", borderRadius: 14, padding: 20, marginBottom: 14, border: "1px solid #E2E8F0" }}>
+                                        <div style={{ height: 12, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 6, width: "40%", marginBottom: 12 }} />
+                                        <div style={{ height: 32, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 8, width: "70%", marginBottom: 12 }} />
+                                        <div style={{ height: 8, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 4, width: "100%", marginBottom: 8 }} />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        <div style={{ padding: "20px 24px", display: pred && !isPredLoading ? "block" : "none" }}>
                             <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
                                 {/* Next overs card */}
                                 <div className="card" style={{ padding: 22, marginBottom: 14 }}>
-                                    <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 14 }}>{`Next ${(pred.nextOvers || []).length} overs prediction`}</div>
+                                    <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 14 }}>{`Next ${(pred?.nextOvers || []).length} overs prediction`}</div>
                                     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                                         {(pred.nextOvers || []).slice(0, 3).map((ov, i) => {
                                             const wc = ov.wicketProb > 40 ? C.red : ov.wicketProb > 25 ? C.amber : C.green;
