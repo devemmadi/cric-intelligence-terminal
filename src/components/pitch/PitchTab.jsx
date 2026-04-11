@@ -25,20 +25,117 @@ const BEHAVIOURS = {
     UNKNOWN:       { id: "UNKNOWN",       label: "Awaiting data…",     color: "#64748B", bg: "rgba(100,116,139,0.08)",  icon: "🔍", short: "No data yet"  },
 };
 
-// ─── Bet signals ──────────────────────────────────────────────────────────────
-function getBetSignal(beh, seg, detr, dew) {
+// ─── Bet signals — fully match-state aware ────────────────────────────────────
+function getBetSignal(beh, seg, ms) {
     const id = beh.id;
-    const isPP = seg.phase === "POWERPLAY";
-    const isDeath = seg.phase === "DEATH";
+    const { runs, wickets, overs, target, crr, rrr, innings, wktsLeft,
+            isChasing, pressure, oversLeft, runsNeeded, strikerSR, bowlerEco,
+            last3Runs, last3RR, projWktsAtSegStart, projRunsAtSegStart } = ms;
 
-    if (id === "SEAM_SWING")  return { back: "Top-order wicket in PP", fade: "Big over / 6s", reason: "New ball moving — openers vulnerable" };
-    if (id === "SEAM_BOUNCE") return { back: "Caught behind / LBW", fade: "Sweep / pull shots",  reason: "Extra bounce beats inside edge" };
-    if (id === "SPIN_GRIP")   return { back: "Spinner wicket", fade: "Batters scoring freely", reason: "Ball gripping and turning — difficult to score" };
-    if (id === "SPIN_LETHAL") return { back: "2+ wickets this phase", fade: "Batter over 20 runs", reason: "Pitch unplayable for right-handers outside off" };
-    if (id === "DEW_FACTOR")  return { back: "Boundaries / big over", fade: "Wicket this phase", reason: "Dew makes ball impossible to grip — spinners ineffective" };
-    if (id === "SURFACE_FLAT")return { back: "30+ runs this phase", fade: "Bowler figures", reason: "Pitch easing — batters timing the ball well" };
-    if (id === "PITCH_WEARING") return { back: "Spinner wicket", fade: "Fluent batting", reason: "Rough outside off — awkward for batters" };
-    if (id === "CONTESTED")   return { back: "Wicket vs dot ball split", fade: "Nothing extreme", reason: "Pitch not heavily favouring either side" };
+    // ── helper shorthands ──────────────────────────────────────────────────────
+    const isDP     = seg.phase === "DEATH";
+    const isMid    = seg.phase === "MIDDLE";
+    const isPP     = seg.phase === "POWERPLAY";
+    const wktsDown = wickets ?? 0;
+    const ovsDone  = parseFloat(overs ?? 0);
+
+    // Projected wickets/runs at segment start (for future segments)
+    const projWD   = projWktsAtSegStart ?? wktsDown;
+    const projWL   = Math.max(10 - projWD, 0);
+    const projR    = projRunsAtSegStart ?? runs;
+
+    // ── SEAM / SWING ─────────────────────────────────────────────────────────
+    if (id === "SEAM_SWING") {
+        if (isChasing) {
+            if (projWD >= 3) return { back: "Bowling team wins", fade: "Chase completed", reason: `${projWL} wickets left with movement still available — chase in serious trouble` };
+            return { back: "PP wicket / tight PP total", fade: "Openers dominating", reason: "Ball swinging in humid conditions — openers at risk" };
+        }
+        if (projWD >= 4) return { back: "Under 130 total", fade: "Batting recovery", reason: `${projWD} wickets already gone with ball still moving — hard to recover` };
+        return { back: "PP total under 35", fade: "50+ powerplay", reason: "New ball moving both ways — expect controlled PP scoring" };
+    }
+
+    // ── SEAM BOUNCE ───────────────────────────────────────────────────────────
+    if (id === "SEAM_BOUNCE") {
+        if (isChasing && runsNeeded > 0) {
+            const rr = runsNeeded / Math.max(oversLeft, 1);
+            if (rr > 11) return { back: "Defending team wins", fade: "Chasing team wins", reason: `Need ${runsNeeded} from ~${Math.round(oversLeft)} overs with extra bounce — near impossible` };
+        }
+        if (projWD >= 3 && isPP) return { back: "Under 140 total / top-order collapse", fade: "Smooth batting", reason: "3+ wickets with bounce still available — severe trouble" };
+        return { back: "Caught behind or LBW wicket", fade: "Pull/hook shots going to boundary", reason: "Ball climbing sharply — inside edge and top edge danger" };
+    }
+
+    // ── SPIN GRIPPING ─────────────────────────────────────────────────────────
+    if (id === "SPIN_GRIP") {
+        if (isChasing) {
+            const rr = runsNeeded / Math.max(oversLeft, 1);
+            if (rr > 10 && projWD >= 4) return { back: "Defending team wins", fade: "Chase", reason: `Need ${runsNeeded} from ~${Math.round(oversLeft)} overs — spinners gripping + ${projWD} down` };
+            if (projWD >= 5) return { back: "Under target by 20+", fade: "Successful chase", reason: `${projWD} wickets gone, spin gripping — batting has no room for error` };
+            if (rr > 9) return { back: "Wicket this phase", fade: "Big over", reason: `Required rate ${rr.toFixed(1)} — batters must attack into spin, high risk` };
+        }
+        if (projWD >= 5) return { back: "Under 130 total", fade: "Recovery innings", reason: `${projWD} wickets down, pitch spinning — tail can't save this` };
+        return { back: "Spinner wicket", fade: "Batters scoring 9+ RPO", reason: "Ball gripping and deviating — difficult to score freely" };
+    }
+
+    // ── SPIN LETHAL ───────────────────────────────────────────────────────────
+    if (id === "SPIN_LETHAL") {
+        if (isChasing) {
+            const rr = runsNeeded / Math.max(oversLeft, 1);
+            if (projWD >= 5) return { back: "Defending team wins", fade: "Any bet on chasing team", reason: `${projWD} wickets down, unplayable spin — chase almost over` };
+            if (rr > 9) return { back: "Defending team wins", fade: "Chase pulled off", reason: `${rr.toFixed(1)} RRR + spinners lethal = pressure collapse likely` };
+            return { back: "2+ wickets this phase", fade: "Chase on track", reason: "Unplayable turn — even set batters in danger" };
+        }
+        if (projWD >= 6) return { back: "Total under 120", fade: "Batting past over 16", reason: `Pitch unplayable + ${projWD} down — team could fold` };
+        return { back: "2+ wickets this segment", fade: "Any batter scoring 25+", reason: "Rough outside off — spinners unplayable on this surface" };
+    }
+
+    // ── DEW FACTOR ───────────────────────────────────────────────────────────
+    if (id === "DEW_FACTOR") {
+        if (isChasing) {
+            const rr = runsNeeded / Math.max(oversLeft, 1);
+            if (rr < 9 && projWL >= 5) return { back: "Chase completed", fade: "Defending team wins", reason: `Dew killing spinners + ${projWL} wickets + need ${rr.toFixed(1)} RPO — chasers heavily favoured` };
+            if (rr < 11 && projWL >= 4) return { back: "Chasing team wins", fade: "Wickets in death", reason: `Ball slipping out of bowlers' hands — ${rr.toFixed(1)} RRR easily achievable with dew` };
+        }
+        // 1st innings — dew inflates death total
+        if (!isChasing && isDP) return { back: "20+ runs this phase", fade: "Bowling team defending well", reason: "Dew in death overs means spinners useless — pace bowlers also losing grip" };
+        return { back: "Big over / 6s", fade: "Wicket ball", reason: "Ball completely wet — impossible to grip, boundaries easy" };
+    }
+
+    // ── SURFACE FLAT ─────────────────────────────────────────────────────────
+    if (id === "SURFACE_FLAT") {
+        if (isChasing) {
+            const rr = runsNeeded / Math.max(oversLeft, 1);
+            if (rr < 8 && projWL >= 5) return { back: "Chase completed easily", fade: "Bowling team wins", reason: `Flat pitch + ${projWL} wickets + only ${rr.toFixed(1)} RRR — chase is comfortable` };
+            if (rr < 10 && projWL >= 3) return { back: "Chasing team wins", fade: "Under target", reason: `${rr.toFixed(1)} RRR on flat pitch — achievable if wickets in hand` };
+        }
+        if (!isChasing && projWD <= 3 && isDP) return { back: "Over 180 total", fade: "Under 165", reason: `Flat pitch + ${10 - projWD} wickets left in death — big finish expected` };
+        return { back: "30+ runs this phase", fade: "Bowler dominant over", reason: "Surface completely flat — batters in full control" };
+    }
+
+    // ── PITCH WEARING ─────────────────────────────────────────────────────────
+    if (id === "PITCH_WEARING") {
+        if (isChasing) {
+            const rr = runsNeeded / Math.max(oversLeft, 1);
+            if (projWD >= 4 && rr > 8) return { back: "Defending team wins", fade: "Chase", reason: `Rough patches + ${projWD} wickets + ${rr.toFixed(1)} RRR — nearly impossible` };
+            return { back: "Wicket this phase", fade: "Fluent 30+ runs", reason: "Deteriorating surface — rough outside off troubling batters" };
+        }
+        if (projWD >= 5) return { back: "Total under 140", fade: "Recovery", reason: `${projWD} down on wearing surface — game could end quickly` };
+        return { back: "Spinner wicket from rough", fade: "Batters sweeping/cutting freely", reason: "Pitch breaking up — variable bounce from rough patches" };
+    }
+
+    // ── CONTESTED ────────────────────────────────────────────────────────────
+    if (id === "CONTESTED") {
+        if (isChasing) {
+            const rr = runsNeeded / Math.max(oversLeft, 1);
+            if (rr > 11) return { back: "Defending team wins", fade: "Chase", reason: `${rr.toFixed(1)} RRR on an even surface — very steep ask` };
+            if (rr < 7 && projWL >= 6) return { back: "Chasing team wins", fade: "Defending team wins", reason: `${rr.toFixed(1)} RRR with ${projWL} wickets — comfortable chase` };
+            // match in the balance
+            return { back: "Next wicket within 3 overs", fade: "Nothing extreme this phase", reason: `${rr.toFixed(1)} RRR with ${projWL} wickets — match in the balance` };
+        }
+        if (projWD >= 5 && isMid) return { back: "Under 145 total", fade: "Big death over rally", reason: `${projWD} wickets down in the middle — tail won't last long` };
+        if (projWD <= 2 && isDP) return { back: "Over 175 total", fade: "Under 160", reason: `${10 - projWD} wickets left in death on decent surface — acceleration expected` };
+        return { back: "Match stays close", fade: "One team running away", reason: "Pitch giving fair contest — match situation decides it" };
+    }
+
     return null;
 }
 
@@ -159,6 +256,14 @@ function buildEvidence(seg, beh, allSegs, matchAvgRPO, pitchKey, detr, dew, humi
     return points.slice(0, 3); // max 3 bullets
 }
 
+// ─── Project match state at start of a future segment ────────────────────────
+function projectStateAtSegment(seg, currentRuns, currentWkts, currentOvers, matchAvgRPO, avgWktsPerOv) {
+    const oversToSeg = Math.max(seg.start - 1 - currentOvers, 0);
+    const projRuns   = Math.round(currentRuns + (matchAvgRPO ?? 8) * oversToSeg);
+    const projWkts   = Math.min(9, Math.round(currentWkts + avgWktsPerOv * oversToSeg));
+    return { projRunsAtSegStart: projRuns, projWktsAtSegStart: projWkts };
+}
+
 // ─── Main computation ─────────────────────────────────────────────────────────
 function buildSegmentData(pred) {
     const pitchKey = normalisePitchKey(pred?.pitchCondition);
@@ -171,21 +276,40 @@ function buildSegmentData(pred) {
     const currentOvers = parseFloat(pred?.overs ?? 0);
     const currentOver  = Math.floor(currentOvers);
 
-    // Build over lookup
+    // ── Live match state ──────────────────────────────────────────────────────
+    const runs    = pred?.score   ?? pred?.runs   ?? 0;
+    const wickets = pred?.wickets ?? 0;
+    const target  = pred?.target  ?? 0;
+    const innings = pred?.innings ?? 1;
+    const crr     = pred?.currentRunRate ?? parseFloat((runs / Math.max(currentOvers, 0.1)).toFixed(2));
+    const rrr     = pred?.requiredRunRate ?? 0;
+    const isChasing  = innings === 2 && target > 0;
+    const wktsLeft   = 10 - wickets;
+    const oversLeft  = Math.max(20 - currentOvers, 0);
+    const runsNeeded = isChasing ? Math.max(target - runs, 0) : 0;
+    const pressure   = isChasing ? rrr - crr : 0;
+    const strikerSR  = pred?.playerContext?.strikerSR ?? 100;
+    const bowlerEco  = pred?.playerContext?.bowlerEco ?? 8;
+    const last3Runs  = pred?.playerContext?.last3Runs ?? 0;
+    const last3RR    = pred?.playerContext?.last3RR   ?? 8;
+
+    // Average wickets per over from history (for projection)
     const overMap = {};
     overHistory.forEach(o => {
         const k = Math.round(o.over ?? o.overNum ?? 0);
         if (k >= 1 && k <= 20) overMap[k] = { runs: o.runs ?? 0, wickets: o.wickets ?? 0 };
     });
-
-    // Match avg RPO
     const completedKeys = Object.keys(overMap).map(Number);
-    const totalRuns = completedKeys.reduce((s, k) => s + overMap[k].runs, 0);
-    const matchAvgRPO = completedKeys.length >= 3
+    const totalRuns  = completedKeys.reduce((s, k) => s + overMap[k].runs, 0);
+    const totalWkts  = completedKeys.reduce((s, k) => s + overMap[k].wickets, 0);
+    const matchAvgRPO  = completedKeys.length >= 3
         ? Math.round((totalRuns / completedKeys.length) * 10) / 10
         : null;
+    const avgWktsPerOv = completedKeys.length >= 3
+        ? totalWkts / completedKeys.length
+        : 0.25; // default ~5 wickets over 20 overs
 
-    // Raw per-segment stats
+    // ── Per-segment stats ─────────────────────────────────────────────────────
     const rawSegs = SEGMENTS.map((seg, i) => {
         const played = [];
         for (let ov = seg.start; ov <= seg.end; ov++) {
@@ -198,18 +322,42 @@ function buildSegmentData(pred) {
         const actualRuns = played.length > 0 ? played.reduce((s, o) => s + o.runs, 0) : null;
         const actualWkts = played.length > 0 ? played.reduce((s, o) => s + o.wickets, 0) : null;
         const actualRPO  = played.length > 0 ? Math.round((actualRuns / played.length) * 10) / 10 : null;
-        const isPast    = currentOver >= seg.end;
-        const isCurrent = !isPast && currentOver >= seg.start - 1 && currentOver < seg.end;
-        const isFuture  = !isPast && !isCurrent;
+        const isPast     = currentOver >= seg.end;
+        const isCurrent  = !isPast && currentOver >= seg.start - 1 && currentOver < seg.end;
+        const isFuture   = !isPast && !isCurrent;
         return { ...seg, i, played, allOvs, actualRuns, actualWkts, actualRPO, oversPlayed: played.length, isPast, isCurrent, isFuture };
     });
 
-    // Enrich each segment
+    // ── Base match state object (shared across signals) ───────────────────────
+    const baseMS = {
+        runs, wickets, overs: currentOvers, target, crr, rrr,
+        innings, wktsLeft, isChasing, pressure, oversLeft, runsNeeded,
+        strikerSR, bowlerEco, last3Runs, last3RR,
+    };
+
+    // ── Enrich each segment ───────────────────────────────────────────────────
     const segments = rawSegs.map((seg, i) => {
-        const behId  = inferBehaviour(seg, rawSegs, pitchKey, detr, dew, humidity, currentOvers);
-        const beh    = BEHAVIOURS[behId] || BEHAVIOURS.UNKNOWN;
+        const behId    = inferBehaviour(seg, rawSegs, pitchKey, detr, dew, humidity, currentOvers);
+        const beh      = BEHAVIOURS[behId] || BEHAVIOURS.UNKNOWN;
         const evidence = buildEvidence(seg, beh, rawSegs, matchAvgRPO, pitchKey, detr, dew, humidity);
-        const betSignal = getBetSignal(beh, seg, detr, dew);
+
+        // Project match state at start of this segment (for future segments)
+        const proj = seg.isFuture
+            ? projectStateAtSegment(seg, runs, wickets, currentOvers, matchAvgRPO ?? crr, avgWktsPerOv)
+            : { projRunsAtSegStart: runs, projWktsAtSegStart: wickets };
+
+        // Recalculate oversLeft and runsNeeded at segment start
+        const segOversLeft   = Math.max(20 - (seg.isFuture ? seg.start - 1 : currentOvers), 0);
+        const segRunsNeeded  = isChasing ? Math.max(target - (proj.projRunsAtSegStart ?? runs), 0) : 0;
+
+        const ms = {
+            ...baseMS,
+            ...proj,
+            oversLeft: segOversLeft,
+            runsNeeded: segRunsNeeded,
+        };
+
+        const betSignal = (!seg.isPast) ? getBetSignal(beh, seg, ms) : null;
         return { ...seg, beh, evidence, betSignal, matchAvgRPO, dew };
     });
 
