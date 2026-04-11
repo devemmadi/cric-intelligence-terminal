@@ -347,6 +347,11 @@ function MatchPill({ m, selected, onClick }) {
     );
 }
 function MatchCard({ m, onClick }) {
+    const _IPL = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
+    const _PSL = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
+    const _t1 = (m.t1 || m.team1 || "").toUpperCase();
+    const _t2 = (m.t2 || m.team2 || "").toUpperCase();
+    const _league = _IPL.some(t => _t1===t||_t2===t) ? "IPL 2026" : _PSL.some(t => _t1===t||_t2===t) ? "PSL 2026" : null;
     return (
         <div className="card" style={{ padding: 16, marginBottom: 10, cursor: "pointer", opacity: m.status === "ENDED" ? 0.8 : 1 }} onClick={onClick}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -1003,36 +1008,32 @@ body { background: ${C.bg}; }
                         {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
                             <>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.red, letterSpacing: 1, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
-                                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.red, animation: "pulse 2s infinite" }} />Live now
-                                </div>
-                                {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
-                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
-                                        try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
-                                    }} />
-                                ))}
-                            </>
-                        )}
-                        {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
-                            <>
-                                <div style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: 1, margin: "14px 0 8px" }}>Upcoming</div>
-                                {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
-                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
-                                        try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
-                                    }} />
-                                ))}
-                            </>
-                        )}
-                        {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
-                            <>
-                                <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "14px 0 8px" }}>Recent</div>
-                                {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
-                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
-                                        try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
-                                    }} />
-                                ))}
+                            {(() => {
+                                const IPL_T = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
+                                const PSL_T = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
+                                const isIPL = function(m) { return IPL_T.some(function(t) { return (m.t1||"")===t||(m.t2||"")===t; }); };
+                                const isPSL = function(m) { return PSL_T.some(function(t) { return (m.t1||"")===t||(m.t2||"")===t; }); };
+                                const mk = function(m) { return function() { setSelectedMatch(m); setCurMatchId(m.id||m.matchId||null); setActiveTab("predict"); }; };
+                                const groups = [
+                                    { key:"IPL", label:"IPL 2026", color:"#F59E0B", ms: liveMatches.filter(function(m){ return isIPL(m); }) },
+                                    { key:"PSL", label:"PSL 2026", color:"#10B981", ms: liveMatches.filter(function(m){ return isPSL(m); }) },
+                                    { key:"INT", label:"International", color:"#6366F1", ms: liveMatches.filter(function(m){ return !isIPL(m) && !isPSL(m); }) },
+                                ];
+                                return groups.map(function(g) {
+                                    if (g.ms.length === 0) return null;
+                                    return (
+                                        <div key={g.key}>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: g.color, letterSpacing: 1, margin: "10px 0 5px", display: "flex", alignItems: "center", gap: 5 }}>
+                                                <span style={{ width: 6, height: 6, borderRadius: "50%", background: g.color, display: "inline-block" }}></span>
+                                                {g.label}
+                                            </div>
+                                            {g.ms.map(function(m) {
+                                                return <MatchPill key={m.id} m={m} selected={selectedMatch != null && selectedMatch.id === m.id} onClick={mk(m)} />;
+                                            })}
+                                        </div>
+                                    );
+                                });
+                            })()}
                             </>
                         )}
                         <div style={{ marginTop: 16, padding: 14, background: C.bg, borderRadius: 12 }}>
