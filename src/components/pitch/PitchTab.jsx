@@ -141,7 +141,7 @@ function getBetSignal(beh, seg, ms) {
 
 // ─── Core: infer behaviour purely from live match trends ─────────────────────
 // NO pitch condition lookup tables. Only measured values from the match.
-function inferBehaviour(seg, allSegs, detr, dew, humidity, trendSlope, matchAvgRPO, avgWktsPerOv, last3RPO, crr) {
+function inferBehaviour(seg, allSegs, detr, dew, humidity, trendSlope, matchAvgRPO, avgWktsPerOv, last3RPO, crr, venueSegs) {
     const { actualRPO, actualWkts, oversPlayed, i } = seg;
 
     // ── CASE 1: Actual data exists for this segment ───────────────────────────
@@ -176,33 +176,44 @@ function inferBehaviour(seg, allSegs, detr, dew, humidity, trendSlope, matchAvgR
         return "CONTESTED";
     }
 
-    // ── CASE 2: No data for this segment — project from match trends only ─────
-    // trendSlope   = RPO change per 4-over segment (from completed segs, LSQ)
-    // avgWktsPerOv = actual wickets per over from completed overs
-    // detr         = computed from overs bowled (not a lookup)
-    // dew          = computed from humidity + over number (not a lookup)
-    // last3RPO     = last 3 overs actual run rate
-    // matchAvgRPO  = actual match average RPO
+    // ── CASE 2: No data for this segment — project from match trends + venue history ──
+    // Sources (all dynamic, no static tables):
+    //   trendSlope   = LSQ RPO change per segment from actual overHistory
+    //   avgWktsPerOv = actual match wicket rate
+    //   detr         = computed from overs bowled
+    //   dew          = computed from humidity + over number
+    //   venueSegs    = historical avg per segment from 7500+ T20 matches at this venue
 
-    // DEW: humidity is measurable + over number is live
+    // Venue historical RPO/wickets for this segment (real data, not a lookup table)
+    const vSeg    = venueSegs ? venueSegs[i] : null;
+    const vRPO    = vSeg?.avg_rpo    ?? null;
+    const vWkts   = vSeg?.avg_wickets ?? null;
+    const vCount  = vSeg?.count       ?? 0;
+
+    // DEW: dew is computed from live humidity + over number
     if (i >= 3 && dew < 0.88) return "DEW_FACTOR";
     if (i === 4 && dew < 0.93 && humidity > 72) return "DEW_FACTOR";
 
-    // SPIN indicators: RPO declining trend + detr growing + middle phase
+    // SPIN: live trend + detr. Confirm with venue history if available
     if (i >= 2 && trendSlope < -2.0 && detr >= 1.10) return "SPIN_LETHAL";
     if (i >= 2 && trendSlope < -1.2 && detr >= 1.06) return "SPIN_GRIP";
-    if (i >= 2 && detr >= 1.20) return "SPIN_LETHAL"; // heavy wear = spin regardless of trend
+    // Venue historically low-scoring in middle + detr present = spin confirmed
+    if (i >= 2 && detr >= 1.12 && vRPO !== null && vCount >= 10 && vRPO < 7.5) return "SPIN_GRIP";
+    if (i >= 2 && detr >= 1.20) return "SPIN_LETHAL";
     if (i >= 2 && detr >= 1.10) return "SPIN_GRIP";
 
-    // SURFACE FLAT: match average already high, or positive trend
+    // SURFACE FLAT: high match avg OR venue historically high-scoring here
     if (matchAvgRPO !== null && matchAvgRPO >= 9.5) return "SURFACE_FLAT";
     if (trendSlope > 1.5) return "SURFACE_FLAT";
+    if (vRPO !== null && vCount >= 10 && vRPO >= 10.0 && i >= 3) return "SURFACE_FLAT";
 
-    // SEAM: early overs, actual wicket rate is elevated + low scoring
+    // SEAM: early overs, elevated actual wicket rate + low scoring
     if (i <= 1 && avgWktsPerOv >= 0.45 && (last3RPO ?? crr ?? 8) < 7.0) return "SEAM_SWING";
     if (i <= 1 && avgWktsPerOv >= 0.30 && (last3RPO ?? crr ?? 8) < 8.0) return "SEAM_BOUNCE";
+    // Venue historically seam-friendly in PP
+    if (i <= 1 && vWkts !== null && vCount >= 10 && vWkts >= 2.2) return "SEAM_SWING";
 
-    // PITCH WEARING: significant detr + RPO declining
+    // PITCH WEARING: detr + RPO declining
     if (detr >= 1.12 && trendSlope < -0.8) return "PITCH_WEARING";
 
     return "CONTESTED";
@@ -246,8 +257,11 @@ function buildEvidence(seg, beh, allSegs, matchAvgRPO, pitchKey, detr, dew, humi
         if (beh.id === "SEAM_SWING" && oversPlayed >= 1)
             points.push("New ball moving both ways — openers in trouble");
     } else {
-        // Future segment — all evidence from measured match values, no static strings
-        const { trendSlope, avgWktsPerOv, last3RPO, matchAvgRPO: mAvg } = seg._trends || {};
+        // Future segment — all evidence from measured match values + venue history
+        const { trendSlope, avgWktsPerOv, last3RPO, matchAvgRPO: mAvg,
+                venueSegs: vSegs, venueName, venueCount } = seg._trends || {};
+        const vSeg   = vSegs ? vSegs[seg.i] : null;
+        const vLabel = venueName ? venueName.split(",")[0] : null;
 
         if (beh.id === "SEAM_SWING") {
             points.push(`Humidity at ${humidity}% — measurably assists swing movement`);
@@ -281,6 +295,11 @@ function buildEvidence(seg, beh, allSegs, matchAvgRPO, pitchKey, detr, dew, humi
             if (mAvg != null) points.push(`Match averaging ${mAvg.toFixed(1)} RPO — neither side dominating`);
             else points.push("Insufficient match data to project clear advantage");
             points.push("Live match state and current bowler form will decide this phase");
+        }
+
+        // Add venue historical context if available (real data, not templates)
+        if (vSeg && vSeg.count >= 8 && vLabel) {
+            points.push(`${vLabel} history (${vSeg.count} matches): avg ${vSeg.avg_rpo.toFixed(1)} RPO, ${vSeg.avg_wickets.toFixed(1)} wkts in overs ${seg.label}`);
         }
     }
 
@@ -377,6 +396,10 @@ function buildSegmentData(pred) {
         strikerSR, bowlerEco, last3Runs, last3RR,
     };
 
+    // ── Venue historical stats ────────────────────────────────────────────────
+    const venueHistory = pred?.venueHistory || null;
+    const venueSegs    = venueHistory?.segments || null; // [{label,avg_rpo,avg_wickets,count}]
+
     // ── Compute trendSlope from completed segments ────────────────────────────
     const doneSegs = rawSegs.filter(s => s.isPast && s.actualRPO !== null);
     if (doneSegs.length >= 2) {
@@ -391,11 +414,11 @@ function buildSegmentData(pred) {
     }
 
     // Trends object passed to evidence builder
-    const trends = { trendSlope, avgWktsPerOv, last3RPO, matchAvgRPO };
+    const trends = { trendSlope, avgWktsPerOv, last3RPO, matchAvgRPO, venueSegs, venueName: venueHistory?.name, venueCount: venueHistory?.match_count };
 
     // ── Enrich each segment ───────────────────────────────────────────────────
     const segments = rawSegs.map((seg, i) => {
-        const behId    = inferBehaviour(seg, rawSegs, detr, dew, humidity, trendSlope, matchAvgRPO, avgWktsPerOv, last3RPO, crr);
+        const behId    = inferBehaviour(seg, rawSegs, detr, dew, humidity, trendSlope, matchAvgRPO, avgWktsPerOv, last3RPO, crr, venueSegs);
         const beh      = BEHAVIOURS[behId] || BEHAVIOURS.UNKNOWN;
         // Attach trends for evidence builder to use
         const segWithTrends = { ...seg, _trends: trends };
@@ -574,7 +597,7 @@ function BehaviourTimeline({ segments, currentOver }) {
 }
 
 // ─── Match condition summary bar ─────────────────────────────────────────────
-function ConditionBar({ pitchKey, detr, dew, humidity, temp, matchAvgRPO }) {
+function ConditionBar({ pitchKey, detr, dew, humidity, temp, matchAvgRPO, venueHistory }) {
     const pitchMeta = {
         FRESH: { label: "Fresh",   color: "#22c55e" },
         WORN:  { label: "Worn",    color: "#f97316" },
@@ -593,6 +616,7 @@ function ConditionBar({ pitchKey, detr, dew, humidity, temp, matchAvgRPO }) {
         humidity > 78 && { label: `Humid ${humidity}%`, color: "#a5f3fc" },
         temp > 34 && { label: `Hot ${temp}°C 🥵`, color: "#fb923c" },
         matchAvgRPO && { label: `Match avg ${matchAvgRPO.toFixed(1)} RPO`, color: "#94A3B8" },
+        venueHistory?.match_count >= 5 && { label: `${venueHistory.name?.split(",")[0]} · ${venueHistory.match_count}m data`, color: "#818CF8" },
     ].filter(Boolean);
 
     return (
@@ -667,7 +691,7 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
             </div>
 
             {/* Condition chips */}
-            <ConditionBar pitchKey={pitchKey} detr={detr} dew={dew} humidity={humidity} temp={temp} matchAvgRPO={matchAvgRPO} />
+            <ConditionBar pitchKey={pitchKey} detr={detr} dew={dew} humidity={humidity} temp={temp} matchAvgRPO={matchAvgRPO} venueHistory={pred?.venueHistory} />
 
             {/* Behaviour timeline strip */}
             <BehaviourTimeline segments={segments} currentOver={currentOver} />
