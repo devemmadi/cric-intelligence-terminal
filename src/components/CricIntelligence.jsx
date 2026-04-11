@@ -7,6 +7,7 @@ import useMatchData from "./hooks/useMatchData";
 import PredictionsTab from "./predictions/PredictionsTab";
 import MatchesTab from "./matches/MatchesTab";
 import MediaSection from "./MediaSection";
+import PitchTab from "./pitch/PitchTab";
 
 export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
@@ -46,7 +47,7 @@ export default function CricIntelligence() {
                     <Logo href="/" />
                 </div>
                 <div style={{ display: "flex", gap: 4 }}>
-                    {[["predict", "Predictions"], ["matches", "Matches"], ["media", "Media"], ["odds", "Odds 🎲"]].map(([k, l]) => (
+                    {[["predict", "Predictions"], ["matches", "Matches"], ["pitch", "Pitch 🏟️"], ["media", "Media"], ["odds", "Odds 🎲"]].map(([k, l]) => (
                         <button key={k} className={`tab-btn ${activeTab === k ? "on" : ""}`}
                             onClick={() => { if (k === "odds") { window.location.href = "/odds"; } else { setActiveTab(k); } }}>
                             {l}
@@ -77,13 +78,21 @@ export default function CricIntelligence() {
                     onMatchClick={handleMatchClick}
                 />
             )}
+            {activeTab === "pitch" && (
+                <PitchTab
+                    pred={pred}
+                    selectedMatch={selectedMatch}
+                    liveMatches={liveMatches}
+                    onMatchSelect={handleMatchClick}
+                />
+            )}
             {activeTab === "media" && <MediaSection />}
 
             <RGFooter />
 
             {/* MOBILE BOTTOM NAV */}
             <nav className="mn">
-                {[["Predictions", "predict"], ["Matches", "matches"], ["Media", "media"]].map(([label, key]) => (
+                {[["Predictions", "predict"], ["Matches", "matches"], ["Pitch", "pitch"], ["Media", "media"]].map(([label, key]) => (
                     <button key={key} className="mt" onClick={() => setActiveTab(key)} style={{ opacity: activeTab === key ? 1 : 0.4 }}>
                         <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>{label}</span>
                     </button>
