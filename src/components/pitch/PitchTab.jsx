@@ -11,18 +11,17 @@ const SEGMENTS = [
     { label: "17–20", start: 17, end: 20, phase: "DEATH"     },
 ];
 
-// ─── Pitch behaviour types ────────────────────────────────────────────────────
-// Each type has: id, label, color, icon, betSignal
+// ─── Pitch behaviour types — plain simple English ─────────────────────────────
 const BEHAVIOURS = {
-    SEAM_SWING:    { id: "SEAM_SWING",    label: "Seam & Swing",       color: "#3B82F6", bg: "rgba(59,130,246,0.12)",   icon: "🌊", short: "Ball swinging" },
-    SEAM_BOUNCE:   { id: "SEAM_BOUNCE",   label: "Seam Bounce",        color: "#60A5FA", bg: "rgba(96,165,250,0.12)",   icon: "⬆️", short: "Extra bounce" },
-    SPIN_GRIP:     { id: "SPIN_GRIP",     label: "Spin Gripping",      color: "#A855F7", bg: "rgba(168,85,247,0.14)",   icon: "🌀", short: "Ball turning" },
-    SPIN_LETHAL:   { id: "SPIN_LETHAL",   label: "Spinners Lethal",    color: "#9333EA", bg: "rgba(147,51,234,0.18)",   icon: "💫", short: "Unplayable turn" },
-    DEW_FACTOR:    { id: "DEW_FACTOR",    label: "Dew Taking Over",    color: "#38BDF8", bg: "rgba(56,189,248,0.13)",   icon: "💧", short: "Ball slipping" },
-    SURFACE_FLAT:  { id: "SURFACE_FLAT",  label: "Surface Flattening", color: "#22C55E", bg: "rgba(34,197,94,0.12)",    icon: "🛣️", short: "Pitch easing" },
-    PITCH_WEARING: { id: "PITCH_WEARING", label: "Pitch Wearing Fast", color: "#F97316", bg: "rgba(249,115,22,0.13)",   icon: "🔥", short: "Rough forming" },
-    CONTESTED:     { id: "CONTESTED",     label: "Evenly Contested",   color: "#F59E0B", bg: "rgba(245,158,11,0.12)",   icon: "⚖️", short: "Even contest" },
-    UNKNOWN:       { id: "UNKNOWN",       label: "Awaiting data…",     color: "#64748B", bg: "rgba(100,116,139,0.08)",  icon: "🔍", short: "No data yet"  },
+    SEAM_SWING:    { id: "SEAM_SWING",    label: "Ball moving in air",   color: "#3B82F6", icon: "🌊", short: "Hard to bat" },
+    SEAM_BOUNCE:   { id: "SEAM_BOUNCE",   label: "Ball jumping off pitch",color: "#60A5FA", icon: "⬆️", short: "Extra bounce" },
+    SPIN_GRIP:     { id: "SPIN_GRIP",     label: "Spinners turning it",  color: "#A855F7", icon: "🌀", short: "Spinners winning" },
+    SPIN_LETHAL:   { id: "SPIN_LETHAL",   label: "Very hard to bat",     color: "#9333EA", icon: "💫", short: "Spinners dominating" },
+    DEW_FACTOR:    { id: "DEW_FACTOR",    label: "Ball getting wet",     color: "#38BDF8", icon: "💧", short: "Easy to bat" },
+    SURFACE_FLAT:  { id: "SURFACE_FLAT",  label: "Easy to bat",          color: "#22C55E", icon: "🛣️", short: "Batters winning" },
+    PITCH_WEARING: { id: "PITCH_WEARING", label: "Pitch breaking up",    color: "#F97316", icon: "🔥", short: "Getting tricky" },
+    CONTESTED:     { id: "CONTESTED",     label: "Both sides even",      color: "#F59E0B", icon: "⚖️", short: "Equal fight" },
+    UNKNOWN:       { id: "UNKNOWN",       label: "Waiting for data…",    color: "#64748B", icon: "🔍", short: "No data yet" },
 };
 
 // ─── Bet signals — fully match-state aware ────────────────────────────────────
@@ -225,81 +224,71 @@ function buildEvidence(seg, beh, allSegs, matchAvgRPO, pitchKey, detr, dew, humi
     const points = [];
 
     if (oversPlayed >= 1 && actualRPO !== null) {
-        // Actual scoring rate context
+        // ── Past / current: plain language from actual data ───────────────────
+        const totalRuns  = seg.actualRuns ?? 0;
+        const totalWkts  = seg.actualWkts ?? 0;
+        const runsPerOv  = Math.round(actualRPO * 10) / 10;
+
+        // How was the scoring?
         if (matchAvgRPO !== null) {
             const delta = actualRPO - matchAvgRPO;
-            if (delta <= -2.5)      points.push(`Scoring dried up — ${actualRPO.toFixed(1)} vs ${matchAvgRPO.toFixed(1)} match RPO`);
-            else if (delta <= -1.2) points.push(`Below average scoring — ${actualRPO.toFixed(1)} RPO in this phase`);
-            else if (delta >= 2.5)  points.push(`Batters exploding — ${actualRPO.toFixed(1)} vs ${matchAvgRPO.toFixed(1)} match RPO`);
-            else                    points.push(`${actualRPO.toFixed(1)} RPO — on par with match average`);
+            if (delta <= -2.5)     points.push(`Very hard to score — only ${totalRuns} runs in ${oversPlayed} overs`);
+            else if (delta <= -1.2)points.push(`Scoring was difficult — ${totalRuns} runs in ${oversPlayed} overs`);
+            else if (delta >= 2.5) points.push(`Batters dominated — ${totalRuns} runs in ${oversPlayed} overs`);
+            else                   points.push(`${totalRuns} runs in ${oversPlayed} overs — normal scoring`);
+        } else {
+            points.push(`${totalRuns} runs scored in ${oversPlayed} overs`);
         }
 
-        // Wickets
-        const wktRate = (actualWkts ?? 0) / oversPlayed;
-        if (wktRate >= 0.75) points.push(`${actualWkts} wickets in ${oversPlayed} overs — collapse territory`);
-        else if (wktRate >= 0.5) points.push(`${actualWkts} wickets — bowlers clearly on top`);
-        else if (actualWkts === 0 && oversPlayed >= 3) points.push(`No wickets fell — batters anchored this phase`);
-        else if (actualWkts > 0) points.push(`${actualWkts} wicket${actualWkts > 1 ? "s" : ""} in ${oversPlayed} overs`);
+        // Wickets — plain
+        if (totalWkts >= 4)                         points.push(`${totalWkts} wickets fell — batting collapsed`);
+        else if (totalWkts === 3)                   points.push(`3 wickets — bowlers on top`);
+        else if (totalWkts === 2)                   points.push(`2 wickets fell`);
+        else if (totalWkts === 1)                   points.push(`1 wicket fell`);
+        else if (totalWkts === 0 && oversPlayed>=3) points.push(`No wickets — batters completely in control`);
 
-        // Trend vs previous
+        // Vs previous phase
         const prev = i > 0 ? allSegs[i - 1] : null;
         if (prev?.actualRPO) {
             const change = actualRPO - prev.actualRPO;
-            if (change < -2.5)     points.push(`Sharp drop from previous phase (${change.toFixed(1)} RPO)`);
-            else if (change > 2.5) points.push(`Jumped ${change.toFixed(1)} RPO from previous phase`);
+            if (change < -2.5)     points.push(`Much harder than previous overs`);
+            else if (change > 2.5) points.push(`Much easier than previous overs`);
         }
 
-        // Behaviour-specific observations
-        if (beh.id === "DEW_FACTOR" && oversPlayed >= 2)
-            points.push("Ball slipping in fielders' hands — misfields likely");
-        if (beh.id === "SPIN_LETHAL" && oversPlayed >= 2)
-            points.push("Spinners turning and gripping from rough outside off");
-        if (beh.id === "SEAM_SWING" && oversPlayed >= 1)
-            points.push("New ball moving both ways — openers in trouble");
+        // Behaviour note
+        if (beh.id === "DEW_FACTOR" && oversPlayed >= 2) points.push("Ball getting wet — hard for bowlers to grip");
+        if (beh.id === "SPIN_LETHAL" && oversPlayed >= 2) points.push("Ball turning a lot — very hard to bat");
+        if (beh.id === "SEAM_SWING" && oversPlayed >= 1)  points.push("Ball swinging — batters struggling to middle it");
+
     } else {
-        // Future segment — all evidence from measured match values + venue history
+        // ── Future segment: from live trends + venue data ─────────────────────
         const { trendSlope, avgWktsPerOv, last3RPO, matchAvgRPO: mAvg,
-                venueSegs: vSegs, venueName, venueCount } = seg._trends || {};
+                venueSegs: vSegs, venueName } = seg._trends || {};
         const vSeg   = vSegs ? vSegs[seg.i] : null;
         const vLabel = venueName ? venueName.split(",")[0] : null;
 
-        if (beh.id === "SEAM_SWING") {
-            points.push(`Humidity at ${humidity}% — measurably assists swing movement`);
-            if (avgWktsPerOv != null) points.push(`Match wicket rate: ${avgWktsPerOv.toFixed(2)}/over — bowlers already in control`);
-        }
-        if (beh.id === "SEAM_BOUNCE") {
-            if (avgWktsPerOv != null) points.push(`${avgWktsPerOv.toFixed(2)} wickets/over in match so far — bowlers getting assistance`);
-            if (last3RPO != null) points.push(`Last 3 overs: ${last3RPO.toFixed(1)} RPO — pitch not easy to bat on`);
-        }
-        if (beh.id === "SPIN_GRIP") {
-            points.push(`Pitch wear at ${detr.toFixed(2)}x — grip and turn measurably increasing`);
-            if (trendSlope != null) points.push(`RPO declining ${Math.abs(trendSlope).toFixed(1)} per phase — scoring getting harder each segment`);
-        }
-        if (beh.id === "SPIN_LETHAL") {
-            points.push(`Heavy deterioration (${detr.toFixed(2)}x) — rough patches confirmed by RPO collapse`);
-            if (trendSlope != null) points.push(`${Math.abs(trendSlope).toFixed(1)} RPO drop per phase — trend points to near-unplayable conditions`);
-        }
-        if (beh.id === "DEW_FACTOR") {
-            points.push(`Dew factor ${((1 - dew) * 100).toFixed(0)}% grip loss — computed from ${humidity}% humidity + over number`);
-            points.push("Spinners will lose effectiveness — pace bowlers preferred in death");
-        }
-        if (beh.id === "SURFACE_FLAT") {
-            if (mAvg != null) points.push(`Match average ${mAvg.toFixed(1)} RPO — pitch clearly batter-friendly`);
-            if (trendSlope != null && trendSlope > 0) points.push(`RPO trending up +${trendSlope.toFixed(1)} per phase — getting easier to bat`);
-        }
-        if (beh.id === "PITCH_WEARING") {
-            points.push(`Wear factor ${detr.toFixed(2)}x + declining scoring trend (${trendSlope?.toFixed(1)}/phase) — surface breaking up`);
-            points.push("Variable bounce likely — batters struggling to read length");
-        }
-        if (beh.id === "CONTESTED") {
-            if (mAvg != null) points.push(`Match averaging ${mAvg.toFixed(1)} RPO — neither side dominating`);
-            else points.push("Insufficient match data to project clear advantage");
-            points.push("Live match state and current bowler form will decide this phase");
+        // What's been happening in this match so far
+        if (mAvg !== null && mAvg !== undefined) {
+            const scoring = mAvg >= 9.5 ? "Teams scoring big" : mAvg >= 8 ? "Normal scoring match" : "Low scoring match";
+            points.push(`${scoring} so far — ${mAvg.toFixed(1)} runs per over`);
         }
 
-        // Add venue historical context if available (real data, not templates)
+        if (beh.id === "SEAM_SWING")    points.push(`Ball still moving in the air — openers in danger`);
+        if (beh.id === "SEAM_BOUNCE")   points.push(`Pitch giving extra bounce — hard to play short balls`);
+        if (beh.id === "SPIN_GRIP")     points.push(`Pitch wearing out — spinners will turn it more now`);
+        if (beh.id === "SPIN_LETHAL")   points.push(`Pitch badly worn — spinners almost unplayable expected`);
+        if (beh.id === "DEW_FACTOR")    points.push(`Ball will get wet — spinners lose grip, easy to bat`);
+        if (beh.id === "SURFACE_FLAT")  points.push(`Pitch is flat — expect big hitting and easy scoring`);
+        if (beh.id === "PITCH_WEARING") points.push(`Surface breaking up — ball behaving unpredictably`);
+        if (beh.id === "CONTESTED")     points.push(`No clear advantage — match situation decides this phase`);
+
+        // Wicket rate context
+        if (avgWktsPerOv != null && avgWktsPerOv >= 0.4)
+            points.push(`${(avgWktsPerOv * 4).toFixed(1)} wickets per 4 overs on average in this match`);
+
+        // Venue data — plain language
         if (vSeg && vSeg.count >= 8 && vLabel) {
-            points.push(`${vLabel} history (${vSeg.count} matches): avg ${vSeg.avg_rpo.toFixed(1)} RPO, ${vSeg.avg_wickets.toFixed(1)} wkts in overs ${seg.label}`);
+            points.push(`At ${vLabel}: teams usually score ${Math.round(vSeg.avg_rpo * 4)} runs and lose ${vSeg.avg_wickets.toFixed(1)} wickets in these overs (${vSeg.count} matches)`);
         }
     }
 
@@ -505,10 +494,11 @@ function SegmentCard({ seg }) {
             {/* Header: phase label + behaviour */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                 <div>
-                    <div style={{ fontSize: 11, color: "#475569", fontWeight: 600, letterSpacing: 1, marginBottom: 3 }}>
-                        OVERS {seg.label} · {seg.phase}
-                        {isPast && <span style={{ marginLeft: 6, color: "#22c55e", fontSize: 9 }}>✓ DONE</span>}
-                        {isFuture && <span style={{ marginLeft: 6, color: "#F59E0B", fontSize: 9 }}>UPCOMING</span>}
+                    <div style={{ fontSize: 11, color: "#475569", fontWeight: 600, letterSpacing: 0.5, marginBottom: 3 }}>
+                        Overs {seg.label}
+                        {isPast && <span style={{ marginLeft: 8, color: "#22c55e", fontSize: 10 }}>✓ Done</span>}
+                        {isCurrent && <span style={{ marginLeft: 8, color: "#3B82F6", fontSize: 10 }}>● Live</span>}
+                        {isFuture && <span style={{ marginLeft: 8, color: "#F59E0B", fontSize: 10 }}>Coming up</span>}
                     </div>
                     {/* BIG behaviour label */}
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -518,14 +508,13 @@ function SegmentCard({ seg }) {
                         </span>
                     </div>
                 </div>
-                {/* Actual score pill if past/current */}
+                {/* Score pill */}
                 {seg.actualRuns !== null && (
-                    <div style={{ textAlign: "right", background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "6px 10px", minWidth: 56 }}>
-                        <div style={{ fontSize: 9, color: "#475569", letterSpacing: 1 }}>
-                            {isPast ? "ACTUAL" : "SO FAR"}
+                    <div style={{ textAlign: "right", background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "6px 12px" }}>
+                        <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1 }}>{seg.actualRuns}</div>
+                        <div style={{ fontSize: 10, color: "#475569", marginTop: 2 }}>
+                            {seg.actualWkts ?? 0} wicket{(seg.actualWkts ?? 0) !== 1 ? "s" : ""}
                         </div>
-                        <div style={{ fontSize: 20, fontWeight: 900, color: "#fff", lineHeight: 1.1 }}>{seg.actualRuns}</div>
-                        <div style={{ fontSize: 9, color: "#475569" }}>{seg.actualWkts ?? 0}w</div>
                     </div>
                 )}
             </div>
@@ -545,21 +534,21 @@ function SegmentCard({ seg }) {
                 </div>
             )}
 
-            {/* Bet signal — only for current + future */}
+            {/* Bet signal */}
             {betSignal && !isPast && (
-                <div style={{ marginTop: 12, background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "10px 12px", borderLeft: `3px solid ${beh.color}` }}>
-                    <div style={{ fontSize: 9, color: "#475569", letterSpacing: 1, marginBottom: 6, fontWeight: 700 }}>BET SIGNAL</div>
-                    <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                        <div>
-                            <span style={{ fontSize: 9, color: "#22c55e", fontWeight: 700, letterSpacing: 0.5 }}>✅ BET ON  </span>
-                            <span style={{ fontSize: 12, color: "#fff", fontWeight: 600 }}>{betSignal.back}</span>
+                <div style={{ marginTop: 12, background: "rgba(255,255,255,0.03)", borderRadius: 10, padding: "12px 14px", borderLeft: `3px solid ${beh.color}` }}>
+                    <div style={{ fontSize: 10, color: "#475569", marginBottom: 8, fontWeight: 600 }}>What to bet</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <span style={{ fontSize: 13 }}>✅</span>
+                            <span style={{ fontSize: 13, color: "#fff", fontWeight: 600 }}>{betSignal.back}</span>
                         </div>
-                        <div>
-                            <span style={{ fontSize: 9, color: "#ef4444", fontWeight: 700, letterSpacing: 0.5 }}>❌ AVOID  </span>
-                            <span style={{ fontSize: 12, color: "#fff", fontWeight: 600 }}>{betSignal.fade}</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <span style={{ fontSize: 13 }}>❌</span>
+                            <span style={{ fontSize: 13, color: "#94A3B8", fontWeight: 500 }}>{betSignal.fade}</span>
                         </div>
                     </div>
-                    <div style={{ fontSize: 10, color: "#64748B", marginTop: 5, fontStyle: "italic" }}>{betSignal.reason}</div>
+                    <div style={{ fontSize: 11, color: "#475569", marginTop: 8, lineHeight: 1.5 }}>{betSignal.reason}</div>
                 </div>
             )}
         </div>
@@ -610,13 +599,12 @@ function ConditionBar({ pitchKey, detr, dew, humidity, temp, matchAvgRPO, venueH
 
     const chips = [
         { label: `Pitch: ${pitchMeta.label}`, color: pitchMeta.color },
-        { label: `Wear: ${detr >= 1.25 ? "Heavy" : detr >= 1.1 ? "Moderate" : "Low"}`, color: detr >= 1.25 ? "#ef4444" : detr >= 1.1 ? "#f59e0b" : "#22c55e" },
-        dew < 0.88 && { label: "Dew: Heavy 💧", color: "#38BDF8" },
-        dew >= 0.88 && dew < 0.95 && { label: "Dew: Mild 💧", color: "#7DD3FC" },
-        humidity > 78 && { label: `Humid ${humidity}%`, color: "#a5f3fc" },
-        temp > 34 && { label: `Hot ${temp}°C 🥵`, color: "#fb923c" },
-        matchAvgRPO && { label: `Match avg ${matchAvgRPO.toFixed(1)} RPO`, color: "#94A3B8" },
-        venueHistory?.match_count >= 5 && { label: `${venueHistory.name?.split(",")[0]} · ${venueHistory.match_count}m data`, color: "#818CF8" },
+        { label: detr >= 1.25 ? "⚠️ Pitch badly worn" : detr >= 1.1 ? "Pitch wearing out" : "Pitch in good shape", color: detr >= 1.25 ? "#ef4444" : detr >= 1.1 ? "#f59e0b" : "#22c55e" },
+        dew < 0.88 && { label: "💧 Heavy dew tonight", color: "#38BDF8" },
+        dew >= 0.88 && dew < 0.95 && { label: "💧 Some dew", color: "#7DD3FC" },
+        humidity > 78 && { label: `${humidity}% humidity — ball swings`, color: "#a5f3fc" },
+        temp > 34 && { label: `${temp}°C — hot day`, color: "#fb923c" },
+        venueHistory?.match_count >= 5 && { label: `📊 ${venueHistory.name?.split(",")[0]} — ${venueHistory.match_count} matches of data`, color: "#818CF8" },
     ].filter(Boolean);
 
     return (
@@ -704,9 +692,7 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
             {/* Footer */}
             <div style={{ marginTop: 18, padding: "10px 14px", background: "rgba(255,255,255,0.02)", borderRadius: 10, border: "1px solid #1E293B" }}>
                 <div style={{ fontSize: 10, color: "#334155", lineHeight: 1.7 }}>
-                    Pitch behaviour inferred from over-by-over data — wicket clustering, run rate shifts, and deterioration trends.
-                    Bet signals update as match data changes. Past segments show actual match figures.
-                    Pitch: <b style={{ color: "#64748B" }}>{pred.pitchCondition || "—"}</b> · Detr: {(pred.deteriorationFactor ?? 1.0).toFixed(2)}x
+                    Based on live match data (runs + wickets per over) and {pred?.venueHistory?.match_count ? `${pred.venueHistory.match_count} historical matches at this ground.` : "historical T20 data."} Updates every 10 seconds.
                 </div>
             </div>
         </div>
