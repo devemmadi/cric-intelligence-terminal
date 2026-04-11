@@ -1413,42 +1413,36 @@ body { background: ${C.bg}; }
                                     </aside>
                 </div>
             )}
-            {activeTab === "matches" && (
-                <div className="fade" style={{ maxWidth: 680, margin: "0 auto", padding: "22px 16px" }}>
-                    {liveMatches.length === 0 && (
-                        <div style={{ textAlign: "center", padding: 60, color: C.muted }}>
-                            <div style={{ fontSize: 40, marginBottom: 12 }}></div>
-                            <div style={{ fontSize: 18, fontWeight: 700 }}>Loading matches...</div>
-                        </div>
-                    )}
-                    {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
-                        <div style={{ marginBottom: 24 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                                <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.red, animation: "pulse 1.5s infinite" }} />
-                                <span style={{ fontSize: 13, fontWeight: 700, color: C.red, letterSpacing: 1 }}>LIVE NOW</span>
+            activeTab === "matches" && (
+            <div className="fade" style={{ maxWidth: 760, margin: "0 auto", padding: "22px 16px" }}>
+                {(() => {
+                    const IPL_T = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
+                    const PSL_T = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
+                    const isIPL = m => IPL_T.some(t => (m.t1||m.team1||"")===t || (m.t2||m.team2||"")===t);
+                    const isPSL = m => PSL_T.some(t => (m.t1||m.team1||"")===t || (m.t2||m.team2||"")===t);
+                    const sections = [
+                        { key:"IPL", label:"IPL 2026", color:"#F59E0B", bg:"#FFF8E7", matches: liveMatches.filter(m => isIPL(m)) },
+                        { key:"PSL", label:"PSL 2026", color:"#10B981", bg:"#E8FDF4", matches: liveMatches.filter(m => isPSL(m)) },
+                        { key:"INT", label:"International", color:"#6366F1", bg:"#EEF2FF", matches: liveMatches.filter(m => !isIPL(m) && !isPSL(m)) },
+                    ];
+                    return sections.map(sec => sec.matches.length === 0 ? null : (
+                        <div key={sec.key} style={{ marginBottom: 28 }}>
+                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12 }}>
+                                <span style={{ background:sec.color, color:"#fff", fontSize:11, fontWeight:700, padding:"3px 12px", borderRadius:20 }}>{sec.label}</span>
+                                <span style={{ fontSize:11, color:"#94A3B8" }}>{sec.matches.length} match{sec.matches.length>1?"es":""}</span>
                             </div>
-                            {liveMatches.filter(m => m.status === "LIVE").map(m => (
+                            {sec.matches.map(m => (
                                 <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
                             ))}
                         </div>
-                    )}
-                    {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
-                        <div style={{ marginBottom: 24 }}>
-                            <div style={{ fontSize: 13, fontWeight: 700, color: C.accent, letterSpacing: 1, marginBottom: 12 }}>UPCOMING</div>
-                            {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
-                            ))}
-                        </div>
-                    )}
-                    {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
-                        <div>
-                            <div style={{ fontSize: 13, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 12 }}>RECENT RESULTS</div>
-                            {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
-                            ))}
-                        </div>
-                    )}
-                </div>
+                    ));
+                })()}
+                {liveMatches.length === 0 && <div style={{ textAlign:"center", padding:60, color:C.muted }}>
+                    <div style={{ fontSize:40, marginBottom:12 }}></div>
+                    <div style={{ fontSize:18, fontWeight:700 }}>Loading matches...</div>
+                </div>}
+            </div>
+            )
             )}
             {activeTab === "media" && <MediaSection />}
             <RGFooter />
