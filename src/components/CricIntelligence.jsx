@@ -347,17 +347,12 @@ function MatchPill({ m, selected, onClick }) {
     );
 }
 function MatchCard({ m, onClick }) {
-    const _IPL = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
-    const _PSL = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
-    const _t1 = (m.t1 || m.team1 || "").toUpperCase();
-    const _t2 = (m.t2 || m.team2 || "").toUpperCase();
-    const _league = _IPL.some(t => _t1===t||_t2===t) ? "IPL 2026" : _PSL.some(t => _t1===t||_t2===t) ? "PSL 2026" : null;
     return (
         <div className="card" style={{ padding: 16, marginBottom: 10, cursor: "pointer", opacity: m.status === "ENDED" ? 0.8 : 1 }} onClick={onClick}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <span style={{ fontSize: 11, color: "#64748B" }}>{m.day} - {m.detail?.split("")[0]?.trim()}</span>
                 <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: m.status === "LIVE" ? "#FFF0F0" : m.status === "UPCOMING" ? "#EFF6FF" : "#F0F0F0", color: m.status === "LIVE" ? "#E53E3E" : m.status === "UPCOMING" ? "#1E2D6B" : "#64748B" }}>
-                    {m.status === "LIVE" ? "● LIVE" : m.status === "UPCOMING" ? _league || m.day || "T20" : _league || m.day || "T20"}{_league && <span style={{fontSize:9,fontWeight:700,padding:"2px 7px",borderRadius:20,background:_league==="IPL 2026"?"#FFF8E7":"#E8FDF4",color:_league==="IPL 2026"?"#F59E0B":"#10B981",marginLeft:4}}>{_league}</span>}
+                    {m.status === "LIVE" ? "LIVE" : m.status === "UPCOMING" ? "UPCOMING" : "ENDED"}
                 </span>
             </div>
             {[{ n: m.t1, s: m.t1Score, w: m.t1Wkts, b: true, imgId: m.t1ImageId || 0 }, { n: m.t2, s: m.t2Score, b: false, imgId: m.t2ImageId || 0 }].map(({ n, s, w, b, imgId }) => (
@@ -1008,40 +1003,36 @@ body { background: ${C.bg}; }
                         {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
                             <>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.red, letterSpacing: 1, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: C.red, letterSpacing: 1, margin: "8px 0 8px", display:"flex", alignItems:"center", gap:6 }}>
-                                <div style={{ width: 7, height: 7, borderRadius: "50%", background: C.red, animation: "pulse 1.5s infinite" }} />
-                                Live now
-                            </div>
-                            {(() => {
-                                const IPL_T = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
-                                const PSL_T = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
-                                const isIPL = m => IPL_T.some(t => (m.t1||m.team1||"")===t||(m.t2||m.team2||"")===t);
-                                const isPSL = m => PSL_T.some(t => (m.t1||m.team1||"")===t||(m.t2||m.team2||"")===t);
-                                const live = liveMatches.filter(m => m.status === "LIVE");
-                                const upcoming = liveMatches.filter(m => m.status === "UPCOMING");
-                                const ended = liveMatches.filter(m => m.status === "ENDED");
-                                const sections = [
-                                    { key:"IPL", label:"IPL 2026", color:"#F59E0B", ms: live.filter(isIPL) },
-                                    { key:"PSL", label:"PSL 2026", color:"#10B981", ms: live.filter(isPSL) },
-                                    { key:"INT", label:"", color:"", ms: live.filter(m => !isIPL(m) && !isPSL(m)) },
-                                ];
-                                return (<>
-                                    {sections.map(sec => sec.ms.length === 0 ? null : (
-                                        <div key={sec.key}>
-                                            {sec.label && <div style={{ fontSize: 10, fontWeight: 700, color: sec.color, letterSpacing: 1, margin: "6px 0 4px" }}>{sec.label}</div>}
-                                            {sec.ms.map(m => <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setActiveTab("predict"); }} />)}
-                                        </div>
-                                    ))}
-                                    {upcoming.length > 0 && <div>
-                                        <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "10px 0 6px" }}>Upcoming</div>
-                                        {upcoming.map(m => <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setActiveTab("predict"); }} />)}
-                                    </div>}
-                                    {ended.length > 0 && <div>
-                                        <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "10px 0 6px" }}>Recent</div>
-                                        {ended.map(m => <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setActiveTab("predict"); }} />)}
-                                    </div>}
-                                </>);
-                            })()}
+                                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.red, animation: "pulse 2s infinite" }} />Live now
+                                </div>
+                                {liveMatches.filter(m => m.status === "LIVE").map(m => (
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
+                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
+                                        try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
+                                    }} />
+                                ))}
+                            </>
+                        )}
+                        {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
+                            <>
+                                <div style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: 1, margin: "14px 0 8px" }}>Upcoming</div>
+                                {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
+                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
+                                        try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
+                                    }} />
+                                ))}
+                            </>
+                        )}
+                        {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
+                            <>
+                                <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "14px 0 8px" }}>Recent</div>
+                                {liveMatches.filter(m => m.status === "ENDED").map(m => (
+                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
+                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
+                                        try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
+                                    }} />
+                                ))}
                             </>
                         )}
                         <div style={{ marginTop: 16, padding: 14, background: C.bg, borderRadius: 12 }}>
@@ -1418,35 +1409,41 @@ body { background: ${C.bg}; }
                 </div>
             )}
             {activeTab === "matches" && (
-            <div className="fade" style={{ maxWidth: 760, margin: "0 auto", padding: "22px 16px" }}>
-                {(() => {
-                    const IPL_T = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
-                    const PSL_T = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
-                    const isIPL = m => IPL_T.some(t => (m.t1||m.team1||"")===t || (m.t2||m.team2||"")===t);
-                    const isPSL = m => PSL_T.some(t => (m.t1||m.team1||"")===t || (m.t2||m.team2||"")===t);
-                    const sections = [
-                        { key:"IPL", label:"IPL 2026", color:"#F59E0B", bg:"#FFF8E7", matches: liveMatches.filter(m => isIPL(m)) },
-                        { key:"PSL", label:"PSL 2026", color:"#10B981", bg:"#E8FDF4", matches: liveMatches.filter(m => isPSL(m)) },
-                        { key:"INT", label:"International", color:"#6366F1", bg:"#EEF2FF", matches: liveMatches.filter(m => !isIPL(m) && !isPSL(m)) },
-                    ];
-                    return sections.map(sec => sec.matches.length === 0 ? null : (
-                        <div key={sec.key} style={{ marginBottom: 28 }}>
-                            <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:12 }}>
-                                <span style={{ background:sec.color, color:"#fff", fontSize:11, fontWeight:700, padding:"3px 12px", borderRadius:20 }}>{sec.label}</span>
-                                <span style={{ fontSize:11, color:"#94A3B8" }}>{sec.matches.length} match{sec.matches.length>1?"es":""}</span>
+                <div className="fade" style={{ maxWidth: 680, margin: "0 auto", padding: "22px 16px" }}>
+                    {liveMatches.length === 0 && (
+                        <div style={{ textAlign: "center", padding: 60, color: C.muted }}>
+                            <div style={{ fontSize: 40, marginBottom: 12 }}></div>
+                            <div style={{ fontSize: 18, fontWeight: 700 }}>Loading matches...</div>
+                        </div>
+                    )}
+                    {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
+                        <div style={{ marginBottom: 24 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                                <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.red, animation: "pulse 1.5s infinite" }} />
+                                <span style={{ fontSize: 13, fontWeight: 700, color: C.red, letterSpacing: 1 }}>LIVE NOW</span>
                             </div>
-                            {sec.matches.map(m => (
+                            {liveMatches.filter(m => m.status === "LIVE").map(m => (
                                 <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
                             ))}
                         </div>
-                    ));
-                })()}
-                {liveMatches.length === 0 && <div style={{ textAlign:"center", padding:60, color:C.muted }}>
-                    <div style={{ fontSize:40, marginBottom:12 }}></div>
-                    <div style={{ fontSize:18, fontWeight:700 }}>Loading matches...</div>
-                </div>}
-            </div>
-            )}
+                    )}
+                    {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
+                        <div style={{ marginBottom: 24 }}>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: C.accent, letterSpacing: 1, marginBottom: 12 }}>UPCOMING</div>
+                            {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
+                            ))}
+                        </div>
+                    )}
+                    {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
+                        <div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 12 }}>RECENT RESULTS</div>
+                            {liveMatches.filter(m => m.status === "ENDED").map(m => (
+                                <MatchCard key={m.id} m={m} onClick={() => { setSelectedMatch(m); setActiveTab("predict"); }} />
+                            ))}
+                        </div>
+                    )}
+                </div>
             )}
             {activeTab === "media" && <MediaSection />}
             <RGFooter />
@@ -1460,5 +1457,3 @@ body { background: ${C.bg}; }
         </div>
     );
 }
-
-
