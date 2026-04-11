@@ -347,12 +347,17 @@ function MatchPill({ m, selected, onClick }) {
     );
 }
 function MatchCard({ m, onClick }) {
+    const _IPL = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
+    const _PSL = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
+    const _t1 = (m.t1 || m.team1 || "").toUpperCase();
+    const _t2 = (m.t2 || m.team2 || "").toUpperCase();
+    const _league = _IPL.some(t => _t1===t||_t2===t) ? "IPL 2026" : _PSL.some(t => _t1===t||_t2===t) ? "PSL 2026" : null;
     return (
         <div className="card" style={{ padding: 16, marginBottom: 10, cursor: "pointer", opacity: m.status === "ENDED" ? 0.8 : 1 }} onClick={onClick}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <span style={{ fontSize: 11, color: "#64748B" }}>{m.day} - {m.detail?.split("")[0]?.trim()}</span>
                 <span style={{ fontSize: 10, fontWeight: 700, padding: "3px 10px", borderRadius: 20, background: m.status === "LIVE" ? "#FFF0F0" : m.status === "UPCOMING" ? "#EFF6FF" : "#F0F0F0", color: m.status === "LIVE" ? "#E53E3E" : m.status === "UPCOMING" ? "#1E2D6B" : "#64748B" }}>
-                    {m.status === "LIVE" ? "● LIVE" : m.status === "UPCOMING" ? league.l : league.l}
+                    {m.status === "LIVE" ? "● LIVE" : m.status === "UPCOMING" ? _league || m.day || "T20" : _league || m.day || "T20"}{_league && <span style={{fontSize:9,fontWeight:700,padding:"2px 7px",borderRadius:20,background:_league==="IPL 2026"?"#FFF8E7":"#E8FDF4",color:_league==="IPL 2026"?"#F59E0B":"#10B981",marginLeft:4}}>{_league}</span>}
                 </span>
             </div>
             {[{ n: m.t1, s: m.t1Score, w: m.t1Wkts, b: true, imgId: m.t1ImageId || 0 }, { n: m.t2, s: m.t2Score, b: false, imgId: m.t2ImageId || 0 }].map(({ n, s, w, b, imgId }) => (
