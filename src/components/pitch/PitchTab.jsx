@@ -139,69 +139,73 @@ function getBetSignal(beh, seg, ms) {
     return null;
 }
 
-// ─── Core: infer behaviour FROM actual match data ─────────────────────────────
-function inferBehaviour(seg, allSegs, pitchKey, detr, dew, humidity, overs) {
-    const { actualRPO, actualWkts, oversPlayed, phase, i } = seg;
+// ─── Core: infer behaviour purely from live match trends ─────────────────────
+// NO pitch condition lookup tables. Only measured values from the match.
+function inferBehaviour(seg, allSegs, detr, dew, humidity, trendSlope, matchAvgRPO, avgWktsPerOv, last3RPO, crr) {
+    const { actualRPO, actualWkts, oversPlayed, i } = seg;
 
-    // ── If we have actual data from this segment ──────────────────────────────
+    // ── CASE 1: Actual data exists for this segment ───────────────────────────
     if (oversPlayed >= 2) {
-        const wPerOv   = (actualWkts ?? 0) / oversPlayed;   // wickets per over
-        const rpo      = actualRPO ?? 0;
-
-        // Dew: late overs + high wicket survival + scoring uptick
-        if (i >= 3 && dew < 0.88) return "DEW_FACTOR";
-        if (i === 4 && dew < 0.92 && rpo >= 9.0) return "DEW_FACTOR";
-
-        // Spin lethal: middle overs, very low RPO + lots of wickets
-        if (i >= 2 && i <= 3 && wPerOv >= 0.65 && rpo < 6.0) return "SPIN_LETHAL";
-
-        // Spin gripping: middle overs, below-average scoring, wickets
-        if (i >= 2 && i <= 3 && wPerOv >= 0.35 && rpo < 7.5) return "SPIN_GRIP";
-
-        // Seam/swing: powerplay, wickets, low scoring
-        if (i <= 1 && wPerOv >= 0.5 && rpo < 6.5) return "SEAM_SWING";
-        if (i <= 1 && wPerOv >= 0.35 && humidity > 72) return "SEAM_SWING";
-
-        // Seam bounce: powerplay, wickets but decent scoring
-        if (i <= 1 && wPerOv >= 0.35 && rpo < 8.0) return "SEAM_BOUNCE";
-
-        // Pitch wearing: deterioration visible + scoring drops between segments
+        const wPerOv = (actualWkts ?? 0) / oversPlayed;
+        const rpo    = actualRPO ?? 0;
         const prevSeg = i > 0 ? allSegs[i - 1] : null;
-        if (prevSeg?.actualRPO && rpo < prevSeg.actualRPO - 2.0 && detr >= 1.1) return "PITCH_WEARING";
+        const rpoVsPrev = prevSeg?.actualRPO != null ? rpo - prevSeg.actualRPO : 0;
 
-        // Surface flattening: scoring higher than prev + late overs
-        if (prevSeg?.actualRPO && rpo > prevSeg.actualRPO + 1.5) return "SURFACE_FLAT";
+        // Dew taking over: late overs + scoring jumped vs earlier
+        if (i >= 3 && dew < 0.88) return "DEW_FACTOR";
+        if (i >= 3 && dew < 0.92 && rpoVsPrev > 1.5) return "DEW_FACTOR";
 
-        // High scoring = flat pitch
-        if (rpo >= 10.0) return "SURFACE_FLAT";
+        // Spin lethal: middle overs, scoring collapsed + wickets clustering
+        if (i >= 2 && wPerOv >= 0.6 && rpo < 6.0) return "SPIN_LETHAL";
+
+        // Spin gripping: middle overs, below avg + wickets
+        if (i >= 2 && wPerOv >= 0.35 && matchAvgRPO !== null && rpo < matchAvgRPO - 1.5) return "SPIN_GRIP";
+        if (i >= 2 && wPerOv >= 0.4 && rpo < 7.5) return "SPIN_GRIP";
+
+        // Seam / swing: powerplay, wickets, low scoring
+        if (i <= 1 && wPerOv >= 0.5 && rpo < 6.5) return "SEAM_SWING";
+        if (i <= 1 && wPerOv >= 0.35 && rpo < 7.5) return "SEAM_BOUNCE";
+
+        // Pitch wearing: RPO drop between segments + detr climbing
+        if (rpoVsPrev < -2.0 && detr >= 1.08) return "PITCH_WEARING";
+
+        // Surface flattening: RPO climbed vs prev, or high absolute scoring
+        if (rpoVsPrev > 1.5) return "SURFACE_FLAT";
+        if (rpo >= 10.0)     return "SURFACE_FLAT";
 
         return "CONTESTED";
     }
 
-    // ── No actual data — infer from pitch + weather + trend ──────────────────
-    if (i === 0) {
-        if (humidity > 80 || pitchKey === "WET") return "SEAM_SWING";
-        if (pitchKey === "FRESH") return "SEAM_BOUNCE";
-        if (pitchKey === "FLAT") return "SURFACE_FLAT";
-        return "SEAM_BOUNCE";
-    }
-    if (i === 1) {
-        if (pitchKey === "FLAT") return "SURFACE_FLAT";
-        return "CONTESTED";
-    }
-    if (i === 2 || i === 3) {
-        if (detr >= 1.25 || pitchKey === "DRY" || pitchKey === "DUSTY") return "SPIN_LETHAL";
-        if (detr >= 1.1  || pitchKey === "WORN") return "SPIN_GRIP";
-        if (pitchKey === "FLAT") return "SURFACE_FLAT";
-        return "CONTESTED";
-    }
-    if (i === 4) {
-        if (dew < 0.88) return "DEW_FACTOR";
-        if (dew < 0.92 && humidity > 72) return "DEW_FACTOR";
-        if (pitchKey === "FLAT") return "SURFACE_FLAT";
-        return "CONTESTED";
-    }
-    return "UNKNOWN";
+    // ── CASE 2: No data for this segment — project from match trends only ─────
+    // trendSlope   = RPO change per 4-over segment (from completed segs, LSQ)
+    // avgWktsPerOv = actual wickets per over from completed overs
+    // detr         = computed from overs bowled (not a lookup)
+    // dew          = computed from humidity + over number (not a lookup)
+    // last3RPO     = last 3 overs actual run rate
+    // matchAvgRPO  = actual match average RPO
+
+    // DEW: humidity is measurable + over number is live
+    if (i >= 3 && dew < 0.88) return "DEW_FACTOR";
+    if (i === 4 && dew < 0.93 && humidity > 72) return "DEW_FACTOR";
+
+    // SPIN indicators: RPO declining trend + detr growing + middle phase
+    if (i >= 2 && trendSlope < -2.0 && detr >= 1.10) return "SPIN_LETHAL";
+    if (i >= 2 && trendSlope < -1.2 && detr >= 1.06) return "SPIN_GRIP";
+    if (i >= 2 && detr >= 1.20) return "SPIN_LETHAL"; // heavy wear = spin regardless of trend
+    if (i >= 2 && detr >= 1.10) return "SPIN_GRIP";
+
+    // SURFACE FLAT: match average already high, or positive trend
+    if (matchAvgRPO !== null && matchAvgRPO >= 9.5) return "SURFACE_FLAT";
+    if (trendSlope > 1.5) return "SURFACE_FLAT";
+
+    // SEAM: early overs, actual wicket rate is elevated + low scoring
+    if (i <= 1 && avgWktsPerOv >= 0.45 && (last3RPO ?? crr ?? 8) < 7.0) return "SEAM_SWING";
+    if (i <= 1 && avgWktsPerOv >= 0.30 && (last3RPO ?? crr ?? 8) < 8.0) return "SEAM_BOUNCE";
+
+    // PITCH WEARING: significant detr + RPO declining
+    if (detr >= 1.12 && trendSlope < -0.8) return "PITCH_WEARING";
+
+    return "CONTESTED";
 }
 
 // ─── Evidence bullets — what actually happened / what to expect ───────────────
@@ -242,15 +246,42 @@ function buildEvidence(seg, beh, allSegs, matchAvgRPO, pitchKey, detr, dew, humi
         if (beh.id === "SEAM_SWING" && oversPlayed >= 1)
             points.push("New ball moving both ways — openers in trouble");
     } else {
-        // Future/no data — pitch + weather inference
-        if (beh.id === "SEAM_SWING")   { points.push(`High humidity (${humidity}%) aiding swing movement`); points.push("New ball expected to move — keep eye on 1st 2 overs"); }
-        if (beh.id === "SEAM_BOUNCE")  { points.push("Fresh pitch with good pace and carry"); points.push("Short balls could be risky — extra bounce"); }
-        if (beh.id === "SPIN_GRIP")    { points.push(`Pitch deteriorating (${detr.toFixed(2)}x) — rough patches forming`); points.push("Ball expected to grip and turn from over 9"); }
-        if (beh.id === "SPIN_LETHAL")  { points.push(`Severe pitch wear (${detr.toFixed(2)}x) — spinners unplayable`); points.push("Right-handers in danger from rough outside off"); }
-        if (beh.id === "DEW_FACTOR")   { points.push(`Heavy dew factor (${(dew * 100).toFixed(0)}% grip loss) expected`); points.push("Spinners will lose control — pace bowlers preferred"); }
-        if (beh.id === "SURFACE_FLAT") { points.push("Pitch expected to ease — batting conditions ideal"); points.push("Bowlers must hit precise lengths to stay in game"); }
-        if (beh.id === "PITCH_WEARING"){ points.push(`Deterioration (${detr.toFixed(2)}x) — pitch breaking up`); points.push("Variable bounce — batters finding it tough to read"); }
-        if (beh.id === "CONTESTED")    { points.push("Neither side has clear advantage at this stage"); points.push("Match situation and form will be key factor"); }
+        // Future segment — all evidence from measured match values, no static strings
+        const { trendSlope, avgWktsPerOv, last3RPO, matchAvgRPO: mAvg } = seg._trends || {};
+
+        if (beh.id === "SEAM_SWING") {
+            points.push(`Humidity at ${humidity}% — measurably assists swing movement`);
+            if (avgWktsPerOv != null) points.push(`Match wicket rate: ${avgWktsPerOv.toFixed(2)}/over — bowlers already in control`);
+        }
+        if (beh.id === "SEAM_BOUNCE") {
+            if (avgWktsPerOv != null) points.push(`${avgWktsPerOv.toFixed(2)} wickets/over in match so far — bowlers getting assistance`);
+            if (last3RPO != null) points.push(`Last 3 overs: ${last3RPO.toFixed(1)} RPO — pitch not easy to bat on`);
+        }
+        if (beh.id === "SPIN_GRIP") {
+            points.push(`Pitch wear at ${detr.toFixed(2)}x — grip and turn measurably increasing`);
+            if (trendSlope != null) points.push(`RPO declining ${Math.abs(trendSlope).toFixed(1)} per phase — scoring getting harder each segment`);
+        }
+        if (beh.id === "SPIN_LETHAL") {
+            points.push(`Heavy deterioration (${detr.toFixed(2)}x) — rough patches confirmed by RPO collapse`);
+            if (trendSlope != null) points.push(`${Math.abs(trendSlope).toFixed(1)} RPO drop per phase — trend points to near-unplayable conditions`);
+        }
+        if (beh.id === "DEW_FACTOR") {
+            points.push(`Dew factor ${((1 - dew) * 100).toFixed(0)}% grip loss — computed from ${humidity}% humidity + over number`);
+            points.push("Spinners will lose effectiveness — pace bowlers preferred in death");
+        }
+        if (beh.id === "SURFACE_FLAT") {
+            if (mAvg != null) points.push(`Match average ${mAvg.toFixed(1)} RPO — pitch clearly batter-friendly`);
+            if (trendSlope != null && trendSlope > 0) points.push(`RPO trending up +${trendSlope.toFixed(1)} per phase — getting easier to bat`);
+        }
+        if (beh.id === "PITCH_WEARING") {
+            points.push(`Wear factor ${detr.toFixed(2)}x + declining scoring trend (${trendSlope?.toFixed(1)}/phase) — surface breaking up`);
+            points.push("Variable bounce likely — batters struggling to read length");
+        }
+        if (beh.id === "CONTESTED") {
+            if (mAvg != null) points.push(`Match averaging ${mAvg.toFixed(1)} RPO — neither side dominating`);
+            else points.push("Insufficient match data to project clear advantage");
+            points.push("Live match state and current bowler form will decide this phase");
+        }
     }
 
     return points.slice(0, 3); // max 3 bullets
@@ -307,7 +338,18 @@ function buildSegmentData(pred) {
         : null;
     const avgWktsPerOv = completedKeys.length >= 3
         ? totalWkts / completedKeys.length
-        : 0.25; // default ~5 wickets over 20 overs
+        : 0.25;
+
+    // Last 3 overs RPO (from overMap — actual data)
+    const sortedKeys = completedKeys.sort((a, b) => a - b);
+    const last3Keys  = sortedKeys.slice(-3);
+    const last3RPO   = last3Keys.length > 0
+        ? Math.round((last3Keys.reduce((s, k) => s + overMap[k].runs, 0) / last3Keys.length) * 10) / 10
+        : null;
+
+    // LSQ trend slope across completed 4-over segments (RPO change per segment)
+    // Computed after rawSegs is built — placeholder here, filled below
+    let trendSlope = 0;
 
     // ── Per-segment stats ─────────────────────────────────────────────────────
     const rawSegs = SEGMENTS.map((seg, i) => {
@@ -335,11 +377,29 @@ function buildSegmentData(pred) {
         strikerSR, bowlerEco, last3Runs, last3RR,
     };
 
+    // ── Compute trendSlope from completed segments ────────────────────────────
+    const doneSegs = rawSegs.filter(s => s.isPast && s.actualRPO !== null);
+    if (doneSegs.length >= 2) {
+        const n     = doneSegs.length;
+        const xs    = doneSegs.map((_, j) => j);
+        const ys    = doneSegs.map(s => s.actualRPO);
+        const xMean = xs.reduce((a, b) => a + b, 0) / n;
+        const yMean = ys.reduce((a, b) => a + b, 0) / n;
+        const num   = xs.reduce((s, x, j) => s + (x - xMean) * (ys[j] - yMean), 0);
+        const den   = xs.reduce((s, x) => s + (x - xMean) ** 2, 0);
+        trendSlope  = den !== 0 ? Math.round((num / den) * 100) / 100 : 0;
+    }
+
+    // Trends object passed to evidence builder
+    const trends = { trendSlope, avgWktsPerOv, last3RPO, matchAvgRPO };
+
     // ── Enrich each segment ───────────────────────────────────────────────────
     const segments = rawSegs.map((seg, i) => {
-        const behId    = inferBehaviour(seg, rawSegs, pitchKey, detr, dew, humidity, currentOvers);
+        const behId    = inferBehaviour(seg, rawSegs, detr, dew, humidity, trendSlope, matchAvgRPO, avgWktsPerOv, last3RPO, crr);
         const beh      = BEHAVIOURS[behId] || BEHAVIOURS.UNKNOWN;
-        const evidence = buildEvidence(seg, beh, rawSegs, matchAvgRPO, pitchKey, detr, dew, humidity);
+        // Attach trends for evidence builder to use
+        const segWithTrends = { ...seg, _trends: trends };
+        const evidence = buildEvidence(segWithTrends, beh, rawSegs, matchAvgRPO, null, detr, dew, humidity);
 
         // Project match state at start of this segment (for future segments)
         const proj = seg.isFuture
@@ -361,7 +421,8 @@ function buildSegmentData(pred) {
         return { ...seg, beh, evidence, betSignal, matchAvgRPO, dew };
     });
 
-    return { segments, matchAvgRPO, pitchKey, detr, weather, dew, humidity, temp };
+    // pitchKey kept only for the UI label chip — NOT used in any inference
+    return { segments, matchAvgRPO, pitchKey, detr, weather, dew, humidity, temp, trendSlope, avgWktsPerOv, last3RPO };
 }
 
 function normalisePitchKey(raw) {
