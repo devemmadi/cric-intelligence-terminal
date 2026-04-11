@@ -1,4 +1,4 @@
-﻿/* eslint-disable */
+/* eslint-disable */
 import React, { useState, useEffect, useCallback } from "react";
 import Logo from "./Logo";
 import RGFooter from "./RGFooter";
