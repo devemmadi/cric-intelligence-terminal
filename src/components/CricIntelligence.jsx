@@ -1008,36 +1008,40 @@ body { background: ${C.bg}; }
                         {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
                             <>
                                 <div style={{ fontSize: 11, fontWeight: 700, color: C.red, letterSpacing: 1, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
-                                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: C.red, animation: "pulse 2s infinite" }} />Live now
-                                </div>
-                                {liveMatches.filter(m => m.status === "LIVE").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
-                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
-                                        try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
-                                    }} />
-                                ))}
-                            </>
-                        )}
-                        {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
-                            <>
-                                <div style={{ fontSize: 11, fontWeight: 700, color: C.accent, letterSpacing: 1, margin: "14px 0 8px" }}>Upcoming</div>
-                                {liveMatches.filter(m => m.status === "UPCOMING").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
-                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
-                                        try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
-                                    }} />
-                                ))}
-                            </>
-                        )}
-                        {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
-                            <>
-                                <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "14px 0 8px" }}>Recent</div>
-                                {liveMatches.filter(m => m.status === "ENDED").map(m => (
-                                    <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => {
-                                        hasUserSelectedRef.current = true; selectedMatchRef.current = m; setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null); setCurMatchId(m.id || m.matchId || null);
-                                        try { const cached = localStorage.getItem("ci_pred_" + m.matchId); if (cached) { setPred(JSON.parse(cached)); setIsPredLoading(false); } else { setPred(null); setIsPredLoading(true); } } catch { setPred(null); setIsPredLoading(true); }
-                                    }} />
-                                ))}
+                            <div style={{ fontSize: 11, fontWeight: 700, color: C.red, letterSpacing: 1, margin: "8px 0 8px", display:"flex", alignItems:"center", gap:6 }}>
+                                <div style={{ width: 7, height: 7, borderRadius: "50%", background: C.red, animation: "pulse 1.5s infinite" }} />
+                                Live now
+                            </div>
+                            {(() => {
+                                const IPL_T = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
+                                const PSL_T = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
+                                const isIPL = m => IPL_T.some(t => (m.t1||m.team1||"")===t||(m.t2||m.team2||"")===t);
+                                const isPSL = m => PSL_T.some(t => (m.t1||m.team1||"")===t||(m.t2||m.team2||"")===t);
+                                const live = liveMatches.filter(m => m.status === "LIVE");
+                                const upcoming = liveMatches.filter(m => m.status === "UPCOMING");
+                                const ended = liveMatches.filter(m => m.status === "ENDED");
+                                const sections = [
+                                    { key:"IPL", label:"IPL 2026", color:"#F59E0B", ms: live.filter(isIPL) },
+                                    { key:"PSL", label:"PSL 2026", color:"#10B981", ms: live.filter(isPSL) },
+                                    { key:"INT", label:"", color:"", ms: live.filter(m => !isIPL(m) && !isPSL(m)) },
+                                ];
+                                return (<>
+                                    {sections.map(sec => sec.ms.length === 0 ? null : (
+                                        <div key={sec.key}>
+                                            {sec.label && <div style={{ fontSize: 10, fontWeight: 700, color: sec.color, letterSpacing: 1, margin: "6px 0 4px" }}>{sec.label}</div>}
+                                            {sec.ms.map(m => <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setActiveTab("predict"); }} />)}
+                                        </div>
+                                    ))}
+                                    {upcoming.length > 0 && <div>
+                                        <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "10px 0 6px" }}>Upcoming</div>
+                                        {upcoming.map(m => <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setActiveTab("predict"); }} />)}
+                                    </div>}
+                                    {ended.length > 0 && <div>
+                                        <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "10px 0 6px" }}>Recent</div>
+                                        {ended.map(m => <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => { setSelectedMatch(m); setCurMatchId(m.id || m.matchId || null); setActiveTab("predict"); }} />)}
+                                    </div>}
+                                </>);
+                            })()}
                             </>
                         )}
                         <div style={{ marginTop: 16, padding: 14, background: C.bg, borderRadius: 12 }}>
