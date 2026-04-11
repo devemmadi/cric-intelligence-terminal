@@ -14,7 +14,7 @@ function WinArc({ value }) {
         <svg width={128} height={80} viewBox="0 0 128 80">
             <path d={`M ${cx - r},${cy} A ${r},${r} 0 0 1 ${cx + r},${cy}`} fill="none" stroke={C.border} strokeWidth={8} strokeLinecap="round" />
             <path d={`M ${cx - r},${cy} A ${r},${r} 0 0 1 ${cx + r},${cy}`} fill="none" stroke={color} strokeWidth={8} strokeLinecap="round" strokeDasharray={`${circ * pct} ${circ}`} />
-            <text x={cx} y={cy - 6} textAnchor="middle" fontSize={22} fontWeight={700} fill={C.text} fontFamily="Inter, system-ui">{value}%</text>
+            <text x={cx} y={cy - 6} textAnchor="middle" fontSize={22} fontWeight={900} fill={C.text} fontFamily="Inter, system-ui">{value}%</text>
             <text x={cx} y={cy + 10} textAnchor="middle" fontSize={9} fill={C.muted} fontFamily="Inter, system-ui" letterSpacing={1}>WIN PROB</text>
         </svg>
     );
@@ -271,17 +271,23 @@ function NoMatchesScreen({ upcomingMatches }) {
     const scheduleMatches = upcomingMatches && upcomingMatches.length > 0 ? upcomingMatches : [];
     return (
         <div style={{ maxWidth: 860, margin: "0 auto", padding: "28px 20px 60px" }}>
-            <div style={{ background: `linear-gradient(135deg, ${C.navy} 0%, #2A3F82 100%)`, borderRadius: 18, padding: "28px 28px 24px", marginBottom: 24, color: "#fff" }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", letterSpacing: 2, marginBottom: 8, textTransform: "uppercase" }}>AI Predictions</div>
-                <h2 style={{ fontSize: 26, fontWeight: 900, margin: "0 0 8px", lineHeight: 1.2 }}>No Live Matches Right Now</h2>
-                <p style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", margin: "0 0 20px", lineHeight: 1.6, maxWidth: 480 }}>
-                    Live predictions appear automatically when matches go live.
-                </p>
-                <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                    {[["877", "Venues tracked"], ["1.7M", "Matches analysed"], ["78.2%", "AI accuracy"]].map(([v, l]) => (
-                        <div key={l} style={{ background: "rgba(255,255,255,0.12)", borderRadius: 10, padding: "10px 16px", textAlign: "center", minWidth: 100 }}>
-                            <div style={{ fontSize: 20, fontWeight: 900, color: "#C8961E" }}>{v}</div>
-                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", marginTop: 2 }}>{l}</div>
+            <div style={{ textAlign: "center", padding: "48px 24px", maxWidth: 400, margin: "0 auto" }}>
+                <div style={{ fontSize: 48, marginBottom: 16 }}>🏏</div>
+                <div style={{ fontSize: 20, fontWeight: 800, color: C.text, marginBottom: 8 }}>
+                    No live matches right now
+                </div>
+                <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6, marginBottom: 24 }}>
+                    CricIntelligence tracks all IPL, PSL and international T20 matches.<br/>
+                    Check back when a match goes live.
+                </div>
+                <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+                    {[
+                        { icon: "🤖", label: "ML Predictions" },
+                        { icon: "📊", label: "Pitch Analysis" },
+                        { icon: "💡", label: "Bet Signals" },
+                    ].map((f, i) => (
+                        <div key={i} style={{ background: C.navyLight, border: `1px solid ${C.border}`, borderRadius: 8, padding: "8px 14px", fontSize: 12, color: C.text }}>
+                            {f.icon} {f.label}
                         </div>
                     ))}
                 </div>
@@ -450,7 +456,21 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 ))}
                             </div>
                         )}
-                        {pred && <div style={{ padding: "20px 24px" }}>
+                        {pred && <div style={{ padding: "16px" }}>
+                            {/* TRUST BAR */}
+                            <div style={{ display: "flex", gap: 8, flexWrap: "wrap", paddingBottom: 12 }}>
+                                {[
+                                    { label: "⚡ Live data from Cricbuzz" },
+                                    { label: "🤖 750,000 match ML model" },
+                                    ...(pred.venue ? [{ label: `📍 ${pred.venue}` }] : []),
+                                ].map((item) => (
+                                    <span key={item.label} style={{ fontSize: 10, color: C.muted, background: "rgba(100,116,139,0.12)", border: `1px solid ${C.border}`, borderRadius: 20, padding: "3px 10px" }}>
+                                        {item.label}
+                                    </span>
+                                ))}
+                            </div>
+                            <NextOverIntelligence pred={pred} />
+
                             <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
                                 {/* Next overs card */}
                                 <div className="card" style={{ padding: 22, marginBottom: 14 }}>
@@ -520,17 +540,17 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                         <LiveScorecard batters={pred.batters} bowler={pred.bowler || {}} />
                                     )}
                                     <div className="card" style={{ padding: 22 }}>
-                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 4 }}>Win probability</div>
+                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 4 }}>Win probability</div>
                                         <div style={{ fontSize: 15, fontWeight: 800, color: winColor, marginBottom: 8, letterSpacing: 0.3 }}>{winMsg}</div>
                                         <WinArc value={prob} />
                                         <div style={{ fontSize: 11, color: C.muted, marginTop: 6, textAlign: "center" }}>{cleanTeam(pred.team1)} · {prob}%</div>
                                     </div>
                                     <div className="card" style={{ padding: 22 }}>
-                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>Match intel</div>
+                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 10 }}>Match intel</div>
                                         {pred.pressureScore !== undefined && (
                                             <div style={{ marginBottom: 14 }}>
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                                                    <span style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PRESSURE INDEX</span>
+                                                    <span style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase" }}>PRESSURE INDEX</span>
                                                     <span style={{ fontSize: 13, fontWeight: 900, color: pred.pressureScore > 70 ? C.red : pred.pressureScore > 45 ? C.amber : C.green }}>
                                                         {pred.pressureScore > 75 ? "CRITICAL" : pred.pressureScore > 55 ? "HIGH" : pred.pressureScore > 35 ? "MODERATE" : "LOW"} {pred.pressureScore}/100
                                                     </span>
@@ -545,8 +565,6 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 </div>
                             </div>
 
-                            <NextOverIntelligence pred={pred} />
-
                             {pred.toss && (
                                 <div style={{ background: "linear-gradient(135deg,#1E2D6B,#253580)", borderRadius: 14, padding: "14px 18px", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
                                     <div>
@@ -560,13 +578,13 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
                                     <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || "🌤"}</span>
                                     <div>
-                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>WEATHER</div>
-                                        <div style={{ fontSize: 20, fontWeight: 800 }}>{pred.weather?.temp || ""}°C</div>
+                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase" }}>WEATHER</div>
+                                        <div style={{ fontSize: 20, fontWeight: 900 }}>{pred.weather?.temp || ""}°C</div>
                                         <div style={{ fontSize: 11, color: C.muted }}>{pred.weather?.condition || ""}</div>
                                     </div>
                                 </div>
                                 <div className="card" style={{ padding: 18 }}>
-                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1 }}>PITCH</div>
+                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase" }}>PITCH</div>
                                     <div style={{ fontSize: 15, fontWeight: 700 }}>{pred.pitchLabel || ""}</div>
                                     <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || ""}</div>
                                 </div>
@@ -582,7 +600,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
             <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14 }}>
                 {pred && pred.team1 && (
                     <div style={{ background: C.bg, borderRadius: 12, padding: "14px" }}>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.5, marginBottom: 12 }}>MATCH CONTEXT</div>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 12 }}>MATCH CONTEXT</div>
                         {[
                             ["Format", pred.matchType?.toUpperCase() || "T20"],
                             ["Phase", pred.currentPhase || ""],

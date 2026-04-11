@@ -44,7 +44,7 @@ export default function MatchesTab({ liveMatches, onMatchClick }) {
     };
 
     return (
-        <div className="fade" style={{ maxWidth: 680, margin: "0 auto", padding: "22px 16px" }}>
+        <div className="fade" style={{ maxWidth: 680, margin: "0 auto", padding: "12px 16px" }}>
             {liveMatches.length === 0 && (
                 <div style={{ textAlign: "center", padding: 60, color: C.muted }}>
                     <div style={{ fontSize: 40, marginBottom: 12 }}>🏏</div>
@@ -54,8 +54,8 @@ export default function MatchesTab({ liveMatches, onMatchClick }) {
 
             {/* LIVE */}
             {liveList.length > 0 && (
-                <div style={{ marginBottom: 28 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+                <div style={{ marginBottom: 16 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
                         <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.red, animation: "pulse 1.5s infinite" }} />
                         <span style={{ fontSize: 14, fontWeight: 800, color: C.red, letterSpacing: 1 }}>LIVE NOW · {liveList.length} match{liveList.length > 1 ? "es" : ""}</span>
                     </div>
@@ -65,8 +65,8 @@ export default function MatchesTab({ liveMatches, onMatchClick }) {
 
             {/* UPCOMING */}
             {upcomingList.length > 0 && (
-                <div style={{ marginBottom: 28 }}>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: C.accent, letterSpacing: 1, marginBottom: 16 }}>UPCOMING</div>
+                <div style={{ marginBottom: 16 }}>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: C.accent, letterSpacing: 1, marginBottom: 8 }}>UPCOMING</div>
                     {renderSection(upcomingList)}
                 </div>
             )}
@@ -74,7 +74,7 @@ export default function MatchesTab({ liveMatches, onMatchClick }) {
             {/* RECENT RESULTS */}
             {endedList.length > 0 && (
                 <div>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: C.muted, letterSpacing: 1, marginBottom: 16 }}>RECENT RESULTS</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: C.muted, letterSpacing: 1, marginBottom: 8 }}>RECENT RESULTS</div>
                     {renderSection(endedList)}
                 </div>
             )}

@@ -621,7 +621,7 @@ function ConditionBar({ pitchKey, detr, dew, humidity, temp, matchAvgRPO, venueH
 // ─── Empty state ──────────────────────────────────────────────────────────────
 function NoPitchData({ liveMatches, onMatchSelect }) {
     return (
-        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+        <div style={{ minHeight: "100vh", background: "#0A0E1A", textAlign: "center", padding: "60px 20px" }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🏟️</div>
             <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 6 }}>No match selected</div>
             <div style={{ fontSize: 13, color: "#475569", marginBottom: 20 }}>Select a live match to see pitch behaviour analysis</div>
@@ -656,7 +656,7 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
 
     if (!pred && !selectedMatch) return <NoPitchData liveMatches={liveMatches} onMatchSelect={onMatchSelect} />;
     if (!pred) return (
-        <div style={{ textAlign: "center", padding: "60px 20px" }}>
+        <div style={{ minHeight: "100vh", background: "#0A0E1A", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <div style={{ fontSize: 13, color: "#475569" }}>Loading pitch data for {selectedMatch?.t1} vs {selectedMatch?.t2}…</div>
         </div>
     );
@@ -664,7 +664,8 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
     const { segments, matchAvgRPO, pitchKey, detr, dew, humidity, temp } = result;
 
     return (
-        <div className="fade" style={{ maxWidth: 660, margin: "0 auto", padding: "20px 16px" }}>
+        <div className="fade" style={{ minHeight: "100vh", background: "#0A0E1A", padding: "0 0 80px" }}>
+        <div style={{ maxWidth: 660, margin: "0 auto", padding: "20px 16px" }}>
 
             {/* Title */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
@@ -695,6 +696,7 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
                     Based on live match data (runs + wickets per over) and {pred?.venueHistory?.match_count ? `${pred.venueHistory.match_count} historical matches at this ground.` : "historical T20 data."} Updates every 10 seconds.
                 </div>
             </div>
+        </div>
         </div>
     );
 }

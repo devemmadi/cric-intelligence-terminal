@@ -18,6 +18,11 @@ export default function CricIntelligence() {
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
 
     useEffect(() => {
+        document.body.style.background = activeTab === "pitch" ? "#0A0E1A" : C.bg;
+        return () => { document.body.style.background = ""; };
+    }, [activeTab]);
+
+    useEffect(() => {
         if (pred?.team1 && pred?.team2) {
             const t1 = pred.team1.split(",")[0].trim();
             const t2 = pred.team2.split(",")[0].trim();
@@ -38,7 +43,7 @@ export default function CricIntelligence() {
     const CSS = GLOBAL_CSS(C);
 
     return (
-        <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
+        <div style={{ minHeight: "100vh", background: activeTab === "pitch" ? "#0A0E1A" : C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
 
             {/* NAV */}
@@ -59,6 +64,20 @@ export default function CricIntelligence() {
                     <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>{liveTime.toLocaleTimeString("en-GB")}</span>
                 </div>
             </nav>
+
+            {/* HERO TAGLINE BAR — only on predict tab when no match selected */}
+            {activeTab === "predict" && !selectedMatch && (
+                <div style={{ background: "linear-gradient(90deg, #0D1B2A, #1A2744)", borderBottom: "1px solid #1E293B", padding: "8px 20px", display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8 }}>
+                    <span style={{ fontSize: 11, color: "rgba(226,232,240,0.7)", fontWeight: 500 }}>AI-powered cricket predictions. Live. Free.</span>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        {[["🏏", "IPL 2026 Live"], ["🤖", "ML Predictions"], ["📊", "Venue Data — 7,500+ matches"]].map(([icon, label]) => (
+                            <span key={label} style={{ fontSize: 11, color: "rgba(226,232,240,0.6)", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 20, padding: "3px 10px" }}>
+                                {icon} {label}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* TABS */}
             {activeTab === "predict" && (
