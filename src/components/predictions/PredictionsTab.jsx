@@ -443,7 +443,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 ))}
                             </div>
                         )}
-                        <div style={{ padding: "20px 24px", display: pred && !isPredLoading ? "block" : "none" }}>
+                        {pred && !isPredLoading && <div style={{ padding: "20px 24px" }}>
                             <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
                                 {/* Next overs card */}
                                 <div className="card" style={{ padding: 22, marginBottom: 14 }}>
@@ -566,7 +566,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             </div>
 
                             <ClaudeAnalysis pred={pred} selectedMatch={selectedMatch} />
-                        </div>
+                        </div>}
                     </>
                 )}
             </main>
