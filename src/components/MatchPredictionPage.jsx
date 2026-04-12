@@ -219,7 +219,7 @@ export default function MatchPredictionPage() {
                 <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14, padding: "20px 24px", marginBottom: 24 }}>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 14 }}>
                         {[
-                            ["🤖", "ML Model", "XGBoost trained on 7,900+ T20 matches. 78% accuracy."],
+                            ["🤖", "ML Model", "XGBoost trained on 7,900+ T20 matches. 80% accuracy."],
                             ["📊", "Live Data", "Ball-by-ball updates from live match feed."],
                             ["🏟️", "Venue Stats", "335 venues tracked — pitch conditions & scoring trends."],
                             ["⚡", "Real-time", "Win probability recalculates every 30 seconds."],

@@ -73,9 +73,9 @@ export default function CricketWinProbability() {
 
                 <h2 style={{ fontSize: 22, fontWeight: 800, color: C.navy, marginBottom: 8 }}>How Accurate Is It?</h2>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14, marginBottom: 32 }}>
-                    {[["78.2%", "Overall accuracy", "Across all T20 matches in test set"],
-                      ["82.1%", "IPL accuracy", "Indian Premier League specifically"],
-                      ["±4.3%", "Average error", "Mean absolute error on win probability"]
+                    {[["80.2%", "Overall accuracy", "Across all T20 matches in test set"],
+                      ["82.3%", "Death overs accuracy", "Most accurate in final 5 overs"],
+                      ["±3.9%", "Average error", "Mean absolute error on win probability"]
                     ].map(([v, l, sub]) => (
                         <div key={l} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "20px 16px", textAlign: "center" }}>
                             <div style={{ fontSize: 26, fontWeight: 900, color: C.navy }}>{v}</div>
