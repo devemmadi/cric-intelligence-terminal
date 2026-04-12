@@ -59,7 +59,7 @@ body { background: ${C.bg}; }
 .match-pill { transition: all .2s cubic-bezier(.22,.68,0,1.2); cursor: pointer; border-radius: 10px; border: 1px solid ${C.border}; padding: 8px 12px; background: ${C.surface}; margin-bottom: 5px; }
 .match-pill:hover { border-color: ${C.accent}80; background: #F8FAFF; transform: translateX(2px); }
 .match-pill.sel { border-color: ${C.accent}; background: linear-gradient(135deg, #F0F7FF, #E8F0FF); box-shadow: 0 2px 12px rgba(30,45,107,0.1); }
-.tab-btn { background: none; border: none; cursor: pointer; padding: 8px 16px; border-radius: 8px; font-family: Inter, system-ui; font-size: 13px; font-weight: 500; transition: all .2s; color: rgba(255,255,255,0.55); }
+.tab-btn { background: none; border: none; cursor: pointer; padding: 7px 13px; border-radius: 8px; font-family: Inter, system-ui; font-size: 13px; font-weight: 500; transition: all .2s; color: rgba(255,255,255,0.55); display: inline-flex; align-items: center; justify-content: center; line-height: 1; white-space: nowrap; }
 .tab-btn:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.08); }
 .tab-btn.on { background: rgba(255,255,255,0.18); color: #fff; font-weight: 700; }
 .over-card { border-radius: 14px; border: 1.5px solid ${C.border}; padding: 14px 10px; text-align: center; background: ${C.surface}; transition: all .2s cubic-bezier(.22,.68,0,1.2); cursor: pointer; position: relative; overflow: hidden; }

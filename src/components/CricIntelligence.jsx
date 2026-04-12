@@ -52,11 +52,13 @@ export default function CricIntelligence() {
                 <div onClick={() => { setActiveTab("predict"); window.scrollTo(0, 0); }} style={{ cursor: "pointer" }}>
                     <Logo href="/" />
                 </div>
-                <div style={{ display: "flex", gap: 4 }}>
-                    {[["predict", "Predictions"], ["matches", "Matches"], ["pitch", "Pitch 🏟️"], ["media", "Media"], ["odds", "Odds 🎲"]].map(([k, l]) => (
+                <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
+                    {[["predict", null, "Predictions"], ["matches", null, "Matches"], ["pitch", "🏟️", "Pitch"], ["media", null, "Media"], ["odds", "🎲", "Odds"]].map(([k, icon, label]) => (
                         <button key={k} className={`tab-btn ${activeTab === k ? "on" : ""}`}
-                            onClick={() => { if (k === "odds") { window.location.href = "/odds"; } else { setActiveTab(k); } }}>
-                            {l}
+                            onClick={() => { if (k === "odds") { window.location.href = "/odds"; } else { setActiveTab(k); } }}
+                            style={{ display: "flex", alignItems: "center", gap: icon ? 5 : 0, lineHeight: 1 }}>
+                            {icon && <span style={{ fontSize: 14, lineHeight: 1, display: "flex", alignItems: "center" }}>{icon}</span>}
+                            <span>{label}</span>
                         </button>
                     ))}
                 </div>
