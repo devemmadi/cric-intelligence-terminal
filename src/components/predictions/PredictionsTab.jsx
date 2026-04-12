@@ -268,6 +268,38 @@ Be sharp, specific, bold. No vague statements.`;
     );
 }
 
+const TEAM_COLORS = {
+  "rcb": "#EC1C24", "royal challengers": "#EC1C24", "bangalore": "#EC1C24",
+  "mi": "#004BA0", "mumbai": "#004BA0",
+  "csk": "#F7A721", "chennai": "#F7A721",
+  "kkr": "#3A225D", "kolkata": "#3A225D",
+  "srh": "#FF822A", "hyderabad": "#FF822A", "sunrisers": "#FF822A",
+  "rr": "#E91E8C", "rajasthan": "#E91E8C",
+  "dc": "#0078BC", "delhi": "#0078BC",
+  "pbks": "#ED1B24", "punjab": "#ED1B24",
+  "lsg": "#A4262A", "lucknow": "#A4262A",
+  "gt": "#1DA462", "gujarat": "#1DA462",
+  "nam": "#009939", "namibia": "#009939",
+  "sco": "#003DA5", "scotland": "#003DA5",
+  "ind": "#0033A0", "india": "#0033A0",
+  "pak": "#01411C", "pakistan": "#01411C",
+  "aus": "#FFD700", "australia": "#FFD700",
+  "eng": "#CF142B", "england": "#CF142B",
+  "sa": "#007A4D", "south africa": "#007A4D",
+  "nz": "#000000", "new zealand": "#000000",
+  "sl": "#003580", "sri lanka": "#003580",
+  "wi": "#7B0041", "west indies": "#7B0041",
+  "ban": "#006A4E", "bangladesh": "#006A4E",
+};
+function getTeamColor(name) {
+  if (!name) return "#1E2D6B";
+  const n = name.toLowerCase();
+  for (const [k, v] of Object.entries(TEAM_COLORS)) {
+    if (n.includes(k)) return v;
+  }
+  return "#1E2D6B";
+}
+
 function NoMatchesScreen({ upcomingMatches }) {
     const scheduleMatches = upcomingMatches && upcomingMatches.length > 0 ? upcomingMatches : [];
     return (
@@ -445,7 +477,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                 {(selectedMatch || pred) && (
                     <>
                         {/* Match header — uses selectedMatch immediately, falls back to pred */}
-                        <div style={{ background: "linear-gradient(160deg,#1a2760 0%,#253580 100%)", padding: "16px 24px 20px", position: "sticky", top: 0, zIndex: 100, color: "#fff" }}>
+                        <div style={{ background: `linear-gradient(135deg, ${getTeamColor(pred?.team1 || selectedMatch?.t1)}22 0%, #1a2760 40%, #253580 60%, ${getTeamColor(pred?.team2 || selectedMatch?.t2)}22 100%)`, padding: "16px 24px 20px", position: "sticky", top: 0, zIndex: 100, color: "#fff", borderBottom: `1px solid rgba(255,255,255,0.08)` }}>
                             {/* Thin loading bar at top */}
                             {isPredLoading && (
                                 <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
@@ -510,6 +542,34 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     </span>
                                 ))}
                             </div>
+                            {/* WIN PROBABILITY HERO BAR */}
+                            {pred.aiProbability !== undefined && (
+                              <div style={{ background: "#fff", border: `1px solid ${C.border}`, borderRadius: 14, padding: "16px 20px", marginBottom: 14 }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: getTeamColor(pred.team1), flexShrink: 0 }} />
+                                    <span style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{cleanTeam(pred.team1)}</span>
+                                  </div>
+                                  <div style={{ fontSize: 10, fontWeight: 600, color: C.muted, letterSpacing: 1 }}>WIN PROBABILITY</div>
+                                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                    <span style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{cleanTeam(pred.team2)}</span>
+                                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: getTeamColor(pred.team2), flexShrink: 0 }} />
+                                  </div>
+                                </div>
+                                <div style={{ position: "relative", height: 36, borderRadius: 18, overflow: "hidden", background: `${getTeamColor(pred.team2)}33` }}>
+                                  <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${pred.aiProbability}%`, background: `linear-gradient(90deg, ${getTeamColor(pred.team1)}, ${getTeamColor(pred.team1)}bb)`, borderRadius: 18, transition: "width 0.8s cubic-bezier(.4,0,.2,1)" }} />
+                                  <div style={{ position: "absolute", left: 0, top: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 14px" }}>
+                                    <span style={{ fontSize: 20, fontWeight: 900, color: "#fff", textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>{pred.aiProbability}%</span>
+                                    <span style={{ fontSize: 20, fontWeight: 900, color: pred.aiProbability < 70 ? "#fff" : C.text, textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>{100 - pred.aiProbability}%</span>
+                                  </div>
+                                </div>
+                                <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
+                                  <span style={{ fontSize: 11, fontWeight: 700, color: pred.aiProbability >= 65 ? C.green : pred.aiProbability >= 45 ? C.amber : C.red, background: pred.aiProbability >= 65 ? "rgba(0,184,148,0.08)" : pred.aiProbability >= 45 ? "rgba(245,158,11,0.08)" : "rgba(239,68,68,0.08)", padding: "3px 12px", borderRadius: 20 }}>
+                                    {pred.aiProbability >= 65 ? `${cleanTeam(pred.team1)} strong favourite` : pred.aiProbability <= 35 ? `${cleanTeam(pred.team2)} strong favourite` : "Close contest — could go either way"}
+                                  </span>
+                                </div>
+                              </div>
+                            )}
                             <NextOverIntelligence pred={pred} />
 
                             <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
@@ -669,44 +729,52 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     </div>
                 )}
                 {pred && pred.team1 && (
-                    <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${C.border}`, background: C.bg }}>
-                        <div style={{ padding: "12px 14px" }}>
-                            <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1.5, marginBottom: 8 }}>AI PREDICTION SUMMARY</div>
-                            {/* Win prob */}
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                                <span style={{ fontSize: 11, color: C.muted }}>{cleanTeam(pred.team1)} win</span>
-                                <span style={{ fontSize: 14, fontWeight: 900, color: prob >= 60 ? C.green : prob <= 40 ? C.red : C.amber }}>{prob}%</span>
-                            </div>
-                            {/* Next over */}
-                            {pred.nextOvers?.[0] && (
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                                    <span style={{ fontSize: 11, color: C.muted }}>Next over</span>
-                                    <span style={{ fontSize: 12, fontWeight: 700, color: C.text }}>{pred.nextOvers[0].runRange} runs</span>
-                                </div>
-                            )}
-                            {/* Wicket risk */}
-                            {pred.nextOvers?.[0] && (
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-                                    <span style={{ fontSize: 11, color: C.muted }}>Wicket risk</span>
-                                    <span style={{ fontSize: 12, fontWeight: 700, color: pred.nextOvers[0].wicketProb > 40 ? C.red : pred.nextOvers[0].wicketProb > 25 ? C.amber : C.green }}>
-                                        {pred.nextOvers[0].wicketProb > 40 ? "High" : pred.nextOvers[0].wicketProb > 25 ? "Medium" : "Low"} · {pred.nextOvers[0].wicketProb}%
-                                    </span>
-                                </div>
-                            )}
-                            <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 10, marginBottom: 6 }}>
-                                <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>Want to act on this prediction?</div>
-                                <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
-                                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: C.navy, border: `1px solid ${C.navyLight || "#2A3F6F"}`, borderRadius: 8, padding: "9px 14px", textDecoration: "none", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,0.85)", transition: "opacity .15s" }}
-                                    onMouseOver={e => e.currentTarget.style.opacity = "0.8"}
-                                    onMouseOut={e => e.currentTarget.style.opacity = "1"}>
-                                    🎰 Bet on this match · 1xBet
-                                </a>
-                            </div>
-                            <div style={{ fontSize: 9, color: C.muted, textAlign: "center" }}>
-                                18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: C.muted }}>BeGambleAware.org</a>
-                            </div>
-                        </div>
+                  <div style={{ borderRadius: 14, overflow: "hidden", border: `1px solid ${C.border}`, background: C.bg }}>
+                    {/* Team probability mini-bar */}
+                    <div style={{ height: 4, background: `${getTeamColor(pred.team2)}66`, position: "relative" }}>
+                      <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${prob}%`, background: getTeamColor(pred.team1), transition: "width 0.8s" }} />
                     </div>
+                    <div style={{ padding: "14px 14px 12px" }}>
+                      <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>AI PREDICTION SUMMARY</div>
+                      {/* Win prob — big */}
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 14 }}>
+                        <div>
+                          <div style={{ fontSize: 10, color: C.muted, marginBottom: 2 }}>{cleanTeam(pred.team1)} win</div>
+                          <div style={{ fontSize: 28, fontWeight: 900, color: prob >= 60 ? C.green : prob <= 40 ? C.red : C.amber, lineHeight: 1 }}>{prob}%</div>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                          <div style={{ fontSize: 10, color: C.muted, marginBottom: 2 }}>{cleanTeam(pred.team2)} win</div>
+                          <div style={{ fontSize: 22, fontWeight: 800, color: C.muted, lineHeight: 1 }}>{100 - prob}%</div>
+                        </div>
+                      </div>
+                      {/* Divider */}
+                      <div style={{ height: 1, background: C.border, marginBottom: 10 }} />
+                      {/* Next over + wicket risk */}
+                      {pred.nextOvers?.[0] && (<>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                          <span style={{ fontSize: 11, color: C.muted }}>Next over</span>
+                          <span style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{pred.nextOvers[0].runRange} runs</span>
+                        </div>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                          <span style={{ fontSize: 11, color: C.muted }}>Wicket risk</span>
+                          <span style={{ fontSize: 12, fontWeight: 700, color: pred.nextOvers[0].wicketProb > 40 ? C.red : pred.nextOvers[0].wicketProb > 25 ? C.amber : C.green }}>
+                            {pred.nextOvers[0].wicketProb > 40 ? "High" : pred.nextOvers[0].wicketProb > 25 ? "Med" : "Low"} · {pred.nextOvers[0].wicketProb}%
+                          </span>
+                        </div>
+                      </>)}
+                      {/* Bet CTA */}
+                      <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 10, marginBottom: 6 }}>
+                        <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>Want to act on this prediction?</div>
+                        <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
+                          style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: C.navy, border: `1px solid ${C.navyLight || "#2A3F6F"}`, borderRadius: 8, padding: "9px 14px", textDecoration: "none", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,0.85)" }}>
+                          🎰 Bet on this match · 1xBet
+                        </a>
+                      </div>
+                      <div style={{ fontSize: 9, color: C.muted, textAlign: "center" }}>
+                        18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: C.muted }}>BeGambleAware.org</a>
+                      </div>
+                    </div>
+                  </div>
                 )}
 
                 <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center" }}>
