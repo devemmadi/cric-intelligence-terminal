@@ -461,7 +461,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", paddingBottom: 12 }}>
                                 {[
                                     { label: "⚡ Live data from Cricbuzz" },
-                                    { label: "🤖 750,000 match ML model" },
+                                    { label: "🤖 ML model — 78% accuracy" },
                                     ...(pred.venue ? [{ label: `📍 ${pred.venue}` }] : []),
                                 ].map((item) => (
                                     <span key={item.label} style={{ fontSize: 10, color: C.muted, background: "rgba(100,116,139,0.12)", border: `1px solid ${C.border}`, borderRadius: 20, padding: "3px 10px" }}>
