@@ -629,22 +629,41 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     </div>
                 )}
                 {pred && pred.team1 && (
-                    <div style={{ borderRadius: 12, overflow: "hidden", border: "1px solid rgba(255,184,0,0.3)", background: "linear-gradient(135deg, #1A2560, #1E3A8A)" }}>
+                    <div style={{ borderRadius: 12, overflow: "hidden", border: `1px solid ${C.border}`, background: C.bg }}>
                         <div style={{ padding: "12px 14px" }}>
-                            <div style={{ fontSize: 9, color: "rgba(255,184,0,0.7)", fontWeight: 700, letterSpacing: 1.5, marginBottom: 6 }}>LIVE ODDS</div>
-                            <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginBottom: 2 }}>{cleanTeam(pred.team1)} win</div>
-                            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
-                                <div style={{ fontSize: 28, fontWeight: 900, color: prob >= 60 ? "#00FF94" : prob <= 40 ? "#FF4444" : "#FFB800", lineHeight: 1 }}>{prob}%</div>
-                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>AI<br />probability</div>
+                            <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1.5, marginBottom: 8 }}>AI PREDICTION SUMMARY</div>
+                            {/* Win prob */}
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                                <span style={{ fontSize: 11, color: C.muted }}>{cleanTeam(pred.team1)} win</span>
+                                <span style={{ fontSize: 14, fontWeight: 900, color: prob >= 60 ? C.green : prob <= 40 ? C.red : C.amber }}>{prob}%</span>
                             </div>
-                            <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
-                                style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: "#FFB800", borderRadius: 8, padding: "10px 14px", textDecoration: "none", fontWeight: 800, fontSize: 13, color: "#1A1A1A" }}>
-                                Bet on 1xBet →
-                            </a>
-                        </div>
-                        <div style={{ padding: "6px 14px 10px", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", textAlign: "center" }}>
-                                18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: "rgba(255,255,255,0.3)" }}>BeGambleAware.org</a>
+                            {/* Next over */}
+                            {pred.nextOvers?.[0] && (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                                    <span style={{ fontSize: 11, color: C.muted }}>Next over</span>
+                                    <span style={{ fontSize: 12, fontWeight: 700, color: C.text }}>{pred.nextOvers[0].runRange} runs</span>
+                                </div>
+                            )}
+                            {/* Wicket risk */}
+                            {pred.nextOvers?.[0] && (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+                                    <span style={{ fontSize: 11, color: C.muted }}>Wicket risk</span>
+                                    <span style={{ fontSize: 12, fontWeight: 700, color: pred.nextOvers[0].wicketProb > 40 ? C.red : pred.nextOvers[0].wicketProb > 25 ? C.amber : C.green }}>
+                                        {pred.nextOvers[0].wicketProb > 40 ? "High" : pred.nextOvers[0].wicketProb > 25 ? "Medium" : "Low"} · {pred.nextOvers[0].wicketProb}%
+                                    </span>
+                                </div>
+                            )}
+                            <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 10, marginBottom: 6 }}>
+                                <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>Want to act on this prediction?</div>
+                                <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
+                                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: C.navy, border: `1px solid ${C.navyLight || "#2A3F6F"}`, borderRadius: 8, padding: "9px 14px", textDecoration: "none", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,0.85)", transition: "opacity .15s" }}
+                                    onMouseOver={e => e.currentTarget.style.opacity = "0.8"}
+                                    onMouseOut={e => e.currentTarget.style.opacity = "1"}>
+                                    🎰 Bet on this match · 1xBet
+                                </a>
+                            </div>
+                            <div style={{ fontSize: 9, color: C.muted, textAlign: "center" }}>
+                                18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: C.muted }}>BeGambleAware.org</a>
                             </div>
                         </div>
                     </div>
