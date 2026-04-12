@@ -20,13 +20,11 @@ export default function useMatchData() {
     });
     const [isPredLoading, setIsPredLoading] = useState(false);
 
-    const hasUserSelectedRef = useRef(false);
     const selectedMatchRef = useRef(null);
     // Incremented every time user selects a match — used to discard stale prediction responses
     const predRequestIdRef = useRef(0);
 
     const selectMatch = useCallback((m) => {
-        hasUserSelectedRef.current = true;
         selectedMatchRef.current = m;
         setIsPredLoading(true);  // Show subtle loader only — don't wipe pred
         setSelectedMatch(m);
@@ -85,8 +83,9 @@ export default function useMatchData() {
             setIsFirstLoad(false);
             try { localStorage.setItem("ci_matches_cache", JSON.stringify(mapped)); } catch { }
 
-            // Auto-select first live/upcoming match only if user never manually selected
-            if (!hasUserSelectedRef.current) {
+            // Auto-select only on very first load when nothing is selected yet
+            // Once user has selected a match, NEVER override it
+            if (!selectedMatchRef.current) {
                 const best = mapped.find(m => m.status === "LIVE") || mapped.find(m => m.status === "UPCOMING");
                 if (best) {
                     selectedMatchRef.current = best;
