@@ -8,6 +8,7 @@ import PredictionsTab from "./predictions/PredictionsTab";
 import MatchesTab from "./matches/MatchesTab";
 import MediaSection from "./MediaSection";
 import PitchTab from "./pitch/PitchTab";
+import NotifyButton from "./shared/NotifyButton";
 
 export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
@@ -59,9 +60,12 @@ export default function CricIntelligence() {
                         </button>
                     ))}
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: liveStatus === "live" ? C.green : C.amber, animation: "pulse 2s infinite" }} />
-                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>{liveTime.toLocaleTimeString("en-GB")}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <NotifyButton />
+                    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: liveStatus === "live" ? C.green : C.amber, animation: "pulse 2s infinite" }} />
+                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>{liveTime.toLocaleTimeString("en-GB")}</span>
+                    </div>
                 </div>
             </nav>
 
