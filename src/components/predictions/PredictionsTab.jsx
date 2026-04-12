@@ -451,7 +451,7 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSelect, pred, liveStatus, isFirstLoad, isPredLoading }) {
     const [activeOver, setActiveOver] = useState(0);
-    const prob = pred?.aiProbability || 50;
+    const prob = Math.round((pred?.aiProbability || 50) * 10) / 10;
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
 
@@ -560,7 +560,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                   <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${pred.aiProbability}%`, background: `linear-gradient(90deg, ${getTeamColor(pred.team1)}, ${getTeamColor(pred.team1)}bb)`, borderRadius: 18, transition: "width 0.8s cubic-bezier(.4,0,.2,1)" }} />
                                   <div style={{ position: "absolute", left: 0, top: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 14px" }}>
                                     <span style={{ fontSize: 20, fontWeight: 900, color: "#fff", textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>{pred.aiProbability}%</span>
-                                    <span style={{ fontSize: 20, fontWeight: 900, color: pred.aiProbability < 70 ? "#fff" : C.text, textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>{100 - pred.aiProbability}%</span>
+                                    <span style={{ fontSize: 20, fontWeight: 900, color: pred.aiProbability < 70 ? "#fff" : C.text, textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>{Math.round((100 - pred.aiProbability) * 10) / 10}%</span>
                                   </div>
                                 </div>
                                 <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
@@ -744,7 +744,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         </div>
                         <div style={{ textAlign: "right" }}>
                           <div style={{ fontSize: 10, color: C.muted, marginBottom: 2 }}>{cleanTeam(pred.team2)} win</div>
-                          <div style={{ fontSize: 22, fontWeight: 800, color: C.muted, lineHeight: 1 }}>{100 - prob}%</div>
+                          <div style={{ fontSize: 22, fontWeight: 800, color: C.muted, lineHeight: 1 }}>{Math.round((100 - prob) * 10) / 10}%</div>
                         </div>
                       </div>
                       {/* Divider */}
