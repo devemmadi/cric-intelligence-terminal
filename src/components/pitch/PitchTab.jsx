@@ -312,6 +312,7 @@ function buildSegmentData(pred) {
     const humidity = weather.humidity   ?? 60;
     const temp     = weather.temperature ?? 28;
     const overHistory = pred?.overHistory || [];
+    const pitchSegML  = pred?.pitchSegPredictions || {};
     const currentOvers = parseFloat(pred?.overs ?? 0);
     const currentOver  = Math.floor(currentOvers);
 
@@ -409,6 +410,8 @@ function buildSegmentData(pred) {
     const segments = rawSegs.map((seg, i) => {
         const behId    = inferBehaviour(seg, rawSegs, detr, dew, humidity, trendSlope, matchAvgRPO, avgWktsPerOv, last3RPO, crr, venueSegs);
         const beh      = BEHAVIOURS[behId] || BEHAVIOURS.UNKNOWN;
+        // ML pitch prediction for future segments
+        const mlPred   = seg.isFuture ? pitchSegML[seg.label] || null : null;
         // Attach trends for evidence builder to use
         const segWithTrends = { ...seg, _trends: trends };
         const evidence = buildEvidence(segWithTrends, beh, rawSegs, matchAvgRPO, null, detr, dew, humidity);
@@ -430,7 +433,7 @@ function buildSegmentData(pred) {
         };
 
         const betSignal = (!seg.isPast) ? getBetSignal(beh, seg, ms) : null;
-        return { ...seg, beh, evidence, betSignal, matchAvgRPO, dew };
+        return { ...seg, beh, evidence, betSignal, matchAvgRPO, dew, mlPred };
     });
 
     // pitchKey kept only for the UI label chip — NOT used in any inference
@@ -508,12 +511,22 @@ function SegmentCard({ seg }) {
                         </span>
                     </div>
                 </div>
-                {/* Score pill */}
+                {/* Score pill — actual (past/current) */}
                 {seg.actualRuns !== null && (
                     <div style={{ textAlign: "right", background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "6px 12px" }}>
                         <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1 }}>{seg.actualRuns}</div>
                         <div style={{ fontSize: 10, color: "#475569", marginTop: 2 }}>
                             {seg.actualWkts ?? 0} wicket{(seg.actualWkts ?? 0) !== 1 ? "s" : ""}
+                        </div>
+                    </div>
+                )}
+                {/* ML prediction pill — future segments */}
+                {isFuture && seg.mlPred && (
+                    <div style={{ textAlign: "right", background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.3)", borderRadius: 8, padding: "6px 12px" }}>
+                        <div style={{ fontSize: 9, color: "#818CF8", fontWeight: 700, marginBottom: 2, letterSpacing: 0.5 }}>🤖 ML</div>
+                        <div style={{ fontSize: 20, fontWeight: 900, color: "#818CF8", lineHeight: 1 }}>{seg.mlPred.pred_runs}</div>
+                        <div style={{ fontSize: 10, color: "#6366F1", marginTop: 2 }}>
+                            ~{seg.mlPred.pred_wkts.toFixed(1)} wkt{seg.mlPred.pred_wkts !== 1 ? "s" : ""}
                         </div>
                     </div>
                 )}
