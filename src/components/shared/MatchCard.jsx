@@ -3,89 +3,102 @@ import React from "react";
 import { C, API_BASE, getLeague } from "./constants";
 import TeamLogo from "./TeamLogo";
 
-/** Small pill in the left sidebar — compact dark card */
-export function MatchPill({ m, selected, onClick }) {
-    const isLive   = m.isLive || (m.matchStarted && !m.matchEnded);
-    const isEnded  = m.matchEnded || m.status === "ENDED";
-    const isUpcoming = !isLive && !isEnded;
-    const league   = getLeague(m);
+/** Tiny team logo */
+function MiniLogo({ imgId, name, size = 20 }) {
+    return (
+        <img
+            src={`${API_BASE}/team-image/${imgId || 0}`}
+            style={{ width: size, height: size, borderRadius: "50%", objectFit: "cover", background: "#1E293B", flexShrink: 0 }}
+            alt={name || ""}
+            onError={e => { e.target.style.display = "none"; }}
+        />
+    );
+}
 
-    const borderColor = isLive ? "#EF4444" : isUpcoming ? "#F59E0B" : "#1E293B";
-    const bgColor     = selected ? (isLive ? "rgba(239,68,68,0.08)" : "rgba(99,102,241,0.1)") : "#0D1117";
-    const borderFull  = selected ? `1.5px solid ${isLive ? "#EF4444" : "#6366F1"}` : `1px solid #1E293B`;
+/** Small pill in the left sidebar — ultra-compact single-card */
+export function MatchPill({ m, selected, onClick }) {
+    const isLive     = m.isLive || (m.matchStarted && !m.matchEnded);
+    const isEnded    = m.matchEnded || m.status === "ENDED";
+    const isUpcoming = !isLive && !isEnded;
+    const league     = getLeague(m);
 
     const t1 = m.t1 || m.team1 || "?";
     const t2 = m.t2 || m.team2 || "?";
 
-    // Score display
+    // Score: show "117/5" for live batting team
     const t1Score = m.t1Score != null ? (m.t1Wkts != null ? `${m.t1Score}/${m.t1Wkts}` : `${m.t1Score}`) : null;
     const t2Score = m.t2Score != null ? (m.t2Wkts != null ? `${m.t2Score}/${m.t2Wkts}` : `${m.t2Score}`) : null;
+    const hasScore = t1Score || t2Score;
+
+    const accentColor = isLive ? "#EF4444" : isUpcoming ? "#F59E0B" : "#334155";
+    const bgColor     = selected
+        ? (isLive ? "rgba(239,68,68,0.12)" : "rgba(99,102,241,0.12)")
+        : "rgba(255,255,255,0.02)";
 
     return (
         <div
             onClick={onClick}
             style={{
                 background: bgColor,
-                border: borderFull,
-                borderLeft: `3px solid ${borderColor}`,
-                borderRadius: 10,
-                padding: "10px 12px",
-                marginBottom: 6,
+                border: selected ? `1.5px solid ${isLive ? "#EF4444" : "#6366F1"}` : "1px solid #1E293B",
+                borderLeft: `3px solid ${accentColor}`,
+                borderRadius: 9,
+                padding: "9px 10px",
+                marginBottom: 5,
                 cursor: "pointer",
-                transition: "all 0.15s",
+                transition: "background 0.12s, border-color 0.12s",
+                userSelect: "none",
             }}
         >
-            {/* Top row: format badge + status */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                <span style={{ fontSize: 9, fontWeight: 700, color: "#475569", letterSpacing: 0.8 }}>
-                    {(m.matchType || "T20").toUpperCase()}
-                    {league.key !== "INT" && (
-                        <span style={{ marginLeft: 6, color: league.color }}>· {league.label}</span>
+            {/* Row 1: logos + team names + status */}
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                {/* Stacked logos */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 2, flexShrink: 0 }}>
+                    <MiniLogo imgId={m.t1ImageId || m.team1ImageId} name={t1} size={18} />
+                    <MiniLogo imgId={m.t2ImageId || m.team2ImageId} name={t2} size={18} />
+                </div>
+
+                {/* Team names */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {t1}
+                    </div>
+                    <div style={{ fontSize: 12, fontWeight: 500, color: "#64748B", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {t2}
+                    </div>
+                </div>
+
+                {/* Right: score or status */}
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                    {hasScore ? (
+                        <>
+                            <div style={{ fontSize: 11, fontWeight: 800, color: "#fff", lineHeight: 1.3 }}>{t1Score ?? "–"}</div>
+                            <div style={{ fontSize: 11, fontWeight: 500, color: "#475569", lineHeight: 1.3 }}>{t2Score ?? "–"}</div>
+                        </>
+                    ) : (
+                        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                            {isLive && <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "pulse 1.5s infinite" }} />}
+                            <span style={{ fontSize: 9, fontWeight: 700, color: accentColor, letterSpacing: 0.5 }}>
+                                {isLive ? "LIVE" : isUpcoming ? "SOON" : "FT"}
+                            </span>
+                        </div>
                     )}
+                </div>
+            </div>
+
+            {/* Row 2: format + league (only if needed) */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 5 }}>
+                <span style={{ fontSize: 9, color: "#334155", fontWeight: 600, letterSpacing: 0.5 }}>
+                    {(m.matchType || "T20").toUpperCase()}
+                    {league.key !== "INT" && <span style={{ color: league.color, marginLeft: 5 }}>· {league.label}</span>}
                 </span>
-                {isLive && (
-                    <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 9, fontWeight: 800, color: "#EF4444" }}>
-                        <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "pulse 1.5s infinite" }} />
+                {isLive && hasScore && (
+                    <span style={{ display: "flex", alignItems: "center", gap: 3, fontSize: 9, fontWeight: 700, color: "#EF4444" }}>
+                        <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "pulse 1.5s infinite" }} />
                         LIVE
                     </span>
                 )}
-                {isUpcoming && (
-                    <span style={{ fontSize: 9, fontWeight: 700, color: "#F59E0B" }}>UPCOMING</span>
-                )}
-                {isEnded && (
-                    <span style={{ fontSize: 9, fontWeight: 600, color: "#475569" }}>ENDED</span>
-                )}
             </div>
-
-            {/* Team rows */}
-            {[
-                { name: t1, score: t1Score, imgId: m.t1ImageId || m.team1ImageId || 0 },
-                { name: t2, score: t2Score, imgId: m.t2ImageId || m.team2ImageId || 0 },
-            ].map(({ name, score, imgId }, idx) => (
-                <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: idx === 0 ? 4 : 0 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                        <img
-                            src={`${API_BASE}/team-image/${imgId}`}
-                            style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", background: "#1E293B" }}
-                            alt=""
-                            onError={e => { e.target.style.display = "none"; }}
-                        />
-                        <span style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0" }}>{name}</span>
-                    </div>
-                    {score != null && (
-                        <span style={{ fontSize: 12, fontWeight: 800, color: isLive && idx === 0 ? "#fff" : "#94A3B8" }}>
-                            {score}
-                        </span>
-                    )}
-                </div>
-            ))}
-
-            {/* Status note for ended/upcoming */}
-            {(isEnded || isUpcoming) && m.status && typeof m.status === "string" && m.status.length > 8 && (
-                <div style={{ fontSize: 10, color: isUpcoming ? "#F59E0B" : "#475569", marginTop: 6, lineHeight: 1.4 }}>
-                    {m.status}
-                </div>
-            )}
         </div>
     );
 }
