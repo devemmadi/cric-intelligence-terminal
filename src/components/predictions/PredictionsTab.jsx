@@ -641,14 +641,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         </div>
                     </div>
                 )}
-                {/* Buy Me a Coffee */}
-                <a href="https://buymeacoffee.com/cricintelligence" target="_blank" rel="noreferrer"
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: "#FFDD00", color: "#000", fontWeight: 700, fontSize: 12, padding: "9px 14px", borderRadius: 10, textDecoration: "none", transition: "opacity .15s" }}
-                    onMouseOver={e => e.currentTarget.style.opacity = "0.85"}
-                    onMouseOut={e => e.currentTarget.style.opacity = "1"}
-                >
-                    ☕ Support this project
-                </a>
+
                 <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center" }}>
                     <a href="/about" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>About Us</a>
                     <span style={{ color: C.border, margin: "0 6px" }}>·</span>
