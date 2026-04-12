@@ -30,28 +30,32 @@ export function MatchPill({ m, selected, onClick }) {
     const t2Score = m.t2Score != null ? (m.t2Wkts != null ? `${m.t2Score}/${m.t2Wkts}` : `${m.t2Score}`) : null;
     const hasScore = t1Score || t2Score;
 
-    const accentColor = isLive ? "#EF4444" : isUpcoming ? "#F59E0B" : "#334155";
+    const accentColor = isLive ? "#DC2626" : isUpcoming ? "#D97706" : "#CBD5E1";
     const bgColor     = selected
-        ? (isLive ? "rgba(239,68,68,0.12)" : "rgba(99,102,241,0.12)")
-        : "rgba(255,255,255,0.02)";
+        ? (isLive ? "#FFF5F5" : "#EEF2FF")
+        : "#fff";
+    const borderColor = selected
+        ? (isLive ? "#FCA5A5" : "#A5B4FC")
+        : "#E2E8F0";
 
     return (
         <div
             onClick={onClick}
             style={{
                 background: bgColor,
-                border: selected ? `1.5px solid ${isLive ? "#EF4444" : "#6366F1"}` : "1px solid #1E293B",
+                border: `1px solid ${borderColor}`,
                 borderLeft: `3px solid ${accentColor}`,
-                borderRadius: 9,
+                borderRadius: 10,
                 padding: "9px 10px",
                 marginBottom: 5,
                 cursor: "pointer",
                 transition: "background 0.12s, border-color 0.12s",
                 userSelect: "none",
+                boxShadow: selected ? "0 1px 4px rgba(0,0,0,0.06)" : "none",
             }}
         >
             {/* Row 1: logos + team names + status */}
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
                 {/* Stacked logos */}
                 <div style={{ display: "flex", flexDirection: "column", gap: 2, flexShrink: 0 }}>
                     <MiniLogo imgId={m.t1ImageId || m.team1ImageId} name={t1} size={18} />
@@ -60,10 +64,10 @@ export function MatchPill({ m, selected, onClick }) {
 
                 {/* Team names */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: "#0F172A", lineHeight: 1.35, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                         {t1}
                     </div>
-                    <div style={{ fontSize: 12, fontWeight: 500, color: "#64748B", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <div style={{ fontSize: 12, fontWeight: 500, color: "#64748B", lineHeight: 1.35, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                         {t2}
                     </div>
                 </div>
@@ -72,12 +76,12 @@ export function MatchPill({ m, selected, onClick }) {
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
                     {hasScore ? (
                         <>
-                            <div style={{ fontSize: 11, fontWeight: 800, color: "#fff", lineHeight: 1.3 }}>{t1Score ?? "–"}</div>
-                            <div style={{ fontSize: 11, fontWeight: 500, color: "#475569", lineHeight: 1.3 }}>{t2Score ?? "–"}</div>
+                            <div style={{ fontSize: 11, fontWeight: 800, color: "#0F172A", lineHeight: 1.3 }}>{t1Score ?? "–"}</div>
+                            <div style={{ fontSize: 11, fontWeight: 500, color: "#94A3B8", lineHeight: 1.3 }}>{t2Score ?? "–"}</div>
                         </>
                     ) : (
                         <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                            {isLive && <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "pulse 1.5s infinite" }} />}
+                            {isLive && <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#DC2626", display: "inline-block", animation: "pulse 1.5s infinite" }} />}
                             <span style={{ fontSize: 9, fontWeight: 700, color: accentColor, letterSpacing: 0.5 }}>
                                 {isLive ? "LIVE" : isUpcoming ? "SOON" : "FT"}
                             </span>
@@ -86,15 +90,15 @@ export function MatchPill({ m, selected, onClick }) {
                 </div>
             </div>
 
-            {/* Row 2: format + league (only if needed) */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 5 }}>
-                <span style={{ fontSize: 9, color: "#334155", fontWeight: 600, letterSpacing: 0.5 }}>
+            {/* Row 2: format badge */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 6 }}>
+                <span style={{ fontSize: 9, color: "#94A3B8", fontWeight: 600, letterSpacing: 0.5 }}>
                     {(m.matchType || "T20").toUpperCase()}
                     {league.key !== "INT" && <span style={{ color: league.color, marginLeft: 5 }}>· {league.label}</span>}
                 </span>
                 {isLive && hasScore && (
-                    <span style={{ display: "flex", alignItems: "center", gap: 3, fontSize: 9, fontWeight: 700, color: "#EF4444" }}>
-                        <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "pulse 1.5s infinite" }} />
+                    <span style={{ display: "flex", alignItems: "center", gap: 3, fontSize: 9, fontWeight: 700, color: "#DC2626" }}>
+                        <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#DC2626", display: "inline-block", animation: "pulse 1.5s infinite" }} />
                         LIVE
                     </span>
                 )}

@@ -315,13 +315,13 @@ function NoMatchesScreen({ upcomingMatches }) {
 // ─── Sidebar section header ────────────────────────────────────────────────────
 function SidebarSection({ label, count, color, dot }) {
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: 7, margin: "16px 0 8px" }}>
-            {dot && <span style={{ width: 6, height: 6, borderRadius: "50%", background: color, display: "inline-block", flexShrink: 0, animation: dot === "pulse" ? "pulse 1.5s infinite" : "none" }} />}
-            <span style={{ fontSize: 10, fontWeight: 800, color, letterSpacing: 1.2 }}>{label}</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 6, margin: "14px 0 7px" }}>
+            {dot && <span style={{ width: 5, height: 5, borderRadius: "50%", background: color, display: "inline-block", flexShrink: 0, animation: dot === "pulse" ? "pulse 1.5s infinite" : "none" }} />}
+            <span style={{ fontSize: 9, fontWeight: 800, color, letterSpacing: 1.1 }}>{label}</span>
             {count > 0 && (
-                <span style={{ fontSize: 9, fontWeight: 700, background: color + "22", color, borderRadius: 20, padding: "1px 7px" }}>{count}</span>
+                <span style={{ fontSize: 9, fontWeight: 700, background: color + "18", color, borderRadius: 20, padding: "1px 7px" }}>{count}</span>
             )}
-            <div style={{ flex: 1, height: 1, background: color + "22" }} />
+            <div style={{ flex: 1, height: 1, background: "#E2E8F0" }} />
         </div>
     );
 }
@@ -343,39 +343,37 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
 
     return (
         <aside className="sl" style={{
-            borderRight: "1px solid #1E293B",
-            background: "#0A0E1A",
-            padding: "16px 12px",
+            borderRight: `1px solid ${C.border}`,
+            background: C.surface,
+            padding: "14px 12px",
             overflowY: "auto",
         }}>
             {/* Header pill */}
             <div style={{
-                display: "flex", alignItems: "center", gap: 8,
-                marginBottom: 16, padding: "8px 12px",
-                background: liveList.length > 0 ? "rgba(239,68,68,0.1)" : "rgba(99,102,241,0.1)",
-                border: `1px solid ${liveList.length > 0 ? "rgba(239,68,68,0.25)" : "rgba(99,102,241,0.2)"}`,
-                borderRadius: 10,
+                display: "flex", alignItems: "center", gap: 7,
+                marginBottom: 14, padding: "6px 10px",
+                background: liveList.length > 0 ? "#FFF0F0" : "#EEF2FF",
+                border: `1px solid ${liveList.length > 0 ? "#FECACA" : "#C7D2FE"}`,
+                borderRadius: 8,
             }}>
                 {liveList.length > 0 && (
-                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "pulse 1.5s infinite", flexShrink: 0 }} />
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "pulse 1.5s infinite", flexShrink: 0 }} />
                 )}
-                <span style={{ fontSize: 11, fontWeight: 800, color: liveList.length > 0 ? "#EF4444" : "#818CF8", flex: 1 }}>
+                <span style={{ fontSize: 11, fontWeight: 800, color: liveList.length > 0 ? "#DC2626" : C.navy, flex: 1 }}>
                     {liveList.length > 0 ? `${liveList.length} Live Match${liveList.length > 1 ? "es" : ""}` : "Match Centre"}
                 </span>
-                <span style={{ fontSize: 10, color: "#475569" }}>
-                    {liveMatches.length} total
-                </span>
+                <span style={{ fontSize: 10, color: C.muted }}>{liveMatches.length} total</span>
             </div>
 
             {/* LIVE NOW */}
             {liveList.length > 0 && (
                 <>
-                    <SidebarSection label="LIVE NOW" count={liveList.length} color="#EF4444" dot="pulse" />
+                    <SidebarSection label="LIVE NOW" count={liveList.length} color="#DC2626" dot="pulse" />
                     {groups.map(g => {
                         if (g.ms.length === 0) return null;
                         return (
                             <div key={g.key} style={{ marginBottom: 4 }}>
-                                <div style={{ fontSize: 9, fontWeight: 700, color: g.color, letterSpacing: 1, marginBottom: 5, paddingLeft: 3 }}>
+                                <div style={{ fontSize: 9, fontWeight: 700, color: g.color, letterSpacing: 1, marginBottom: 4, paddingLeft: 2 }}>
                                     {g.label}
                                 </div>
                                 {g.ms.map(m => (
@@ -390,7 +388,7 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
             {/* UPCOMING */}
             {upcomingList.length > 0 && (
                 <>
-                    <SidebarSection label="UPCOMING" count={upcomingList.length} color="#F59E0B" dot={false} />
+                    <SidebarSection label="UPCOMING" count={upcomingList.length} color="#D97706" dot={false} />
                     {upcomingList.slice(0, 5).map(m => (
                         <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => onMatchSelect(m)} />
                     ))}
@@ -400,17 +398,17 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
             {/* RECENT */}
             {recentList.length > 0 && (
                 <>
-                    <SidebarSection label="RECENT" count={0} color="#475569" dot={false} />
-                    {recentList.slice(0, 4).map(m => (
+                    <SidebarSection label="RECENT" count={0} color={C.muted} dot={false} />
+                    {recentList.slice(0, 5).map(m => (
                         <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => onMatchSelect(m)} />
                     ))}
                 </>
             )}
 
-            {/* Runs trend sparkline */}
+            {/* Runs trend */}
             {pred?.overHistory?.length > 2 && (
-                <div style={{ marginTop: 16, padding: "12px 12px 10px", background: "#0D1117", border: "1px solid #1E293B", borderRadius: 10 }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, color: "#475569", letterSpacing: 1, marginBottom: 8 }}>RUNS TREND</div>
+                <div style={{ marginTop: 14, padding: "10px 12px", background: C.bg, borderRadius: 10 }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 8 }}>RUNS TREND</div>
                     <Spark data={pred.overHistory} />
                 </div>
             )}
