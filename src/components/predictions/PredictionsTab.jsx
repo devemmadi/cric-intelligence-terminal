@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { C, API_BASE, cleanTeam, IPL_TEAMS, PSL_TEAMS, getLeague } from "../shared/constants";
 import TeamLogo from "../shared/TeamLogo";
 import { MatchPill } from "../shared/MatchCard";
+import LiveProbabilityGraph from "./LiveProbabilityGraph";
 
 // ─── Small sub-components (only used inside predictions) ──────────────────────
 
@@ -564,6 +565,13 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Live Probability Graph */}
+                            {pred.overs > 0 && (
+                                <div style={{ marginBottom: 14 }}>
+                                    <LiveProbabilityGraph pred={pred} />
+                                </div>
+                            )}
 
                             {pred.toss && (
                                 <div style={{ background: "linear-gradient(135deg,#1E2D6B,#253580)", borderRadius: 14, padding: "14px 18px", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
