@@ -3,39 +3,89 @@ import React from "react";
 import { C, API_BASE, getLeague } from "./constants";
 import TeamLogo from "./TeamLogo";
 
-/** Small pill in the left sidebar */
+/** Small pill in the left sidebar — compact dark card */
 export function MatchPill({ m, selected, onClick }) {
-    const isLive = m.isLive || (m.matchStarted && !m.matchEnded);
-    const isEnded = m.matchEnded;
-    const league = getLeague(m);
+    const isLive   = m.isLive || (m.matchStarted && !m.matchEnded);
+    const isEnded  = m.matchEnded || m.status === "ENDED";
+    const isUpcoming = !isLive && !isEnded;
+    const league   = getLeague(m);
+
+    const borderColor = isLive ? "#EF4444" : isUpcoming ? "#F59E0B" : "#1E293B";
+    const bgColor     = selected ? (isLive ? "rgba(239,68,68,0.08)" : "rgba(99,102,241,0.1)") : "#0D1117";
+    const borderFull  = selected ? `1.5px solid ${isLive ? "#EF4444" : "#6366F1"}` : `1px solid #1E293B`;
+
+    const t1 = m.t1 || m.team1 || "?";
+    const t2 = m.t2 || m.team2 || "?";
+
+    // Score display
+    const t1Score = m.t1Score != null ? (m.t1Wkts != null ? `${m.t1Score}/${m.t1Wkts}` : `${m.t1Score}`) : null;
+    const t2Score = m.t2Score != null ? (m.t2Wkts != null ? `${m.t2Score}/${m.t2Wkts}` : `${m.t2Score}`) : null;
 
     return (
-        <div onClick={onClick} style={{
-            background: selected ? '#EEF2FF' : '#fff',
-            border: selected ? '1.5px solid #6366F1' : '1px solid #E2E8F0',
-            borderRadius: 12, padding: '12px 14px', marginBottom: 10, cursor: 'pointer'
-        }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <span style={{ fontSize: 10, color: '#94A3B8' }}>{m.matchType?.toUpperCase()}</span>
-                <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 20,
-                    background: isLive ? '#FFF0F0' : '#F1F5F9', color: isLive ? '#E53E3E' : league.color }}>
-                    {isLive ? '🔴 LIVE' : league.label}
+        <div
+            onClick={onClick}
+            style={{
+                background: bgColor,
+                border: borderFull,
+                borderLeft: `3px solid ${borderColor}`,
+                borderRadius: 10,
+                padding: "10px 12px",
+                marginBottom: 6,
+                cursor: "pointer",
+                transition: "all 0.15s",
+            }}
+        >
+            {/* Top row: format badge + status */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                <span style={{ fontSize: 9, fontWeight: 700, color: "#475569", letterSpacing: 0.8 }}>
+                    {(m.matchType || "T20").toUpperCase()}
+                    {league.key !== "INT" && (
+                        <span style={{ marginLeft: 6, color: league.color }}>· {league.label}</span>
+                    )}
                 </span>
+                {isLive && (
+                    <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: 9, fontWeight: 800, color: "#EF4444" }}>
+                        <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "pulse 1.5s infinite" }} />
+                        LIVE
+                    </span>
+                )}
+                {isUpcoming && (
+                    <span style={{ fontSize: 9, fontWeight: 700, color: "#F59E0B" }}>UPCOMING</span>
+                )}
+                {isEnded && (
+                    <span style={{ fontSize: 9, fontWeight: 600, color: "#475569" }}>ENDED</span>
+                )}
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 5 }}>
-                <img src={`${API_BASE}/team-image/${m.t1ImageId || m.team1ImageId || 0}`}
-                    style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }}
-                    alt="" onError={e => e.target.style.display = 'none'} />
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{m.t1 || m.team1}</span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 7 }}>
-                <img src={`${API_BASE}/team-image/${m.t2ImageId || m.team2ImageId || 0}`}
-                    style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover' }}
-                    alt="" onError={e => e.target.style.display = 'none'} />
-                <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{m.t2 || m.team2}</span>
-            </div>
-            {isEnded && m.status && <div style={{ fontSize: 10, color: '#6366F1', fontWeight: 500 }}>{m.status}</div>}
-            {!isEnded && !isLive && m.status && <div style={{ fontSize: 10, color: '#F59E0B', fontWeight: 500 }}>{m.status}</div>}
+
+            {/* Team rows */}
+            {[
+                { name: t1, score: t1Score, imgId: m.t1ImageId || m.team1ImageId || 0 },
+                { name: t2, score: t2Score, imgId: m.t2ImageId || m.team2ImageId || 0 },
+            ].map(({ name, score, imgId }, idx) => (
+                <div key={idx} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: idx === 0 ? 4 : 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                        <img
+                            src={`${API_BASE}/team-image/${imgId}`}
+                            style={{ width: 20, height: 20, borderRadius: "50%", objectFit: "cover", background: "#1E293B" }}
+                            alt=""
+                            onError={e => { e.target.style.display = "none"; }}
+                        />
+                        <span style={{ fontSize: 12, fontWeight: 700, color: "#E2E8F0" }}>{name}</span>
+                    </div>
+                    {score != null && (
+                        <span style={{ fontSize: 12, fontWeight: 800, color: isLive && idx === 0 ? "#fff" : "#94A3B8" }}>
+                            {score}
+                        </span>
+                    )}
+                </div>
+            ))}
+
+            {/* Status note for ended/upcoming */}
+            {(isEnded || isUpcoming) && m.status && typeof m.status === "string" && m.status.length > 8 && (
+                <div style={{ fontSize: 10, color: isUpcoming ? "#F59E0B" : "#475569", marginTop: 6, lineHeight: 1.4 }}>
+                    {m.status}
+                </div>
+            )}
         </div>
     );
 }

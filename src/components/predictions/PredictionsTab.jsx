@@ -312,36 +312,73 @@ function NoMatchesScreen({ upcomingMatches }) {
     );
 }
 
+// ─── Sidebar section header ────────────────────────────────────────────────────
+function SidebarSection({ label, count, color, dot }) {
+    return (
+        <div style={{ display: "flex", alignItems: "center", gap: 7, margin: "16px 0 8px" }}>
+            {dot && <span style={{ width: 6, height: 6, borderRadius: "50%", background: color, display: "inline-block", flexShrink: 0, animation: dot === "pulse" ? "pulse 1.5s infinite" : "none" }} />}
+            <span style={{ fontSize: 10, fontWeight: 800, color, letterSpacing: 1.2 }}>{label}</span>
+            {count > 0 && (
+                <span style={{ fontSize: 9, fontWeight: 700, background: color + "22", color, borderRadius: 20, padding: "1px 7px" }}>{count}</span>
+            )}
+            <div style={{ flex: 1, height: 1, background: color + "22" }} />
+        </div>
+    );
+}
+
 // ─── Sidebar with all live matches grouped by IPL/PSL/International ───────────
 function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus, pred }) {
     const isIPL = m => IPL_TEAMS.some(t => (m.t1||'')===t||(m.t2||'')===t);
     const isPSL = m => PSL_TEAMS.some(t => (m.t1||'')===t||(m.t2||'')===t);
 
+    const liveList     = liveMatches.filter(m => m.status === "LIVE");
+    const upcomingList = liveMatches.filter(m => m.status === "UPCOMING");
+    const recentList   = liveMatches.filter(m => m.status === "ENDED");
+
     const groups = [
-        { key: "IPL", label: "IPL 2026", color: "#F59E0B", ms: liveMatches.filter(isIPL) },
-        { key: "PSL", label: "PSL 2026",  color: "#10B981", ms: liveMatches.filter(isPSL) },
-        { key: "INT", label: "International", color: "#6366F1", ms: liveMatches.filter(m => !isIPL(m) && !isPSL(m)) },
+        { key: "IPL", label: "IPL 2026", color: "#F59E0B", ms: liveList.filter(isIPL) },
+        { key: "PSL", label: "PSL 2026",  color: "#10B981", ms: liveList.filter(isPSL) },
+        { key: "INT", label: "International", color: "#818CF8", ms: liveList.filter(m => !isIPL(m) && !isPSL(m)) },
     ];
 
-    const liveCount = liveMatches.filter(m => m.status === "LIVE").length;
-
     return (
-        <aside className="sl" style={{ borderRight: `1px solid ${C.border}`, background: C.surface, padding: "18px 14px", overflowY: "auto" }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: "#fff", letterSpacing: 1, marginBottom: 14, padding: "6px 12px", background: liveStatus === "live" ? C.red : C.navy, borderRadius: 8, display: "inline-flex", alignItems: "center", gap: 6 }}>
-                {liveStatus === "live" && <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#fff", animation: "pulse 1.5s infinite", display: "inline-block" }} />}
-                {liveStatus === "live" ? `Live Data · ${liveCount}` : "Matches"}
+        <aside className="sl" style={{
+            borderRight: "1px solid #1E293B",
+            background: "#0A0E1A",
+            padding: "16px 12px",
+            overflowY: "auto",
+        }}>
+            {/* Header pill */}
+            <div style={{
+                display: "flex", alignItems: "center", gap: 8,
+                marginBottom: 16, padding: "8px 12px",
+                background: liveList.length > 0 ? "rgba(239,68,68,0.1)" : "rgba(99,102,241,0.1)",
+                border: `1px solid ${liveList.length > 0 ? "rgba(239,68,68,0.25)" : "rgba(99,102,241,0.2)"}`,
+                borderRadius: 10,
+            }}>
+                {liveList.length > 0 && (
+                    <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "pulse 1.5s infinite", flexShrink: 0 }} />
+                )}
+                <span style={{ fontSize: 11, fontWeight: 800, color: liveList.length > 0 ? "#EF4444" : "#818CF8", flex: 1 }}>
+                    {liveList.length > 0 ? `${liveList.length} Live Match${liveList.length > 1 ? "es" : ""}` : "Match Centre"}
+                </span>
+                <span style={{ fontSize: 10, color: "#475569" }}>
+                    {liveMatches.length} total
+                </span>
             </div>
 
-            {liveMatches.filter(m => m.status === "LIVE").length > 0 && (
+            {/* LIVE NOW */}
+            {liveList.length > 0 && (
                 <>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 8 }}>LIVE NOW</div>
+                    <SidebarSection label="LIVE NOW" count={liveList.length} color="#EF4444" dot="pulse" />
                     {groups.map(g => {
-                        const live = g.ms.filter(m => m.status === "LIVE");
-                        if (live.length === 0) return null;
+                        if (g.ms.length === 0) return null;
                         return (
-                            <div key={g.key}>
-                                <div style={{ fontSize: 10, fontWeight: 700, color: g.color, letterSpacing: 1, margin: "8px 0 4px" }}>{g.label}</div>
-                                {live.map(m => (
+                            <div key={g.key} style={{ marginBottom: 4 }}>
+                                <div style={{ fontSize: 9, fontWeight: 700, color: g.color, letterSpacing: 1, marginBottom: 5, paddingLeft: 3 }}>
+                                    {g.label}
+                                </div>
+                                {g.ms.map(m => (
                                     <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => onMatchSelect(m)} />
                                 ))}
                             </div>
@@ -350,28 +387,33 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
                 </>
             )}
 
-            {liveMatches.filter(m => m.status === "UPCOMING").length > 0 && (
+            {/* UPCOMING */}
+            {upcomingList.length > 0 && (
                 <>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "14px 0 8px" }}>UPCOMING</div>
-                    {liveMatches.filter(m => m.status === "UPCOMING").slice(0, 4).map(m => (
+                    <SidebarSection label="UPCOMING" count={upcomingList.length} color="#F59E0B" dot={false} />
+                    {upcomingList.slice(0, 5).map(m => (
                         <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => onMatchSelect(m)} />
                     ))}
                 </>
             )}
 
-            {liveMatches.filter(m => m.status === "ENDED").length > 0 && (
+            {/* RECENT */}
+            {recentList.length > 0 && (
                 <>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, margin: "14px 0 8px" }}>RECENT</div>
-                    {liveMatches.filter(m => m.status === "ENDED").slice(0, 4).map(m => (
+                    <SidebarSection label="RECENT" count={0} color="#475569" dot={false} />
+                    {recentList.slice(0, 4).map(m => (
                         <MatchPill key={m.id} m={m} selected={selectedMatch?.id === m.id} onClick={() => onMatchSelect(m)} />
                     ))}
                 </>
             )}
 
-            <div style={{ marginTop: 16, padding: 14, background: C.bg, borderRadius: 12 }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>RUNS TREND</div>
-                <Spark data={pred?.overHistory || []} />
-            </div>
+            {/* Runs trend sparkline */}
+            {pred?.overHistory?.length > 2 && (
+                <div style={{ marginTop: 16, padding: "12px 12px 10px", background: "#0D1117", border: "1px solid #1E293B", borderRadius: 10 }}>
+                    <div style={{ fontSize: 9, fontWeight: 700, color: "#475569", letterSpacing: 1, marginBottom: 8 }}>RUNS TREND</div>
+                    <Spark data={pred.overHistory} />
+                </div>
+            )}
         </aside>
     );
 }
