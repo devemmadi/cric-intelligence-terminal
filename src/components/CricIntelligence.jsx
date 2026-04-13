@@ -10,6 +10,13 @@ import MediaSection from "./MediaSection";
 import PitchTab from "./pitch/PitchTab";
 import NotifyButton from "./shared/NotifyButton";
 
+// Inject canonical tag dynamically so each page gets the right one
+function setCanonical(url) {
+    let el = document.querySelector("link[rel='canonical']");
+    if (!el) { el = document.createElement("link"); el.setAttribute("rel", "canonical"); document.head.appendChild(el); }
+    el.setAttribute("href", url);
+}
+
 export default function CricIntelligence() {
     const [activeTab, setActiveTab] = useState("predict");
     const [liveTime, setLiveTime] = useState(new Date());
@@ -17,6 +24,9 @@ export default function CricIntelligence() {
     const { liveMatches, selectedMatch, selectMatch, pred, liveStatus, isFirstLoad, isPredLoading } = useMatchData();
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
+
+    // Set canonical for main app — always points to homepage
+    useEffect(() => { setCanonical("https://www.cricintelligence.com/"); }, []);
 
     useEffect(() => {
         document.body.style.background = activeTab === "pitch" ? "#0A0E1A" : C.bg;

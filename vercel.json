@@ -3,6 +3,8 @@
   "outputDirectory": "build",
   "framework": "create-react-app",
   "rewrites": [
+    { "source": "/predictions/ipl-2026", "destination": "/predictions/ipl-2026.html" },
+    { "source": "/predictions/t20-predictions", "destination": "/predictions/t20-predictions.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
