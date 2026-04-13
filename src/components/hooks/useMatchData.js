@@ -25,17 +25,18 @@ export default function useMatchData() {
     const predRequestIdRef = useRef(0);
 
     // ── PREDICTION — define first so selectMatch can call it ─────────────────
-    const fetchPred = useCallback(async (matchId) => {
-        if (!matchId) return;
+    const fetchPred = useCallback(async (matchId, t1 = "", t2 = "") => {
+        if (!matchId && !t1) return;
 
         predRequestIdRef.current += 1;
         const thisRequestId = predRequestIdRef.current;
 
         setIsPredLoading(true);
         try {
+            const teamParams = t1 ? `&t1=${encodeURIComponent(t1)}&t2=${encodeURIComponent(t2)}` : "";
             const [predData, scorecardData] = await Promise.all([
-                fetch(`${API_BASE}/predict?match_id=${matchId}`).then(r => r.ok ? r.json() : null).catch(() => null),
-                fetch(`${API_BASE}/match/${matchId}`).then(r => r.ok ? r.json() : null).catch(() => null),
+                fetch(`${API_BASE}/predict?match_id=${matchId}${teamParams}`).then(r => r.ok ? r.json() : null).catch(() => null),
+                fetch(`${API_BASE}/match/${matchId}?t1=${encodeURIComponent(t1)}&t2=${encodeURIComponent(t2)}`).then(r => r.ok ? r.json() : null).catch(() => null),
             ]);
 
             if (thisRequestId !== predRequestIdRef.current) return;
@@ -89,7 +90,7 @@ export default function useMatchData() {
         setSelectedMatch(m);
         setIsPredLoading(true);
         const mid = m?.matchId || m?.id;
-        if (mid) fetchPred(mid);
+        fetchPred(mid, m?.t1 || "", m?.t2 || "");
     }, [fetchPred]);
 
     // ── MATCHES ONLY — runs on interval, never touches pred ──────────────────
@@ -152,7 +153,7 @@ export default function useMatchData() {
                     selectedMatchRef.current = best;
                     setSelectedMatch(best);
                     const mid = best.matchId || best.id;
-                    if (mid) fetchPred(mid);
+                    fetchPred(mid, best.t1 || "", best.t2 || "");
                 }
             }
         } catch { setLiveStatus("mock"); }
@@ -168,11 +169,11 @@ export default function useMatchData() {
     // Prediction auto-refreshes every 10s for selected match
     useEffect(() => {
         const mid = selectedMatch?.matchId || selectedMatch?.id;
-        if (!mid) return;
+        if (!mid && !selectedMatch?.t1) return;
         const t = setInterval(() => {
             const m = selectedMatchRef.current;
             const id = m?.matchId || m?.id;
-            if (id) fetchPred(id);
+            fetchPred(id, m?.t1 || "", m?.t2 || "");
         }, 10000);
         return () => clearInterval(t);
     }, [selectedMatch?.id, fetchPred]);
