@@ -187,6 +187,63 @@ function LiveScorecard({ batters, bowler }) {
     );
 }
 
+// ─── Prediction Call Banner ───────────────────────────────────────────────────
+function PredictionCallBanner({ pred }) {
+    if (!pred || pred.aiProbability === undefined) return null;
+    const prob = pred.aiProbability;
+    const team1 = cleanTeam(pred.team1);
+    const team2 = cleanTeam(pred.team2);
+
+    const favoredTeam = prob >= 55 ? team1 : prob <= 45 ? team2 : null;
+    const favoredProb = prob >= 55 ? prob : prob <= 45 ? Math.round((100 - prob) * 10) / 10 : 50;
+
+    const confGap = Math.abs(prob - 50);
+    const confidence = confGap >= 20 ? "High" : confGap >= 10 ? "Medium" : "Low";
+    const confColor = confGap >= 20 ? "#22c55e" : confGap >= 10 ? "#f59e0b" : "#ef4444";
+    const confBg = confGap >= 20 ? "rgba(34,197,94,0.1)" : confGap >= 10 ? "rgba(245,158,11,0.1)" : "rgba(239,68,68,0.1)";
+    const risk = confGap >= 20 ? "Low risk" : confGap >= 10 ? "Medium risk" : "High risk";
+
+    function getReason() {
+        const parts = [];
+        const pitch = (pred.pitchLabel || "").toLowerCase();
+        if (pitch.includes("bat")) parts.push("Batting pitch");
+        else if (pitch.includes("bowl") || pitch.includes("seam") || pitch.includes("spin")) parts.push("Bowling conditions");
+        if (pred.bowlingFactor <= 0.84) parts.push("Elite bowling attack");
+        if (pred.battingFactor >= 1.15) parts.push("Strong batting lineup");
+        if (pred.pressureScore > 65) parts.push("Mounting pressure");
+        if (pred.currentRunRate && pred.requiredRunRate && pred.currentRunRate > pred.requiredRunRate + 1) parts.push("Run rate in control");
+        if (pred.currentPhase === "DEATH OVERS") parts.push("Death overs phase");
+        if (parts.length === 0) return "Current match situation favours this side";
+        return parts.slice(0, 3).join(" · ");
+    }
+
+    return (
+        <div style={{ background: "#0F172A", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: "14px 18px", marginBottom: 14 }}>
+            <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.4)", letterSpacing: 1.5, marginBottom: 10, textTransform: "uppercase" }}>Prediction Call</div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
+                <div>
+                    {favoredTeam ? (
+                        <div style={{ fontSize: 18, fontWeight: 900, color: "#fff", marginBottom: 4 }}>
+                            {favoredTeam} &nbsp;<span style={{ color: confColor }}>{favoredProb}%</span>
+                        </div>
+                    ) : (
+                        <div style={{ fontSize: 18, fontWeight: 900, color: "#f59e0b", marginBottom: 4 }}>Evenly matched · 50/50</div>
+                    )}
+                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>{getReason()}</div>
+                </div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 20, background: confBg, color: confColor, border: `1px solid ${confColor}44` }}>
+                        {confidence} confidence
+                    </span>
+                    <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 12px", borderRadius: 20, background: "rgba(255,255,255,0.06)", color: "rgba(255,255,255,0.55)", border: "1px solid rgba(255,255,255,0.12)" }}>
+                        {risk}
+                    </span>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function ClaudeAnalysis({ pred, selectedMatch }) {
     const [analysis, setAnalysis] = React.useState("");
     const [loading, setLoading] = React.useState(false);
@@ -570,6 +627,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 </div>
                               </div>
                             )}
+                            <PredictionCallBanner pred={pred} />
                             <NextOverIntelligence pred={pred} />
 
                             <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
@@ -749,6 +807,28 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                       </div>
                       {/* Divider */}
                       <div style={{ height: 1, background: C.border, marginBottom: 10 }} />
+                      {/* Why factors */}
+                      {(() => {
+                        const factors = [];
+                        const pitch = (pred.pitchLabel || "").toLowerCase();
+                        if (pitch.includes("bat")) factors.push({ label: "Batting pitch", color: "#22c55e" });
+                        else if (pitch.includes("bowl") || pitch.includes("spin") || pitch.includes("seam")) factors.push({ label: "Bowling pitch", color: "#f59e0b" });
+                        if (pred.currentPhase) factors.push({ label: pred.currentPhase, color: "#818cf8" });
+                        if (pred.pressureScore > 60) factors.push({ label: `Pressure ${pred.pressureScore}/100`, color: "#ef4444" });
+                        if (pred.bowlingFactor <= 0.84) factors.push({ label: "Elite bowling", color: "#22c55e" });
+                        if (pred.battingFactor >= 1.15) factors.push({ label: "Strong batting", color: "#22c55e" });
+                        if (factors.length === 0) return null;
+                        return (
+                          <div style={{ marginBottom: 10 }}>
+                            <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1.2, marginBottom: 6 }}>WHY</div>
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
+                              {factors.slice(0, 4).map((f, i) => (
+                                <span key={i} style={{ fontSize: 10, fontWeight: 600, padding: "3px 8px", borderRadius: 20, background: f.color + "15", color: f.color, border: `1px solid ${f.color}30` }}>{f.label}</span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()}
                       {/* Next over + wicket risk */}
                       {pred.nextOvers?.[0] && (<>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
