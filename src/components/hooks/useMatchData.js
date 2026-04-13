@@ -45,8 +45,8 @@ export default function useMatchData() {
                 const merged = { ...scorecardData };
                 if (predData && predData.team1) {
                     merged.aiProbability = predData.aiProbability ?? scorecardData.aiProbability;
-                    merged.nextOvers = predData.nextOvers ?? scorecardData.nextOvers;
-                    merged.overHistory = predData.overHistory ?? scorecardData.overHistory;
+                    merged.nextOvers = (predData.nextOvers?.length > 0) ? predData.nextOvers : (scorecardData.nextOvers?.length > 0 ? scorecardData.nextOvers : []);
+                    merged.overHistory = (predData.overHistory?.length > 0) ? predData.overHistory : (scorecardData.overHistory || []);
                     merged.pitchCondition = predData.pitchCondition ?? scorecardData.pitchCondition;
                     merged.weatherImpact = predData.weatherImpact ?? scorecardData.weatherImpact;
                     merged.bowlingFactor = predData.bowlingFactor ?? scorecardData.bowlingFactor;
