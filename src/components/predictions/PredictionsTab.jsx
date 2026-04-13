@@ -546,13 +546,13 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 10 }}>{pred?.venue || selectedMatch?.detail || ""}</div>
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 12 }}>
                                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                        <TeamLogo name={(pred?.team1 || selectedMatch?.t1 || "").toLowerCase()} size={40} imageId={pred?.team1ImageId || selectedMatch?.t1ImageId || 0} />
-                                        <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "#fff" }}>{cleanTeam(pred?.team1 || selectedMatch?.t1)}</span>
+                                        <TeamLogo name={(selectedMatch?.t1 || pred?.team1 || "").toLowerCase()} size={40} imageId={selectedMatch?.t1ImageId || pred?.team1ImageId || 0} />
+                                        <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "#fff" }}>{cleanTeam(selectedMatch?.t1 || pred?.team1)}</span>
                                     </div>
                                     <span style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>vs</span>
                                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                        <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "rgba(255,255,255,0.55)" }}>{cleanTeam(pred?.team2 || selectedMatch?.t2)}</span>
-                                        <TeamLogo name={(pred?.team2 || selectedMatch?.t2 || "").toLowerCase()} size={40} imageId={pred?.team2ImageId || selectedMatch?.t2ImageId || 0} />
+                                        <span className="hn" style={{ fontSize: 38, fontWeight: 900, letterSpacing: -1.5, color: "rgba(255,255,255,0.55)" }}>{cleanTeam(selectedMatch?.t2 || pred?.team2)}</span>
+                                        <TeamLogo name={(selectedMatch?.t2 || pred?.team2 || "").toLowerCase()} size={40} imageId={selectedMatch?.t2ImageId || pred?.team2ImageId || 0} />
                                     </div>
                                 </div>
                                 {pred?.displayScore && (
