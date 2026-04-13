@@ -88,6 +88,8 @@ export default function useMatchData() {
         selectedMatchRef.current = m;
         setSelectedMatch(m);
         setIsPredLoading(true);
+        // Immediately wipe old pred so the UI shows the new match's teams right away
+        setPred(null);
         const mid = m?.matchId || m?.id;
         if (mid) fetchPred(mid);
     }, [fetchPred]);
