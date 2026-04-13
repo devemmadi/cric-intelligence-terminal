@@ -9,6 +9,7 @@ import MatchesTab from "./matches/MatchesTab";
 import MediaSection from "./MediaSection";
 import PitchTab from "./pitch/PitchTab";
 import NotifyButton from "./shared/NotifyButton";
+import TrackRecord from "./TrackRecord";
 
 // Inject canonical tag dynamically so each page gets the right one
 function setCanonical(url) {
@@ -29,7 +30,7 @@ export default function CricIntelligence() {
     useEffect(() => { setCanonical("https://www.cricintelligence.com/"); }, []);
 
     useEffect(() => {
-        document.body.style.background = activeTab === "pitch" ? "#0A0E1A" : C.bg;
+        document.body.style.background = (activeTab === "pitch" || activeTab === "record") ? "#0A0E1A" : C.bg;
         return () => { document.body.style.background = ""; };
     }, [activeTab]);
 
@@ -56,7 +57,7 @@ export default function CricIntelligence() {
     const CSS = GLOBAL_CSS(C);
 
     return (
-        <div style={{ minHeight: "100vh", background: activeTab === "pitch" ? "#0A0E1A" : C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
+        <div style={{ minHeight: "100vh", background: (activeTab === "pitch" || activeTab === "record") ? "#0A0E1A" : C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <style>{CSS}</style>
 
             {/* NAV */}
@@ -65,7 +66,7 @@ export default function CricIntelligence() {
                     <Logo href="/" />
                 </div>
                 <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
-                    {[["predict", null, "Predictions"], ["matches", null, "Matches"], ["pitch", "🏟️", "Pitch"], ["media", null, "Media"], ["odds", "🎲", "Odds"]].map(([k, icon, label]) => (
+                    {[["predict", null, "Predictions"], ["matches", null, "Matches"], ["pitch", "🏟️", "Pitch"], ["media", null, "Media"], ["record", "📊", "Record"], ["odds", "🎲", "Odds"]].map(([k, icon, label]) => (
                         <button key={k} className={`tab-btn ${activeTab === k ? "on" : ""}`}
                             onClick={() => { if (k === "odds") { window.location.href = "/odds"; } else { setActiveTab(k); } }}
                             style={{ display: "flex", alignItems: "center", gap: icon ? 5 : 0, lineHeight: 1 }}>
@@ -111,12 +112,13 @@ export default function CricIntelligence() {
                 />
             )}
             {activeTab === "media" && <MediaSection />}
+            {activeTab === "record" && <TrackRecord />}
 
             <RGFooter />
 
             {/* MOBILE BOTTOM NAV */}
             <nav className="mn">
-                {[["Predictions", "predict"], ["Matches", "matches"], ["Pitch", "pitch"], ["Media", "media"]].map(([label, key]) => (
+                {[["Predictions", "predict"], ["Matches", "matches"], ["Pitch", "pitch"], ["Record", "record"], ["Media", "media"]].map(([label, key]) => (
                     <button key={key} className="mt" onClick={() => setActiveTab(key)} style={{ opacity: activeTab === key ? 1 : 0.4 }}>
                         <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>{label}</span>
                     </button>
