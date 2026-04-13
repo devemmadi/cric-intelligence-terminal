@@ -165,17 +165,21 @@ export default function useMatchData() {
 
     // Prediction refreshes every 10s for the currently selected match
     useEffect(() => {
-        if (!selectedMatch?.matchId) return;
-        const t = setInterval(() => fetchPred(selectedMatchRef.current?.matchId), 10000);
+        const mid = selectedMatch?.matchId || selectedMatch?.id;
+        if (!mid) return;
+        const t = setInterval(() => {
+            const m = selectedMatchRef.current;
+            const id = m?.matchId || m?.id;
+            if (id) fetchPred(id);
+        }, 10000);
         return () => clearInterval(t);
-    }, [selectedMatch?.matchId, fetchPred]);
+    }, [selectedMatch?.id, fetchPred]);
 
     // Fetch prediction immediately when user selects a match
     useEffect(() => {
-        if (selectedMatch?.matchId) {
-            fetchPred(selectedMatch.matchId);
-        }
-    }, [selectedMatch?.matchId, fetchPred]);
+        const mid = selectedMatch?.matchId || selectedMatch?.id;
+        if (mid) fetchPred(mid);
+    }, [selectedMatch?.id, fetchPred]);
 
     return { liveMatches, selectedMatch, selectMatch, pred, liveStatus, isFirstLoad, isPredLoading };
 }
