@@ -26,8 +26,49 @@ export default function useMatchData() {
 
     const selectMatch = useCallback((m) => {
         selectedMatchRef.current = m;
-        setIsPredLoading(true);  // Show subtle loader only — don't wipe pred
+        setIsPredLoading(true);
         setSelectedMatch(m);
+        // Immediately kick off a prediction fetch for this match
+        const mid = m?.matchId || m?.id;
+        if (mid) {
+            predRequestIdRef.current += 1;
+            const thisId = predRequestIdRef.current;
+            (async () => {
+                try {
+                    const [predData, scorecardData] = await Promise.all([
+                        fetch(`${API_BASE}/predict?match_id=${mid}`).then(r => r.ok ? r.json() : null).catch(() => null),
+                        fetch(`${API_BASE}/match/${mid}`).then(r => r.ok ? r.json() : null).catch(() => null),
+                    ]);
+                    if (thisId !== predRequestIdRef.current) return;
+                    if (scorecardData && !scorecardData.error && scorecardData.team1) {
+                        const merged = { ...scorecardData };
+                        if (predData && predData.team1) {
+                            merged.aiProbability = predData.aiProbability ?? scorecardData.aiProbability;
+                            merged.nextOvers = predData.nextOvers ?? scorecardData.nextOvers;
+                            merged.overHistory = predData.overHistory ?? scorecardData.overHistory;
+                            merged.pitchCondition = predData.pitchCondition ?? scorecardData.pitchCondition;
+                            merged.weatherImpact = predData.weatherImpact ?? scorecardData.weatherImpact;
+                            merged.bowlingFactor = predData.bowlingFactor ?? scorecardData.bowlingFactor;
+                            merged.battingFactor = predData.battingFactor ?? scorecardData.battingFactor;
+                            merged.deteriorationFactor = predData.deteriorationFactor ?? scorecardData.deteriorationFactor;
+                            merged.currentPhase = predData.currentPhase ?? scorecardData.currentPhase;
+                            merged.playerContext = predData.playerContext ?? scorecardData.playerContext;
+                            if (scorecardData.score > 0 || scorecardData.overs > 0) {
+                                merged.displayScore = scorecardData.displayScore;
+                                merged.score = scorecardData.score;
+                                merged.wickets = scorecardData.wickets;
+                                merged.overs = scorecardData.overs;
+                                merged.currentRunRate = scorecardData.currentRunRate;
+                            }
+                        }
+                        setPred(merged);
+                    } else if (predData && predData.team1) {
+                        setPred(predData);
+                    }
+                } catch {}
+                finally { if (thisId === predRequestIdRef.current) setIsPredLoading(false); }
+            })();
+        }
     }, []);
 
     // ── MATCHES ONLY — runs on interval, never touches pred ──────────────────
@@ -165,20 +206,13 @@ export default function useMatchData() {
 
     // Prediction refreshes every 10s for the currently selected match
     useEffect(() => {
-        const mid = selectedMatch?.matchId || selectedMatch?.id;
-        if (!mid) return;
+        if (!selectedMatch?.id) return;
         const t = setInterval(() => {
             const m = selectedMatchRef.current;
             const id = m?.matchId || m?.id;
             if (id) fetchPred(id);
         }, 10000);
         return () => clearInterval(t);
-    }, [selectedMatch?.id, fetchPred]);
-
-    // Fetch prediction immediately when user selects a match
-    useEffect(() => {
-        const mid = selectedMatch?.matchId || selectedMatch?.id;
-        if (mid) fetchPred(mid);
     }, [selectedMatch?.id, fetchPred]);
 
     return { liveMatches, selectedMatch, selectMatch, pred, liveStatus, isFirstLoad, isPredLoading };
