@@ -21,55 +21,76 @@ export default function useMatchData() {
     const [isPredLoading, setIsPredLoading] = useState(false);
 
     const selectedMatchRef = useRef(null);
-    // Incremented every time user selects a match — used to discard stale prediction responses
+    // Incremented every time a pred fetch starts — used to discard stale responses
     const predRequestIdRef = useRef(0);
 
-    const selectMatch = useCallback((m) => {
-        selectedMatchRef.current = m;
+    // ── PREDICTION — define first so selectMatch can call it ─────────────────
+    const fetchPred = useCallback(async (matchId) => {
+        if (!matchId) return;
+
+        predRequestIdRef.current += 1;
+        const thisRequestId = predRequestIdRef.current;
+
         setIsPredLoading(true);
-        setSelectedMatch(m);
-        // Immediately kick off a prediction fetch for this match
-        const mid = m?.matchId || m?.id;
-        if (mid) {
-            predRequestIdRef.current += 1;
-            const thisId = predRequestIdRef.current;
-            (async () => {
-                try {
-                    const [predData, scorecardData] = await Promise.all([
-                        fetch(`${API_BASE}/predict?match_id=${mid}`).then(r => r.ok ? r.json() : null).catch(() => null),
-                        fetch(`${API_BASE}/match/${mid}`).then(r => r.ok ? r.json() : null).catch(() => null),
-                    ]);
-                    if (thisId !== predRequestIdRef.current) return;
-                    if (scorecardData && !scorecardData.error && scorecardData.team1) {
-                        const merged = { ...scorecardData };
-                        if (predData && predData.team1) {
-                            merged.aiProbability = predData.aiProbability ?? scorecardData.aiProbability;
-                            merged.nextOvers = predData.nextOvers ?? scorecardData.nextOvers;
-                            merged.overHistory = predData.overHistory ?? scorecardData.overHistory;
-                            merged.pitchCondition = predData.pitchCondition ?? scorecardData.pitchCondition;
-                            merged.weatherImpact = predData.weatherImpact ?? scorecardData.weatherImpact;
-                            merged.bowlingFactor = predData.bowlingFactor ?? scorecardData.bowlingFactor;
-                            merged.battingFactor = predData.battingFactor ?? scorecardData.battingFactor;
-                            merged.deteriorationFactor = predData.deteriorationFactor ?? scorecardData.deteriorationFactor;
-                            merged.currentPhase = predData.currentPhase ?? scorecardData.currentPhase;
-                            merged.playerContext = predData.playerContext ?? scorecardData.playerContext;
-                            if (scorecardData.score > 0 || scorecardData.overs > 0) {
-                                merged.displayScore = scorecardData.displayScore;
-                                merged.score = scorecardData.score;
-                                merged.wickets = scorecardData.wickets;
-                                merged.overs = scorecardData.overs;
-                                merged.currentRunRate = scorecardData.currentRunRate;
-                            }
-                        }
-                        setPred(merged);
-                    } else if (predData && predData.team1) {
-                        setPred(predData);
+        try {
+            const [predData, scorecardData] = await Promise.all([
+                fetch(`${API_BASE}/predict?match_id=${matchId}`).then(r => r.ok ? r.json() : null).catch(() => null),
+                fetch(`${API_BASE}/match/${matchId}`).then(r => r.ok ? r.json() : null).catch(() => null),
+            ]);
+
+            if (thisRequestId !== predRequestIdRef.current) return;
+
+            if (scorecardData && !scorecardData.error && scorecardData.team1) {
+                const merged = { ...scorecardData };
+                if (predData && predData.team1) {
+                    merged.aiProbability = predData.aiProbability ?? scorecardData.aiProbability;
+                    merged.nextOvers = predData.nextOvers ?? scorecardData.nextOvers;
+                    merged.overHistory = predData.overHistory ?? scorecardData.overHistory;
+                    merged.pitchCondition = predData.pitchCondition ?? scorecardData.pitchCondition;
+                    merged.weatherImpact = predData.weatherImpact ?? scorecardData.weatherImpact;
+                    merged.bowlingFactor = predData.bowlingFactor ?? scorecardData.bowlingFactor;
+                    merged.battingFactor = predData.battingFactor ?? scorecardData.battingFactor;
+                    merged.deteriorationFactor = predData.deteriorationFactor ?? scorecardData.deteriorationFactor;
+                    merged.currentPhase = predData.currentPhase ?? scorecardData.currentPhase;
+                    merged.playerContext = predData.playerContext ?? scorecardData.playerContext;
+                    if (scorecardData.score > 0 || scorecardData.overs > 0) {
+                        merged.displayScore = scorecardData.displayScore;
+                        merged.score = scorecardData.score;
+                        merged.wickets = scorecardData.wickets;
+                        merged.overs = scorecardData.overs;
+                        merged.currentRunRate = scorecardData.currentRunRate;
                     }
-                } catch {}
-                finally { if (thisId === predRequestIdRef.current) setIsPredLoading(false); }
-            })();
+                }
+                const mList = window.__matchList || [];
+                const mMatch = mList.find(mx => mx.t1 === merged.team1 || mx.team1 === merged.team1);
+                merged.team1ImageId = mMatch?.t1ImageId || 0;
+                merged.team2ImageId = mMatch?.t2ImageId || 0;
+                setPred(merged);
+                try {
+                    localStorage.setItem("ci_pred_cache", JSON.stringify(merged));
+                    if (merged.id) localStorage.setItem("ci_pred_" + merged.id, JSON.stringify(merged));
+                } catch { }
+            } else if (predData && predData.team1) {
+                const mList = window.__matchList || [];
+                const mMatch = mList.find(mx => mx.t1 === predData.team1 || mx.team1 === predData.team1);
+                predData.team1ImageId = mMatch?.t1ImageId || 0;
+                predData.team2ImageId = mMatch?.t2ImageId || 0;
+                setPred(predData);
+            }
+        } catch { }
+        finally {
+            if (thisRequestId === predRequestIdRef.current) setIsPredLoading(false);
         }
     }, []);
+
+    // ── SELECT MATCH — immediately fetches pred for the chosen match ──────────
+    const selectMatch = useCallback((m) => {
+        selectedMatchRef.current = m;
+        setSelectedMatch(m);
+        setIsPredLoading(true);
+        const mid = m?.matchId || m?.id;
+        if (mid) fetchPred(mid);
+    }, [fetchPred]);
 
     // ── MATCHES ONLY — runs on interval, never touches pred ──────────────────
     const fetchMatches = useCallback(async () => {
@@ -125,88 +146,29 @@ export default function useMatchData() {
             try { localStorage.setItem("ci_matches_cache", JSON.stringify(mapped)); } catch { }
 
             // Auto-select only on very first load when nothing is selected yet
-            // Once user has selected a match, NEVER override it
             if (!selectedMatchRef.current) {
                 const best = mapped.find(m => m.status === "LIVE") || mapped.find(m => m.status === "UPCOMING");
                 if (best) {
                     selectedMatchRef.current = best;
                     setSelectedMatch(best);
+                    const mid = best.matchId || best.id;
+                    if (mid) fetchPred(mid);
                 }
             }
         } catch { setLiveStatus("mock"); }
-    }, []);
+    }, [fetchPred]);
 
-    // ── PREDICTION — called explicitly for a specific matchId only ────────────
-    const fetchPred = useCallback(async (matchId) => {
-        if (!matchId) return;
-
-        // Tag this request with a unique id
-        predRequestIdRef.current += 1;
-        const thisRequestId = predRequestIdRef.current;
-
-        setIsPredLoading(true);
-        try {
-            const [predData, scorecardData] = await Promise.all([
-                fetch(`${API_BASE}/predict?match_id=${matchId}`).then(r => r.ok ? r.json() : null).catch(() => null),
-                fetch(`${API_BASE}/match/${matchId}`).then(r => r.ok ? r.json() : null).catch(() => null),
-            ]);
-
-            // Discard if a newer request was started while this one was in-flight
-            if (thisRequestId !== predRequestIdRef.current) return;
-
-            if (scorecardData && !scorecardData.error && scorecardData.team1) {
-                const merged = { ...scorecardData };
-                if (predData && predData.team1) {
-                    merged.aiProbability = predData.aiProbability ?? scorecardData.aiProbability;
-                    merged.nextOvers = predData.nextOvers ?? scorecardData.nextOvers;
-                    merged.overHistory = predData.overHistory ?? scorecardData.overHistory;
-                    merged.pitchCondition = predData.pitchCondition ?? scorecardData.pitchCondition;
-                    merged.weatherImpact = predData.weatherImpact ?? scorecardData.weatherImpact;
-                    merged.bowlingFactor = predData.bowlingFactor ?? scorecardData.bowlingFactor;
-                    merged.battingFactor = predData.battingFactor ?? scorecardData.battingFactor;
-                    merged.deteriorationFactor = predData.deteriorationFactor ?? scorecardData.deteriorationFactor;
-                    merged.currentPhase = predData.currentPhase ?? scorecardData.currentPhase;
-                    merged.playerContext = predData.playerContext ?? scorecardData.playerContext;
-                    if (scorecardData.score > 0 || scorecardData.overs > 0) {
-                        merged.displayScore = scorecardData.displayScore;
-                        merged.score = scorecardData.score;
-                        merged.wickets = scorecardData.wickets;
-                        merged.overs = scorecardData.overs;
-                        merged.currentRunRate = scorecardData.currentRunRate;
-                    }
-                }
-                const mList = window.__matchList || [];
-                const mMatch = mList.find(mx => mx.t1 === merged.team1 || mx.team1 === merged.team1);
-                merged.team1ImageId = mMatch?.t1ImageId || 0;
-                merged.team2ImageId = mMatch?.t2ImageId || 0;
-                setPred(merged);
-                try {
-                    localStorage.setItem("ci_pred_cache", JSON.stringify(merged));
-                    if (merged.id) localStorage.setItem("ci_pred_" + merged.id, JSON.stringify(merged));
-                } catch { }
-            } else if (predData && predData.team1) {
-                const mList = window.__matchList || [];
-                const mMatch = mList.find(mx => mx.t1 === predData.team1 || mx.team1 === predData.team1);
-                predData.team1ImageId = mMatch?.t1ImageId || 0;
-                predData.team2ImageId = mMatch?.t2ImageId || 0;
-                setPred(predData);
-            }
-        } catch { }
-        finally {
-            if (thisRequestId === predRequestIdRef.current) setIsPredLoading(false);
-        }
-    }, []);
-
-    // Matches list refreshes every 5s (never touches pred)
+    // Matches list refreshes every 5s
     useEffect(() => {
         fetchMatches();
         const t = setInterval(fetchMatches, 5000);
         return () => clearInterval(t);
     }, [fetchMatches]);
 
-    // Prediction refreshes every 10s for the currently selected match
+    // Prediction auto-refreshes every 10s for selected match
     useEffect(() => {
-        if (!selectedMatch?.id) return;
+        const mid = selectedMatch?.matchId || selectedMatch?.id;
+        if (!mid) return;
         const t = setInterval(() => {
             const m = selectedMatchRef.current;
             const id = m?.matchId || m?.id;
