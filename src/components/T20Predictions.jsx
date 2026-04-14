@@ -74,6 +74,20 @@ export default function T20Predictions() {
                     ))}
                 </div>
 
+                {/* Win probability cricket — target exact GSC query */}
+                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "24px 24px", marginBottom: 28 }}>
+                    <h2 style={{ fontSize: 20, fontWeight: 800, color: C.navy, marginBottom: 10 }}>Cricket Win Probability — Live & Accurate</h2>
+                    <p style={{ fontSize: 14, color: C.muted, lineHeight: 1.75, marginBottom: 12 }}>
+                        Cricket win probability tells you — right now, mid-match — which team is most likely to win and by how much. CricIntelligence updates this figure every ball using a machine learning model trained on 7,900+ T20 matches across 877 venues globally.
+                    </p>
+                    <p style={{ fontSize: 14, color: C.muted, lineHeight: 1.75, marginBottom: 16 }}>
+                        The model weights 25 factors: current score, wickets in hand, required run rate, bowling economy, batting strike rate, pitch condition, dew factor, over phase, and venue history. Cricket win probability on CricIntelligence achieves <strong>80.2% match prediction accuracy</strong> — verified across completed matches.
+                    </p>
+                    <a href="/" style={{ display: "inline-block", background: C.navy, color: "#fff", fontWeight: 700, fontSize: 13, padding: "10px 22px", borderRadius: 9, textDecoration: "none" }}>
+                        View Live Win Probability →
+                    </a>
+                </div>
+
                 {/* Leagues covered */}
                 <h2 style={{ fontSize: 22, fontWeight: 800, color: C.navy, marginBottom: 8 }}>T20 Leagues We Cover</h2>
                 <p style={{ fontSize: 14, color: C.muted, lineHeight: 1.8, marginBottom: 16 }}>Live predictions activate automatically when any of these tournaments are in progress.</p>
