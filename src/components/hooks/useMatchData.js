@@ -148,9 +148,11 @@ export default function useMatchData() {
             setIsFirstLoad(false);
             try { localStorage.setItem("ci_matches_cache", JSON.stringify(mapped)); } catch { }
 
-            // Auto-select only on very first load when nothing is selected yet
-            if (!selectedMatchRef.current) {
-                const best = mapped.find(m => m.status === "LIVE") || mapped.find(m => m.status === "UPCOMING");
+            // Auto-select on first load OR if selected match no longer exists in the list
+            const currentId = selectedMatchRef.current?.matchId || selectedMatchRef.current?.id;
+            const stillExists = currentId && mapped.some(m => (m.matchId || m.id) === currentId);
+            if (!selectedMatchRef.current || !stillExists) {
+                const best = mapped.find(m => m.status === "LIVE") || mapped.find(m => m.status === "UPCOMING") || mapped[0];
                 if (best) {
                     selectedMatchRef.current = best;
                     setSelectedMatch(best);
