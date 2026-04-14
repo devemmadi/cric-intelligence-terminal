@@ -10,6 +10,7 @@ import MediaSection from "./MediaSection";
 import PitchTab from "./pitch/PitchTab";
 import NotifyButton from "./shared/NotifyButton";
 import TrackRecord from "./TrackRecord";
+import ErrorBoundary from "./shared/ErrorBoundary";
 
 // Inject canonical tag dynamically so each page gets the right one
 function setCanonical(url) {
@@ -87,32 +88,38 @@ export default function CricIntelligence() {
 
             {/* TABS */}
             {activeTab === "predict" && (
-                <PredictionsTab
-                    liveMatches={liveMatches}
-                    selectedMatch={selectedMatch}
-                    onMatchSelect={handleMatchClick}
-                    pred={pred}
-                    liveStatus={liveStatus}
-                    isFirstLoad={isFirstLoad}
-                    isPredLoading={isPredLoading}
-                />
+                <ErrorBoundary label="Predictions">
+                    <PredictionsTab
+                        liveMatches={liveMatches}
+                        selectedMatch={selectedMatch}
+                        onMatchSelect={handleMatchClick}
+                        pred={pred}
+                        liveStatus={liveStatus}
+                        isFirstLoad={isFirstLoad}
+                        isPredLoading={isPredLoading}
+                    />
+                </ErrorBoundary>
             )}
             {activeTab === "matches" && (
-                <MatchesTab
-                    liveMatches={liveMatches}
-                    onMatchClick={handleMatchClick}
-                />
+                <ErrorBoundary label="Matches">
+                    <MatchesTab
+                        liveMatches={liveMatches}
+                        onMatchClick={handleMatchClick}
+                    />
+                </ErrorBoundary>
             )}
             {activeTab === "pitch" && (
-                <PitchTab
-                    pred={pred}
-                    selectedMatch={selectedMatch}
-                    liveMatches={liveMatches}
-                    onMatchSelect={handleMatchClick}
-                />
+                <ErrorBoundary label="Pitch">
+                    <PitchTab
+                        pred={pred}
+                        selectedMatch={selectedMatch}
+                        liveMatches={liveMatches}
+                        onMatchSelect={handleMatchClick}
+                    />
+                </ErrorBoundary>
             )}
-            {activeTab === "media" && <MediaSection />}
-            {activeTab === "record" && <TrackRecord />}
+            {activeTab === "media" && <ErrorBoundary label="Media"><MediaSection /></ErrorBoundary>}
+            {activeTab === "record" && <ErrorBoundary label="Record"><TrackRecord /></ErrorBoundary>}
 
             <RGFooter />
 
