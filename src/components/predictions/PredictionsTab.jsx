@@ -682,10 +682,52 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     <span style={{ fontSize: 20, fontWeight: 900, color: pred.aiProbability < 70 ? "#fff" : C.text, textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>{Math.round((100 - pred.aiProbability) * 10) / 10}%</span>
                                   </div>
                                 </div>
+                                {/* Verdict label */}
                                 <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
                                   <span style={{ fontSize: 11, fontWeight: 700, color: pred.aiProbability >= 65 ? C.green : pred.aiProbability >= 45 ? C.amber : C.red, background: pred.aiProbability >= 65 ? "rgba(0,184,148,0.08)" : pred.aiProbability >= 45 ? "rgba(245,158,11,0.08)" : "rgba(239,68,68,0.08)", padding: "3px 12px", borderRadius: 20 }}>
                                     {pred.aiProbability >= 65 ? `${cleanTeam(pred.team1)} strong favourite` : pred.aiProbability <= 35 ? `${cleanTeam(pred.team2)} strong favourite` : "Close contest — could go either way"}
                                   </span>
+                                </div>
+
+                                {/* WHY line — plain English reason */}
+                                {(() => {
+                                  const inn = pred.innings || 1;
+                                  const fmt = (pred.matchType || "t20").toLowerCase();
+                                  const totOv = fmt === "odi" ? 50 : fmt === "test" ? 450 : 20;
+                                  const needed = pred.runsNeeded || (pred.target ? pred.target - (pred.score || 0) : 0);
+                                  const ballsLeft = Math.round(Math.max(0, totOv - (pred.overs || 0)) * 6);
+                                  const wktsLeft = 10 - (pred.wickets || 0);
+                                  const crr = pred.currentRunRate || 0;
+                                  const t1 = cleanTeam(pred.team1);
+                                  let why = "";
+                                  if (inn === 2 && pred.target > 0) {
+                                    why = `${t1} needs ${needed} more runs off ${ballsLeft} balls · ${wktsLeft} wickets in hand`;
+                                  } else if (inn === 1 && crr > 0) {
+                                    const par = fmt === "odi" ? 5.0 : 7.5;
+                                    const vs = crr >= par + 1.5 ? "well above par" : crr >= par ? "above par" : crr >= par - 1 ? "on par" : "below par";
+                                    why = `${t1} scoring at ${crr.toFixed(1)} runs/over — ${vs}`;
+                                  }
+                                  if (!why) return null;
+                                  return (
+                                    <div style={{ textAlign: "center", marginTop: 10, fontSize: 12, color: C.muted, fontStyle: "italic" }}>
+                                      {why}
+                                    </div>
+                                  );
+                                })()}
+
+                                {/* Fair value odds — compare with your bookmaker */}
+                                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 0, marginTop: 12, borderTop: `1px solid ${C.border}`, paddingTop: 12 }}>
+                                  <div style={{ textAlign: "center", flex: 1 }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 0.8, marginBottom: 3 }}>FAIR ODDS · {cleanTeam(pred.team1)}</div>
+                                    <div style={{ fontSize: 18, fontWeight: 900, color: C.text }}>{pred.aiProbability > 0 ? (100 / pred.aiProbability).toFixed(2) : "—"}</div>
+                                  </div>
+                                  <div style={{ width: 1, height: 36, background: C.border, margin: "0 16px" }} />
+                                  <div style={{ textAlign: "center", flex: 1 }}>
+                                    <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 0.8, marginBottom: 3 }}>FAIR ODDS · {cleanTeam(pred.team2)}</div>
+                                    <div style={{ fontSize: 18, fontWeight: 900, color: C.text }}>{pred.aiProbability < 100 ? (100 / (100 - pred.aiProbability)).toFixed(2) : "—"}</div>
+                                  </div>
+                                  <div style={{ width: 1, height: 36, background: C.border, margin: "0 16px" }} />
+                                  <a href="/odds" style={{ fontSize: 10, fontWeight: 700, color: C.accent, textDecoration: "none", whiteSpace: "nowrap" }}>Compare odds →</a>
                                 </div>
                               </div>
                             )}
