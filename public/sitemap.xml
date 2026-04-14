@@ -1,59 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.cricintelligence.com/</loc><lastmod>2026-04-12</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.95</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/t20-predictions</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.90</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/cricket-win-probability</loc><lastmod>2026-04-12</lastmod><changefreq>weekly</changefreq><priority>0.85</priority></url>
 
-  <!-- IPL 2026 Match Prediction Pages -->
-  <url><loc>https://www.cricintelligence.com/predictions/mi-vs-csk-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.92</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/rcb-vs-csk-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.91</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/mi-vs-rcb-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.90</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/kkr-vs-csk-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.90</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/mi-vs-kkr-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.89</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/srh-vs-mi-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.89</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/rcb-vs-kkr-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.88</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/csk-vs-srh-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.88</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/mi-vs-rr-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.87</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/gt-vs-mi-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.87</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/lsg-vs-csk-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.86</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/dc-vs-rcb-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.86</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/pbks-vs-rr-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.85</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/gt-vs-lsg-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.85</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/srh-vs-kkr-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.85</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/mi-vs-gt-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.84</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/csk-vs-dc-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.84</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/rcb-vs-srh-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.84</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/kkr-vs-dc-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.83</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/mi-vs-lsg-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.83</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/pbks-vs-gt-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.82</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/rr-vs-srh-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.82</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/dc-vs-pbks-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.82</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/lsg-vs-gt-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.81</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/kkr-vs-rr-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.81</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/csk-vs-pbks-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.81</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/mi-vs-dc-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.80</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/rcb-vs-gt-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.80</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/srh-vs-lsg-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.80</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/rr-vs-dc-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.79</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/mi-vs-pbks-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.79</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/csk-vs-gt-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.79</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/kkr-vs-lsg-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.78</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/srh-vs-dc-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.78</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/rcb-vs-rr-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.78</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/rcb-vs-pbks-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.77</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/gt-vs-srh-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.77</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/lsg-vs-rr-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.77</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/kkr-vs-pbks-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.76</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/dc-vs-lsg-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.76</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/rr-vs-gt-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.76</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/pbks-vs-lsg-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.75</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/dc-vs-gt-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.75</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/rr-vs-pbks-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.75</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/dc-vs-srh-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.75</priority></url>
-  <url><loc>https://www.cricintelligence.com/predictions/kkr-vs-gt-ipl-2026</loc><lastmod>2026-04-12</lastmod><changefreq>daily</changefreq><priority>0.74</priority></url>
+  <!-- Core pages — all have unique real content -->
+  <url>
+    <loc>https://www.cricintelligence.com/</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>1.0</priority>
+  </url>
 
-  <url><loc>https://www.cricintelligence.com/about</loc><lastmod>2026-04-12</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
-  <url><loc>https://www.cricintelligence.com/privacy</loc><lastmod>2026-04-12</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://www.cricintelligence.com/terms</loc><lastmod>2026-04-12</lastmod><changefreq>monthly</changefreq><priority>0.3</priority></url>
+  <url>
+    <loc>https://www.cricintelligence.com/predictions/ipl-2026</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://www.cricintelligence.com/predictions/t20-predictions</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <url>
+    <loc>https://www.cricintelligence.com/predictions/cricket-win-probability</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://www.cricintelligence.com/about</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://www.cricintelligence.com/privacy</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>https://www.cricintelligence.com/terms</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
 </urlset>
