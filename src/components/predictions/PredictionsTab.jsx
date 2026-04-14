@@ -36,79 +36,141 @@ function Spark({ data }) {
 }
 
 function NextOverIntelligence({ pred }) {
-    if (!pred || !pred.nextOvers || pred.nextOvers.length < 2) return null;
-    const ov1 = pred.nextOvers[0];
-    const ov2 = pred.nextOvers[1];
-    const detr = pred.deteriorationFactor || 1.0;
-    const spinBoost = Math.round((detr - 1.0) * 100);
-    const dewSoon = pred.weatherImpact?.dewFactor < 0.9;
-    const pitchCond = pred.pitchCondition || "FRESH";
+    if (!pred) return null;
+
+    // ── MOMENTUM (left card) ─────────────────────────────────────────────────
     const history = pred.overHistory || [];
-    const bowlerQuality = pred.bowlingFactor ? (pred.bowlingFactor <= 0.82 ? "Elite" : pred.bowlingFactor <= 0.92 ? "Good" : "Average") : "Average";
-    const batQuality = pred.battingFactor ? (pred.battingFactor >= 1.15 ? "Strong" : pred.battingFactor >= 0.95 ? "Average" : "Weak") : "Average";
-    const wicketLabel1 = ov1.wicketProb > 40 ? "High" : ov1.wicketProb > 25 ? "Medium" : "Low";
-    const wicketLabel2 = ov2.wicketProb > 40 ? "High" : ov2.wicketProb > 25 ? "Medium" : "Low";
+    const last5 = history.slice(-5);
+    const last3Runs = pred.playerContext?.last3Runs || 0;
+    const last3Wkts = pred.playerContext?.last3Wkts || 0;
+    const crr = pred.currentRunRate || 0;
+
+    let momentumLabel = "STEADY";
+    let momentumColor = "#f59e0b";
+    let momentumArrow = "→";
+    if (last5.length >= 3) {
+        const half = Math.ceil(last5.length / 2);
+        const firstSum = last5.slice(0, half).reduce((s, o) => s + (o.runs || 0), 0);
+        const secondSum = last5.slice(half).reduce((s, o) => s + (o.runs || 0), 0);
+        const ratio = secondSum / (firstSum || 1);
+        if (ratio > 1.25) { momentumLabel = "RISING"; momentumColor = "#22c55e"; momentumArrow = "↑"; }
+        else if (ratio < 0.75) { momentumLabel = "FALLING"; momentumColor = "#ef4444"; momentumArrow = "↓"; }
+    } else if (last3Runs > 22) { momentumLabel = "RISING"; momentumColor = "#22c55e"; momentumArrow = "↑"; }
+    else if (last3Runs < 10) { momentumLabel = "FALLING"; momentumColor = "#ef4444"; momentumArrow = "↓"; }
+
+    const maxBar = Math.max(...last5.map(o => o.runs || 0), 1);
+
+    // ── PRESSURE (right card) ────────────────────────────────────────────────
+    const rrr = pred.requiredRunRate || 0;
+    const innings = pred.innings || 1;
+    const partnership = pred.playerContext?.partnershipRuns || 0;
+    const wicketsLeft = 10 - (pred.wickets || 0);
+
+    let pressureLabel = "ON TRACK";
+    let pressureColor = "#22c55e";
+    if (innings === 2 && rrr > 0) {
+        const gap = rrr - crr;
+        if (gap > 3)       { pressureLabel = "CRITICAL";    pressureColor = "#ef4444"; }
+        else if (gap > 1)  { pressureLabel = "UNDER PRESSURE"; pressureColor = "#f59e0b"; }
+        else if (gap < -2) { pressureLabel = "IN CONTROL";  pressureColor = "#22c55e"; }
+        else               { pressureLabel = "NECK & NECK"; pressureColor = "#60A5FA"; }
+    } else if (innings === 1) {
+        if (crr < 4)       { pressureLabel = "BELOW PAR";  pressureColor = "#ef4444"; }
+        else if (crr >= 7) { pressureLabel = "ABOVE PAR";  pressureColor = "#22c55e"; }
+        else               { pressureLabel = "ON TRACK";   pressureColor = "#f59e0b"; }
+    }
+
+    const rrrBarPct = rrr > 0 ? Math.min(100, (crr / rrr) * 100) : 0;
+    const dangerousPartnership = partnership > 75;
+    const tailExposed = wicketsLeft <= 3;
+    const rateCritical = innings === 2 && rrr > crr + 4;
+
     return (
         <div style={{ padding: "0 0 4px 0", marginBottom: 14 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
                 <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#E24B4A", animation: "blink2 1.5s infinite" }} />
-                <span style={{ fontSize: 13, fontWeight: 500, color: "#0A0A0A" }}>Next over intelligence</span>
-                <span style={{ fontSize: 12, color: "#64748B" }}>Over {ov1.over} - {ov1.phase}</span>
+                <span style={{ fontSize: 13, fontWeight: 500, color: "#0A0A0A" }}>Match pulse</span>
+                <span style={{ fontSize: 12, color: "#64748B" }}>Live momentum &amp; pressure</span>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
+
+                {/* ── LEFT: Momentum ──────────────────────────────────────── */}
                 <div style={{ background: "#1E2D6B", border: "2px solid #60A5FA", borderRadius: 12, padding: 14, boxShadow: "0 0 16px rgba(96,165,250,0.3)" }}>
-                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>NOW · Over {ov1.over}</div>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
-                        <span style={{ fontSize: 32, fontWeight: 900, color: "#FFFFFF" }}>{ov1.runRange}</span>
-                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.55)" }}>runs expected</span>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>MOMENTUM</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                        <span style={{ fontSize: 28, fontWeight: 900, color: momentumColor, lineHeight: 1 }}>{momentumArrow}</span>
+                        <span style={{ fontSize: 15, fontWeight: 800, color: momentumColor }}>{momentumLabel}</span>
                     </div>
-                    <div style={{ marginBottom: 10 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>Bowling</span>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: pred.bowlingFactor <= 0.85 ? "#3B6D11" : pred.bowlingFactor >= 1.1 ? "#A32D2D" : "#64748B" }}>{bowlerQuality}</span>
+
+                    {/* Last 5 overs bar chart */}
+                    {last5.length > 0 && (
+                        <div style={{ marginBottom: 12 }}>
+                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 6, letterSpacing: 0.5 }}>LAST {last5.length} OVERS</div>
+                            <div style={{ display: "flex", alignItems: "flex-end", gap: 3, height: 36 }}>
+                                {last5.map((ov, i) => {
+                                    const h = Math.max(5, ((ov.runs || 0) / maxBar) * 32);
+                                    const col = (ov.runs || 0) >= 10 ? "#22c55e" : (ov.runs || 0) >= 6 ? "#f59e0b" : "#60A5FA";
+                                    return (
+                                        <div key={i} title={`Ov ${ov.over}: ${ov.runs}r`} style={{ flex: 1, height: h, background: col, borderRadius: "3px 3px 0 0", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                            <span style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>{ov.runs}</span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                            <div style={{ height: 2, background: "rgba(255,255,255,0.15)", borderRadius: 1, marginTop: 2 }} />
                         </div>
-                        <div style={{ height: 6, background: "rgba(255,255,255,0.12)", borderRadius: 3, overflow: "hidden" }}>
-                            <div style={{ width: `${Math.min(100, (pred.bowlingFactor || 1) * 60)}%`, height: "100%", background: pred.bowlingFactor <= 0.85 ? "#22c55e" : pred.bowlingFactor >= 1.1 ? "#ef4444" : "#60A5FA", borderRadius: 3 }} />
+                    )}
+
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <div>
+                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>Last 3 overs</div>
+                            <div style={{ fontSize: 16, fontWeight: 900, color: last3Runs > 22 ? "#22c55e" : last3Runs > 14 ? "#f59e0b" : "#94A3B8" }}>
+                                {last3Runs}r{last3Wkts > 0 ? ` ${last3Wkts}w` : ""}
+                            </div>
                         </div>
-                    </div>
-                    <div style={{ marginBottom: 10 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
-                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>Wicket risk</span>
-                            <span style={{ fontSize: 13, fontWeight: 800, color: ov1.wicketProb > 40 ? "#ef4444" : ov1.wicketProb > 25 ? "#f59e0b" : "#22c55e" }}>{wicketLabel1} · {ov1.wicketProb}%</span>
+                        <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>CRR</div>
+                            <div style={{ fontSize: 16, fontWeight: 900, color: "#FFFFFF" }}>{crr.toFixed(2)}</div>
                         </div>
-                        <div style={{ height: 6, background: "rgba(255,255,255,0.12)", borderRadius: 4, overflow: "hidden" }}>
-                            <div style={{ width: `${ov1.wicketProb}%`, height: "100%", background: ov1.wicketProb > 40 ? "#ef4444" : ov1.wicketProb > 25 ? "#f59e0b" : "#22c55e", borderRadius: 4 }} />
-                        </div>
-                    </div>
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                        {spinBoost > 5 && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#FAEEDA", color: "#854F0B" }}>Spin +{spinBoost}%</span>}
-                        {!dewSoon && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#EEF2FF", color: "#64748B" }}>No dew</span>}
-                        {dewSoon && <span style={{ fontSize: 11, padding: "3px 8px", borderRadius: 6, background: "#E6F1FB", color: "#185FA5" }}>Dew incoming</span>}
                     </div>
                 </div>
-                <div style={{ background: "#111A3E", border: "1.5px dashed rgba(255,255,255,0.2)", borderRadius: 12, padding: 14, opacity: 0.85 }}>
-                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>NEXT · Over {ov2.over}</div>
-                    <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 12 }}>
-                        <span style={{ fontSize: 32, fontWeight: 900, color: "rgba(255,255,255,0.7)" }}>{ov2.runRange}</span>
-                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>runs expected</span>
+
+                {/* ── RIGHT: Pressure ─────────────────────────────────────── */}
+                <div style={{ background: "#111A3E", border: "1.5px dashed rgba(255,255,255,0.2)", borderRadius: 12, padding: 14 }}>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>PRESSURE</div>
+                    <div style={{ fontSize: 15, fontWeight: 800, color: pressureColor, marginBottom: 12 }}>{pressureLabel}</div>
+
+                    {/* RRR vs CRR bar — only in 2nd innings chase */}
+                    {innings === 2 && rrr > 0 && (
+                        <div style={{ marginBottom: 12 }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.45)" }}>CRR {crr.toFixed(2)}</span>
+                                <span style={{ fontSize: 10, fontWeight: 700, color: crr >= rrr ? "#22c55e" : "#ef4444" }}>RRR {rrr.toFixed(2)}</span>
+                            </div>
+                            <div style={{ height: 7, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
+                                <div style={{ width: `${rrrBarPct}%`, height: "100%", background: crr >= rrr ? "#22c55e" : "#ef4444", borderRadius: 4, transition: "width 0.4s" }} />
+                            </div>
+                        </div>
+                    )}
+
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
+                        <div>
+                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>Partnership</div>
+                            <div style={{ fontSize: 16, fontWeight: 900, color: dangerousPartnership ? "#ef4444" : partnership > 30 ? "#f59e0b" : "#94A3B8" }}>{partnership} runs</div>
+                        </div>
+                        <div style={{ textAlign: "right" }}>
+                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>Wkts left</div>
+                            <div style={{ fontSize: 16, fontWeight: 900, color: tailExposed ? "#ef4444" : wicketsLeft <= 6 ? "#f59e0b" : "#22c55e" }}>{wicketsLeft}</div>
+                        </div>
                     </div>
-                    <div style={{ marginBottom: 10 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                            <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)" }}>Batting</span>
-                            <span style={{ fontSize: 11, fontWeight: 700, color: pred.battingFactor >= 1.15 ? "#3B6D11" : pred.battingFactor <= 0.85 ? "#A32D2D" : "#64748B" }}>{batQuality}</span>
-                        </div>
-                        <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
-                            <div style={{ width: `${Math.min(100, (pred.battingFactor || 1) * 60)}%`, height: "100%", background: pred.battingFactor >= 1.15 ? "#00FF94" : pred.battingFactor <= 0.85 ? "#FF4444" : "#60A5FA", borderRadius: 4 }} />
-                        </div>
-                    </div>
-                    <div style={{ marginBottom: 10 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 5 }}>
-                            <span style={{ fontSize: 11, color: "#64748B" }}>Wicket risk</span>
-                            <span style={{ fontSize: 13, fontWeight: 800, color: ov2.wicketProb > 40 ? "#ef4444" : ov2.wicketProb > 25 ? "#f59e0b" : "#22c55e" }}>{wicketLabel2} · {ov2.wicketProb}%</span>
-                        </div>
-                        <div style={{ height: 6, background: "#EEF2FF", borderRadius: 4, overflow: "hidden" }}>
-                            <div style={{ width: `${ov2.wicketProb}%`, height: "100%", background: ov2.wicketProb > 40 ? "#ef4444" : ov2.wicketProb > 25 ? "#f59e0b" : "#22c55e", borderRadius: 4 }} />
-                        </div>
+
+                    <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+                        {dangerousPartnership && <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(239,68,68,0.18)", color: "#ef4444", fontWeight: 600 }}>Dangerous partnership</span>}
+                        {tailExposed && <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(239,68,68,0.18)", color: "#ef4444", fontWeight: 600 }}>Tail exposed</span>}
+                        {rateCritical && <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(239,68,68,0.18)", color: "#ef4444", fontWeight: 600 }}>Rate critical</span>}
+                        {!dangerousPartnership && !tailExposed && !rateCritical && (
+                            <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.12)", color: "#22c55e", fontWeight: 600 }}>No major alerts</span>
+                        )}
                     </div>
                 </div>
             </div>
