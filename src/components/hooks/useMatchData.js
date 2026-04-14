@@ -80,7 +80,9 @@ export default function useMatchData() {
             }
         } catch { }
         finally {
-            if (thisRequestId === predRequestIdRef.current) setIsPredLoading(false);
+            // Always clear loading — even if this response is stale, a blank loading
+            // spinner is worse than showing slightly stale data
+            setIsPredLoading(false);
         }
     }, []);
 
@@ -166,7 +168,9 @@ export default function useMatchData() {
         return () => clearInterval(t);
     }, [fetchMatches]);
 
-    // Prediction auto-refreshes every 10s for selected match
+    // Prediction auto-refreshes every 30s for selected match
+    // (10s was causing a race: backend can take >10s, stale-check aborted the response
+    //  and left isPredLoading stuck true)
     useEffect(() => {
         const mid = selectedMatch?.matchId || selectedMatch?.id;
         if (!mid && !selectedMatch?.t1) return;
@@ -174,7 +178,7 @@ export default function useMatchData() {
             const m = selectedMatchRef.current;
             const id = m?.matchId || m?.id;
             fetchPred(id, m?.t1 || "", m?.t2 || "");
-        }, 10000);
+        }, 30000);
         return () => clearInterval(t);
     }, [selectedMatch?.id, fetchPred]);
 
