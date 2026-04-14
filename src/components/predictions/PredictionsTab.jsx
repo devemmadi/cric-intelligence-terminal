@@ -605,7 +605,18 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             )}
                             <style>{`@keyframes loadingBar { 0%{transform:scaleX(0);opacity:1} 70%{transform:scaleX(0.8);opacity:1} 100%{transform:scaleX(1);opacity:0} }`}</style>
                             <div style={{ textAlign: "center" }}>
-                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 10 }}>{pred?.venue || selectedMatch?.detail || ""}</div>
+                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 6 }}>{pred?.venue || selectedMatch?.detail || ""}</div>
+                                {(() => {
+                                    const st = selectedMatch?.rawStatus || pred?.matchStatus || "";
+                                    const isToss = st && (st.toLowerCase().includes("opt to") || st.toLowerCase().includes("won the toss") || st.toLowerCase().includes("chose to"));
+                                    if (!isToss) return null;
+                                    return (
+                                        <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(200,150,30,0.18)", border: "1px solid rgba(200,150,30,0.4)", borderRadius: 20, padding: "4px 12px", marginBottom: 10 }}>
+                                            <span style={{ fontSize: 13 }}>🪙</span>
+                                            <span style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", letterSpacing: 0.3 }}>{st}</span>
+                                        </div>
+                                    );
+                                })()}
                                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 16, marginBottom: 12 }}>
                                     <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                                         <TeamLogo name={(selectedMatch?.t1 || pred?.team1 || "").toLowerCase()} size={40} imageId={selectedMatch?.t1ImageId || pred?.team1ImageId || 0} />
