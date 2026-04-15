@@ -252,7 +252,10 @@ function LiveScorecard({ batters, bowler }) {
 // ─── Prediction Call Banner ───────────────────────────────────────────────────
 function PredictionCallBanner({ pred }) {
     if (!pred || pred.aiProbability === undefined) return null;
-    const prob = pred.aiProbability;
+    // Normalize: innings 2 aiProbability = team2 (chasing) win %, invert to get team1 %
+    const _rawProb = pred.aiProbability;
+    const _inn = pred.innings || 1;
+    const prob = _inn === 2 ? Math.round((100 - _rawProb) * 10) / 10 : _rawProb;
     const team1 = cleanTeam(pred.team1);
     const team2 = cleanTeam(pred.team2);
 
@@ -570,7 +573,11 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSelect, pred, liveStatus, isFirstLoad, isPredLoading }) {
     const [activeOver, setActiveOver] = useState(0);
-    const prob = Math.round((pred?.aiProbability || 50) * 10) / 10;
+    // Backend aiProbability: innings 1 = team1's win %, innings 2 = chasing team2's win %
+    // Normalize to always represent team1's win probability for consistent display
+    const _rawProb = pred?.aiProbability ?? 50;
+    const _innings = pred?.innings || 1;
+    const prob = Math.round((_innings === 2 ? 100 - _rawProb : _rawProb) * 10) / 10;
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
 
@@ -673,7 +680,11 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 ))}
                             </div>
                             {/* WIN PROBABILITY HERO BAR */}
-                            {pred.aiProbability !== undefined && (
+                            {pred.aiProbability !== undefined && (() => {
+                              // Normalize prob to team1's perspective (same as outer `prob` var)
+                              const t1p = prob;
+                              const t2p = Math.round((100 - t1p) * 10) / 10;
+                              return (
                               <div style={{ background: "#fff", border: `1px solid ${C.border}`, borderRadius: 14, padding: "16px 20px", marginBottom: 14 }}>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                                   <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -687,16 +698,16 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                   </div>
                                 </div>
                                 <div style={{ position: "relative", height: 36, borderRadius: 18, overflow: "hidden", background: `${getTeamColor(pred.team2)}33` }}>
-                                  <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${pred.aiProbability}%`, background: `linear-gradient(90deg, ${getTeamColor(pred.team1)}, ${getTeamColor(pred.team1)}bb)`, borderRadius: 18, transition: "width 0.8s cubic-bezier(.4,0,.2,1)" }} />
+                                  <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${t1p}%`, background: `linear-gradient(90deg, ${getTeamColor(pred.team1)}, ${getTeamColor(pred.team1)}bb)`, borderRadius: 18, transition: "width 0.8s cubic-bezier(.4,0,.2,1)" }} />
                                   <div style={{ position: "absolute", left: 0, top: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 14px" }}>
-                                    <span style={{ fontSize: 20, fontWeight: 900, color: "#fff", textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>{pred.aiProbability}%</span>
-                                    <span style={{ fontSize: 20, fontWeight: 900, color: pred.aiProbability < 70 ? "#fff" : C.text, textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>{Math.round((100 - pred.aiProbability) * 10) / 10}%</span>
+                                    <span style={{ fontSize: 20, fontWeight: 900, color: "#fff", textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>{t1p}%</span>
+                                    <span style={{ fontSize: 20, fontWeight: 900, color: t1p < 70 ? "#fff" : C.text, textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>{t2p}%</span>
                                   </div>
                                 </div>
                                 {/* Verdict label */}
                                 <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
-                                  <span style={{ fontSize: 11, fontWeight: 700, color: pred.aiProbability >= 65 ? C.green : pred.aiProbability >= 45 ? C.amber : C.red, background: pred.aiProbability >= 65 ? "rgba(0,184,148,0.08)" : pred.aiProbability >= 45 ? "rgba(245,158,11,0.08)" : "rgba(239,68,68,0.08)", padding: "3px 12px", borderRadius: 20 }}>
-                                    {pred.aiProbability >= 65 ? `${cleanTeam(pred.team1)} strong favourite` : pred.aiProbability <= 35 ? `${cleanTeam(pred.team2)} strong favourite` : "Close contest — could go either way"}
+                                  <span style={{ fontSize: 11, fontWeight: 700, color: t1p >= 65 ? C.green : t1p >= 45 ? C.amber : C.red, background: t1p >= 65 ? "rgba(0,184,148,0.08)" : t1p >= 45 ? "rgba(245,158,11,0.08)" : "rgba(239,68,68,0.08)", padding: "3px 12px", borderRadius: 20 }}>
+                                    {t1p >= 65 ? `${cleanTeam(pred.team1)} strong favourite` : t1p <= 35 ? `${cleanTeam(pred.team2)} strong favourite` : "Close contest — could go either way"}
                                   </span>
                                 </div>
 
@@ -736,18 +747,19 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 0, marginTop: 12, borderTop: `1px solid ${C.border}`, paddingTop: 12 }}>
                                   <div style={{ textAlign: "center", flex: 1 }}>
                                     <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 0.8, marginBottom: 3 }}>FAIR ODDS · {cleanTeam(pred.team1)}</div>
-                                    <div style={{ fontSize: 18, fontWeight: 900, color: C.text }}>{pred.aiProbability > 0 ? (100 / pred.aiProbability).toFixed(2) : "—"}</div>
+                                    <div style={{ fontSize: 18, fontWeight: 900, color: C.text }}>{t1p > 0 ? (100 / t1p).toFixed(2) : "—"}</div>
                                   </div>
                                   <div style={{ width: 1, height: 36, background: C.border, margin: "0 16px" }} />
                                   <div style={{ textAlign: "center", flex: 1 }}>
                                     <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 0.8, marginBottom: 3 }}>FAIR ODDS · {cleanTeam(pred.team2)}</div>
-                                    <div style={{ fontSize: 18, fontWeight: 900, color: C.text }}>{pred.aiProbability < 100 ? (100 / (100 - pred.aiProbability)).toFixed(2) : "—"}</div>
+                                    <div style={{ fontSize: 18, fontWeight: 900, color: C.text }}>{t2p > 0 ? (100 / t2p).toFixed(2) : "—"}</div>
                                   </div>
                                   <div style={{ width: 1, height: 36, background: C.border, margin: "0 16px" }} />
                                   <a href="/odds" style={{ fontSize: 10, fontWeight: 700, color: C.accent, textDecoration: "none", whiteSpace: "nowrap" }}>Compare odds →</a>
                                 </div>
                               </div>
-                            )}
+                              );
+                            })()}
                             <PredictionCallBanner pred={pred} />
                             <NextOverIntelligence pred={pred} />
 
