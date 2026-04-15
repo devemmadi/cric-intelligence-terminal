@@ -528,6 +528,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     const prob = Math.round((_innings === 2 ? 100 - _rawProb : _rawProb) * 10) / 10;
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
+    // Compute isEnded at top level so all child sections can use it
+    const _st = selectedMatch?.rawStatus || pred?.matchStatus || "";
+    const isEnded = selectedMatch?.status === "ENDED" || _st.toLowerCase().includes("won by") || _st.toLowerCase().includes(" beat ") || _st.toLowerCase().includes("match tied") || _st.toLowerCase().includes("no result");
 
     return (
         <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px minmax(0,1fr) 240px", minHeight: "calc(100vh - 54px)", width: "100%" }}>
@@ -669,8 +672,8 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                   </span>
                                 </div>
 
-                                {/* WHY line — plain English reason */}
-                                {(() => {
+                                {/* WHY line — plain English reason (hide when match ended) */}
+                                {!isEnded && (() => {
                                   const inn = pred.innings || 1;
                                   const fmt = (pred.matchType || "t20").toLowerCase();
                                   const totOv = fmt === "odi" ? 50 : fmt === "test" ? 450 : 20;
@@ -718,8 +721,8 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                               </div>
                               );
                             })()}
-                            <PredictionCallBanner pred={pred} />
-                            <NextOverIntelligence pred={pred} />
+                            {!isEnded && <PredictionCallBanner pred={pred} />}
+                            {!isEnded && <NextOverIntelligence pred={pred} />}
 
                             <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
                                 {/* Next overs card */}
