@@ -75,9 +75,12 @@ function NextOverIntelligence({ pred }) {
         else if (gap < -2) { pressureLabel = "Chasing well";  pressureColor = "#22c55e"; }
         else               { pressureLabel = "Too close to call"; pressureColor = "#60A5FA"; }
     } else if (innings === 1) {
-        if (crr < 4)       { pressureLabel = "Scoring slow";  pressureColor = "#ef4444"; }
-        else if (crr >= 7) { pressureLabel = "Ahead of pace";  pressureColor = "#22c55e"; }
-        else               { pressureLabel = "On track";   pressureColor = "#f59e0b"; }
+        // Use momentum (vsAvg) for accuracy — raw CRR alone is misleading at high-scoring venues
+        const vsAvg = pred.momentum || 0;
+        if (crr < 4 || vsAvg < -2)  { pressureLabel = "Scoring slow";  pressureColor = "#ef4444"; }
+        else if (vsAvg > 1)          { pressureLabel = "Ahead of pace";  pressureColor = "#22c55e"; }
+        else if (vsAvg < -0.5)       { pressureLabel = "Scoring slow";   pressureColor = "#ef4444"; }
+        else                         { pressureLabel = "On track";        pressureColor = "#f59e0b"; }
     }
 
     const rrrBarPct = rrr > 0 ? Math.min(100, (crr / rrr) * 100) : 0;
@@ -696,8 +699,8 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                   if (inn === 2 && pred.target > 0) {
                                     why = `${battingTeam} needs ${needed} more runs off ${ballsLeft} balls · ${wktsLeft} wickets in hand`;
                                   } else if (inn === 1 && crr > 0) {
-                                    const par = fmt === "odi" ? 5.0 : 7.5;
-                                    const vs = crr >= par + 1.5 ? "well above par" : crr >= par ? "above par" : crr >= par - 1 ? "on par" : "below par";
+                                    const vsAvg = pred.momentum || 0;
+                                    const vs = vsAvg > 1.5 ? "well above par" : vsAvg > 0.3 ? "above par" : vsAvg > -0.3 ? "on par" : "below par";
                                     why = `${battingTeam} scoring at ${crr.toFixed(1)} runs/over — ${vs}`;
                                   }
                                   if (!why) return null;
