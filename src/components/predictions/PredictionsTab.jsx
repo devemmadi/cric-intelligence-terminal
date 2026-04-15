@@ -66,18 +66,18 @@ function NextOverIntelligence({ pred }) {
     const partnership = pred.playerContext?.partnershipRuns || 0;
     const wicketsLeft = 10 - (pred.wickets || 0);
 
-    let pressureLabel = "ON TRACK";
+    let pressureLabel = "On track";
     let pressureColor = "#22c55e";
     if (innings === 2 && rrr > 0) {
         const gap = rrr - crr;
-        if (gap > 3)       { pressureLabel = "CRITICAL";    pressureColor = "#ef4444"; }
-        else if (gap > 1)  { pressureLabel = "UNDER PRESSURE"; pressureColor = "#f59e0b"; }
-        else if (gap < -2) { pressureLabel = "IN CONTROL";  pressureColor = "#22c55e"; }
-        else               { pressureLabel = "NECK & NECK"; pressureColor = "#60A5FA"; }
+        if (gap > 3)       { pressureLabel = "Chase in trouble";    pressureColor = "#ef4444"; }
+        else if (gap > 1)  { pressureLabel = "Falling behind"; pressureColor = "#f59e0b"; }
+        else if (gap < -2) { pressureLabel = "Chasing well";  pressureColor = "#22c55e"; }
+        else               { pressureLabel = "Too close to call"; pressureColor = "#60A5FA"; }
     } else if (innings === 1) {
-        if (crr < 4)       { pressureLabel = "BELOW PAR";  pressureColor = "#ef4444"; }
-        else if (crr >= 7) { pressureLabel = "ABOVE PAR";  pressureColor = "#22c55e"; }
-        else               { pressureLabel = "ON TRACK";   pressureColor = "#f59e0b"; }
+        if (crr < 4)       { pressureLabel = "Scoring slow";  pressureColor = "#ef4444"; }
+        else if (crr >= 7) { pressureLabel = "Ahead of pace";  pressureColor = "#22c55e"; }
+        else               { pressureLabel = "On track";   pressureColor = "#f59e0b"; }
     }
 
     const rrrBarPct = rrr > 0 ? Math.min(100, (crr / rrr) * 100) : 0;
@@ -96,7 +96,7 @@ function NextOverIntelligence({ pred }) {
 
                 {/* ── LEFT: Momentum ──────────────────────────────────────── */}
                 <div style={{ background: "#1E2D6B", border: "2px solid #60A5FA", borderRadius: 12, padding: 14, boxShadow: "0 0 16px rgba(96,165,250,0.3)" }}>
-                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>MOMENTUM</div>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>Who's Dominating</div>
                     <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
                         <span style={{ fontSize: 28, fontWeight: 900, color: momentumColor, lineHeight: 1 }}>{momentumArrow}</span>
                         <span style={{ fontSize: 15, fontWeight: 800, color: momentumColor }}>{momentumLabel}</span>
@@ -137,7 +137,7 @@ function NextOverIntelligence({ pred }) {
 
                 {/* ── RIGHT: Pressure ─────────────────────────────────────── */}
                 <div style={{ background: "#111A3E", border: "1.5px dashed rgba(255,255,255,0.2)", borderRadius: 12, padding: 14 }}>
-                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>PRESSURE</div>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>Match Situation</div>
                     <div style={{ fontSize: 15, fontWeight: 800, color: pressureColor, marginBottom: 12 }}>{pressureLabel}</div>
 
                     {/* RRR vs CRR bar — only in 2nd innings chase */}
@@ -709,6 +709,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 {[
                                     { label: "⚡ Live data from Cricbuzz" },
                                     { label: "🤖 ML model — 80% accuracy" },
+                                    { label: "🔄 Auto-refreshes every 30s" },
                                     ...(pred.venue ? [{ label: `📍 ${pred.venue}` }] : []),
                                 ].map((item) => (
                                     <span key={item.label} style={{ fontSize: 10, color: C.muted, background: "rgba(100,116,139,0.12)", border: `1px solid ${C.border}`, borderRadius: 20, padding: "3px 10px" }}>
@@ -817,11 +818,11 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                             const phaseColor = ov.phase === "POWERPLAY" ? C.accent : ov.phase === "DEATH OVERS" ? C.red : C.amber;
                                             const sr = batSR, eco = bowlEco, bnd = bndPct, l3r = last3r, phase = ov.phase || '';
                                             let vText, vBg;
-                                            if (sr > 150 && eco > 8.5) { vText = 'BIG SCORING OVER'; vBg = '#E53E3E'; }
-                                            else if (sr > 150 || (eco > 8 && bnd > 35)) { vText = 'RUNS LIKELY'; vBg = '#DD6B20'; }
-                                            else if (sr < 100 && eco < 6.5) { vText = 'TIGHT OVER'; vBg = '#276749'; }
-                                            else if (l3r > 25 || phase === 'DEATH OVERS') { vText = 'HOT MOMENTUM'; vBg = '#6B21A8'; }
-                                            else { vText = 'STEADY OVER'; vBg = '#1D4ED8'; }
+                                            if (sr > 150 && eco > 8.5) { vText = 'High scoring over'; vBg = '#EF4444'; }
+                                            else if (sr > 150 || (eco > 8 && bnd > 35)) { vText = 'Runs coming fast'; vBg = '#F59E0B'; }
+                                            else if (sr < 100 && eco < 6.5) { vText = 'Tight over'; vBg = '#22C55E'; }
+                                            else if (l3r > 25 || phase === 'DEATH OVERS') { vText = 'Momentum building'; vBg = '#F59E0B'; }
+                                            else { vText = 'Steady over'; vBg = '#3B82F6'; }
                                             return (
                                                 <div key={i} onClick={() => setActiveOver(i)} style={{
                                                     background: activeOver === i ? "#2A3F82" : "#1B2A6B",
@@ -855,7 +856,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                                     </div>
                                                     <div style={{ display: "flex", justifyContent: "space-between", marginTop: 5 }}>
                                                         <span style={{ fontSize: 11, fontWeight: 700, color: "#FFFFFF" }}>Expected: {ov.expectedRuns} runs</span>
-                                                        <span style={{ fontSize: 11, fontWeight: 700, color: wc }}>{ov.wicketProb}% wicket</span>
+                                                        <span style={{ fontSize: 11, fontWeight: 700, color: wc }}>
+                                                            {ov.wicketProb > 40 ? "⚠ Wicket likely soon" : ov.wicketProb > 25 ? "Wicket possible" : "Batsmen safe"}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             );
@@ -879,9 +882,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                         {pred.pressureScore !== undefined && (
                                             <div style={{ marginBottom: 14 }}>
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                                                    <span style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase" }}>PRESSURE INDEX</span>
+                                                    <span style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase" }}>Batting Pressure</span>
                                                     <span style={{ fontSize: 13, fontWeight: 900, color: pred.pressureScore > 70 ? C.red : pred.pressureScore > 45 ? C.amber : C.green }}>
-                                                        {pred.pressureScore > 75 ? "CRITICAL" : pred.pressureScore > 55 ? "HIGH" : pred.pressureScore > 35 ? "MODERATE" : "LOW"} {pred.pressureScore}/100
+                                                        {pred.pressureScore > 75 ? "Batters under fire" : pred.pressureScore > 55 ? "Tension rising" : pred.pressureScore > 35 ? "Even contest" : "In control"}
                                                     </span>
                                                 </div>
                                                 <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 6, overflow: "hidden" }}>
