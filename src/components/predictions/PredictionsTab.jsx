@@ -337,86 +337,6 @@ function PredictionCallBanner({ pred }) {
     );
 }
 
-function ClaudeAnalysis({ pred, selectedMatch }) {
-    const [analysis, setAnalysis] = React.useState("");
-    const [loading, setLoading] = React.useState(false);
-    const [asked, setAsked] = React.useState(false);
-    const [matchKey, setMatchKey] = React.useState("");
-    React.useEffect(() => {
-        const key = (pred?.team1 || "") + (pred?.team2 || "") + (selectedMatch?.matchId || "");
-        if (key !== matchKey) { setAnalysis(""); setAsked(false); setMatchKey(key); }
-    }, [pred, selectedMatch]);
-    async function askClaude() {
-        if (!pred || loading) return;
-        setLoading(true); setAsked(true); setAnalysis("");
-        const batters = (pred.batters || []).map(b => `${b.name} ${b.runs}(${b.balls}) SR:${b.sr}`).join(", ") || "N/A";
-        const bowler = pred.bowler ? `${pred.bowler.name} ${pred.bowler.overs}ov ECO:${pred.bowler.economy} ${pred.bowler.wickets}wkts` : "N/A";
-        const prompt = `You are an elite cricket analyst. Analyze this LIVE match and give sharp, specific predictions.
-MATCH: ${pred.team1} vs ${pred.team2} (${pred.matchType?.toUpperCase() || "T20"})
-SCORE: ${pred.displayScore} | CRR: ${pred.currentRunRate} | Overs: ${pred.overs}
-PITCH: ${pred.pitchLabel || "Unknown"} (${pred.pitchCondition || ""})
-AT CREASE: ${batters}
-BOWLING: ${bowler}
-ML WIN PROBABILITY: ${pred.aiProbability}% for ${pred.team1}
-Give me:
-1. **WIN PREDICTION** - who wins and why (be confident, give %)
-2. **NEXT 5 OVERS** - exact runs range expected, wicket risk
-3. **GAME-CHANGER** - one factor that will decide this match
-4. **STRATEGY CALL** - what should batting/bowling team do RIGHT NOW
-Be sharp, specific, bold. No vague statements.`;
-        try {
-            const res = await fetch(API_BASE + "/claude-analysis", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
-            const data = await res.json();
-            const text = (data.content || []).map(c => c.text || "").join("") || data.error || "No response.";
-            setAnalysis(text);
-        } catch (e) { setAnalysis("Error: " + e.message); }
-        setLoading(false);
-    }
-    if (!pred || !pred.team1) return null;
-    return (
-        <div className="card" style={{ margin: "0 20px 16px", padding: 20, border: "1px solid rgba(139,92,246,0.3)", background: "linear-gradient(135deg,rgba(139,92,246,0.05),rgba(99,102,241,0.05))" }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 14 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <span style={{ fontSize: 18 }}>🤖</span>
-                    <span style={{ fontWeight: 800, fontSize: 13, color: "#7C3AED", letterSpacing: 1 }}>CLAUDE AI ANALYSIS</span>
-                    <span style={{ fontSize: 10, background: "rgba(139,92,246,0.15)", color: "#a78bfa", padding: "2px 8px", borderRadius: 20, fontWeight: 600 }}>BETA</span>
-                </div>
-                <button onClick={askClaude} disabled={loading} style={{ background: loading ? "#334155" : "#FFB800", border: "none", color: loading ? "#fff" : "#1A1A1A", padding: "8px 18px", borderRadius: 8, cursor: loading ? "not-allowed" : "pointer", fontSize: 12, fontWeight: 800 }}>
-                    {loading ? "Analyzing..." : asked ? "Refresh" : "Get AI Analysis"}
-                </button>
-            </div>
-            {!asked && !loading && (
-                <div style={{ fontSize: 11, color: "#94A3B8", textAlign: "center" }}>Click <strong style={{ color: "#FFB800" }}>Get AI Analysis</strong> for live match breakdown</div>
-            )}
-            {loading && (
-                <div style={{ textAlign: "center", padding: "20px 0", color: "#a78bfa", fontSize: 13 }}>
-                    Claude is analyzing live match data...
-                </div>
-            )}
-            {analysis && (
-                <div style={{ borderTop: "1px solid rgba(139,92,246,0.2)", paddingTop: 14 }}>
-                    {analysis.split("\n\n").map((block, i) => {
-                        const lines = block.split("\n").filter(l => l.trim());
-                        if (!lines.length) return null;
-                        return (
-                            <div key={i} style={{ marginBottom: 10 }}>
-                                {lines.map((line, j) => {
-                                    if (line.startsWith("- ")) return (
-                                        <div key={j} style={{ display: "flex", gap: 8, alignItems: "flex-start", marginBottom: 4, paddingLeft: 8 }}>
-                                            <span style={{ color: "#a78bfa", marginTop: 2 }}>▸</span>
-                                            <span style={{ fontSize: 13, color: "#cbd5e1", lineHeight: 1.7 }}>{line.substring(2)}</span>
-                                        </div>
-                                    );
-                                    return <p key={j} style={{ fontSize: 13, color: "#cbd5e1", lineHeight: 1.8, margin: "0 0 4px" }}>{line}</p>;
-                                })}
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
-        </div>
-    );
-}
 
 const TEAM_COLORS = {
   "rcb": "#EC1C24", "royal challengers": "#EC1C24", "bangalore": "#EC1C24",
@@ -929,7 +849,6 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 </div>
                             </div>
 
-                            <ClaudeAnalysis pred={pred} selectedMatch={selectedMatch} />
                         </div>}
                     </>
                 )}
