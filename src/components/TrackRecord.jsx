@@ -136,7 +136,10 @@ export default function TrackRecord() {
                 display: "flex", alignItems: "center", gap: 24,
                 boxShadow: "0 8px 32px rgba(30,45,107,0.25)"
             }}>
-                <HitRateRing pct={hitRate !== null ? hitRate : 0} />
+                {/* Only show ring when there's real resolved data */}
+                {!loading && !error && total > 0 && (
+                    <HitRateRing pct={hitRate !== null ? hitRate : 0} />
+                )}
                 <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 4, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>
                         Overall Accuracy
@@ -145,6 +148,23 @@ export default function TrackRecord() {
                         <div style={{ fontSize: 13, color: "rgba(255,255,255,0.4)" }}>Loading…</div>
                     ) : error ? (
                         <div style={{ fontSize: 13, color: "#E53E3E" }}>{error}</div>
+                    ) : total === 0 ? (
+                        /* No resolved matches yet — show friendly placeholder */
+                        <div>
+                            <div style={{ fontSize: 22, fontWeight: 800, color: "#FFFFFF", lineHeight: 1.2, marginBottom: 6 }}>
+                                Building track record…
+                            </div>
+                            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.5 }}>
+                                Accuracy unlocks after matches finish. Check back once live games wrap up!
+                            </div>
+                            {pending > 0 && (
+                                <div style={{ marginTop: 10 }}>
+                                    <span style={{ padding: "5px 12px", borderRadius: 8, background: "rgba(245,158,11,0.18)", color: "#F59E0B", fontSize: 12, fontWeight: 700 }}>
+                                        ⏳ {pending} match{pending !== 1 ? "es" : ""} in progress
+                                    </span>
+                                </div>
+                            )}
+                        </div>
                     ) : (
                         <>
                             <div style={{ fontSize: 36, fontWeight: 900, color: "#FFFFFF", lineHeight: 1.1 }}>

@@ -129,7 +129,7 @@ function NextOverIntelligence({ pred }) {
                             </div>
                         </div>
                         <div style={{ textAlign: "right" }}>
-                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>CRR</div>
+                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>Run Speed</div>
                             <div style={{ fontSize: 16, fontWeight: 900, color: "#FFFFFF" }}>{crr.toFixed(2)}</div>
                         </div>
                     </div>
@@ -144,8 +144,8 @@ function NextOverIntelligence({ pred }) {
                     {innings === 2 && rrr > 0 && (
                         <div style={{ marginBottom: 12 }}>
                             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.45)" }}>CRR {crr.toFixed(2)}</span>
-                                <span style={{ fontSize: 10, fontWeight: 700, color: crr >= rrr ? "#22c55e" : "#ef4444" }}>RRR {rrr.toFixed(2)}</span>
+                                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.45)" }}>Scoring {crr.toFixed(2)}/ov</span>
+                                <span style={{ fontSize: 10, fontWeight: 700, color: crr >= rrr ? "#22c55e" : "#ef4444" }}>Need {rrr.toFixed(2)}/ov</span>
                             </div>
                             <div style={{ height: 7, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
                                 <div style={{ width: `${rrrBarPct}%`, height: "100%", background: crr >= rrr ? "#22c55e" : "#ef4444", borderRadius: 4, transition: "width 0.4s" }} />
@@ -167,7 +167,7 @@ function NextOverIntelligence({ pred }) {
                     <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
                         {dangerousPartnership && <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(239,68,68,0.18)", color: "#ef4444", fontWeight: 600 }}>Dangerous partnership</span>}
                         {tailExposed && <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(239,68,68,0.18)", color: "#ef4444", fontWeight: 600 }}>Tail exposed</span>}
-                        {rateCritical && <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(239,68,68,0.18)", color: "#ef4444", fontWeight: 600 }}>Rate critical</span>}
+                        {rateCritical && <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(239,68,68,0.18)", color: "#ef4444", fontWeight: 600 }}>Falling behind target</span>}
                         {!dangerousPartnership && !tailExposed && !rateCritical && (
                             <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.12)", color: "#22c55e", fontWeight: 600 }}>No major alerts</span>
                         )}
@@ -282,9 +282,37 @@ function PredictionCallBanner({ pred }) {
         return parts.slice(0, 3).join(" · ");
     }
 
+    // ── BET / WAIT / AVOID CTA ──────────────────────────────────────────────
+    let ctaLabel, ctaColor, ctaBg, ctaBorder, ctaIcon;
+    if (prob >= 65) {
+        ctaLabel = `BET ${team1}`; ctaIcon = "🟢";
+        ctaColor = "#00C896"; ctaBg = "rgba(0,200,150,0.15)"; ctaBorder = "rgba(0,200,150,0.5)";
+    } else if (prob <= 35) {
+        ctaLabel = `BET ${team2}`; ctaIcon = "🟢";
+        ctaColor = "#00C896"; ctaBg = "rgba(0,200,150,0.15)"; ctaBorder = "rgba(0,200,150,0.5)";
+    } else if (prob >= 55 || prob <= 45) {
+        ctaLabel = "WAIT"; ctaIcon = "🟡";
+        ctaColor = "#F59E0B"; ctaBg = "rgba(245,158,11,0.15)"; ctaBorder = "rgba(245,158,11,0.5)";
+    } else {
+        ctaLabel = "AVOID"; ctaIcon = "🔴";
+        ctaColor = "#EF4444"; ctaBg = "rgba(239,68,68,0.15)"; ctaBorder = "rgba(239,68,68,0.5)";
+    }
+
     return (
         <div style={{ background: "#0F172A", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: "14px 18px", marginBottom: 14 }}>
-            <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.4)", letterSpacing: 1.5, marginBottom: 10, textTransform: "uppercase" }}>Prediction Call</div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, flexWrap: "wrap", gap: 8 }}>
+                <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.4)", letterSpacing: 1.5, textTransform: "uppercase" }}>Prediction Call</div>
+                {/* BET / WAIT / AVOID pill */}
+                <span style={{
+                    fontSize: 13, fontWeight: 900, padding: "5px 16px", borderRadius: 20,
+                    background: ctaBg, color: ctaColor,
+                    border: `1.5px solid ${ctaBorder}`,
+                    letterSpacing: 0.5,
+                    display: "inline-flex", alignItems: "center", gap: 6,
+                }}>
+                    {ctaIcon} {ctaLabel}
+                </span>
+            </div>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
                 <div>
                     {favoredTeam ? (
@@ -648,7 +676,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     <div style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
                                         <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore}</span>
                                         <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
-                                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>CRR {pred.currentRunRate || ""}</span>
+                                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>Rate {pred.currentRunRate || ""}</span>
                                         {pred.momentum !== undefined && pred.currentRunRate > 0 && (
                                             <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: pred.momentum > 0.5 ? "rgba(0,200,150,0.25)" : pred.momentum < -0.5 ? "rgba(229,62,62,0.25)" : "rgba(255,255,255,0.1)", color: pred.momentum > 0.5 ? "#00D4AA" : pred.momentum < -0.5 ? "#FF6B6B" : "rgba(255,255,255,0.7)" }}>
                                                 {pred.momentum > 0 ? "+" : ""}{pred.momentum ? pred.momentum.toFixed(1) : "0"} vs avg
