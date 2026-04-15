@@ -449,6 +449,10 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
             background: C.surface,
             padding: "14px 12px",
             overflowY: "auto",
+            position: "sticky",
+            top: 54,
+            height: "calc(100vh - 54px)",
+            alignSelf: "start",
         }}>
             {/* Header pill */}
             <div style={{
@@ -544,7 +548,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
             />
 
             {/* MAIN CONTENT */}
-            <main className="mc" style={{ padding: 0, overflowY: "auto", overflow: "visible" }}>
+            <main className="mc" style={{ padding: 0, minWidth: 0 }}>
                 {/* Show NoMatchesScreen only if no match selected and not loading */}
                 {!selectedMatch && !pred && !isPredLoading && (
                     <NoMatchesScreen upcomingMatches={liveMatches.filter(m => m.status === "UPCOMING")} />
@@ -858,7 +862,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
             </main>
 
             {/* RIGHT SIDEBAR */}
-            <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14 }}>
+            <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14, position: "sticky", top: 54, height: "calc(100vh - 54px)", overflowY: "auto", alignSelf: "start" }}>
                 {pred && pred.team1 && (
                     <div style={{ background: C.bg, borderRadius: 12, padding: "14px" }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 12 }}>MATCH CONTEXT</div>
