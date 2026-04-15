@@ -706,17 +706,23 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                   const fmt = (pred.matchType || "t20").toLowerCase();
                                   const totOv = fmt === "odi" ? 50 : fmt === "test" ? 450 : 20;
                                   const needed = pred.runsNeeded || (pred.target ? pred.target - (pred.score || 0) : 0);
-                                  const ballsLeft = Math.round(Math.max(0, totOv - (pred.overs || 0)) * 6);
+                                  // Fix: cricket overs use .1-.6 notation (not decimal), e.g. 14.6 = 15 complete overs
+                                  const rawOvers = pred.overs || 0;
+                                  const fullOvers = Math.floor(rawOvers);
+                                  const ballsInOver = Math.round((rawOvers % 1) * 10);
+                                  const ballsBowled = fullOvers * 6 + ballsInOver;
+                                  const ballsLeft = Math.max(0, totOv * 6 - ballsBowled);
                                   const wktsLeft = 10 - (pred.wickets || 0);
                                   const crr = pred.currentRunRate || 0;
-                                  const t1 = cleanTeam(pred.team1);
+                                  // In innings 2, team2 is the batting/chasing team; team1 batted first
+                                  const battingTeam = cleanTeam(inn === 2 ? (pred.team2 || pred.team1) : pred.team1);
                                   let why = "";
                                   if (inn === 2 && pred.target > 0) {
-                                    why = `${t1} needs ${needed} more runs off ${ballsLeft} balls · ${wktsLeft} wickets in hand`;
+                                    why = `${battingTeam} needs ${needed} more runs off ${ballsLeft} balls · ${wktsLeft} wickets in hand`;
                                   } else if (inn === 1 && crr > 0) {
                                     const par = fmt === "odi" ? 5.0 : 7.5;
                                     const vs = crr >= par + 1.5 ? "well above par" : crr >= par ? "above par" : crr >= par - 1 ? "on par" : "below par";
-                                    why = `${t1} scoring at ${crr.toFixed(1)} runs/over — ${vs}`;
+                                    why = `${battingTeam} scoring at ${crr.toFixed(1)} runs/over — ${vs}`;
                                   }
                                   if (!why) return null;
                                   return (
