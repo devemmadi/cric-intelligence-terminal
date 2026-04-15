@@ -615,7 +615,16 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 6 }}>{pred?.venue || selectedMatch?.detail || ""}</div>
                                 {(() => {
                                     const st = selectedMatch?.rawStatus || pred?.matchStatus || "";
-                                    const isToss = st && (st.toLowerCase().includes("opt to") || st.toLowerCase().includes("won the toss") || st.toLowerCase().includes("chose to"));
+                                    const isEnded = selectedMatch?.status === "ENDED" || st.toLowerCase().includes("won by") || st.toLowerCase().includes(" beat ") || st.toLowerCase().includes("match tied") || st.toLowerCase().includes("no result");
+                                    const isToss = !isEnded && st && (st.toLowerCase().includes("opt to") || st.toLowerCase().includes("won the toss") || st.toLowerCase().includes("chose to"));
+                                    if (isEnded && st) {
+                                        return (
+                                            <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(0,184,148,0.18)", border: "1px solid rgba(0,184,148,0.4)", borderRadius: 20, padding: "4px 16px", marginBottom: 10 }}>
+                                                <span style={{ fontSize: 13 }}>🏆</span>
+                                                <span style={{ fontSize: 11, fontWeight: 700, color: "#00B894", letterSpacing: 0.3 }}>{st}</span>
+                                            </div>
+                                        );
+                                    }
                                     if (!isToss) return null;
                                     return (
                                         <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(200,150,30,0.18)", border: "1px solid rgba(200,150,30,0.4)", borderRadius: 20, padding: "4px 12px", marginBottom: 10 }}>

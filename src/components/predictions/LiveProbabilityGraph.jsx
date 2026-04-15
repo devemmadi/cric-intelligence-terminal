@@ -63,8 +63,10 @@ export default function LiveProbabilityGraph({ pred }) {
         [points]);
 
     const lastPt = points[points.length - 1];
-    const favor = currentProb >= 50 ? team1 : team2;
-    const favorProb = currentProb >= 50 ? currentProb : 100 - currentProb;
+    // Normalize: innings 2 aiProbability = chasing team2's prob → invert for team1
+    const normProb = innings === 2 ? Math.round((100 - currentProb) * 10) / 10 : currentProb;
+    const favor = normProb >= 50 ? team1 : team2;
+    const favorProb = normProb >= 50 ? normProb : 100 - normProb;
     const probColor = favorProb >= 70 ? "#00C896" : favorProb >= 55 ? "#3B82F6" : "#F59E0B";
 
     if (history.length < 2) {
