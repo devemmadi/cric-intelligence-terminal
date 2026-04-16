@@ -19,6 +19,8 @@ export default function RGFooter() {
                             ["/about", "About Us"],
                             ["/how-it-works", "How It Works"],
                             ["/faq", "FAQ"],
+                            ["/cricket-predictions-uk", "Cricket Predictions UK"],
+                            ["/predictions/ipl-2026", "IPL 2026 Predictions"],
                             ["/privacy", "Privacy Policy"],
                             ["/terms", "Terms & Conditions"],
                         ].map(([href, label]) => (

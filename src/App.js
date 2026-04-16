@@ -8,6 +8,8 @@ import OddsCalculator from './components/OddsCalculator';
 import AboutUs from './components/AboutUs';
 import HowItWorks from './components/HowItWorks';
 import FAQ from './components/FAQ';
+import InternationalPredictionPage from './components/InternationalPredictionPage';
+import CricketPredictionsUK from './components/CricketPredictionsUK';
 import AgeGate from './components/AgeGate';
 import IPL2026Predictions from './components/IPL2026Predictions';
 import CricketWinProbability from './components/CricketWinProbability';
@@ -31,6 +33,8 @@ function App() {
                     <Route path="/predictions/ipl-2026" element={<IPL2026Predictions />} />
                     <Route path="/predictions/cricket-win-probability" element={<CricketWinProbability />} />
                     <Route path="/predictions/t20-predictions" element={<T20Predictions />} />
+                    <Route path="/predictions/international/:matchup" element={<InternationalPredictionPage />} />
+                    <Route path="/cricket-predictions-uk" element={<CricketPredictionsUK />} />
                     <Route path="/predictions/:matchup" element={<MatchPredictionPage />} />
                     <Route path="*" element={<CricIntelligence />} />
                 </Routes>
