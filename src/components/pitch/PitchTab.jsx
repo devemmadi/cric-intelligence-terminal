@@ -480,7 +480,7 @@ function OverDots({ seg, large }) {
 }
 
 // ─── BIG live card for the current segment ────────────────────────────────────
-function LiveCard({ seg }) {
+function LiveCard({ seg, isMatchOver }) {
     const { beh, evidence, betSignal } = seg;
     return (
         <div style={{
@@ -490,11 +490,13 @@ function LiveCard({ seg }) {
             boxShadow: `0 0 32px ${beh.color}22`,
             position: "relative",
         }}>
-            {/* LIVE badge */}
-            <div style={{ position: "absolute", top: 14, right: 14, display: "flex", alignItems: "center", gap: 5, background: "#3B82F618", border: "1px solid #3B82F6", borderRadius: 20, padding: "3px 10px" }}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#3B82F6", animation: "pulse 1.5s infinite" }} />
-                <span style={{ fontSize: 9, fontWeight: 800, color: "#3B82F6", letterSpacing: 1 }}>LIVE</span>
-            </div>
+            {/* LIVE badge — only when match is still in progress */}
+            {!isMatchOver && (
+                <div style={{ position: "absolute", top: 14, right: 14, display: "flex", alignItems: "center", gap: 5, background: "#3B82F618", border: "1px solid #3B82F6", borderRadius: 20, padding: "3px 10px" }}>
+                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#3B82F6", animation: "pulse 1.5s infinite" }} />
+                    <span style={{ fontSize: 9, fontWeight: 800, color: "#3B82F6", letterSpacing: 1 }}>LIVE</span>
+                </div>
+            )}
 
             {/* Phase + overs */}
             <div style={{ fontSize: 11, color: "#475569", fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>
@@ -725,9 +727,24 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
     );
 
     const { segments, matchAvgRPO, pitchKey, detr, dew, humidity, temp } = result;
-    const currentSeg = segments.find(s => s.isCurrent);
-    const nextSeg    = segments.find(s => s.isFuture);
-    const pastSegs   = segments.filter(s => s.isPast);
+
+    // Detect if match is over — chase complete OR 20 overs done OR selectedMatch.matchEnded
+    const runs   = pred?.score ?? pred?.runs ?? 0;
+    const target = pred?.target ?? 0;
+    const innings = pred?.innings ?? 1;
+    const overs  = parseFloat(pred?.overs ?? 0);
+    const isMatchOver = (
+        selectedMatch?.matchEnded ||
+        (innings === 2 && target > 0 && runs >= target) ||
+        overs >= 20
+    );
+
+    // When match is over, treat the "current" segment as past too
+    const currentSeg = isMatchOver ? null : segments.find(s => s.isCurrent);
+    const nextSeg    = isMatchOver ? null : segments.find(s => s.isFuture);
+    const pastSegs   = isMatchOver
+        ? segments.filter(s => s.actualRuns !== null)   // show all segments with data
+        : segments.filter(s => s.isPast);
 
     return (
         <div className="fade" style={{ minHeight: "100vh", background: "#0A0E1A", padding: "0 0 80px" }}>
@@ -739,10 +756,16 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
                     <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>Pitch Behaviour</div>
                     {matchName && <div style={{ fontSize: 12, color: "#475569", marginTop: 2 }}>{matchName}</div>}
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                    <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", animation: "pulse 2s infinite" }} />
-                    <span style={{ fontSize: 10, color: "#475569", letterSpacing: 0.8 }}>LIVE</span>
-                </div>
+                {isMatchOver ? (
+                    <div style={{ display: "flex", alignItems: "center", gap: 5, background: "rgba(100,116,139,0.15)", border: "1px solid #334155", borderRadius: 20, padding: "3px 10px" }}>
+                        <span style={{ fontSize: 10, fontWeight: 800, color: "#64748B", letterSpacing: 1 }}>FINAL</span>
+                    </div>
+                ) : (
+                    <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", animation: "pulse 2s infinite" }} />
+                        <span style={{ fontSize: 10, color: "#475569", letterSpacing: 0.8 }}>LIVE</span>
+                    </div>
+                )}
             </div>
 
             {/* Condition chips */}
@@ -751,16 +774,27 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
             {/* Full-match timeline strip */}
             <BehaviourTimeline segments={segments} currentOver={currentOver} />
 
+            {/* ── MATCH OVER summary banner ── */}
+            {isMatchOver && (
+                <div style={{ background: "#0D1117", border: "1.5px solid #334155", borderRadius: 14, padding: "18px 20px", marginBottom: 12, display: "flex", alignItems: "center", gap: 14 }}>
+                    <span style={{ fontSize: 28 }}>🏁</span>
+                    <div>
+                        <div style={{ fontSize: 14, fontWeight: 800, color: "#94A3B8" }}>Match Complete</div>
+                        <div style={{ fontSize: 12, color: "#475569", marginTop: 3 }}>Full pitch analysis below — all overs played</div>
+                    </div>
+                </div>
+            )}
+
             {/* ── CURRENT OVER — hero ── */}
             {currentSeg ? (
-                <LiveCard seg={currentSeg} />
-            ) : (
+                <LiveCard seg={currentSeg} isMatchOver={isMatchOver} />
+            ) : !isMatchOver ? (
                 /* Match hasn't started or data not yet flowing */
                 <div style={{ background: "#0D1117", border: "1.5px solid #1E293B", borderRadius: 14, padding: "24px", textAlign: "center" }}>
                     <div style={{ fontSize: 28, marginBottom: 8 }}>⏳</div>
                     <div style={{ fontSize: 14, color: "#475569" }}>Waiting for live over data…</div>
                 </div>
-            )}
+            ) : null}
 
             {/* ── NEXT UP ── */}
             {nextSeg && (
@@ -772,7 +806,9 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
             {/* ── PAST OVERS — compact list ── */}
             {pastSegs.length > 0 && (
                 <div style={{ marginTop: 16 }}>
-                    <div style={{ fontSize: 10, color: "#334155", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>PAST OVERS</div>
+                    <div style={{ fontSize: 10, color: "#334155", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>
+                        {isMatchOver ? "FULL MATCH BREAKDOWN" : "PAST OVERS"}
+                    </div>
                     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                         {[...pastSegs].reverse().map((seg, i) => <PastRow key={i} seg={seg} />)}
                     </div>
