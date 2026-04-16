@@ -453,24 +453,25 @@ function normalisePitchKey(raw) {
 }
 
 // ─── Over dot-bar mini chart ──────────────────────────────────────────────────
-function OverDots({ seg }) {
+function OverDots({ seg, large }) {
     const hasData = seg.allOvs.some(o => o.played);
     if (!hasData) return null;
     const maxR = Math.max(...seg.allOvs.filter(o => o.played).map(o => o.runs), 1);
+    const h = large ? 44 : 28;
     return (
-        <div style={{ display: "flex", gap: 3, alignItems: "flex-end", height: 28, marginTop: 10 }}>
+        <div style={{ display: "flex", gap: large ? 5 : 3, alignItems: "flex-end", height: h, marginTop: large ? 14 : 8 }}>
             {seg.allOvs.map((o, j) => {
                 if (!o.played) {
                     return <div key={j} style={{ flex: 1, height: 3, background: "rgba(255,255,255,0.06)", borderRadius: 2 }} />;
                 }
-                const h = Math.max(4, Math.round((o.runs / maxR) * 24));
+                const barH = Math.max(4, Math.round((o.runs / maxR) * (h - 10)));
                 const hasWkt = o.wickets > 0;
                 const barColor = hasWkt ? "#ef4444" : o.runs >= 12 ? "#4ade80" : o.runs >= 7 ? seg.beh?.color ?? C.accent : "#475569";
                 return (
                     <div key={j} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
-                        {hasWkt && <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#ef4444" }} />}
-                        <div style={{ width: "100%", height: h, borderRadius: 2, background: barColor }} title={`Over ${o.over}: ${o.runs}r ${o.wickets}w`} />
-                        <span style={{ fontSize: 7, color: "#334155" }}>{o.over}</span>
+                        {hasWkt && <div style={{ width: large ? 6 : 4, height: large ? 6 : 4, borderRadius: "50%", background: "#ef4444" }} />}
+                        <div style={{ width: "100%", height: barH, borderRadius: 2, background: barColor }} title={`Over ${o.over}: ${o.runs}r ${o.wickets}w`} />
+                        <span style={{ fontSize: large ? 9 : 7, color: "#475569", fontWeight: large ? 600 : 400 }}>{o.over}</span>
                     </div>
                 );
             })}
@@ -478,92 +479,141 @@ function OverDots({ seg }) {
     );
 }
 
-// ─── Single segment card ──────────────────────────────────────────────────────
-function SegmentCard({ seg }) {
-    const { beh, evidence, betSignal, isCurrent, isPast, isFuture } = seg;
-    const borderColor = isCurrent ? beh.color : isPast ? "#1E293B" : "#1E2D4A";
-    const opacity = isPast ? 0.65 : 1;
-
+// ─── BIG live card for the current segment ────────────────────────────────────
+function LiveCard({ seg }) {
+    const { beh, evidence, betSignal } = seg;
     return (
-        <div style={{ background: "#0D1117", border: `1.5px solid ${borderColor}`, borderRadius: 14, padding: "16px", position: "relative", opacity, transition: "all 0.2s" }}>
+        <div style={{
+            background: `linear-gradient(135deg, #0D1117 0%, ${beh.color}18 100%)`,
+            border: `2px solid ${beh.color}`,
+            borderRadius: 18, padding: "20px",
+            boxShadow: `0 0 32px ${beh.color}22`,
+            position: "relative",
+        }}>
+            {/* LIVE badge */}
+            <div style={{ position: "absolute", top: 14, right: 14, display: "flex", alignItems: "center", gap: 5, background: "#3B82F618", border: "1px solid #3B82F6", borderRadius: 20, padding: "3px 10px" }}>
+                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#3B82F6", animation: "pulse 1.5s infinite" }} />
+                <span style={{ fontSize: 9, fontWeight: 800, color: "#3B82F6", letterSpacing: 1 }}>LIVE</span>
+            </div>
 
-            {/* YOU ARE HERE */}
-            {isCurrent && (
-                <div style={{ position: "absolute", top: -11, left: "50%", transform: "translateX(-50%)", background: beh.color, color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 12px", borderRadius: 20, letterSpacing: 1, whiteSpace: "nowrap" }}>
-                    ▶ YOU ARE HERE
+            {/* Phase + overs */}
+            <div style={{ fontSize: 11, color: "#475569", fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>
+                OVERS {seg.label} · {seg.phase}
+            </div>
+
+            {/* Icon + behaviour name */}
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14 }}>
+                <span style={{ fontSize: 32 }}>{beh.icon}</span>
+                <div>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: beh.color, lineHeight: 1.1 }}>{beh.label}</div>
+                    <div style={{ fontSize: 11, color: "#475569", marginTop: 3 }}>{beh.short}</div>
+                </div>
+            </div>
+
+            {/* Score row */}
+            {seg.actualRuns !== null && (
+                <div style={{ display: "flex", gap: 16, marginBottom: 10, alignItems: "center" }}>
+                    <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 10, padding: "10px 18px", textAlign: "center" }}>
+                        <div style={{ fontSize: 30, fontWeight: 900, color: "#fff", lineHeight: 1 }}>{seg.actualRuns}</div>
+                        <div style={{ fontSize: 10, color: "#475569", marginTop: 2 }}>runs</div>
+                    </div>
+                    <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 10, padding: "10px 18px", textAlign: "center" }}>
+                        <div style={{ fontSize: 30, fontWeight: 900, color: seg.actualWkts > 0 ? "#ef4444" : "#22c55e", lineHeight: 1 }}>{seg.actualWkts ?? 0}</div>
+                        <div style={{ fontSize: 10, color: "#475569", marginTop: 2 }}>wickets</div>
+                    </div>
+                    <div style={{ background: "rgba(255,255,255,0.06)", borderRadius: 10, padding: "10px 18px", textAlign: "center" }}>
+                        <div style={{ fontSize: 30, fontWeight: 900, color: "#fff", lineHeight: 1 }}>{seg.actualRPO?.toFixed(1) ?? "–"}</div>
+                        <div style={{ fontSize: 10, color: "#475569", marginTop: 2 }}>RPO</div>
+                    </div>
                 </div>
             )}
 
-            {/* Header: phase label + behaviour */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-                <div>
-                    <div style={{ fontSize: 11, color: "#475569", fontWeight: 600, letterSpacing: 0.5, marginBottom: 3 }}>
-                        Overs {seg.label}
-                        {isPast && <span style={{ marginLeft: 8, color: "#22c55e", fontSize: 10 }}>✓ Done</span>}
-                        {isCurrent && <span style={{ marginLeft: 8, color: "#3B82F6", fontSize: 10 }}>● Live</span>}
-                        {isFuture && <span style={{ marginLeft: 8, color: "#F59E0B", fontSize: 10 }}>Coming up</span>}
-                    </div>
-                    {/* BIG behaviour label */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <span style={{ fontSize: 18 }}>{beh.icon}</span>
-                        <span style={{ fontSize: 17, fontWeight: 800, color: beh.color, lineHeight: 1.2 }}>
-                            {beh.label}
-                        </span>
-                    </div>
-                </div>
-                {/* Score pill — actual (past/current) */}
-                {seg.actualRuns !== null && (
-                    <div style={{ textAlign: "right", background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "6px 12px" }}>
-                        <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", lineHeight: 1 }}>{seg.actualRuns}</div>
-                        <div style={{ fontSize: 10, color: "#475569", marginTop: 2 }}>
-                            {seg.actualWkts ?? 0} wicket{(seg.actualWkts ?? 0) !== 1 ? "s" : ""}
-                        </div>
-                    </div>
-                )}
-                {/* ML prediction pill — future segments */}
-                {isFuture && seg.mlPred && (
-                    <div style={{ textAlign: "right", background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.3)", borderRadius: 8, padding: "6px 12px" }}>
-                        <div style={{ fontSize: 9, color: "#818CF8", fontWeight: 700, marginBottom: 2, letterSpacing: 0.5 }}>🤖 ML</div>
-                        <div style={{ fontSize: 20, fontWeight: 900, color: "#818CF8", lineHeight: 1 }}>{seg.mlPred.pred_runs}</div>
-                        <div style={{ fontSize: 10, color: "#6366F1", marginTop: 2 }}>
-                            ~{seg.mlPred.pred_wkts.toFixed(1)} wkt{seg.mlPred.pred_wkts !== 1 ? "s" : ""}
-                        </div>
-                    </div>
-                )}
-            </div>
-
-            {/* Over bars */}
-            <OverDots seg={{ ...seg, beh }} />
+            {/* Over bars — large */}
+            <OverDots seg={{ ...seg, beh }} large />
 
             {/* Evidence bullets */}
             {evidence.length > 0 && (
-                <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 5 }}>
+                <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 7 }}>
                     {evidence.map((pt, j) => (
-                        <div key={j} style={{ display: "flex", gap: 7, alignItems: "flex-start" }}>
-                            <span style={{ color: beh.color, fontSize: 10, marginTop: 1, flexShrink: 0 }}>●</span>
-                            <span style={{ fontSize: 11, color: "#94A3B8", lineHeight: 1.45 }}>{pt}</span>
+                        <div key={j} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+                            <span style={{ color: beh.color, fontSize: 11, marginTop: 1, flexShrink: 0 }}>●</span>
+                            <span style={{ fontSize: 13, color: "#94A3B8", lineHeight: 1.5 }}>{pt}</span>
                         </div>
                     ))}
                 </div>
             )}
 
             {/* Bet signal */}
-            {betSignal && !isPast && (
-                <div style={{ marginTop: 12, background: "rgba(255,255,255,0.03)", borderRadius: 10, padding: "12px 14px", borderLeft: `3px solid ${beh.color}` }}>
-                    <div style={{ fontSize: 10, color: "#475569", marginBottom: 8, fontWeight: 600 }}>What to bet</div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <span style={{ fontSize: 13 }}>✅</span>
-                            <span style={{ fontSize: 13, color: "#fff", fontWeight: 600 }}>{betSignal.back}</span>
+            {betSignal && (
+                <div style={{ marginTop: 14, background: "rgba(255,255,255,0.03)", borderRadius: 12, padding: "14px 16px", borderLeft: `3px solid ${beh.color}` }}>
+                    <div style={{ fontSize: 10, color: "#475569", marginBottom: 10, fontWeight: 700, letterSpacing: 0.5 }}>WHAT TO BET</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <span style={{ fontSize: 15 }}>✅</span>
+                            <span style={{ fontSize: 14, color: "#fff", fontWeight: 700 }}>{betSignal.back}</span>
                         </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                            <span style={{ fontSize: 13 }}>❌</span>
-                            <span style={{ fontSize: 13, color: "#94A3B8", fontWeight: 500 }}>{betSignal.fade}</span>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                            <span style={{ fontSize: 15 }}>❌</span>
+                            <span style={{ fontSize: 13, color: "#64748B", fontWeight: 500 }}>{betSignal.fade}</span>
                         </div>
                     </div>
-                    <div style={{ fontSize: 11, color: "#475569", marginTop: 8, lineHeight: 1.5 }}>{betSignal.reason}</div>
+                    <div style={{ fontSize: 11, color: "#475569", marginTop: 10, lineHeight: 1.6 }}>{betSignal.reason}</div>
                 </div>
             )}
+        </div>
+    );
+}
+
+// ─── Compact next-up card ─────────────────────────────────────────────────────
+function NextCard({ seg }) {
+    const { beh, evidence, betSignal } = seg;
+    return (
+        <div style={{ background: "#0D1117", border: `1.5px solid ${beh.color}55`, borderRadius: 14, padding: "14px 16px" }}>
+            <div style={{ fontSize: 10, color: "#F59E0B", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>⏭ NEXT UP · OVERS {seg.label}</div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                <span style={{ fontSize: 20 }}>{beh.icon}</span>
+                <span style={{ fontSize: 15, fontWeight: 800, color: beh.color }}>{beh.label}</span>
+            </div>
+            {evidence.length > 0 && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 5, marginBottom: betSignal ? 10 : 0 }}>
+                    {evidence.map((pt, j) => (
+                        <div key={j} style={{ display: "flex", gap: 7, alignItems: "flex-start" }}>
+                            <span style={{ color: beh.color, fontSize: 9, marginTop: 2, flexShrink: 0 }}>●</span>
+                            <span style={{ fontSize: 11, color: "#64748B", lineHeight: 1.45 }}>{pt}</span>
+                        </div>
+                    ))}
+                </div>
+            )}
+            {betSignal && (
+                <div style={{ background: "rgba(255,255,255,0.02)", borderRadius: 8, padding: "10px 12px", borderLeft: `3px solid ${beh.color}` }}>
+                    <div style={{ fontSize: 10, color: "#475569", marginBottom: 6, fontWeight: 600 }}>Expected</div>
+                    <div style={{ fontSize: 12, color: "#fff", fontWeight: 600 }}>✅ {betSignal.back}</div>
+                    <div style={{ fontSize: 11, color: "#475569", marginTop: 4, lineHeight: 1.5 }}>{betSignal.reason}</div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ─── Compact past row ─────────────────────────────────────────────────────────
+function PastRow({ seg }) {
+    const { beh } = seg;
+    return (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "#0D1117", borderRadius: 10, border: "1px solid #1E293B" }}>
+            <span style={{ fontSize: 16, flexShrink: 0 }}>{beh.icon}</span>
+            <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 10, color: "#334155", marginBottom: 2 }}>Overs {seg.label}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: beh.color }}>{beh.label}</div>
+            </div>
+            {seg.actualRuns !== null && (
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                    <div style={{ fontSize: 15, fontWeight: 900, color: "#fff" }}>{seg.actualRuns}r</div>
+                    <div style={{ fontSize: 10, color: seg.actualWkts > 0 ? "#ef4444" : "#334155" }}>
+                        {seg.actualWkts}w · {seg.actualRPO?.toFixed(1)}/ov
+                    </div>
+                </div>
+            )}
+            <span style={{ fontSize: 10, color: "#22c55e", fontWeight: 700, flexShrink: 0 }}>✓</span>
         </div>
     );
 }
@@ -571,7 +621,7 @@ function SegmentCard({ seg }) {
 // ─── Top timeline strip ───────────────────────────────────────────────────────
 function BehaviourTimeline({ segments, currentOver }) {
     return (
-        <div style={{ display: "flex", gap: 3, marginBottom: 20 }}>
+        <div style={{ display: "flex", gap: 3, marginBottom: 16 }}>
             {segments.map((seg, i) => {
                 const isActive = currentOver >= seg.start - 1 && currentOver < seg.end;
                 const isPast = currentOver >= seg.end;
@@ -675,36 +725,62 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
     );
 
     const { segments, matchAvgRPO, pitchKey, detr, dew, humidity, temp } = result;
+    const currentSeg = segments.find(s => s.isCurrent);
+    const nextSeg    = segments.find(s => s.isFuture);
+    const pastSegs   = segments.filter(s => s.isPast);
 
     return (
         <div className="fade" style={{ minHeight: "100vh", background: "#0A0E1A", padding: "0 0 80px" }}>
-        <div style={{ maxWidth: 660, margin: "0 auto", padding: "20px 16px" }}>
+        <div style={{ maxWidth: 600, margin: "0 auto", padding: "20px 16px" }}>
 
             {/* Title */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
                 <div>
                     <div style={{ fontSize: 18, fontWeight: 800, color: "#fff" }}>Pitch Behaviour</div>
                     {matchName && <div style={{ fontSize: 12, color: "#475569", marginTop: 2 }}>{matchName}</div>}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
                     <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#22c55e", animation: "pulse 2s infinite" }} />
-                    <span style={{ fontSize: 10, color: "#475569", letterSpacing: 0.8 }}>LIVE · UPDATES EVERY 10S</span>
+                    <span style={{ fontSize: 10, color: "#475569", letterSpacing: 0.8 }}>LIVE</span>
                 </div>
             </div>
 
             {/* Condition chips */}
             <ConditionBar pitchKey={pitchKey} detr={detr} dew={dew} humidity={humidity} temp={temp} matchAvgRPO={matchAvgRPO} venueHistory={pred?.venueHistory} />
 
-            {/* Behaviour timeline strip */}
+            {/* Full-match timeline strip */}
             <BehaviourTimeline segments={segments} currentOver={currentOver} />
 
-            {/* Segment cards */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {segments.map((seg, i) => <SegmentCard key={i} seg={seg} />)}
-            </div>
+            {/* ── CURRENT OVER — hero ── */}
+            {currentSeg ? (
+                <LiveCard seg={currentSeg} />
+            ) : (
+                /* Match hasn't started or data not yet flowing */
+                <div style={{ background: "#0D1117", border: "1.5px solid #1E293B", borderRadius: 14, padding: "24px", textAlign: "center" }}>
+                    <div style={{ fontSize: 28, marginBottom: 8 }}>⏳</div>
+                    <div style={{ fontSize: 14, color: "#475569" }}>Waiting for live over data…</div>
+                </div>
+            )}
+
+            {/* ── NEXT UP ── */}
+            {nextSeg && (
+                <div style={{ marginTop: 12 }}>
+                    <NextCard seg={nextSeg} />
+                </div>
+            )}
+
+            {/* ── PAST OVERS — compact list ── */}
+            {pastSegs.length > 0 && (
+                <div style={{ marginTop: 16 }}>
+                    <div style={{ fontSize: 10, color: "#334155", fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>PAST OVERS</div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                        {[...pastSegs].reverse().map((seg, i) => <PastRow key={i} seg={seg} />)}
+                    </div>
+                </div>
+            )}
 
             {/* Footer */}
-            <div style={{ marginTop: 18, padding: "10px 14px", background: "rgba(255,255,255,0.02)", borderRadius: 10, border: "1px solid #1E293B" }}>
+            <div style={{ marginTop: 16, padding: "10px 14px", background: "rgba(255,255,255,0.02)", borderRadius: 10, border: "1px solid #1E293B" }}>
                 <div style={{ fontSize: 10, color: "#334155", lineHeight: 1.7 }}>
                     Based on live match data (runs + wickets per over) and {pred?.venueHistory?.match_count ? `${pred.venueHistory.match_count} historical matches at this ground.` : "historical T20 data."} Updates every 10 seconds.
                 </div>
