@@ -17,6 +17,8 @@ export default function RGFooter() {
                         {[
                             ["/", "Home"],
                             ["/about", "About Us"],
+                            ["/how-it-works", "How It Works"],
+                            ["/faq", "FAQ"],
                             ["/privacy", "Privacy Policy"],
                             ["/terms", "Terms & Conditions"],
                         ].map(([href, label]) => (
