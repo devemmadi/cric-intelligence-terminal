@@ -561,7 +561,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                 {(selectedMatch || pred) && (
                     <>
                         {/* Match header — uses selectedMatch immediately, falls back to pred */}
-                        <div style={{ background: `linear-gradient(135deg, ${getTeamColor(pred?.team1 || selectedMatch?.t1)}22 0%, #1a2760 40%, #253580 60%, ${getTeamColor(pred?.team2 || selectedMatch?.t2)}22 100%)`, padding: "16px 24px 20px", position: "sticky", top: 0, zIndex: 100, color: "#fff", borderBottom: `1px solid rgba(255,255,255,0.08)` }}>
+                        <div style={{ background: `linear-gradient(135deg, ${getTeamColor(pred?.team1 || selectedMatch?.t1)}22 0%, #1a2760 40%, #253580 60%, ${getTeamColor(pred?.team2 || selectedMatch?.t2)}22 100%)`, padding: "16px 24px 20px", position: "sticky", top: 54, zIndex: 10, color: "#fff", borderBottom: `1px solid rgba(255,255,255,0.08)` }}>
                             {/* Thin loading bar at top */}
                             {isPredLoading && (
                                 <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
@@ -797,7 +797,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 </div>
 
                                 {/* Right column: scorecard + win prob */}
-                                <div style={{ position: "sticky", top: 80, display: "flex", flexDirection: "column", gap: 14 }}>
+                                <div style={{ position: "sticky", top: 54, display: "flex", flexDirection: "column", gap: 14 }}>
                                     {pred.batters && pred.batters.length > 0 && (
                                         <LiveScorecard batters={pred.batters} bowler={pred.bowler || {}} />
                                     )}
