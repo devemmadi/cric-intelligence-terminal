@@ -184,58 +184,58 @@ function NextOverIntelligence({ pred }) {
 function LiveScorecard({ batters, bowler }) {
     if (!batters || batters.length === 0) return null;
     return (
-        <div style={{ background: "#0F172A", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflow: "hidden" }}>
+        <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
 
             {/* Header */}
-            <div style={{ padding: "10px 16px", display: "flex", alignItems: "center", gap: 8, borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+            <div style={{ padding: "10px 16px", display: "flex", alignItems: "center", gap: 8, background: "#F8FAFC", borderBottom: "1px solid #E2E8F0" }}>
                 <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#EF4444", display: "inline-block", animation: "pulse 1.5s infinite", flexShrink: 0 }} />
-                <span style={{ fontSize: 11, fontWeight: 800, color: "#94A3B8", letterSpacing: 1.5 }}>LIVE SCORECARD</span>
+                <span style={{ fontSize: 11, fontWeight: 800, color: "#475569", letterSpacing: 1.5 }}>LIVE SCORECARD</span>
             </div>
 
             {/* Batters */}
             <div style={{ padding: "10px 14px 8px" }}>
                 {/* Column headers */}
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 40px 40px 56px", gap: 4, marginBottom: 4, padding: "0 6px" }}>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: "#334155", letterSpacing: 1 }}>BATTER</span>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: "#334155", textAlign: "right" }}>R</span>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: "#334155", textAlign: "right" }}>B</span>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: "#334155", textAlign: "right" }}>SR</span>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 44px 44px 58px", gap: 4, marginBottom: 2, padding: "0 10px" }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1 }}>BATTER</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textAlign: "right" }}>R</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textAlign: "right" }}>B</span>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textAlign: "right" }}>SR</span>
                 </div>
 
                 {batters.map((b, i) => {
                     const sr = b.sr ? Math.round(b.sr) : 0;
-                    const srColor = sr >= 180 ? "#4ADE80" : sr >= 150 ? "#22C55E" : sr >= 120 ? "#F59E0B" : sr >= 80 ? "#94A3B8" : "#EF4444";
-                    const srBg   = sr >= 150 ? "rgba(34,197,94,0.15)" : sr >= 120 ? "rgba(245,158,11,0.15)" : sr < 80 ? "rgba(239,68,68,0.12)" : "rgba(255,255,255,0.05)";
+                    const srColor = sr >= 180 ? "#15803D" : sr >= 150 ? "#16A34A" : sr >= 120 ? "#B45309" : sr >= 80 ? "#64748B" : "#DC2626";
+                    const srBg   = sr >= 150 ? "#DCFCE7" : sr >= 120 ? "#FEF3C7" : sr < 80 ? "#FEE2E2" : "#F1F5F9";
                     return (
                         <div key={i} style={{
-                            display: "grid", gridTemplateColumns: "1fr 40px 40px 56px", gap: 4,
-                            padding: "10px 6px", borderRadius: 10, marginBottom: 4, alignItems: "center",
-                            background: b.isStriker ? "rgba(255,255,255,0.06)" : "transparent",
+                            display: "grid", gridTemplateColumns: "1fr 44px 44px 58px", gap: 4,
+                            padding: "10px 10px", borderRadius: 10, marginBottom: 2, alignItems: "center",
+                            background: b.isStriker ? "#F0FDF4" : "transparent",
                             borderLeft: b.isStriker ? "3px solid #22C55E" : "3px solid transparent",
                         }}>
                             {/* Name */}
                             <div>
-                                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 2 }}>
-                                    {b.isStriker && <span style={{ fontSize: 8, color: "#22C55E", fontWeight: 900 }}>▶</span>}
-                                    <span style={{ fontSize: 14, fontWeight: b.isStriker ? 800 : 600, color: b.isStriker ? "#FFFFFF" : "#64748B", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 110 }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                                    {b.isStriker && <span style={{ fontSize: 9, color: "#16A34A", fontWeight: 900 }}>▶</span>}
+                                    <span style={{ fontSize: 14, fontWeight: b.isStriker ? 800 : 500, color: b.isStriker ? "#0F172A" : "#94A3B8", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 110 }}>
                                         {b.name}
                                     </span>
                                 </div>
                                 {b.isStriker && (
-                                    <span style={{ fontSize: 9, fontWeight: 700, color: "#22C55E", letterSpacing: 0.8 }}>ON STRIKE</span>
+                                    <span style={{ fontSize: 9, fontWeight: 700, color: "#16A34A", letterSpacing: 0.6, marginLeft: 14 }}>on strike</span>
                                 )}
                             </div>
-                            {/* Runs — biggest number */}
-                            <span style={{ fontSize: 20, fontWeight: 900, color: "#FFFFFF", textAlign: "right", lineHeight: 1 }}>
+                            {/* Runs */}
+                            <span style={{ fontSize: 22, fontWeight: 900, color: b.isStriker ? "#0F172A" : "#94A3B8", textAlign: "right", lineHeight: 1 }}>
                                 {b.runs ?? 0}
                             </span>
                             {/* Balls */}
-                            <span style={{ fontSize: 13, fontWeight: 600, color: "#64748B", textAlign: "right" }}>
+                            <span style={{ fontSize: 13, fontWeight: 500, color: "#94A3B8", textAlign: "right" }}>
                                 {b.balls ?? 0}
                             </span>
                             {/* SR badge */}
                             <div style={{ textAlign: "right" }}>
-                                <span style={{ fontSize: 13, fontWeight: 800, color: srColor, background: srBg, padding: "3px 7px", borderRadius: 7, display: "inline-block" }}>
+                                <span style={{ fontSize: 12, fontWeight: 800, color: srColor, background: srBg, padding: "3px 8px", borderRadius: 20, display: "inline-block" }}>
                                     {sr}
                                 </span>
                             </div>
@@ -245,36 +245,36 @@ function LiveScorecard({ batters, bowler }) {
             </div>
 
             {/* Divider */}
-            <div style={{ height: 1, background: "rgba(255,255,255,0.06)", margin: "0 14px" }} />
+            <div style={{ height: 1, background: "#F1F5F9", margin: "0 14px" }} />
 
             {/* Bowler */}
             {bowler && bowler.name && (
                 <div style={{ padding: "10px 14px 12px" }}>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 36px 36px 30px 50px", gap: 4, marginBottom: 4, padding: "0 6px" }}>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: "#334155", letterSpacing: 1 }}>BOWLER</span>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: "#334155", textAlign: "right" }}>O</span>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: "#334155", textAlign: "right" }}>R</span>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: "#334155", textAlign: "right" }}>W</span>
-                        <span style={{ fontSize: 10, fontWeight: 700, color: "#334155", textAlign: "right" }}>ECO</span>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 38px 38px 32px 52px", gap: 4, marginBottom: 2, padding: "0 10px" }}>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", letterSpacing: 1 }}>BOWLER</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textAlign: "right" }}>O</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textAlign: "right" }}>R</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textAlign: "right" }}>W</span>
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "#94A3B8", textAlign: "right" }}>ECO</span>
                     </div>
                     <div style={{
-                        display: "grid", gridTemplateColumns: "1fr 36px 36px 30px 50px", gap: 4,
-                        padding: "10px 6px", borderRadius: 10, background: "rgba(245,158,11,0.07)",
+                        display: "grid", gridTemplateColumns: "1fr 38px 38px 32px 52px", gap: 4,
+                        padding: "10px 10px", borderRadius: 10, background: "#FFFBEB",
                         borderLeft: "3px solid #F59E0B", alignItems: "center",
                     }}>
                         <div>
-                            <div style={{ fontSize: 14, fontWeight: 700, color: "#FFFFFF", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 110, marginBottom: 2 }}>{bowler.name}</div>
-                            <span style={{ fontSize: 9, fontWeight: 700, color: "#F59E0B", letterSpacing: 0.8 }}>BOWLING</span>
+                            <div style={{ fontSize: 14, fontWeight: 700, color: "#0F172A", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: 110, marginBottom: 2 }}>{bowler.name}</div>
+                            <span style={{ fontSize: 9, fontWeight: 700, color: "#D97706", letterSpacing: 0.6 }}>bowling</span>
                         </div>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: "#94A3B8", textAlign: "right" }}>{bowler.overs ?? 0}</span>
-                        <span style={{ fontSize: 13, fontWeight: 600, color: "#94A3B8", textAlign: "right" }}>{bowler.runs ?? 0}</span>
-                        <span style={{ fontSize: 20, fontWeight: 900, textAlign: "right", color: (bowler.wickets ?? 0) > 0 ? "#22C55E" : "#64748B" }}>{bowler.wickets ?? 0}</span>
+                        <span style={{ fontSize: 13, fontWeight: 500, color: "#64748B", textAlign: "right" }}>{bowler.overs ?? 0}</span>
+                        <span style={{ fontSize: 13, fontWeight: 500, color: "#64748B", textAlign: "right" }}>{bowler.runs ?? 0}</span>
+                        <span style={{ fontSize: 22, fontWeight: 900, textAlign: "right", color: (bowler.wickets ?? 0) > 0 ? "#16A34A" : "#94A3B8" }}>{bowler.wickets ?? 0}</span>
                         <div style={{ textAlign: "right" }}>
                             {(() => {
                                 const eco = bowler.economy;
-                                const eColor = eco <= 6 ? "#22C55E" : eco <= 9 ? "#F59E0B" : "#EF4444";
-                                const eBg   = eco <= 6 ? "rgba(34,197,94,0.15)" : eco <= 9 ? "rgba(245,158,11,0.15)" : "rgba(239,68,68,0.12)";
-                                return <span style={{ fontSize: 13, fontWeight: 800, color: eColor, background: eBg, padding: "3px 7px", borderRadius: 7, display: "inline-block" }}>{eco ? eco.toFixed(1) : "0.0"}</span>;
+                                const eColor = eco <= 6 ? "#15803D" : eco <= 9 ? "#B45309" : "#DC2626";
+                                const eBg   = eco <= 6 ? "#DCFCE7" : eco <= 9 ? "#FEF3C7" : "#FEE2E2";
+                                return <span style={{ fontSize: 12, fontWeight: 800, color: eColor, background: eBg, padding: "3px 8px", borderRadius: 20, display: "inline-block" }}>{eco ? eco.toFixed(1) : "0.0"}</span>;
                             })()}
                         </div>
                     </div>
