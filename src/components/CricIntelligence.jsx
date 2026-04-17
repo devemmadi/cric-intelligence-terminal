@@ -86,13 +86,13 @@ export default function CricIntelligence() {
                     <div style={{ position: "relative" }}>
                         <button
                             className={`tab-btn ${["pitch","record","media","odds"].includes(activeTab) ? "on" : ""}`}
-                            onClick={() => setMoreOpen(o => !o)}
+                            onClick={(e) => { e.stopPropagation(); setMoreOpen(o => !o); }}
                             style={{ gap: 4 }}>
                             <span>More</span>
                             <span style={{ fontSize: 9, opacity: 0.7 }}>{moreOpen ? "▲" : "▼"}</span>
                         </button>
                         {moreOpen && (
-                            <div style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, background: "#1E2D6B", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10, overflow: "hidden", zIndex: 200, minWidth: 140, boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
+                            <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, background: "#1E2D6B", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10, overflow: "hidden", zIndex: 200, minWidth: 140, boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
                                 {[["pitch", "🏟️", "Pitch Analysis"], ["record", "📊", "Track Record"], ["media", "📰", "Media"], ["odds", "🎲", "Odds"]].map(([k, icon, label]) => (
                                     <button key={k}
                                         onClick={() => { if (k === "odds") { window.location.href = "/odds"; } else { setActiveTab(k); setMoreOpen(false); } }}
