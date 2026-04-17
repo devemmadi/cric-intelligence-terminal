@@ -144,7 +144,7 @@ function inferBehaviour(seg, allSegs, detr, dew, humidity, trendSlope, matchAvgR
     const { actualRPO, actualWkts, oversPlayed, i } = seg;
 
     // ── CASE 1: Actual data exists for this segment ───────────────────────────
-    if (oversPlayed >= 2) {
+    if (oversPlayed >= 1) {
         const wPerOv = (actualWkts ?? 0) / oversPlayed;
         const rpo    = actualRPO ?? 0;
         const prevSeg = i > 0 ? allSegs[i - 1] : null;
@@ -155,23 +155,31 @@ function inferBehaviour(seg, allSegs, detr, dew, humidity, trendSlope, matchAvgR
         if (i >= 3 && dew < 0.92 && rpoVsPrev > 1.5) return "DEW_FACTOR";
 
         // Spin lethal: middle overs, scoring collapsed + wickets clustering
-        if (i >= 2 && wPerOv >= 0.6 && rpo < 6.0) return "SPIN_LETHAL";
+        if (i >= 2 && wPerOv >= 0.5 && rpo < 6.0) return "SPIN_LETHAL";
 
         // Spin gripping: middle overs, below avg + wickets
-        if (i >= 2 && wPerOv >= 0.35 && matchAvgRPO !== null && rpo < matchAvgRPO - 1.5) return "SPIN_GRIP";
-        if (i >= 2 && wPerOv >= 0.4 && rpo < 7.5) return "SPIN_GRIP";
+        if (i >= 2 && wPerOv >= 0.30 && matchAvgRPO !== null && rpo < matchAvgRPO - 1.5) return "SPIN_GRIP";
+        if (i >= 2 && wPerOv >= 0.35 && rpo < 7.5) return "SPIN_GRIP";
+        // Middle overs very low scoring even without many wickets = spin gripping
+        if (i >= 2 && rpo < 6.0) return "SPIN_GRIP";
 
         // Seam / swing: powerplay, wickets, low scoring
-        if (i <= 1 && wPerOv >= 0.5 && rpo < 6.5) return "SEAM_SWING";
-        if (i <= 1 && wPerOv >= 0.35 && rpo < 7.5) return "SEAM_BOUNCE";
+        if (i <= 1 && wPerOv >= 0.4 && rpo < 6.5) return "SEAM_SWING";
+        if (i <= 1 && wPerOv >= 0.30 && rpo < 7.5) return "SEAM_BOUNCE";
+        // Powerplay very low even without many wickets
+        if (i <= 1 && rpo < 5.5) return "SEAM_SWING";
 
         // Pitch wearing: RPO drop between segments + detr climbing
         if (rpoVsPrev < -2.0 && detr >= 1.08) return "PITCH_WEARING";
 
         // Surface flattening: RPO climbed vs prev, or high absolute scoring
         if (rpoVsPrev > 1.5) return "SURFACE_FLAT";
-        if (rpo >= 10.0)     return "SURFACE_FLAT";
+        if (rpo >= 9.5)      return "SURFACE_FLAT";
 
+        // Still have some data — use current scoring pace to decide
+        if (rpo >= 8.5)      return "SURFACE_FLAT";
+        if (rpo <= 6.5 && i >= 2) return "SPIN_GRIP";
+        if (rpo <= 7.0 && i <= 1) return "SEAM_BOUNCE";
         return "CONTESTED";
     }
 
@@ -179,6 +187,7 @@ function inferBehaviour(seg, allSegs, detr, dew, humidity, trendSlope, matchAvgR
     // Sources (all dynamic, no static tables):
     //   trendSlope   = LSQ RPO change per segment from actual overHistory
     //   avgWktsPerOv = actual match wicket rate
+    //   crr / last3RPO = live match run rates
     //   detr         = computed from overs bowled
     //   dew          = computed from humidity + over number
     //   venueSegs    = historical avg per segment from 7500+ T20 matches at this venue
@@ -189,31 +198,41 @@ function inferBehaviour(seg, allSegs, detr, dew, humidity, trendSlope, matchAvgR
     const vWkts   = vSeg?.avg_wickets ?? null;
     const vCount  = vSeg?.count       ?? 0;
 
+    // Use live match run rate as a primary signal — it reflects actual current conditions
+    const livePace = last3RPO ?? crr ?? null;
+
     // DEW: dew is computed from live humidity + over number
     if (i >= 3 && dew < 0.88) return "DEW_FACTOR";
     if (i === 4 && dew < 0.93 && humidity > 72) return "DEW_FACTOR";
 
-    // SPIN: live trend + detr. Confirm with venue history if available
-    if (i >= 2 && trendSlope < -2.0 && detr >= 1.10) return "SPIN_LETHAL";
-    if (i >= 2 && trendSlope < -1.2 && detr >= 1.06) return "SPIN_GRIP";
-    // Venue historically low-scoring in middle + detr present = spin confirmed
-    if (i >= 2 && detr >= 1.12 && vRPO !== null && vCount >= 10 && vRPO < 7.5) return "SPIN_GRIP";
-    if (i >= 2 && detr >= 1.20) return "SPIN_LETHAL";
-    if (i >= 2 && detr >= 1.10) return "SPIN_GRIP";
-
-    // SURFACE FLAT: high match avg OR venue historically high-scoring here
-    if (matchAvgRPO !== null && matchAvgRPO >= 9.5) return "SURFACE_FLAT";
+    // SURFACE FLAT: live pace is high, or match avg already high
+    if (livePace !== null && livePace >= 10.0) return "SURFACE_FLAT";
+    if (matchAvgRPO !== null && matchAvgRPO >= 9.0) return "SURFACE_FLAT";
     if (trendSlope > 1.5) return "SURFACE_FLAT";
     if (vRPO !== null && vCount >= 10 && vRPO >= 10.0 && i >= 3) return "SURFACE_FLAT";
 
-    // SEAM: early overs, elevated actual wicket rate + low scoring
-    if (i <= 1 && avgWktsPerOv >= 0.45 && (last3RPO ?? crr ?? 8) < 7.0) return "SEAM_SWING";
-    if (i <= 1 && avgWktsPerOv >= 0.30 && (last3RPO ?? crr ?? 8) < 8.0) return "SEAM_BOUNCE";
-    // Venue historically seam-friendly in PP
+    // SEAM: early overs, live pace is low + wickets falling
+    if (i <= 1 && avgWktsPerOv >= 0.40 && livePace !== null && livePace < 7.0) return "SEAM_SWING";
+    if (i <= 1 && avgWktsPerOv >= 0.25 && livePace !== null && livePace < 8.0) return "SEAM_BOUNCE";
+    if (i <= 1 && livePace !== null && livePace < 6.0) return "SEAM_SWING"; // very low early = seam
     if (i <= 1 && vWkts !== null && vCount >= 10 && vWkts >= 2.2) return "SEAM_SWING";
+
+    // SPIN: middle/death + live pace dropping
+    if (i >= 2 && trendSlope < -2.0 && detr >= 1.10) return "SPIN_LETHAL";
+    if (i >= 2 && trendSlope < -1.2 && detr >= 1.06) return "SPIN_GRIP";
+    if (i >= 2 && detr >= 1.12 && vRPO !== null && vCount >= 10 && vRPO < 7.5) return "SPIN_GRIP";
+    if (i >= 2 && detr >= 1.20) return "SPIN_LETHAL";
+    if (i >= 2 && detr >= 1.10) return "SPIN_GRIP";
+    // Middle overs + live pace is low = spin gripping
+    if (i >= 2 && livePace !== null && livePace < 7.0 && avgWktsPerOv >= 0.20) return "SPIN_GRIP";
+    if (i >= 2 && livePace !== null && livePace < 6.5) return "SPIN_GRIP";
 
     // PITCH WEARING: detr + RPO declining
     if (detr >= 1.12 && trendSlope < -0.8) return "PITCH_WEARING";
+
+    // Last resort: if we have a live pace signal, use it to avoid CONTESTED
+    if (livePace !== null && livePace >= 8.5) return "SURFACE_FLAT";
+    if (matchAvgRPO !== null && matchAvgRPO >= 8.0) return "SURFACE_FLAT";
 
     return "CONTESTED";
 }
