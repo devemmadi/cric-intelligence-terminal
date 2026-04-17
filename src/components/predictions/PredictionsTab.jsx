@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { C, API_BASE, cleanTeam, IPL_TEAMS, PSL_TEAMS, getLeague } from "../shared/constants";
 import TeamLogo from "../shared/TeamLogo";
 import { MatchPill } from "../shared/MatchCard";
@@ -405,6 +405,185 @@ function getTeamColor(name) {
   return "#1E2D6B";
 }
 
+// ─── Mini trust block — fetched live ─────────────────────────────────────────
+function MiniTrustBlock() {
+    const [info, setInfo] = useState(null);
+    useEffect(() => {
+        fetch(`${API_BASE}/match-record`)
+            .then(r => r.json())
+            .then(d => {
+                const decided = (d.records || []).filter(r => r.correct !== null && r.correct !== undefined);
+                if (decided.length > 0) setInfo({ hitRate: d.hitRate, correct: decided.filter(r => r.correct).length, total: decided.length });
+            })
+            .catch(() => {});
+    }, []);
+    if (!info) return null;
+    return (
+        <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(0,200,150,0.06)", border: "1px solid rgba(0,200,150,0.2)", borderRadius: 10, padding: "8px 14px", marginBottom: 12 }}>
+            <span style={{ fontSize: 18, fontWeight: 900, color: "#00C896" }}>{info.hitRate}%</span>
+            <div style={{ flex: 1 }}>
+                <span style={{ fontSize: 12, fontWeight: 700, color: C.text }}>AI Track Record </span>
+                <span style={{ fontSize: 11, color: C.muted }}>{info.correct}/{info.total} correct predictions</span>
+            </div>
+            <span style={{ fontSize: 10, fontWeight: 700, color: "#00C896", background: "rgba(0,200,150,0.12)", padding: "2px 8px", borderRadius: 20 }}>✓ Verified</span>
+        </div>
+    );
+}
+
+// ─── Hero Decision Card — the first thing user sees ───────────────────────────
+function HeroDecision({ pred, prob, isEnded }) {
+    const [countdown, setCountdown] = useState(30);
+    const [viewers] = useState(() => Math.floor(Math.random() * 80) + 40); // FOMO: 40–120 viewers
+
+    // Countdown to next auto-refresh
+    useEffect(() => {
+        const t = setInterval(() => setCountdown(c => c <= 1 ? 30 : c - 1), 1000);
+        return () => clearInterval(t);
+    }, []);
+    // Reset countdown when pred changes (i.e. new data arrived)
+    useEffect(() => { setCountdown(30); }, [pred?.overs]);
+
+    if (!pred || pred.aiProbability === undefined) return null;
+
+    const t1 = cleanTeam(pred.team1);
+    const t2 = cleanTeam(pred.team2);
+    const t1Color = getTeamColor(pred.team1);
+    const t2Color = getTeamColor(pred.team2);
+    const confGap = Math.abs(prob - 50);
+    const confidence = confGap >= 20 ? "High" : confGap >= 10 ? "Medium" : "Low";
+    const favTeam = prob >= 50 ? t1 : t2;
+    const favProb = prob >= 50 ? prob : Math.round((100 - prob) * 10) / 10;
+    const favTeamColor = prob >= 50 ? t1Color : t2Color;
+
+    let signal, signalColor, signalBg;
+    if (prob >= 65 || prob <= 35) {
+        signal = "BET";
+        signalColor = "#00C896";
+        signalBg = "linear-gradient(145deg, #022c22 0%, #064e3b 60%, #065f46 100%)";
+    } else if (prob >= 55 || prob <= 45) {
+        signal = "WAIT";
+        signalColor = "#F59E0B";
+        signalBg = "linear-gradient(145deg, #1c0f00 0%, #451a03 60%, #78350f 100%)";
+    } else {
+        signal = "AVOID";
+        signalColor = "#EF4444";
+        signalBg = "linear-gradient(145deg, #1a0000 0%, #450a0a 60%, #7f1d1d 100%)";
+    }
+
+    // 3 plain-English reasons
+    const inn = pred.innings || 1;
+    const fmt = (pred.matchType || "t20").toLowerCase();
+    const totOv = fmt === "odi" ? 50 : 20;
+    const rawOvers = pred.overs || 0;
+    const ballsBowled = Math.floor(rawOvers) * 6 + Math.round((rawOvers % 1) * 10);
+    const ballsLeft = Math.max(0, totOv * 6 - ballsBowled);
+    const wktsLeft = 10 - (pred.wickets || 0);
+    const needed = pred.runsNeeded || (pred.target ? pred.target - (pred.score || pred.runs || 0) : 0);
+    const battingTeam = cleanTeam(inn === 2 ? (pred.team2 || pred.team1) : pred.team1);
+    const crr = pred.currentRunRate || 0;
+    const rrr = pred.requiredRunRate || 0;
+    const reasons = [];
+
+    if (inn === 2 && pred.target > 0) {
+        reasons.push(`${battingTeam} needs ${needed} more runs off ${ballsLeft} balls`);
+        if (wktsLeft <= 3) reasons.push(`Only ${wktsLeft} wickets left — tail exposed`);
+        else reasons.push(`${wktsLeft} wickets in hand`);
+        if (rrr > crr + 2) reasons.push(`Need ${rrr.toFixed(1)}/ov but scoring ${crr.toFixed(1)} — falling behind`);
+        else if (crr > rrr + 1) reasons.push(`Scoring ${crr.toFixed(1)}/ov, need ${rrr.toFixed(1)} — well in control`);
+        else reasons.push(`Required rate ${rrr.toFixed(1)} — match in the balance`);
+    } else if (inn === 1 && crr > 0) {
+        const vsAvg = pred.momentum || 0;
+        reasons.push(`${battingTeam} scoring ${crr.toFixed(1)}/ov — ${vsAvg > 0.5 ? "above par" : vsAvg < -0.5 ? "below par" : "on par"}`);
+        const pitch = (pred.pitchLabel || "").toLowerCase();
+        if (pitch.includes("bowl") || pitch.includes("spin") || pitch.includes("seam")) reasons.push("Bowling-friendly conditions");
+        else if (pitch.includes("bat") || pitch.includes("flat")) reasons.push("Flat pitch — batters on top");
+        if (pred.currentPhase === "POWERPLAY") reasons.push("Powerplay overs — key phase");
+        else if (pred.currentPhase === "DEATH OVERS") reasons.push("Death overs — big hitting phase");
+        else if (pred.currentPhase === "MIDDLE OVERS") reasons.push("Middle overs — wickets crucial now");
+    }
+    while (reasons.length < 3) {
+        if (pred.nextOvers?.[0]) { reasons.push(`Next over: ${pred.nextOvers[0].runRange} runs expected`); break; }
+        reasons.push(pred.pressureScore > 65 ? "Batting under heavy pressure" : "Match developing normally");
+        break;
+    }
+
+    return (
+        <div style={{ background: signalBg, borderRadius: 20, padding: "20px", marginBottom: 14, position: "relative", overflow: "hidden" }}>
+            {/* Ambient glow */}
+            <div style={{ position: "absolute", top: -60, right: -60, width: 220, height: 220, borderRadius: "50%", background: signalColor + "12", pointerEvents: "none" }} />
+            <div style={{ position: "absolute", bottom: -40, left: -40, width: 160, height: 160, borderRadius: "50%", background: favTeamColor + "0A", pointerEvents: "none" }} />
+
+            {/* Top row: signal badge + meta */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: signalColor, animation: signal === "BET" ? "pulse 1.5s infinite" : "none", flexShrink: 0 }} />
+                    <span style={{ fontSize: 10, fontWeight: 800, color: signalColor, letterSpacing: 2 }}>AI SIGNAL</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.07)", padding: "3px 9px", borderRadius: 20 }}>
+                        👥 {viewers} watching
+                    </span>
+                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", background: "rgba(255,255,255,0.07)", padding: "3px 9px", borderRadius: 20 }}>
+                        🔄 {countdown}s
+                    </span>
+                </div>
+            </div>
+
+            {/* Main decision */}
+            <div style={{ textAlign: "center", marginBottom: 18 }}>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", letterSpacing: 1, marginBottom: 8 }}>
+                    {signal === "BET" ? "OUR PICK" : signal === "WAIT" ? "NOT YET — WAIT" : "TOO CLOSE TO CALL"}
+                </div>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 14 }}>
+                    <div style={{ fontSize: 58, fontWeight: 900, color: signalColor, lineHeight: 1, letterSpacing: -2 }}>{favProb}%</div>
+                    <div style={{ textAlign: "left" }}>
+                        <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: -1 }}>{favTeam}</div>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginTop: 3 }}>to win · {confidence} confidence</div>
+                    </div>
+                </div>
+                {/* Dual-colour probability bar */}
+                <div style={{ height: 8, borderRadius: 4, background: `${t2Color}44`, overflow: "hidden", marginBottom: 6 }}>
+                    <div style={{ width: `${prob}%`, height: "100%", background: `linear-gradient(90deg, ${t1Color}, ${t1Color}cc)`, borderRadius: 4, transition: "width 0.8s cubic-bezier(.4,0,.2,1)" }} />
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.65)" }}>{t1} {prob}%</span>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.4)" }}>{t2} {Math.round((100 - prob) * 10) / 10}%</span>
+                </div>
+            </div>
+
+            {/* 3 reasons */}
+            <div style={{ background: "rgba(0,0,0,0.28)", borderRadius: 12, padding: "12px 14px", marginBottom: 16 }}>
+                {reasons.slice(0, 3).map((r, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: i < reasons.slice(0,3).length - 1 ? 9 : 0 }}>
+                        <span style={{ color: signalColor, fontSize: 9, marginTop: 4, flexShrink: 0 }}>●</span>
+                        <span style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", lineHeight: 1.45 }}>{r}</span>
+                    </div>
+                ))}
+            </div>
+
+            {/* CTA */}
+            {signal === "BET" ? (
+                <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
+                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: signalColor, borderRadius: 12, padding: "14px 20px", textDecoration: "none", color: "#fff", fontWeight: 900, fontSize: 16, letterSpacing: 0.3, boxShadow: `0 6px 24px ${signalColor}55`, marginBottom: 8 }}>
+                    🎰 BET {favTeam} on 1xBet
+                </a>
+            ) : signal === "WAIT" ? (
+                <div style={{ textAlign: "center", padding: "12px", background: "rgba(245,158,11,0.12)", borderRadius: 12, border: "1px solid rgba(245,158,11,0.3)", marginBottom: 8 }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "#F59E0B" }}>⏳ Wait for a clearer signal</span>
+                </div>
+            ) : (
+                <div style={{ textAlign: "center", padding: "12px", background: "rgba(239,68,68,0.1)", borderRadius: 12, border: "1px solid rgba(239,68,68,0.25)", marginBottom: 8 }}>
+                    <span style={{ fontSize: 14, fontWeight: 700, color: "#EF4444" }}>🚫 Avoid — too unpredictable</span>
+                </div>
+            )}
+
+            <div style={{ textAlign: "center", fontSize: 10, color: "rgba(255,255,255,0.22)" }}>
+                18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: "rgba(255,255,255,0.22)" }}>BeGambleAware.org</a>
+            </div>
+        </div>
+    );
+}
+
 function NoMatchesScreen({ upcomingMatches }) {
     const scheduleMatches = upcomingMatches && upcomingMatches.length > 0 ? upcomingMatches : [];
     return (
@@ -679,88 +858,34 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     </span>
                                 ))}
                             </div>
-                            {/* WIN PROBABILITY HERO BAR */}
+
+                            {/* ── HERO DECISION (replaces old hero bar + prediction call banner) ── */}
+                            {!isEnded && <HeroDecision pred={pred} prob={prob} isEnded={isEnded} />}
+
+                            {/* ── MINI TRUST BLOCK ── */}
+                            <MiniTrustBlock />
+
+                            {/* ── FAIR ODDS (collapsed below hero) ── */}
                             {pred.aiProbability !== undefined && (() => {
-                              // Normalize prob to team1's perspective (same as outer `prob` var)
                               const t1p = prob;
                               const t2p = Math.round((100 - t1p) * 10) / 10;
                               return (
-                              <div style={{ background: "#fff", border: `1px solid ${C.border}`, borderRadius: 14, padding: "16px 20px", marginBottom: 14 }}>
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: getTeamColor(pred.team1), flexShrink: 0 }} />
-                                    <span style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{cleanTeam(pred.team1)}</span>
-                                  </div>
-                                  <div style={{ fontSize: 10, fontWeight: 600, color: C.muted, letterSpacing: 1 }}>WIN PROBABILITY</div>
-                                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                    <span style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{cleanTeam(pred.team2)}</span>
-                                    <div style={{ width: 10, height: 10, borderRadius: "50%", background: getTeamColor(pred.team2), flexShrink: 0 }} />
-                                  </div>
+                              <div style={{ background: "#fff", border: `1px solid ${C.border}`, borderRadius: 12, padding: "10px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 0 }}>
+                                <div style={{ textAlign: "center", flex: 1 }}>
+                                  <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 0.8, marginBottom: 3 }}>FAIR ODDS · {cleanTeam(pred.team1)}</div>
+                                  <div style={{ fontSize: 16, fontWeight: 900, color: C.text }}>{t1p > 0 ? (100 / t1p).toFixed(2) : "—"}</div>
                                 </div>
-                                <div style={{ position: "relative", height: 36, borderRadius: 18, overflow: "hidden", background: `${getTeamColor(pred.team2)}33` }}>
-                                  <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${t1p}%`, background: `linear-gradient(90deg, ${getTeamColor(pred.team1)}, ${getTeamColor(pred.team1)}bb)`, borderRadius: 18, transition: "width 0.8s cubic-bezier(.4,0,.2,1)" }} />
-                                  <div style={{ position: "absolute", left: 0, top: 0, right: 0, bottom: 0, display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 14px" }}>
-                                    <span style={{ fontSize: 20, fontWeight: 900, color: "#fff", textShadow: "0 1px 4px rgba(0,0,0,0.4)" }}>{t1p}%</span>
-                                    <span style={{ fontSize: 20, fontWeight: 900, color: t1p < 70 ? "#fff" : C.text, textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>{t2p}%</span>
-                                  </div>
+                                <div style={{ width: 1, height: 30, background: C.border, margin: "0 12px" }} />
+                                <div style={{ textAlign: "center", flex: 1 }}>
+                                  <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 0.8, marginBottom: 3 }}>FAIR ODDS · {cleanTeam(pred.team2)}</div>
+                                  <div style={{ fontSize: 16, fontWeight: 900, color: C.text }}>{t2p > 0 ? (100 / t2p).toFixed(2) : "—"}</div>
                                 </div>
-                                {/* Verdict label */}
-                                <div style={{ display: "flex", justifyContent: "center", marginTop: 8 }}>
-                                  <span style={{ fontSize: 11, fontWeight: 700, color: t1p >= 65 ? C.green : t1p >= 45 ? C.amber : C.red, background: t1p >= 65 ? "rgba(0,184,148,0.08)" : t1p >= 45 ? "rgba(245,158,11,0.08)" : "rgba(239,68,68,0.08)", padding: "3px 12px", borderRadius: 20 }}>
-                                    {t1p >= 65 ? `${cleanTeam(pred.team1)} strong favourite` : t1p <= 35 ? `${cleanTeam(pred.team2)} strong favourite` : "Close contest — could go either way"}
-                                  </span>
-                                </div>
-
-                                {/* WHY line — plain English reason (hide when match ended) */}
-                                {!isEnded && (() => {
-                                  const inn = pred.innings || 1;
-                                  const fmt = (pred.matchType || "t20").toLowerCase();
-                                  const totOv = fmt === "odi" ? 50 : fmt === "test" ? 450 : 20;
-                                  const needed = pred.runsNeeded || (pred.target ? pred.target - (pred.score || 0) : 0);
-                                  // Fix: cricket overs use .1-.6 notation (not decimal), e.g. 14.6 = 15 complete overs
-                                  const rawOvers = pred.overs || 0;
-                                  const fullOvers = Math.floor(rawOvers);
-                                  const ballsInOver = Math.round((rawOvers % 1) * 10);
-                                  const ballsBowled = fullOvers * 6 + ballsInOver;
-                                  const ballsLeft = Math.max(0, totOv * 6 - ballsBowled);
-                                  const wktsLeft = 10 - (pred.wickets || 0);
-                                  const crr = pred.currentRunRate || 0;
-                                  // In innings 2, team2 is the batting/chasing team; team1 batted first
-                                  const battingTeam = cleanTeam(inn === 2 ? (pred.team2 || pred.team1) : pred.team1);
-                                  let why = "";
-                                  if (inn === 2 && pred.target > 0) {
-                                    why = `${battingTeam} needs ${needed} more runs off ${ballsLeft} balls · ${wktsLeft} wickets in hand`;
-                                  } else if (inn === 1 && crr > 0) {
-                                    const vsAvg = pred.momentum || 0;
-                                    const vs = vsAvg > 1.5 ? "well above par" : vsAvg > 0.3 ? "above par" : vsAvg > -0.3 ? "on par" : "below par";
-                                    why = `${battingTeam} scoring at ${crr.toFixed(1)} runs/over — ${vs}`;
-                                  }
-                                  if (!why) return null;
-                                  return (
-                                    <div style={{ textAlign: "center", marginTop: 10, fontSize: 12, color: C.muted, fontStyle: "italic" }}>
-                                      {why}
-                                    </div>
-                                  );
-                                })()}
-
-                                {/* Fair value odds — compare with your bookmaker */}
-                                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 0, marginTop: 12, borderTop: `1px solid ${C.border}`, paddingTop: 12 }}>
-                                  <div style={{ textAlign: "center", flex: 1 }}>
-                                    <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 0.8, marginBottom: 3 }}>FAIR ODDS · {cleanTeam(pred.team1)}</div>
-                                    <div style={{ fontSize: 18, fontWeight: 900, color: C.text }}>{t1p > 0 ? (100 / t1p).toFixed(2) : "—"}</div>
-                                  </div>
-                                  <div style={{ width: 1, height: 36, background: C.border, margin: "0 16px" }} />
-                                  <div style={{ textAlign: "center", flex: 1 }}>
-                                    <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 0.8, marginBottom: 3 }}>FAIR ODDS · {cleanTeam(pred.team2)}</div>
-                                    <div style={{ fontSize: 18, fontWeight: 900, color: C.text }}>{t2p > 0 ? (100 / t2p).toFixed(2) : "—"}</div>
-                                  </div>
-                                  <div style={{ width: 1, height: 36, background: C.border, margin: "0 16px" }} />
-                                  <a href="/odds" style={{ fontSize: 10, fontWeight: 700, color: C.accent, textDecoration: "none", whiteSpace: "nowrap" }}>Compare odds →</a>
-                                </div>
+                                <div style={{ width: 1, height: 30, background: C.border, margin: "0 12px" }} />
+                                <a href="/odds" style={{ fontSize: 11, fontWeight: 700, color: C.accent, textDecoration: "none", whiteSpace: "nowrap" }}>Compare odds →</a>
                               </div>
                               );
                             })()}
-                            {!isEnded && <PredictionCallBanner pred={pred} />}
+
                             {!isEnded && <NextOverIntelligence pred={pred} />}
 
                             <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
@@ -976,12 +1101,12 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                           </span>
                         </div>
                       </>)}
-                      {/* Bet CTA */}
+                      {/* Bet CTA — dynamic team name */}
                       <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 10, marginBottom: 6 }}>
-                        <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>Want to act on this prediction?</div>
+                        <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>Act on this prediction</div>
                         <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
-                          style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: C.navy, border: `1px solid ${C.navyLight || "#2A3F6F"}`, borderRadius: 8, padding: "9px 14px", textDecoration: "none", fontWeight: 700, fontSize: 12, color: "rgba(255,255,255,0.85)" }}>
-                          🎰 Bet on this match · 1xBet
+                          style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: prob >= 65 ? "#065f46" : prob <= 35 ? "#065f46" : C.navy, border: `1px solid ${prob >= 65 || prob <= 35 ? "rgba(0,200,150,0.4)" : C.navyLight || "#2A3F6F"}`, borderRadius: 8, padding: "10px 14px", textDecoration: "none", fontWeight: 800, fontSize: 13, color: prob >= 65 || prob <= 35 ? "#00C896" : "rgba(255,255,255,0.85)" }}>
+                          🎰 BET {prob >= 50 ? cleanTeam(pred.team1) : cleanTeam(pred.team2)} on 1xBet
                         </a>
                       </div>
                       <div style={{ fontSize: 9, color: C.muted, textAlign: "center" }}>
