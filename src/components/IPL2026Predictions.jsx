@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from "react";
+import React, { useEffect } from "react";
 import Logo from "./Logo";
 import RGFooter from "./RGFooter";
 
@@ -25,9 +25,14 @@ const FAQS = [
 ];
 
 // Set page title
-if (typeof document !== "undefined") document.title = "IPL 2026 Predictions & Win Probability — AI Cricket Analysis | CricIntelligence";
 
 export default function IPL2026Predictions() {
+    useEffect(() => {
+        document.title = "IPL 2026 Predictions & Win Probability — AI Cricket Analysis | CricIntelligence";
+        let el = document.querySelector("link[rel='canonical']");
+        if (!el) { el = document.createElement("link"); el.setAttribute("rel", "canonical"); document.head.appendChild(el); }
+        el.setAttribute("href", "https://www.cricintelligence.com/predictions/ipl-2026");
+    }, []);
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
 

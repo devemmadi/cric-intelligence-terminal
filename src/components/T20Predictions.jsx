@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React from "react";
+import React, { useEffect } from "react";
 import Logo from "./Logo";
 import RGFooter from "./RGFooter";
 
@@ -20,10 +20,14 @@ const T20_LEAGUES = [
     { name: "PSL", country: "🇵🇰", flag: "Pakistan", months: "Feb–Mar 2026", teams: 6, matches: 34, covered: true },
 ];
 
-// Set page title
-if (typeof document !== "undefined") document.title = "T20 Cricket Predictions — AI Over-by-Over Analysis | CricIntelligence";
 
 export default function T20Predictions() {
+    useEffect(() => {
+        document.title = "T20 Cricket Predictions — AI Over-by-Over Analysis | CricIntelligence";
+        let el = document.querySelector("link[rel='canonical']");
+        if (!el) { el = document.createElement("link"); el.setAttribute("rel", "canonical"); document.head.appendChild(el); }
+        el.setAttribute("href", "https://www.cricintelligence.com/predictions/t20-predictions");
+    }, []);
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
             <nav style={{ background: C.navy, padding: "0 24px", height: 54, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 100 }}>

@@ -17,6 +17,11 @@ function setMeta(name, content) {
 
 export default function HowItWorks() {
     useEffect(() => {
+        let el = document.querySelector("link[rel='canonical']");
+        if (!el) { el = document.createElement('link'); el.setAttribute('rel', 'canonical'); document.head.appendChild(el); }
+        el.setAttribute('href', 'https://www.cricintelligence.com/how-it-works');
+    }, []);
+    useEffect(() => {
         document.title = "How CricIntelligence Works — AI Cricket Win Probability Explained";
         setMeta("description", "Learn how CricIntelligence uses machine learning, venue history, pitch data, and live ball-by-ball stats to predict cricket match outcomes in real time.");
     }, []);
