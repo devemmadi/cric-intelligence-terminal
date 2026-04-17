@@ -373,6 +373,201 @@ function PredictionCallBanner({ pred }) {
 }
 
 
+// ─── Batter Score Prediction Card ────────────────────────────────────────────
+function BatterAnalysisCard({ analysis }) {
+    if (!analysis || analysis.length === 0) return null;
+    return (
+        <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, overflow: "hidden", marginBottom: 14 }}>
+            <div style={{ padding: "10px 16px", background: "#0F172A", display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 14 }}>🏏</span>
+                <span style={{ fontSize: 11, fontWeight: 800, color: "#fff", letterSpacing: 1.5 }}>BATTER SCORE PREDICTION</span>
+                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginLeft: "auto" }}>Career stats + live form</span>
+            </div>
+            <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", gap: 10 }}>
+                {analysis.map((b, i) => {
+                    const prob20 = b.prob20plus || 0;
+                    const prob50 = b.prob50plus || 0;
+                    const verdict = b.verdict || "";
+                    const isStriker = b.isStriker;
+                    const verdictColor = verdict.toLowerCase().includes("danger") ? "#ef4444"
+                        : verdict.toLowerCase().includes("caution") || verdict.toLowerCase().includes("cautious") || verdict.toLowerCase().includes("slow") ? "#f59e0b"
+                        : verdict.toLowerCase().includes("attack") || verdict.toLowerCase().includes("fire") || verdict.toLowerCase().includes("big") ? "#22c55e"
+                        : "#60a5fa";
+                    return (
+                        <div key={i} style={{
+                            borderRadius: 12, padding: "12px 14px",
+                            background: isStriker ? "#F0FDF4" : "#F8FAFC",
+                            border: isStriker ? "1.5px solid #22C55E" : "1px solid #E2E8F0",
+                        }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                                <div>
+                                    <span style={{ fontSize: 13, fontWeight: 800, color: "#0F172A" }}>{b.name}</span>
+                                    {isStriker && <span style={{ fontSize: 9, color: "#16A34A", fontWeight: 700, marginLeft: 6 }}>ON STRIKE</span>}
+                                    <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>
+                                        {b.runs ?? 0}({b.balls ?? 0}) · Exp +{b.expectedMore ?? 0} more
+                                    </div>
+                                </div>
+                                <span style={{ fontSize: 11, fontWeight: 800, color: verdictColor, background: verdictColor + "18",
+                                    padding: "4px 10px", borderRadius: 20, flexShrink: 0 }}>
+                                    {verdict}
+                                </span>
+                            </div>
+                            <div style={{ display: "flex", gap: 8 }}>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 3, letterSpacing: 0.5 }}>SCORES 20+</div>
+                                    <div style={{ height: 6, background: "#E2E8F0", borderRadius: 3, overflow: "hidden" }}>
+                                        <div style={{ height: "100%", width: prob20 + "%", background: prob20 >= 60 ? "#22c55e" : prob20 >= 35 ? "#f59e0b" : "#ef4444", borderRadius: 3 }} />
+                                    </div>
+                                    <div style={{ fontSize: 11, fontWeight: 800, color: "#0F172A", marginTop: 2 }}>{prob20}%</div>
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 3, letterSpacing: 0.5 }}>SCORES 50+</div>
+                                    <div style={{ height: 6, background: "#E2E8F0", borderRadius: 3, overflow: "hidden" }}>
+                                        <div style={{ height: "100%", width: prob50 + "%", background: prob50 >= 40 ? "#22c55e" : prob50 >= 20 ? "#f59e0b" : "#94a3b8", borderRadius: 3 }} />
+                                    </div>
+                                    <div style={{ fontSize: 11, fontWeight: 800, color: "#0F172A", marginTop: 2 }}>{prob50}%</div>
+                                </div>
+                                {b.knownPlayer && b.careerPhaseSR > 0 && (
+                                    <div style={{ flex: 1 }}>
+                                        <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 3, letterSpacing: 0.5 }}>CAREER SR</div>
+                                        <div style={{ fontSize: 18, fontWeight: 900, color: b.careerPhaseSR >= 150 ? "#22c55e" : b.careerPhaseSR >= 120 ? "#f59e0b" : "#94a3b8" }}>
+                                            {b.careerPhaseSR}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
+
+// ─── Bowler Wicket Probability Card ──────────────────────────────────────────
+function BowlerWicketCard({ analysis }) {
+    if (!analysis || !analysis.name) return null;
+    const wkt1 = analysis.wktProbNextOv || 0;
+    const wkt2 = analysis.wktProb2Ov || 0;
+    const verdict = analysis.verdict || "";
+    const verdictColor = verdict.toLowerCase().includes("high threat") || verdict.toLowerCase().includes("danger") ? "#ef4444"
+        : verdict.toLowerCase().includes("moderate") ? "#f59e0b"
+        : verdict.toLowerCase().includes("control") ? "#22c55e"
+        : "#60a5fa";
+    const btype = analysis.bowlerType === "spin" ? "Spinner" : "Pacer";
+    const btypeIcon = analysis.bowlerType === "spin" ? "🌀" : "💨";
+    const careerWktr = analysis.careerWktRate || 0;
+    const isKnown = !!analysis.knownBowler;
+    return (
+        <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, overflow: "hidden", marginBottom: 14 }}>
+            <div style={{ padding: "10px 16px", background: "#1E2D6B", display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 14 }}>🎯</span>
+                <span style={{ fontSize: 11, fontWeight: 800, color: "#fff", letterSpacing: 1.5 }}>BOWLER WICKET ANALYSIS</span>
+                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginLeft: "auto" }}>Career data + live pressure</span>
+            </div>
+            <div style={{ padding: "14px 16px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                    <div>
+                        <div style={{ fontSize: 15, fontWeight: 800, color: "#0F172A" }}>{analysis.name}</div>
+                        <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>
+                            {btypeIcon} {btype}{isKnown ? " · Career data available" : " · Live match data only"}
+                        </div>
+                    </div>
+                    <span style={{ fontSize: 12, fontWeight: 800, color: verdictColor, background: verdictColor + "18",
+                        padding: "5px 12px", borderRadius: 20 }}>
+                        {verdict}
+                    </span>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10, marginBottom: 12 }}>
+                    <div style={{ background: "#F8FAFC", borderRadius: 10, padding: "10px 12px", textAlign: "center" }}>
+                        <div style={{ fontSize: 22, fontWeight: 900, color: wkt1 >= 35 ? "#ef4444" : wkt1 >= 20 ? "#f59e0b" : "#22c55e", lineHeight: 1 }}>{wkt1}%</div>
+                        <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 3, letterSpacing: 0.5 }}>NEXT OVER</div>
+                    </div>
+                    <div style={{ background: "#F8FAFC", borderRadius: 10, padding: "10px 12px", textAlign: "center" }}>
+                        <div style={{ fontSize: 22, fontWeight: 900, color: wkt2 >= 50 ? "#ef4444" : wkt2 >= 30 ? "#f59e0b" : "#22c55e", lineHeight: 1 }}>{wkt2}%</div>
+                        <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 3, letterSpacing: 0.5 }}>NEXT 2 OVS</div>
+                    </div>
+                    {isKnown && careerWktr > 0 && (
+                        <div style={{ background: "#F8FAFC", borderRadius: 10, padding: "10px 12px", textAlign: "center" }}>
+                            <div style={{ fontSize: 22, fontWeight: 900, color: "#1E2D6B", lineHeight: 1 }}>{careerWktr}%</div>
+                            <div style={{ fontSize: 9, color: "#94A3B8", marginTop: 3, letterSpacing: 0.5 }}>CAREER RATE</div>
+                        </div>
+                    )}
+                </div>
+                {analysis.factors && analysis.factors.length > 0 && (
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                        {analysis.factors.map((f, i) => (
+                            <span key={i} style={{ fontSize: 10, padding: "3px 10px", borderRadius: 20,
+                                background: "#1E2D6B18", color: "#1E2D6B", fontWeight: 600 }}>{f}</span>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+// ─── Pitch Reality Card ───────────────────────────────────────────────────────
+function PitchRealityCard({ analysis }) {
+    if (!analysis || !analysis.classification) return null;
+    const cls = analysis.classification || "NEUTRAL";
+    const clsColor = cls === "PACE_FRIENDLY" ? "#3B82F6"
+        : cls === "SPIN_FRIENDLY" ? "#8B5CF6"
+        : cls === "BATTING_PARADISE" ? "#22c55e"
+        : cls === "SEAM_SWING" ? "#0EA5E9"
+        : cls === "FLAT_QUICK" ? "#F59E0B"
+        : "#64748B";
+    const dqColor = analysis.dataQuality === "HIGH" ? "#22c55e" : analysis.dataQuality === "MEDIUM" ? "#f59e0b" : "#94a3b8";
+    const vsHist = analysis.vsHistory || "";
+    const vsHistColor = vsHist.startsWith("+") ? "#22c55e" : vsHist.startsWith("-") ? "#ef4444" : "#f59e0b";
+    return (
+        <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, overflow: "hidden", marginBottom: 14 }}>
+            <div style={{ padding: "10px 16px", background: clsColor, display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 14 }}>🏟️</span>
+                <span style={{ fontSize: 11, fontWeight: 800, color: "#fff", letterSpacing: 1.5 }}>PITCH REALITY</span>
+                <span style={{ fontSize: 9, color: "rgba(255,255,255,0.65)", marginLeft: "auto" }}>3-layer analysis</span>
+            </div>
+            <div style={{ padding: "14px 16px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
+                    <div>
+                        <div style={{ fontSize: 16, fontWeight: 900, color: clsColor }}>{analysis.label || cls}</div>
+                        <div style={{ fontSize: 11, color: "#64748B", marginTop: 2 }}>
+                            {analysis.todayRPO > 0 ? `Today: ${analysis.todayRPO.toFixed(1)} RPO` : ""}
+                            {analysis.histAvgRPO > 0 ? ` · Venue avg: ${analysis.histAvgRPO.toFixed(1)} RPO` : ""}
+                        </div>
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: dqColor, background: dqColor + "18",
+                        padding: "3px 10px", borderRadius: 20 }}>
+                        {analysis.dataQuality} data
+                    </span>
+                </div>
+                {vsHist && (
+                    <div style={{ background: "#F8FAFC", borderRadius: 10, padding: "10px 14px", marginBottom: 10, display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 20, fontWeight: 900, color: vsHistColor }}>{vsHist}</span>
+                        <div>
+                            <div style={{ fontSize: 12, fontWeight: 700, color: "#0F172A" }}>vs Venue History</div>
+                            <div style={{ fontSize: 11, color: "#64748B" }}>
+                                {vsHist.startsWith("+") ? "Pitch playing faster than usual" : vsHist.startsWith("-") ? "Pitch playing slower than usual" : "Match pace on par with venue history"}
+                            </div>
+                        </div>
+                    </div>
+                )}
+                {analysis.insights && analysis.insights.length > 0 && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
+                        {analysis.insights.map((ins, i) => (
+                            <div key={i} style={{ fontSize: 12, color: "#475569", display: "flex", gap: 6, alignItems: "flex-start" }}>
+                                <span style={{ color: clsColor, fontWeight: 700, flexShrink: 0 }}>→</span>
+                                <span>{ins}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
+
 const TEAM_COLORS = {
   "rcb": "#EC1C24", "royal challengers": "#EC1C24", "bangalore": "#EC1C24",
   "mi": "#004BA0", "mumbai": "#004BA0",
@@ -988,6 +1183,15 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             {pred.overs > 0 && (
                                 <div style={{ marginBottom: 14 }}>
                                     <LiveProbabilityGraph pred={pred} />
+                                </div>
+                            )}
+
+                            {/* ── Player Analysis: Batter / Bowler / Pitch ── */}
+                            {pred.playerAnalysis && (
+                                <div style={{ marginBottom: 14 }}>
+                                    <BatterAnalysisCard analysis={pred.playerAnalysis.batters} />
+                                    <BowlerWicketCard analysis={pred.playerAnalysis.bowler} />
+                                    <PitchRealityCard analysis={pred.playerAnalysis.pitch} />
                                 </div>
                             )}
 
