@@ -104,6 +104,9 @@ export default function TrackRecord() {
 
     useEffect(() => {
         setLoading(true);
+        // Fire-and-forget: try to resolve any pending predictions before fetching the list
+        // This handles matches that ended while the server was down or Cricbuzz didn't flag them
+        fetch(`${API_BASE}/resolve-pending`, { method: "POST" }).catch(() => {});
         fetch(`${API_BASE}/match-record`)
             .then(r => r.json())
             .then(d => { setData(d); setLoading(false); })

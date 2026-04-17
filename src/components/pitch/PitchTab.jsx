@@ -728,15 +728,19 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
 
     const { segments, matchAvgRPO, pitchKey, detr, dew, humidity, temp } = result;
 
-    // Detect if match is over — chase complete OR 20 overs done OR selectedMatch.matchEnded
-    const runs   = pred?.score ?? pred?.runs ?? 0;
-    const target = pred?.target ?? 0;
+    // Detect if match is over — chase complete OR all overs done OR selectedMatch.matchEnded
+    const runs    = pred?.score ?? pred?.runs ?? 0;
+    const target  = pred?.target ?? 0;
     const innings = pred?.innings ?? 1;
-    const overs  = parseFloat(pred?.overs ?? 0);
+    const overs   = parseFloat(pred?.overs ?? 0);
+    const matchFmt = (pred?.matchType || "t20").toLowerCase();
+    // Format-aware over limit so ODI/Test matches don't show "Match Complete" after 20 overs
+    const maxOvers = matchFmt === "odi" ? 50 : matchFmt === "test" ? 90 : 20;
     const isMatchOver = (
         selectedMatch?.matchEnded ||
+        selectedMatch?.status === "ENDED" ||
         (innings === 2 && target > 0 && runs >= target) ||
-        overs >= 20
+        overs >= maxOvers
     );
 
     // When match is over, treat the "current" segment as past too
@@ -773,6 +777,16 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
 
             {/* Full-match timeline strip */}
             <BehaviourTimeline segments={segments} currentOver={currentOver} />
+
+            {/* ODI/Test notice — pitch segments are T20-optimised */}
+            {matchFmt !== "t20" && (
+                <div style={{ background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.3)", borderRadius: 10, padding: "10px 14px", marginBottom: 12, display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 16 }}>⚠️</span>
+                    <span style={{ fontSize: 12, color: "#F59E0B" }}>
+                        Pitch analysis is optimised for T20. Showing first 20 overs of this {matchFmt.toUpperCase()} match.
+                    </span>
+                </div>
+            )}
 
             {/* ── MATCH OVER summary banner ── */}
             {isMatchOver && (
