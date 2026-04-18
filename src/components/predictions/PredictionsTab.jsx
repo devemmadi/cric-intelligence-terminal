@@ -731,7 +731,9 @@ function HeroDecision({ pred, prob, isEnded }) {
         else if (wktsLeft <= 4) reasons.push(`Only ${wktsLeft} wickets left — tail coming in soon ⚠️`);
         else reasons.push(`${wktsLeft} wickets still in hand — plenty of batting left`);
         const ballsLeftOv = (ballsLeft / 6).toFixed(1);
-        if (needed <= 12 && ballsLeft >= 6) reasons.push(`Just ${needed} needed off ${ballsLeftOv} overs — should be comfortable`);
+        if (needed <= 0) reasons.push(`Target achieved — match complete 🏆`);
+        else if (ballsLeft <= 0) reasons.push(`${needed} needed off last ball — nail-biting finish! 🎯`);
+        else if (needed <= 12 && ballsLeft >= 6) reasons.push(`Just ${needed} needed off ${ballsLeftOv} overs — should be comfortable`);
         else if (needed > ballsLeft) reasons.push(`${needed} needed off ${ballsLeft} balls — asking rate is brutal`);
     } else if (inn === 1 && crr > 0) {
         const vsAvg = pred.momentum || 0;
