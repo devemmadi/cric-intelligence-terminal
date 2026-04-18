@@ -710,21 +710,27 @@ function HeroDecision({ pred, prob, isEnded }) {
     const reasons = [];
 
     if (inn === 2 && pred.target > 0) {
-        reasons.push(`${battingTeam} needs ${needed} more runs off ${ballsLeft} balls`);
-        if (wktsLeft <= 3) reasons.push(`Only ${wktsLeft} wickets left — tail exposed`);
-        else reasons.push(`${wktsLeft} wickets in hand`);
-        if (rrr > crr + 2) reasons.push(`Need ${rrr.toFixed(1)}/ov but scoring ${crr.toFixed(1)} — falling behind`);
-        else if (crr > rrr + 1) reasons.push(`Scoring ${crr.toFixed(1)}/ov, need ${rrr.toFixed(1)} — well in control`);
-        else reasons.push(`Required rate ${rrr.toFixed(1)} — match in the balance`);
+        // Forward-looking chase narrative
+        if (rrr > crr + 2.5) reasons.push(`${battingTeam} are falling behind — need ${rrr.toFixed(1)}/ov, scoring only ${crr.toFixed(1)} 🔴`);
+        else if (crr > rrr + 1.5) reasons.push(`${battingTeam} are cruising — scoring ${crr.toFixed(1)}/ov, need just ${rrr.toFixed(1)} 🟢`);
+        else reasons.push(`It's right on the edge — ${battingTeam} need ${rrr.toFixed(1)}/ov, scoring ${crr.toFixed(1)} ⚡`);
+        if (wktsLeft <= 2) reasons.push(`Last ${wktsLeft} wicket${wktsLeft === 1 ? "" : "s"} — one more and it's over 🎯`);
+        else if (wktsLeft <= 4) reasons.push(`Only ${wktsLeft} wickets left — tail coming in soon ⚠️`);
+        else reasons.push(`${wktsLeft} wickets still in hand — plenty of batting left`);
+        const ballsLeftOv = (ballsLeft / 6).toFixed(1);
+        if (needed <= 12 && ballsLeft >= 6) reasons.push(`Just ${needed} needed off ${ballsLeftOv} overs — should be comfortable`);
+        else if (needed > ballsLeft) reasons.push(`${needed} needed off ${ballsLeft} balls — asking rate is brutal`);
     } else if (inn === 1 && crr > 0) {
         const vsAvg = pred.momentum || 0;
-        reasons.push(`${battingTeam} scoring ${crr.toFixed(1)}/ov — ${vsAvg > 0.5 ? "above par" : vsAvg < -0.5 ? "below par" : "on par"}`);
+        if (vsAvg > 0.5) reasons.push(`${battingTeam} are batting above par — building a big total 📈`);
+        else if (vsAvg < -0.5) reasons.push(`${battingTeam} are struggling — below expected run rate 📉`);
+        else reasons.push(`${battingTeam} are on track — even contest so far ⚖️`);
         const pitch = (pred.pitchLabel || "").toLowerCase();
-        if (pitch.includes("bowl") || pitch.includes("spin") || pitch.includes("seam")) reasons.push("Bowling-friendly conditions");
-        else if (pitch.includes("bat") || pitch.includes("flat")) reasons.push("Flat pitch — batters on top");
-        if (pred.currentPhase === "POWERPLAY") reasons.push("Powerplay overs — key phase");
-        else if (pred.currentPhase === "DEATH OVERS") reasons.push("Death overs — big hitting phase");
-        else if (pred.currentPhase === "MIDDLE OVERS") reasons.push("Middle overs — wickets crucial now");
+        if (pitch.includes("bowl") || pitch.includes("spin") || pitch.includes("seam")) reasons.push("Pitch helping bowlers — expect pressure to build");
+        else if (pitch.includes("bat") || pitch.includes("flat")) reasons.push("Flat pitch — batters in total control today");
+        if (pred.currentPhase === "POWERPLAY") reasons.push("Powerplay: next 2 overs set the tone for the chase");
+        else if (pred.currentPhase === "DEATH OVERS") reasons.push("Death overs — finishers can swing this either way");
+        else if (pred.currentPhase === "MIDDLE OVERS") reasons.push("Middle overs — a wicket now changes everything");
     }
     while (reasons.length < 3) {
         if (pred.nextOvers?.[0]) { reasons.push(`Next over: ${pred.nextOvers[0].runRange} runs expected`); break; }
@@ -757,13 +763,13 @@ function HeroDecision({ pred, prob, isEnded }) {
             {/* Main decision */}
             <div style={{ textAlign: "center", marginBottom: 18 }}>
                 <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", letterSpacing: 1, marginBottom: 8 }}>
-                    {signal === "BET" ? "OUR PICK" : signal === "WAIT" ? "NOT YET — WAIT" : "TOO CLOSE TO CALL"}
+                    {signal === "BET" ? `🔥 HIGH-CONFIDENCE PICK` : signal === "WAIT" ? "⏳ WAIT FOR CLEARER SIGNAL" : "⚠️ TOO CLOSE TO CALL"}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 14 }}>
                     <div style={{ fontSize: 58, fontWeight: 900, color: signalColor, lineHeight: 1, letterSpacing: -2 }}>{favProb}%</div>
                     <div style={{ textAlign: "left" }}>
                         <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: -1 }}>{favTeam}</div>
-                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginTop: 3 }}>to win · {confidence} confidence</div>
+                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginTop: 3 }}>to win · <span style={{ color: signalColor, fontWeight: 700 }}>{confidence} confidence</span></div>
                     </div>
                 </div>
                 {/* Dual-colour probability bar */}
@@ -789,16 +795,19 @@ function HeroDecision({ pred, prob, isEnded }) {
             {/* CTA */}
             {signal === "BET" ? (
                 <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: signalColor, borderRadius: 12, padding: "14px 20px", textDecoration: "none", color: "#fff", fontWeight: 900, fontSize: 16, letterSpacing: 0.3, boxShadow: `0 6px 24px ${signalColor}55`, marginBottom: 8 }}>
-                    🎰 BET {favTeam} on 1xBet
+                    style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, background: `linear-gradient(135deg, ${signalColor}, #00A37A)`, borderRadius: 14, padding: "16px 20px", textDecoration: "none", color: "#fff", fontWeight: 900, fontSize: 17, letterSpacing: 0.3, boxShadow: `0 8px 28px ${signalColor}66`, marginBottom: 6, animation: "pulse 2.5s infinite" }}>
+                    <span>🎰 BET {favTeam} TO WIN — Act Now</span>
+                    <span style={{ fontSize: 10, fontWeight: 600, opacity: 0.75, letterSpacing: 1 }}>AI CONFIDENCE: {confidence.toUpperCase()} · {favProb}% WIN PROBABILITY</span>
                 </a>
             ) : signal === "WAIT" ? (
-                <div style={{ textAlign: "center", padding: "12px", background: "rgba(245,158,11,0.12)", borderRadius: 12, border: "1px solid rgba(245,158,11,0.3)", marginBottom: 8 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: "#F59E0B" }}>⏳ Wait for a clearer signal</span>
+                <div style={{ textAlign: "center", padding: "13px", background: "rgba(245,158,11,0.12)", borderRadius: 12, border: "1px solid rgba(245,158,11,0.3)", marginBottom: 8 }}>
+                    <div style={{ fontSize: 14, fontWeight: 800, color: "#F59E0B", marginBottom: 2 }}>⏳ Not yet — wait for a clearer signal</div>
+                    <div style={{ fontSize: 10, color: "rgba(245,158,11,0.6)" }}>Match is too close right now</div>
                 </div>
             ) : (
-                <div style={{ textAlign: "center", padding: "12px", background: "rgba(239,68,68,0.1)", borderRadius: 12, border: "1px solid rgba(239,68,68,0.25)", marginBottom: 8 }}>
-                    <span style={{ fontSize: 14, fontWeight: 700, color: "#EF4444" }}>🚫 Avoid — too unpredictable</span>
+                <div style={{ textAlign: "center", padding: "13px", background: "rgba(239,68,68,0.1)", borderRadius: 12, border: "1px solid rgba(239,68,68,0.25)", marginBottom: 8 }}>
+                    <div style={{ fontSize: 14, fontWeight: 800, color: "#EF4444", marginBottom: 2 }}>🚫 Skip this one — too unpredictable</div>
+                    <div style={{ fontSize: 10, color: "rgba(239,68,68,0.6)" }}>No edge found — protect your bankroll</div>
                 </div>
             )}
 
@@ -1337,10 +1346,11 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                       </>)}
                       {/* Bet CTA — dynamic team name */}
                       <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 10, marginBottom: 6 }}>
-                        <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>Act on this prediction</div>
+                        <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>Act on this AI signal</div>
                         <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
-                          style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, background: prob >= 65 ? "#065f46" : prob <= 35 ? "#065f46" : C.navy, border: `1px solid ${prob >= 65 || prob <= 35 ? "rgba(0,200,150,0.4)" : C.navyLight || "#2A3F6F"}`, borderRadius: 8, padding: "10px 14px", textDecoration: "none", fontWeight: 800, fontSize: 13, color: prob >= 65 || prob <= 35 ? "#00C896" : "rgba(255,255,255,0.85)" }}>
-                          🎰 BET {prob >= 50 ? cleanTeam(pred.team1) : cleanTeam(pred.team2)} on 1xBet
+                          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, background: prob >= 65 || prob <= 35 ? "linear-gradient(135deg,#00C896,#00A37A)" : C.navy, border: "none", borderRadius: 10, padding: "11px 14px", textDecoration: "none", fontWeight: 900, fontSize: 13, color: "#fff", boxShadow: prob >= 65 || prob <= 35 ? "0 4px 16px rgba(0,200,150,0.4)" : "none" }}>
+                          <span>🎰 BET {prob >= 50 ? cleanTeam(pred.team1) : cleanTeam(pred.team2)} TO WIN</span>
+                          {(prob >= 65 || prob <= 35) && <span style={{ fontSize: 9, opacity: 0.8, fontWeight: 600 }}>HIGH CONFIDENCE SIGNAL</span>}
                         </a>
                       </div>
                       <div style={{ fontSize: 9, color: C.muted, textAlign: "center" }}>
