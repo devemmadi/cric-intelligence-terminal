@@ -695,20 +695,18 @@ function HeroDecision({ pred, prob, isEnded }) {
     const favProb = prob >= 50 ? prob : Math.round((100 - prob) * 10) / 10;
     const favTeamColor = prob >= 50 ? t1Color : t2Color;
 
-    let signal, signalColor, signalBg;
+    let signal, signalColor;
     if (prob >= 65 || prob <= 35) {
         signal = "BET";
         signalColor = "#00C896";
-        signalBg = "linear-gradient(145deg, #022c22 0%, #064e3b 60%, #065f46 100%)";
     } else if (prob >= 55 || prob <= 45) {
         signal = "WAIT";
         signalColor = "#F59E0B";
-        signalBg = "linear-gradient(145deg, #1c0f00 0%, #451a03 60%, #78350f 100%)";
     } else {
         signal = "AVOID";
         signalColor = "#EF4444";
-        signalBg = "linear-gradient(145deg, #1a0000 0%, #450a0a 60%, #7f1d1d 100%)";
     }
+    const signalBg = "linear-gradient(145deg, #0F1535 0%, #141D4A 100%)";
 
     // 3 plain-English reasons
     const inn = pred.innings || 1;
@@ -754,10 +752,11 @@ function HeroDecision({ pred, prob, isEnded }) {
     }
 
     return (
-        <div style={{ background: signalBg, borderRadius: 20, padding: "20px", marginBottom: 14, position: "relative", overflow: "hidden" }}>
-            {/* Ambient glow */}
-            <div style={{ position: "absolute", top: -60, right: -60, width: 220, height: 220, borderRadius: "50%", background: signalColor + "12", pointerEvents: "none" }} />
-            <div style={{ position: "absolute", bottom: -40, left: -40, width: 160, height: 160, borderRadius: "50%", background: favTeamColor + "0A", pointerEvents: "none" }} />
+        <div style={{ background: signalBg, borderRadius: 20, padding: "20px", marginBottom: 14, position: "relative", overflow: "hidden", border: `1.5px solid ${signalColor}28`, boxShadow: `0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)` }}>
+            {/* Subtle top accent line */}
+            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${signalColor}88, transparent)`, borderRadius: "20px 20px 0 0" }} />
+            {/* Subtle glow */}
+            <div style={{ position: "absolute", top: -40, right: -40, width: 160, height: 160, borderRadius: "50%", background: signalColor + "08", pointerEvents: "none" }} />
 
             {/* Top row: signal badge + meta */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
@@ -776,29 +775,41 @@ function HeroDecision({ pred, prob, isEnded }) {
             </div>
 
             {/* Main decision */}
-            <div style={{ textAlign: "center", marginBottom: 18 }}>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", letterSpacing: 1, marginBottom: 8 }}>
-                    {signal === "BET" ? `🔥 HIGH-CONFIDENCE PICK` : signal === "WAIT" ? "⏳ WAIT FOR CLEARER SIGNAL" : "⚠️ TOO CLOSE TO CALL"}
+            <div style={{ marginBottom: 16 }}>
+                {/* Signal label */}
+                <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: signalColor + "18", border: `1px solid ${signalColor}40`, borderRadius: 8, padding: "5px 12px", marginBottom: 14 }}>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: signalColor, letterSpacing: 1 }}>
+                        {signal === "BET" ? `🔥 HIGH-CONFIDENCE PICK` : signal === "WAIT" ? "⏳ WAIT FOR CLEARER SIGNAL" : "⚠️ TOO CLOSE TO CALL"}
+                    </span>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14, marginBottom: 14 }}>
-                    <div style={{ fontSize: 58, fontWeight: 900, color: signalColor, lineHeight: 1, letterSpacing: -2 }}>{favProb}%</div>
-                    <div style={{ textAlign: "left" }}>
-                        <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", lineHeight: 1, letterSpacing: -1 }}>{favTeam}</div>
-                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", marginTop: 3 }}>to win · <span style={{ color: signalColor, fontWeight: 700 }}>{confidence} confidence</span></div>
+
+                {/* Teams + probability row */}
+                <div style={{ display: "flex", alignItems: "center", gap: 0, marginBottom: 12 }}>
+                    {/* T1 block */}
+                    <div style={{ flex: 1, textAlign: "center" }}>
+                        <div style={{ fontSize: 24, fontWeight: 900, color: "#fff", letterSpacing: -0.5 }}>{t1}</div>
+                        <div style={{ fontSize: 26, fontWeight: 900, color: t1Color, letterSpacing: -1, lineHeight: 1.1 }}>{prob}%</div>
+                    </div>
+                    {/* vs divider */}
+                    <div style={{ width: 1, height: 48, background: "rgba(255,255,255,0.1)", flexShrink: 0 }} />
+                    {/* T2 block */}
+                    <div style={{ flex: 1, textAlign: "center" }}>
+                        <div style={{ fontSize: 24, fontWeight: 900, color: "#fff", letterSpacing: -0.5 }}>{t2}</div>
+                        <div style={{ fontSize: 26, fontWeight: 900, color: t2Color, letterSpacing: -1, lineHeight: 1.1 }}>{Math.round((100 - prob) * 10) / 10}%</div>
                     </div>
                 </div>
-                {/* Dual-colour probability bar */}
-                <div style={{ height: 8, borderRadius: 4, background: `${t2Color}44`, overflow: "hidden", marginBottom: 6 }}>
-                    <div style={{ width: `${prob}%`, height: "100%", background: `linear-gradient(90deg, ${t1Color}, ${t1Color}cc)`, borderRadius: 4, transition: "width 0.8s cubic-bezier(.4,0,.2,1)" }} />
+
+                {/* Probability bar */}
+                <div style={{ height: 6, borderRadius: 3, background: `${t2Color}44`, overflow: "hidden", marginBottom: 5 }}>
+                    <div style={{ width: `${prob}%`, height: "100%", background: `linear-gradient(90deg, ${t1Color}, ${t1Color}cc)`, borderRadius: 3, transition: "width 0.8s cubic-bezier(.4,0,.2,1)" }} />
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: "rgba(255,255,255,0.65)" }}>{t1} {prob}%</span>
-                    <span style={{ fontSize: 12, fontWeight: 600, color: "rgba(255,255,255,0.4)" }}>{t2} {Math.round((100 - prob) * 10) / 10}%</span>
+                <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.35)", textAlign: "center" }}>
+                    {favTeam} favoured · <span style={{ color: signalColor }}>{confidence} confidence</span>
                 </div>
             </div>
 
             {/* 3 reasons */}
-            <div style={{ background: "rgba(0,0,0,0.28)", borderRadius: 12, padding: "12px 14px", marginBottom: 16 }}>
+            <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "12px 14px", marginBottom: 16 }}>
                 {reasons.slice(0, 3).map((r, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: i < reasons.slice(0,3).length - 1 ? 9 : 0 }}>
                         <span style={{ color: signalColor, fontSize: 9, marginTop: 4, flexShrink: 0 }}>●</span>
@@ -833,18 +844,125 @@ function HeroDecision({ pred, prob, isEnded }) {
     );
 }
 
+function FeaturedMatchHero() {
+    const [timeLeft, setTimeLeft] = React.useState("");
+    React.useEffect(() => {
+        function calcTime() {
+            // RCB vs DC, April 18 2026, 19:30 IST (UTC+5:30 = 14:00 UTC)
+            const matchTime = new Date("2026-04-18T14:00:00Z");
+            const now = new Date();
+            const diff = matchTime - now;
+            if (diff <= 0) { setTimeLeft("Starting soon!"); return; }
+            const h = Math.floor(diff / 3600000);
+            const m = Math.floor((diff % 3600000) / 60000);
+            const s = Math.floor((diff % 60000) / 1000);
+            if (h > 48) { setTimeLeft(`${Math.floor(h/24)}d ${h%24}h`); return; }
+            if (h > 0) setTimeLeft(`${h}h ${m}m`);
+            else setTimeLeft(`${m}m ${s}s`);
+        }
+        calcTime();
+        const iv = setInterval(calcTime, 1000);
+        return () => clearInterval(iv);
+    }, []);
+
+    return (
+        <div style={{
+            background: `linear-gradient(135deg, #1A1035 0%, #1E2D6B 50%, #2D1B4E 100%)`,
+            borderRadius: 20, overflow: "hidden", marginBottom: 32,
+            border: `1px solid rgba(245,158,11,0.35)`,
+            boxShadow: "0 8px 40px rgba(30,45,107,0.35), 0 0 0 1px rgba(245,158,11,0.1)",
+            position: "relative",
+        }}>
+            {/* Glow blobs */}
+            <div style={{ position:"absolute", top:-40, left:-40, width:200, height:200, borderRadius:"50%", background:"rgba(239,68,68,0.12)", filter:"blur(60px)", pointerEvents:"none" }} />
+            <div style={{ position:"absolute", bottom:-40, right:-40, width:200, height:200, borderRadius:"50%", background:"rgba(99,102,241,0.12)", filter:"blur(60px)", pointerEvents:"none" }} />
+
+            {/* Top strip */}
+            <div style={{ background:"rgba(245,158,11,0.15)", borderBottom:"1px solid rgba(245,158,11,0.25)", padding:"7px 20px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                    <span style={{ fontSize:10, fontWeight:900, color:"#F59E0B", letterSpacing:1.5 }}>🏆 IPL 2026 · MATCH 26</span>
+                </div>
+                <div style={{ display:"flex", alignItems:"center", gap:6 }}>
+                    <span style={{ width:6, height:6, borderRadius:"50%", background:"#F59E0B", display:"inline-block", animation:"pulse 2s infinite" }} />
+                    <span style={{ fontSize:10, fontWeight:700, color:"#F59E0B", letterSpacing:0.5 }}>TODAY · 7:30 PM IST</span>
+                </div>
+            </div>
+
+            {/* Main content */}
+            <div style={{ padding:"28px 24px 24px", position:"relative", zIndex:1 }}>
+                {/* Teams */}
+                <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:20, marginBottom:20 }}>
+                    {/* RCB */}
+                    <div style={{ textAlign:"center", flex:1 }}>
+                        <div style={{ fontSize:42, fontWeight:900, color:"#EF4444", letterSpacing:-1, textShadow:"0 0 30px rgba(239,68,68,0.5)" }}>RCB</div>
+                        <div style={{ fontSize:11, color:"rgba(255,255,255,0.55)", fontWeight:600, marginTop:3 }}>Royal Challengers</div>
+                        <div style={{ display:"inline-block", background:"rgba(239,68,68,0.18)", border:"1px solid rgba(239,68,68,0.3)", borderRadius:6, padding:"3px 10px", fontSize:10, fontWeight:700, color:"#FF7070", marginTop:6 }}>#2 in Table</div>
+                    </div>
+
+                    {/* VS */}
+                    <div style={{ textAlign:"center", flexShrink:0 }}>
+                        <div style={{ fontSize:13, fontWeight:900, color:"rgba(255,255,255,0.4)", letterSpacing:2 }}>VS</div>
+                        <div style={{ fontSize:11, color:"rgba(255,255,255,0.3)", marginTop:4 }}>D/N</div>
+                    </div>
+
+                    {/* DC */}
+                    <div style={{ textAlign:"center", flex:1 }}>
+                        <div style={{ fontSize:42, fontWeight:900, color:"#60A5FA", letterSpacing:-1, textShadow:"0 0 30px rgba(96,165,250,0.5)" }}>DC</div>
+                        <div style={{ fontSize:11, color:"rgba(255,255,255,0.55)", fontWeight:600, marginTop:3 }}>Delhi Capitals</div>
+                        <div style={{ display:"inline-block", background:"rgba(96,165,250,0.18)", border:"1px solid rgba(96,165,250,0.3)", borderRadius:6, padding:"3px 10px", fontSize:10, fontWeight:700, color:"#93C5FD", marginTop:6 }}>#6 in Table</div>
+                    </div>
+                </div>
+
+                {/* Venue */}
+                <div style={{ textAlign:"center", marginBottom:20 }}>
+                    <span style={{ fontSize:11, color:"rgba(255,255,255,0.45)", fontWeight:500 }}>📍 M. Chinnaswamy Stadium, Bengaluru</span>
+                </div>
+
+                {/* Countdown + CTA row */}
+                <div style={{ display:"flex", alignItems:"center", gap:12, justifyContent:"center", flexWrap:"wrap" }}>
+                    {/* Countdown */}
+                    <div style={{ background:"rgba(255,255,255,0.07)", border:"1px solid rgba(255,255,255,0.12)", borderRadius:12, padding:"10px 18px", textAlign:"center", minWidth:130 }}>
+                        <div style={{ fontSize:9, fontWeight:800, color:"rgba(255,255,255,0.45)", letterSpacing:1.5, marginBottom:4 }}>MATCH STARTS IN</div>
+                        <div style={{ fontSize:22, fontWeight:900, color:"#F59E0B", fontVariantNumeric:"tabular-nums", letterSpacing:-0.5 }}>{timeLeft || "—"}</div>
+                    </div>
+
+                    {/* AI Prediction teaser */}
+                    <div style={{ background:"linear-gradient(135deg,rgba(239,68,68,0.2),rgba(200,150,30,0.2))", border:"1px solid rgba(245,158,11,0.3)", borderRadius:12, padding:"10px 18px", textAlign:"center", flex:1, minWidth:160 }}>
+                        <div style={{ fontSize:9, fontWeight:800, color:"rgba(255,255,255,0.5)", letterSpacing:1.5, marginBottom:4 }}>🤖 AI PREDICTION</div>
+                        <div style={{ fontSize:14, fontWeight:800, color:"#fff" }}>Ready at kickoff</div>
+                        <div style={{ fontSize:10, color:"rgba(255,255,255,0.5)", marginTop:2 }}>Win prob · Bet signal · Over-by-over</div>
+                    </div>
+                </div>
+
+                {/* Bottom insight strip */}
+                <div style={{ marginTop:16, paddingTop:14, borderTop:"1px solid rgba(255,255,255,0.08)", display:"flex", gap:10, justifyContent:"center", flexWrap:"wrap" }}>
+                    {[
+                        { icon:"🔥", text:"RCB #2 — home advantage" },
+                        { icon:"🏟️", text:"Chinnaswamy — high-scoring ground" },
+                        { icon:"📈", text:"RCB avg 185 batting first here" },
+                    ].map((tip, i) => (
+                        <div key={i} style={{ fontSize:11, color:"rgba(255,255,255,0.5)", display:"flex", alignItems:"center", gap:5 }}>
+                            <span>{tip.icon}</span><span>{tip.text}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 function NoMatchesScreen({ upcomingMatches }) {
     const scheduleMatches = upcomingMatches && upcomingMatches.length > 0 ? upcomingMatches : [];
     return (
         <div style={{ maxWidth: 860, margin: "0 auto", padding: "28px 20px 60px" }}>
-            <div style={{ textAlign: "center", padding: "48px 24px", maxWidth: 400, margin: "0 auto" }}>
-                <div style={{ fontSize: 48, marginBottom: 16 }}>🏏</div>
-                <div style={{ fontSize: 20, fontWeight: 800, color: C.text, marginBottom: 8 }}>
-                    No live matches right now
-                </div>
-                <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6, marginBottom: 24 }}>
-                    CricIntelligence tracks all IPL, PSL and international T20 matches.<br/>
-                    Check back when a match goes live.
+
+            {/* ── Featured match hero ── */}
+            <FeaturedMatchHero />
+
+            {/* ── No live matches note ── */}
+            <div style={{ textAlign: "center", padding: "20px 24px 32px", maxWidth: 400, margin: "0 auto" }}>
+                <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.6, marginBottom: 20 }}>
+                    No live matches right now — AI predictions go live the moment the toss is done.
                 </div>
                 <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
                     {[
@@ -852,12 +970,14 @@ function NoMatchesScreen({ upcomingMatches }) {
                         { icon: "📊", label: "Pitch Analysis" },
                         { icon: "💡", label: "Bet Signals" },
                     ].map((f, i) => (
-                        <div key={i} style={{ background: C.navyLight, border: `1px solid ${C.border}`, borderRadius: 8, padding: "8px 14px", fontSize: 12, color: C.text }}>
+                        <div key={i} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 8, padding: "8px 14px", fontSize: 12, color: C.text }}>
                             {f.icon} {f.label}
                         </div>
                     ))}
                 </div>
             </div>
+
+            {/* ── Upcoming fixtures ── */}
             {scheduleMatches.length > 0 && (
                 <div>
                     <div style={{ fontSize: 13, fontWeight: 700, color: C.accent, letterSpacing: 1, marginBottom: 14 }}>UPCOMING FIXTURES</div>
