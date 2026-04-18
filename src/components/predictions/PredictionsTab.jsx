@@ -643,14 +643,29 @@ function MiniTrustBlock() {
             .catch(() => {});
     }, []);
     if (!info) return null;
+    const { hitRate, correct, total } = info;
+    const isGood = hitRate >= 55;
+    const hasEnoughData = total >= 10;
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: 10, background: "rgba(0,200,150,0.06)", border: "1px solid rgba(0,200,150,0.2)", borderRadius: 10, padding: "8px 14px", marginBottom: 12 }}>
-            <span style={{ fontSize: 18, fontWeight: 900, color: "#00C896" }}>{info.hitRate}%</span>
-            <div style={{ flex: 1 }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: C.text }}>AI Track Record </span>
-                <span style={{ fontSize: 11, color: C.muted }}>{info.correct}/{info.total} correct predictions</span>
-            </div>
-            <span style={{ fontSize: 10, fontWeight: 700, color: "#00C896", background: "rgba(0,200,150,0.12)", padding: "2px 8px", borderRadius: 20 }}>✓ Verified</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, background: isGood ? "rgba(0,200,150,0.06)" : "rgba(100,116,139,0.06)", border: `1px solid ${isGood ? "rgba(0,200,150,0.2)" : "rgba(100,116,139,0.2)"}`, borderRadius: 10, padding: "8px 14px", marginBottom: 12 }}>
+            {isGood ? (
+                <>
+                    <span style={{ fontSize: 18, fontWeight: 900, color: "#00C896" }}>{hitRate}%</span>
+                    <div style={{ flex: 1 }}>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: C.text }}>AI Track Record </span>
+                        <span style={{ fontSize: 11, color: C.muted }}>{correct}/{total} verified</span>
+                    </div>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: "#00C896", background: "rgba(0,200,150,0.12)", padding: "2px 8px", borderRadius: 20 }}>✓ Verified</span>
+                </>
+            ) : hasEnoughData ? (
+                <div style={{ flex: 1 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: C.muted }}>📊 {correct}/{total} matches tracked · Building accuracy</span>
+                </div>
+            ) : (
+                <div style={{ flex: 1 }}>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: C.muted }}>📊 {total} matches tracked · Early data</span>
+                </div>
+            )}
         </div>
     );
 }
@@ -1267,34 +1282,26 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
             {/* RIGHT SIDEBAR */}
             <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14, position: "sticky", top: 54, height: "calc(100vh - 54px)", overflowY: "auto", alignSelf: "start" }}>
                 {pred && pred.team1 && (
-                    <div style={{ background: C.bg, borderRadius: 12, padding: "14px" }}>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 12 }}>MATCH CONTEXT</div>
-                        {[
-                            ["Format", pred.matchType?.toUpperCase() || "T20"],
-                            ["Phase", pred.currentPhase || ""],
-                            ["Pitch", pred.pitchLabel || ""],
-                            ["Weather", pred.weatherImpact?.condition || ""],
-                        ].map(([l, v]) => (
-                            <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
-                                <span style={{ fontSize: 11, color: C.muted }}>{l}</span>
-                                <span style={{ fontSize: 11, fontWeight: 700, color: C.text, maxWidth: 110, textAlign: "right" }}>{v}</span>
-                            </div>
-                        ))}
-                        {pred.toss && (
-                            <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9, marginTop: 4 }}>
-                                <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>TOSS</div>
-                                <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{pred.toss.winner} won · {pred.toss.decision}</div>
-                            </div>
-                        )}
-                    </div>
-                )}
-                {pred && pred.team1 && (
                   <div style={{ borderRadius: 14, overflow: "hidden", border: `1px solid ${C.border}`, background: C.bg }}>
                     {/* Team probability mini-bar */}
                     <div style={{ height: 4, background: `${getTeamColor(pred.team2)}66`, position: "relative" }}>
                       <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${prob}%`, background: getTeamColor(pred.team1), transition: "width 0.8s" }} />
                     </div>
                     <div style={{ padding: "14px 14px 12px" }}>
+                      {/* Bet CTA — TOP, first thing user sees */}
+                      <div style={{ marginBottom: 12 }}>
+                        <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>Act on this AI signal</div>
+                        <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
+                          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, background: prob >= 65 || prob <= 35 ? "linear-gradient(135deg,#00C896,#00A37A)" : C.navy, border: "none", borderRadius: 10, padding: "11px 14px", textDecoration: "none", fontWeight: 900, fontSize: 13, color: "#fff", boxShadow: prob >= 65 || prob <= 35 ? "0 4px 16px rgba(0,200,150,0.4)" : "none" }}>
+                          <span>🎰 BET {prob >= 50 ? cleanTeam(pred.team1) : cleanTeam(pred.team2)} TO WIN</span>
+                          {(prob >= 65 || prob <= 35) && <span style={{ fontSize: 9, opacity: 0.8, fontWeight: 600 }}>HIGH CONFIDENCE SIGNAL</span>}
+                        </a>
+                        <div style={{ fontSize: 9, color: C.muted, textAlign: "center", marginTop: 6 }}>
+                          18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: C.muted }}>BeGambleAware.org</a>
+                        </div>
+                      </div>
+                      {/* Divider */}
+                      <div style={{ height: 1, background: C.border, marginBottom: 12 }} />
                       <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>AI PREDICTION SUMMARY</div>
                       {/* Win prob — big */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 14 }}>
@@ -1337,27 +1344,37 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                           <span style={{ fontSize: 11, color: C.muted }}>Next over</span>
                           <span style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{pred.nextOvers[0].runRange} runs</span>
                         </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                           <span style={{ fontSize: 11, color: C.muted }}>Wicket risk</span>
                           <span style={{ fontSize: 12, fontWeight: 700, color: pred.nextOvers[0].wicketProb > 40 ? C.red : pred.nextOvers[0].wicketProb > 25 ? C.amber : C.green }}>
                             {pred.nextOvers[0].wicketProb > 40 ? "High" : pred.nextOvers[0].wicketProb > 25 ? "Med" : "Low"} · {pred.nextOvers[0].wicketProb}%
                           </span>
                         </div>
                       </>)}
-                      {/* Bet CTA — dynamic team name */}
-                      <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 10, marginBottom: 6 }}>
-                        <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>Act on this AI signal</div>
-                        <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
-                          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, background: prob >= 65 || prob <= 35 ? "linear-gradient(135deg,#00C896,#00A37A)" : C.navy, border: "none", borderRadius: 10, padding: "11px 14px", textDecoration: "none", fontWeight: 900, fontSize: 13, color: "#fff", boxShadow: prob >= 65 || prob <= 35 ? "0 4px 16px rgba(0,200,150,0.4)" : "none" }}>
-                          <span>🎰 BET {prob >= 50 ? cleanTeam(pred.team1) : cleanTeam(pred.team2)} TO WIN</span>
-                          {(prob >= 65 || prob <= 35) && <span style={{ fontSize: 9, opacity: 0.8, fontWeight: 600 }}>HIGH CONFIDENCE SIGNAL</span>}
-                        </a>
-                      </div>
-                      <div style={{ fontSize: 9, color: C.muted, textAlign: "center" }}>
-                        18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: C.muted }}>BeGambleAware.org</a>
-                      </div>
                     </div>
                   </div>
+                )}
+                {pred && pred.team1 && (
+                    <div style={{ background: C.bg, borderRadius: 12, padding: "10px 12px" }}>
+                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>MATCH CONTEXT</div>
+                        {[
+                            ["Format", pred.matchType?.toUpperCase() || "T20"],
+                            ["Phase", pred.currentPhase || ""],
+                            ["Pitch", pred.pitchLabel || ""],
+                            ["Weather", pred.weatherImpact?.condition || ""],
+                        ].map(([l, v]) => (
+                            <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                                <span style={{ fontSize: 11, color: C.muted }}>{l}</span>
+                                <span style={{ fontSize: 11, fontWeight: 700, color: C.text, maxWidth: 110, textAlign: "right" }}>{v}</span>
+                            </div>
+                        ))}
+                        {pred.toss && (
+                            <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9, marginTop: 4 }}>
+                                <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>TOSS</div>
+                                <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{pred.toss.winner} won · {pred.toss.decision}</div>
+                            </div>
+                        )}
+                    </div>
                 )}
 
                 <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center" }}>
