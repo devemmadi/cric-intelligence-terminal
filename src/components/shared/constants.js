@@ -2,10 +2,11 @@
 export const API_BASE = "https://cricintel-backend-production.up.railway.app";
 
 export const C = {
-    bg: "#EEF2FF", surface: "#FFFFFF", border: "#E2E8F0",
+    bg: "#F0F2F8", surface: "#FFFFFF", border: "#DDE2EF",
     text: "#0A0A0A", muted: "#64748B", accent: "#1E2D6B",
     green: "#00B894", red: "#E53E3E", amber: "#F59E0B", gold: "#C8961E",
     navy: "#1E2D6B", navyMid: "#2A3F82", navyLight: "#4A5FAD",
+    sidebarBg: "#141D4A",
 };
 
 export const IPL_TEAMS = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
@@ -55,16 +56,16 @@ body { background: ${C.bg}; }
 @keyframes labelPulse { 0%,100%{box-shadow:0 0 12px currentColor,0 2px 8px rgba(0,0,0,0.2)} 50%{box-shadow:0 0 24px currentColor,0 4px 16px rgba(0,0,0,0.3)} }
 .fade { animation: fadeUp .35s cubic-bezier(.22,.68,0,1.2) forwards; }
 .card { background: ${C.surface}; border: 1px solid ${C.border}; border-radius: 16px; transition: box-shadow .25s, transform .25s; }
-.card:hover { box-shadow: 0 8px 28px rgba(30,45,107,0.12); transform: translateY(-1px); }
-.match-pill { transition: all .2s cubic-bezier(.22,.68,0,1.2); cursor: pointer; border-radius: 10px; border: 1px solid ${C.border}; padding: 8px 12px; background: ${C.surface}; margin-bottom: 5px; }
-.match-pill:hover { border-color: ${C.accent}80; background: #F8FAFF; transform: translateX(2px); }
-.match-pill.sel { border-color: ${C.accent}; background: linear-gradient(135deg, #F0F7FF, #E8F0FF); box-shadow: 0 2px 12px rgba(30,45,107,0.1); }
+.card:hover { box-shadow: 0 8px 32px rgba(30,45,107,0.15); transform: translateY(-1px); }
+.match-pill { transition: all .2s cubic-bezier(.22,.68,0,1.2); cursor: pointer; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; background: rgba(255,255,255,0.07); margin-bottom: 5px; color: rgba(255,255,255,0.75); }
+.match-pill:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.13); transform: translateX(2px); }
+.match-pill.sel { border-color: ${C.gold}; background: rgba(200,150,30,0.18); box-shadow: 0 2px 12px rgba(200,150,30,0.2); }
 .tab-btn { background: none; border: none; cursor: pointer; padding: 7px 13px; border-radius: 8px; font-family: Inter, system-ui; font-size: 13px; font-weight: 500; transition: all .2s; color: rgba(255,255,255,0.55); display: inline-flex; align-items: center; justify-content: center; line-height: 1; white-space: nowrap; }
 .tab-btn:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.08); }
 .tab-btn.on { background: rgba(255,255,255,0.18); color: #fff; font-weight: 700; }
 .over-card { border-radius: 14px; border: 1.5px solid ${C.border}; padding: 14px 10px; text-align: center; background: ${C.surface}; transition: all .2s cubic-bezier(.22,.68,0,1.2); cursor: pointer; position: relative; overflow: hidden; }
-.over-card:hover { border-color: ${C.accent}80; transform: translateY(-3px); box-shadow: 0 6px 20px rgba(30,45,107,0.12); }
-.over-card.sel { border-color: ${C.accent}; background: #F0F7FF; box-shadow: 0 4px 16px rgba(30,45,107,0.15); }
+.over-card:hover { border-color: ${C.navyLight}; transform: translateY(-3px); box-shadow: 0 6px 24px rgba(30,45,107,0.15); }
+.over-card.sel { border-color: ${C.navy}; background: linear-gradient(135deg,#EEF3FF,#E5EDFF); box-shadow: 0 4px 16px rgba(30,45,107,0.18); }
 .btn-p { background: linear-gradient(135deg, ${C.text}, #333); color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-family: Inter, system-ui; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: opacity .2s, transform .1s; }
 .btn-p:hover { opacity: 0.88; transform: translateY(-1px); }
 .btn-p:active { transform: translateY(0); }
