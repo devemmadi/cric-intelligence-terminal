@@ -377,10 +377,13 @@ function PredictionCallBanner({ pred }) {
 function ScoreCheckpointsCard({ projections }) {
     if (!projections || projections.length === 0) return null;
 
-    const confColor = (c) => c >= 80 ? "#16A34A" : c >= 65 ? "#B45309" : "#64748B";
-    const confBg    = (c) => c >= 80 ? "#DCFCE7" : c >= 65 ? "#FEF3C7" : "#F1F5F9";
+    // confidence number → plain English (never shown to user as %)
+    function confVerdict(c) {
+        if (c >= 85) return { text: "Very confident", color: "#16A34A", bg: "#DCFCE7" };
+        if (c >= 70) return { text: "Fairly confident", color: "#B45309", bg: "#FEF3C7" };
+        return { text: "Rough estimate", color: "#64748B", bg: "#F1F5F9" };
+    }
 
-    // Final score = last checkpoint
     const finalChk = projections[projections.length - 1];
 
     return (
@@ -390,13 +393,12 @@ function ScoreCheckpointsCard({ projections }) {
                 <span style={{ fontSize: 18 }}>📊</span>
                 <div>
                     <div style={{ fontSize: 13, fontWeight: 900, color: "#fff", letterSpacing: 0.5 }}>Score Projections</div>
-                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginTop: 1 }}>Live AI — no static data</div>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginTop: 1 }}>Based on live match data</div>
                 </div>
                 {finalChk && (
                     <div style={{ marginLeft: "auto", textAlign: "right" }}>
                         <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>FINAL SCORE</div>
-                        <div style={{ fontSize: 22, fontWeight: 900, color: "#C8961E", lineHeight: 1 }}>{finalChk.projected}</div>
-                        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)" }}>{finalChk.range}</div>
+                        <div style={{ fontSize: 22, fontWeight: 900, color: "#C8961E", lineHeight: 1 }}>{finalChk.low}–{finalChk.high}</div>
                     </div>
                 )}
             </div>
@@ -404,43 +406,40 @@ function ScoreCheckpointsCard({ projections }) {
             {/* Checkpoint rows */}
             <div style={{ padding: "10px 14px", display: "flex", flexDirection: "column", gap: 8 }}>
                 {projections.map((p, i) => {
-                    const isFinal = p.checkpoint === 20;
-                    const barPct  = Math.min(100, (p.projected / 250) * 100);
+                    const isFinal  = p.checkpoint === 20;
+                    const cv       = confVerdict(p.confidence);
+                    const barPct   = Math.min(100, (p.projected / 250) * 100);
                     const barColor = isFinal ? "#C8961E" : "#4A90E2";
 
                     return (
                         <div key={i} style={{
                             borderRadius: 12, padding: "12px 14px",
-                            background: isFinal ? "linear-gradient(135deg,#FEF3C710,#FFFBEB)" : "#F8FAFC",
-                            border: isFinal ? "1.5px solid #C8961E44" : "1px solid #E2E8F0",
+                            background: isFinal ? "#FFFBEB" : "#F8FAFC",
+                            border: isFinal ? "1.5px solid #C8961E55" : "1px solid #E2E8F0",
                         }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 7 }}>
-                                {/* Label */}
-                                <div>
-                                    <span style={{ fontSize: 12, fontWeight: 800, color: isFinal ? "#92400E" : "#0F172A" }}>
-                                        {isFinal ? "🏁 " : ""}{p.label}
-                                    </span>
-                                    {isFinal && <span style={{ fontSize: 9, marginLeft: 6, color: "#B45309", background: "#FEF3C7", padding: "1px 6px", borderRadius: 8, fontWeight: 700 }}>KEY</span>}
-                                </div>
-                                {/* Confidence pill */}
-                                <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 12,
-                                    background: confBg(p.confidence), color: confColor(p.confidence) }}>
-                                    {p.confidence}% conf
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                                <span style={{ fontSize: 12, fontWeight: 800, color: isFinal ? "#92400E" : "#0F172A" }}>
+                                    {isFinal ? "🏁 " : ""}{p.label}
+                                </span>
+                                <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 9px", borderRadius: 12,
+                                    background: cv.bg, color: cv.color }}>
+                                    {cv.text}
                                 </span>
                             </div>
 
-                            {/* Main numbers */}
-                            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 7 }}>
-                                <span style={{ fontSize: isFinal ? 32 : 26, fontWeight: 900, color: isFinal ? "#92400E" : "#1E2D6B", lineHeight: 1 }}>
-                                    {p.projected}
+                            {/* The ONE number that matters */}
+                            <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 8 }}>
+                                <span style={{ fontSize: isFinal ? 30 : 24, fontWeight: 900,
+                                    color: isFinal ? "#92400E" : "#1E2D6B", lineHeight: 1 }}>
+                                    {p.low}–{p.high}
                                 </span>
-                                <span style={{ fontSize: 12, color: "#64748B" }}>runs</span>
-                                <span style={{ fontSize: 12, color: "#94A3B8", marginLeft: 4 }}>({p.range})</span>
+                                <span style={{ fontSize: 13, color: "#94A3B8" }}>runs</span>
                             </div>
 
-                            {/* Progress bar */}
-                            <div style={{ height: 5, background: "#E2E8F0", borderRadius: 3 }}>
-                                <div style={{ height: "100%", width: barPct + "%", background: `linear-gradient(90deg, ${barColor}, ${barColor}99)`, borderRadius: 3, transition: "width 0.5s" }} />
+                            <div style={{ height: 4, background: "#E2E8F0", borderRadius: 3 }}>
+                                <div style={{ height: "100%", width: barPct + "%",
+                                    background: `linear-gradient(90deg, ${barColor}, ${barColor}99)`,
+                                    borderRadius: 3, transition: "width 0.5s" }} />
                             </div>
                         </div>
                     );
@@ -455,64 +454,52 @@ function ScoreCheckpointsCard({ projections }) {
 function PartnershipCard({ partnership }) {
     if (!partnership || !partnership.striker) return null;
 
-    const runs    = partnership.runsExpected || 0;
-    const balls   = partnership.ballsExpected || 0;
-    const overs   = partnership.oversExpected || 0;
-    const lo      = partnership.rangeLow || 0;
-    const hi      = partnership.rangeHigh || 0;
-    const conf    = partnership.confidence || 0;
+    const runs  = partnership.runsExpected || 0;
+    const lo    = partnership.rangeLow || 0;
+    const hi    = partnership.rangeHigh || 0;
+    const conf  = partnership.confidence || 0;
 
-    const runColor  = runs >= 60 ? "#DC2626" : runs >= 35 ? "#B45309" : runs >= 20 ? "#0369A1" : "#16A34A";
-    const runBg     = runs >= 60 ? "#FEE2E2" : runs >= 35 ? "#FEF3C7" : runs >= 20 ? "#E0F2FE" : "#DCFCE7";
-    const runEmoji  = runs >= 60 ? "🔥" : runs >= 35 ? "⚡" : runs >= 20 ? "🏏" : "🎯";
+    // plain English — no % shown
+    const confText = conf >= 80 ? "Very confident" : conf >= 65 ? "Fairly confident" : "Rough estimate";
+
+    const runColor = runs >= 60 ? "#DC2626" : runs >= 35 ? "#B45309" : runs >= 20 ? "#0369A1" : "#16A34A";
+    const runBg    = runs >= 60 ? "#FEE2E2" : runs >= 35 ? "#FEF3C7" : runs >= 20 ? "#E0F2FE" : "#DCFCE7";
+    const runEmoji = runs >= 60 ? "🔥" : runs >= 35 ? "⚡" : runs >= 20 ? "🏏" : "🎯";
 
     return (
         <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, overflow: "hidden", marginBottom: 14 }}>
-            {/* Header */}
             <div style={{ padding: "10px 16px", background: "linear-gradient(135deg,#134E4A,#0F766E)", display: "flex", alignItems: "center", gap: 8 }}>
                 <span style={{ fontSize: 16 }}>🤝</span>
                 <span style={{ fontSize: 12, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>Partnership Prediction</span>
-                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginLeft: "auto" }}>before next wicket</span>
+                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginLeft: "auto" }}>runs before next wicket</span>
             </div>
 
             <div style={{ padding: "14px 16px" }}>
-                {/* Batters */}
+                {/* Batters — clean, no SR clutter */}
                 <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
                     <div style={{ flex: 1, background: "#F0FDF4", borderRadius: 10, padding: "8px 10px", border: "2px solid #22C55E" }}>
-                        <div style={{ fontSize: 9, color: "#16A34A", fontWeight: 700, marginBottom: 2 }}>▶ STRIKER</div>
-                        <div style={{ fontSize: 13, fontWeight: 800, color: "#0F172A", marginBottom: 1 }}>{partnership.striker}</div>
-                        <div style={{ fontSize: 11, color: "#64748B" }}>
-                            {partnership.strikerRuns}* ({partnership.strikerSR} SR)
-                        </div>
+                        <div style={{ fontSize: 9, color: "#16A34A", fontWeight: 700, marginBottom: 3 }}>▶ ON STRIKE</div>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: "#0F172A" }}>{partnership.striker}</div>
+                        <div style={{ fontSize: 12, color: "#16A34A", fontWeight: 700, marginTop: 2 }}>{partnership.strikerRuns}*</div>
                     </div>
                     <div style={{ flex: 1, background: "#F8FAFC", borderRadius: 10, padding: "8px 10px", border: "1px solid #E2E8F0" }}>
-                        <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 2 }}>NON-STRIKER</div>
-                        <div style={{ fontSize: 13, fontWeight: 800, color: "#0F172A", marginBottom: 1 }}>{partnership.nonStriker}</div>
-                        <div style={{ fontSize: 11, color: "#64748B" }}>
-                            {partnership.nonStrikerRuns} ({partnership.nonStrikerSR} SR)
-                        </div>
+                        <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 3 }}>AT OTHER END</div>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: "#0F172A" }}>{partnership.nonStriker}</div>
+                        <div style={{ fontSize: 12, color: "#64748B", marginTop: 2 }}>{partnership.nonStrikerRuns}</div>
                     </div>
                 </div>
 
-                {/* Big answer */}
-                <div style={{ background: runBg, borderRadius: 12, padding: "14px 16px", marginBottom: 10, display: "flex", alignItems: "center", gap: 12 }}>
-                    <span style={{ fontSize: 28 }}>{runEmoji}</span>
-                    <div>
-                        <div style={{ fontSize: 22, fontWeight: 900, color: runColor, lineHeight: 1, marginBottom: 3 }}>
-                            {runs} runs
-                        </div>
-                        <div style={{ fontSize: 12, color: "#64748B" }}>
-                            ~{overs} overs · range {lo}–{hi} runs
-                        </div>
+                {/* Big answer — verdict first, numbers second */}
+                <div style={{ background: runBg, borderRadius: 12, padding: "14px 16px", marginBottom: 10 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
+                        <span style={{ fontSize: 26 }}>{runEmoji}</span>
+                        <div style={{ fontSize: 15, fontWeight: 900, color: runColor }}>{partnership.verdict}</div>
                     </div>
-                    <div style={{ marginLeft: "auto", textAlign: "right" }}>
-                        <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 2 }}>CONFIDENCE</div>
-                        <div style={{ fontSize: 16, fontWeight: 900, color: conf >= 75 ? "#16A34A" : "#B45309" }}>{conf}%</div>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: runColor, lineHeight: 1, marginBottom: 4 }}>
+                        {lo}–{hi} more runs
                     </div>
+                    <div style={{ fontSize: 11, color: "#64748B" }}>{confText} · ~{partnership.oversExpected} overs</div>
                 </div>
-
-                {/* Verdict */}
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#475569" }}>{partnership.verdict}</div>
             </div>
         </div>
     );
@@ -523,27 +510,36 @@ function PartnershipCard({ partnership }) {
 function BatterAnalysisCard({ analysis }) {
     if (!analysis || analysis.length === 0) return null;
 
-    function scoreLabel(pct) {
-        if (pct >= 65) return { text: "Very likely ✅", color: "#16A34A", bg: "#DCFCE7" };
-        if (pct >= 40) return { text: "Possible 🟡", color: "#B45309", bg: "#FEF3C7" };
-        return { text: "Unlikely ❌", color: "#DC2626", bg: "#FEE2E2" };
+    // Convert prob% to plain English verdict + style — % never shown to user
+    function innings20Verdict(pct, runs) {
+        // Already past 20? Focus on 30/50 instead — but we still use prob20 to signal intent
+        if (pct >= 70) return { verdict: "Should score big",         color: "#16A34A", bg: "#DCFCE7", emoji: "🔥" };
+        if (pct >= 45) return { verdict: "Could go either way",      color: "#B45309", bg: "#FEF3C7", emoji: "🟡" };
+        return           { verdict: "Likely a short innings",        color: "#DC2626", bg: "#FEE2E2", emoji: "❌" };
+    }
+    function innings50Verdict(pct) {
+        if (pct >= 55) return { verdict: "Half-century on the cards", color: "#16A34A", bg: "#DCFCE7", emoji: "💯" };
+        if (pct >= 30) return { verdict: "50 is possible",            color: "#B45309", bg: "#FEF3C7", emoji: "🟡" };
+        return           { verdict: "50 looks unlikely",              color: "#94A3B8", bg: "#F1F5F9", emoji: "❌" };
     }
 
     return (
         <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, overflow: "hidden", marginBottom: 14 }}>
             <div style={{ padding: "10px 16px", background: "#0F172A", display: "flex", alignItems: "center", gap: 8 }}>
                 <span style={{ fontSize: 16 }}>🏏</span>
-                <span style={{ fontSize: 12, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>Will they score big?</span>
-                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", marginLeft: "auto" }}>AI prediction</span>
+                <span style={{ fontSize: 12, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>Batter Predictions</span>
+                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", marginLeft: "auto" }}>AI · live data</span>
             </div>
             <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", gap: 10 }}>
                 {analysis.filter(b => !b.noData).map((b, i) => {
-                    const prob20 = b.prob20plus || 0;
-                    const prob50 = b.prob50plus || 0;
-                    const lbl20 = scoreLabel(prob20);
-                    const lbl50 = scoreLabel(prob50);
-                    const expMore = b.expectedMore || 0;
+                    const prob20   = b.prob20plus || 0;
+                    const prob50   = b.prob50plus || 0;
+                    const expMore  = b.expectedMore || 0;
+                    const expTotal = b.expectedTotal || (b.runs + expMore);
+                    const v20      = innings20Verdict(prob20, b.runs);
+                    const v50      = innings50Verdict(prob50);
                     const isStriker = b.isStriker;
+
                     return (
                         <div key={i} style={{
                             borderRadius: 12, padding: "14px",
@@ -554,30 +550,42 @@ function BatterAnalysisCard({ analysis }) {
                             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
                                 {isStriker && <span style={{ fontSize: 12 }}>▶</span>}
                                 <span style={{ fontSize: 14, fontWeight: 800, color: "#0F172A" }}>{b.name}</span>
-                                <span style={{ fontSize: 12, color: "#64748B" }}>{b.runs ?? 0} off {b.balls ?? 0} balls</span>
+                                <span style={{ fontSize: 12, color: "#64748B" }}>{b.runs ?? 0} off {b.balls ?? 0}</span>
                                 {isStriker && (
-                                    <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700, color: "#16A34A",
-                                        background: "#DCFCE7", padding: "2px 8px", borderRadius: 20 }}>batting now</span>
+                                    <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700,
+                                        color: "#16A34A", background: "#DCFCE7", padding: "2px 8px", borderRadius: 20 }}>
+                                        batting now
+                                    </span>
                                 )}
                             </div>
 
-                            {/* AI expects */}
-                            <div style={{ fontSize: 12, color: "#475569", marginBottom: 10, background: "#fff",
-                                borderRadius: 8, padding: "8px 12px", border: "1px solid #E2E8F0" }}>
-                                🤖 AI expects <strong style={{ color: "#0F172A" }}>~{expMore} more runs</strong> before getting out
+                            {/* Expected total — the ONE number */}
+                            <div style={{ background: "#fff", borderRadius: 10, padding: "10px 14px",
+                                border: "1px solid #E2E8F0", marginBottom: 10,
+                                display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                                <div>
+                                    <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 700, marginBottom: 2 }}>EXPECTED INNINGS TOTAL</div>
+                                    <div style={{ fontSize: 26, fontWeight: 900, color: "#0F172A", lineHeight: 1 }}>
+                                        ~{expTotal} runs
+                                    </div>
+                                </div>
+                                <div style={{ fontSize: 11, color: "#64748B", textAlign: "right" }}>
+                                    <div>{expMore > 0 ? `+${expMore} more` : "near done"}</div>
+                                    <div style={{ fontSize: 10, color: "#94A3B8" }}>from current {b.runs}</div>
+                                </div>
                             </div>
 
-                            {/* Score probability — 2 big tiles */}
+                            {/* Two verdict tiles — words only, no % */}
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-                                <div style={{ background: lbl20.bg, borderRadius: 10, padding: "10px 12px" }}>
-                                    <div style={{ fontSize: 10, color: "#64748B", marginBottom: 4, fontWeight: 600 }}>Scores 20+ runs?</div>
-                                    <div style={{ fontSize: 20, fontWeight: 900, color: lbl20.color, lineHeight: 1, marginBottom: 3 }}>{prob20}%</div>
-                                    <div style={{ fontSize: 11, fontWeight: 700, color: lbl20.color }}>{lbl20.text}</div>
+                                <div style={{ background: v20.bg, borderRadius: 10, padding: "10px 12px" }}>
+                                    <div style={{ fontSize: 10, color: "#64748B", marginBottom: 5, fontWeight: 600 }}>Scores 20+?</div>
+                                    <div style={{ fontSize: 18 }}>{v20.emoji}</div>
+                                    <div style={{ fontSize: 11, fontWeight: 800, color: v20.color, marginTop: 4 }}>{v20.verdict}</div>
                                 </div>
-                                <div style={{ background: lbl50.bg, borderRadius: 10, padding: "10px 12px" }}>
-                                    <div style={{ fontSize: 10, color: "#64748B", marginBottom: 4, fontWeight: 600 }}>Scores 50+ runs?</div>
-                                    <div style={{ fontSize: 20, fontWeight: 900, color: lbl50.color, lineHeight: 1, marginBottom: 3 }}>{prob50}%</div>
-                                    <div style={{ fontSize: 11, fontWeight: 700, color: lbl50.color }}>{lbl50.text}</div>
+                                <div style={{ background: v50.bg, borderRadius: 10, padding: "10px 12px" }}>
+                                    <div style={{ fontSize: 10, color: "#64748B", marginBottom: 5, fontWeight: 600 }}>Scores 50+?</div>
+                                    <div style={{ fontSize: 18 }}>{v50.emoji}</div>
+                                    <div style={{ fontSize: 11, fontWeight: 800, color: v50.color, marginTop: 4 }}>{v50.verdict}</div>
                                 </div>
                             </div>
                         </div>
