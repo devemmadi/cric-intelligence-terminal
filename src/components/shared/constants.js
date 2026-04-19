@@ -69,7 +69,7 @@ body { background: ${C.bg}; }
 .btn-p { background: linear-gradient(135deg, ${C.text}, #333); color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-family: Inter, system-ui; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: opacity .2s, transform .1s; }
 .btn-p:hover { opacity: 0.88; transform: translateY(-1px); }
 .btn-p:active { transform: translateY(0); }
-@media (max-width: 768px) {
+@media (max-width: 700px) {
     .sl { display: none !important; }
     .sr { display: none !important; }
     .mg { grid-template-columns: 1fr !important; }
