@@ -539,6 +539,12 @@ function BatterAnalysisCard({ analysis }) {
                     const v20      = innings20Verdict(prob20, b.runs);
                     const v50      = innings50Verdict(prob50);
                     const isStriker = b.isStriker;
+                    const form     = b.recentForm || "ok";
+                    const formBadge = form === "hot"
+                        ? { text: "🔥 Hot form", color: "#16A34A", bg: "#DCFCE7" }
+                        : form === "cold"
+                        ? { text: "❄️ Cold form", color: "#DC2626", bg: "#FEE2E2" }
+                        : null;
 
                     return (
                         <div key={i} style={{
@@ -547,10 +553,16 @@ function BatterAnalysisCard({ analysis }) {
                             border: isStriker ? "2px solid #22C55E" : "1px solid #E2E8F0",
                         }}>
                             {/* Name row */}
-                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
                                 {isStriker && <span style={{ fontSize: 12 }}>▶</span>}
                                 <span style={{ fontSize: 14, fontWeight: 800, color: "#0F172A" }}>{b.name}</span>
                                 <span style={{ fontSize: 12, color: "#64748B" }}>{b.runs ?? 0} off {b.balls ?? 0}</span>
+                                {formBadge && (
+                                    <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 20,
+                                        background: formBadge.bg, color: formBadge.color }}>
+                                        {formBadge.text}
+                                    </span>
+                                )}
                                 {isStriker && (
                                     <span style={{ marginLeft: "auto", fontSize: 10, fontWeight: 700,
                                         color: "#16A34A", background: "#DCFCE7", padding: "2px 8px", borderRadius: 20 }}>
