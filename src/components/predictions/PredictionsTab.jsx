@@ -1554,21 +1554,6 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 </div>
                             )}
 
-                            <div className="cr" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14 }}>
-                                <div className="card" style={{ padding: 18, display: "flex", gap: 14, alignItems: "center" }}>
-                                    <span style={{ fontSize: 32 }}>{pred.weatherImpact?.emoji || "🌤"}</span>
-                                    <div>
-                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase" }}>WEATHER</div>
-                                        <div style={{ fontSize: 20, fontWeight: 900 }}>{pred.weather?.temp || ""}°C</div>
-                                        <div style={{ fontSize: 11, color: C.muted }}>{pred.weather?.condition || ""}</div>
-                                    </div>
-                                </div>
-                                <div className="card" style={{ padding: 18 }}>
-                                    <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase" }}>PITCH</div>
-                                    <div style={{ fontSize: 15, fontWeight: 700 }}>{pred.pitchLabel || ""}</div>
-                                    <div style={{ fontSize: 11, color: C.muted }}>{pred.pitchCondition || ""}</div>
-                                </div>
-                            </div>
 
                         </div>}
                     </>
