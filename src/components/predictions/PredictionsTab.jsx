@@ -373,6 +373,152 @@ function PredictionCallBanner({ pred }) {
 }
 
 
+// ─── Score Checkpoint Projections Card ───────────────────────────────────────
+function ScoreCheckpointsCard({ projections }) {
+    if (!projections || projections.length === 0) return null;
+
+    const confColor = (c) => c >= 80 ? "#16A34A" : c >= 65 ? "#B45309" : "#64748B";
+    const confBg    = (c) => c >= 80 ? "#DCFCE7" : c >= 65 ? "#FEF3C7" : "#F1F5F9";
+
+    // Final score = last checkpoint
+    const finalChk = projections[projections.length - 1];
+
+    return (
+        <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, overflow: "hidden", marginBottom: 14 }}>
+            {/* Header */}
+            <div style={{ padding: "12px 16px", background: "linear-gradient(135deg,#0F172A,#1E2D6B)", display: "flex", alignItems: "center", gap: 10 }}>
+                <span style={{ fontSize: 18 }}>📊</span>
+                <div>
+                    <div style={{ fontSize: 13, fontWeight: 900, color: "#fff", letterSpacing: 0.5 }}>Score Projections</div>
+                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginTop: 1 }}>Live AI — no static data</div>
+                </div>
+                {finalChk && (
+                    <div style={{ marginLeft: "auto", textAlign: "right" }}>
+                        <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>FINAL SCORE</div>
+                        <div style={{ fontSize: 22, fontWeight: 900, color: "#C8961E", lineHeight: 1 }}>{finalChk.projected}</div>
+                        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)" }}>{finalChk.range}</div>
+                    </div>
+                )}
+            </div>
+
+            {/* Checkpoint rows */}
+            <div style={{ padding: "10px 14px", display: "flex", flexDirection: "column", gap: 8 }}>
+                {projections.map((p, i) => {
+                    const isFinal = p.checkpoint === 20;
+                    const barPct  = Math.min(100, (p.projected / 250) * 100);
+                    const barColor = isFinal ? "#C8961E" : "#4A90E2";
+
+                    return (
+                        <div key={i} style={{
+                            borderRadius: 12, padding: "12px 14px",
+                            background: isFinal ? "linear-gradient(135deg,#FEF3C710,#FFFBEB)" : "#F8FAFC",
+                            border: isFinal ? "1.5px solid #C8961E44" : "1px solid #E2E8F0",
+                        }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 7 }}>
+                                {/* Label */}
+                                <div>
+                                    <span style={{ fontSize: 12, fontWeight: 800, color: isFinal ? "#92400E" : "#0F172A" }}>
+                                        {isFinal ? "🏁 " : ""}{p.label}
+                                    </span>
+                                    {isFinal && <span style={{ fontSize: 9, marginLeft: 6, color: "#B45309", background: "#FEF3C7", padding: "1px 6px", borderRadius: 8, fontWeight: 700 }}>KEY</span>}
+                                </div>
+                                {/* Confidence pill */}
+                                <span style={{ fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 12,
+                                    background: confBg(p.confidence), color: confColor(p.confidence) }}>
+                                    {p.confidence}% conf
+                                </span>
+                            </div>
+
+                            {/* Main numbers */}
+                            <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 7 }}>
+                                <span style={{ fontSize: isFinal ? 32 : 26, fontWeight: 900, color: isFinal ? "#92400E" : "#1E2D6B", lineHeight: 1 }}>
+                                    {p.projected}
+                                </span>
+                                <span style={{ fontSize: 12, color: "#64748B" }}>runs</span>
+                                <span style={{ fontSize: 12, color: "#94A3B8", marginLeft: 4 }}>({p.range})</span>
+                            </div>
+
+                            {/* Progress bar */}
+                            <div style={{ height: 5, background: "#E2E8F0", borderRadius: 3 }}>
+                                <div style={{ height: "100%", width: barPct + "%", background: `linear-gradient(90deg, ${barColor}, ${barColor}99)`, borderRadius: 3, transition: "width 0.5s" }} />
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
+}
+
+
+// ─── Partnership Prediction Card ──────────────────────────────────────────────
+function PartnershipCard({ partnership }) {
+    if (!partnership || !partnership.striker) return null;
+
+    const runs    = partnership.runsExpected || 0;
+    const balls   = partnership.ballsExpected || 0;
+    const overs   = partnership.oversExpected || 0;
+    const lo      = partnership.rangeLow || 0;
+    const hi      = partnership.rangeHigh || 0;
+    const conf    = partnership.confidence || 0;
+
+    const runColor  = runs >= 60 ? "#DC2626" : runs >= 35 ? "#B45309" : runs >= 20 ? "#0369A1" : "#16A34A";
+    const runBg     = runs >= 60 ? "#FEE2E2" : runs >= 35 ? "#FEF3C7" : runs >= 20 ? "#E0F2FE" : "#DCFCE7";
+    const runEmoji  = runs >= 60 ? "🔥" : runs >= 35 ? "⚡" : runs >= 20 ? "🏏" : "🎯";
+
+    return (
+        <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, overflow: "hidden", marginBottom: 14 }}>
+            {/* Header */}
+            <div style={{ padding: "10px 16px", background: "linear-gradient(135deg,#134E4A,#0F766E)", display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ fontSize: 16 }}>🤝</span>
+                <span style={{ fontSize: 12, fontWeight: 800, color: "#fff", letterSpacing: 1 }}>Partnership Prediction</span>
+                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginLeft: "auto" }}>before next wicket</span>
+            </div>
+
+            <div style={{ padding: "14px 16px" }}>
+                {/* Batters */}
+                <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
+                    <div style={{ flex: 1, background: "#F0FDF4", borderRadius: 10, padding: "8px 10px", border: "2px solid #22C55E" }}>
+                        <div style={{ fontSize: 9, color: "#16A34A", fontWeight: 700, marginBottom: 2 }}>▶ STRIKER</div>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: "#0F172A", marginBottom: 1 }}>{partnership.striker}</div>
+                        <div style={{ fontSize: 11, color: "#64748B" }}>
+                            {partnership.strikerRuns}* ({partnership.strikerSR} SR)
+                        </div>
+                    </div>
+                    <div style={{ flex: 1, background: "#F8FAFC", borderRadius: 10, padding: "8px 10px", border: "1px solid #E2E8F0" }}>
+                        <div style={{ fontSize: 9, color: "#64748B", fontWeight: 700, marginBottom: 2 }}>NON-STRIKER</div>
+                        <div style={{ fontSize: 13, fontWeight: 800, color: "#0F172A", marginBottom: 1 }}>{partnership.nonStriker}</div>
+                        <div style={{ fontSize: 11, color: "#64748B" }}>
+                            {partnership.nonStrikerRuns} ({partnership.nonStrikerSR} SR)
+                        </div>
+                    </div>
+                </div>
+
+                {/* Big answer */}
+                <div style={{ background: runBg, borderRadius: 12, padding: "14px 16px", marginBottom: 10, display: "flex", alignItems: "center", gap: 12 }}>
+                    <span style={{ fontSize: 28 }}>{runEmoji}</span>
+                    <div>
+                        <div style={{ fontSize: 22, fontWeight: 900, color: runColor, lineHeight: 1, marginBottom: 3 }}>
+                            {runs} runs
+                        </div>
+                        <div style={{ fontSize: 12, color: "#64748B" }}>
+                            ~{overs} overs · range {lo}–{hi} runs
+                        </div>
+                    </div>
+                    <div style={{ marginLeft: "auto", textAlign: "right" }}>
+                        <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 2 }}>CONFIDENCE</div>
+                        <div style={{ fontSize: 16, fontWeight: 900, color: conf >= 75 ? "#16A34A" : "#B45309" }}>{conf}%</div>
+                    </div>
+                </div>
+
+                {/* Verdict */}
+                <div style={{ fontSize: 12, fontWeight: 600, color: "#475569" }}>{partnership.verdict}</div>
+            </div>
+        </div>
+    );
+}
+
+
 // ─── Batter Score Prediction Card ────────────────────────────────────────────
 function BatterAnalysisCard({ analysis }) {
     if (!analysis || analysis.length === 0) return null;
@@ -1220,7 +1366,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", paddingBottom: 12 }}>
                                 {[
                                     { label: "⚡ Live data from Cricbuzz" },
-                                    { label: "🤖 ML model — 80% accuracy" },
+                                    { label: "🤖 ML model — score projections + partnerships" },
                                     { label: "🔄 Auto-refreshes every 30s" },
                                     ...(pred.venue ? [{ label: `📍 ${pred.venue}` }] : []),
                                 ].map((item) => (
@@ -1359,6 +1505,14 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             {pred.overs > 0 && (
                                 <div style={{ marginBottom: 14 }}>
                                     <LiveProbabilityGraph pred={pred} />
+                                </div>
+                            )}
+
+                            {/* ── Score Checkpoints + Partnership (betting reference) ── */}
+                            {pred.playerAnalysis && (pred.playerAnalysis.scoreProjection?.length > 0 || pred.playerAnalysis.partnership?.striker) && !isEnded && (
+                                <div style={{ marginBottom: 0 }}>
+                                    <ScoreCheckpointsCard projections={pred.playerAnalysis.scoreProjection} />
+                                    <PartnershipCard partnership={pred.playerAnalysis.partnership} />
                                 </div>
                             )}
 
