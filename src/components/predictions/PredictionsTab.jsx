@@ -1352,9 +1352,18 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 </div>
                                 {pred?.displayScore && (
                                     <div style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
+                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", letterSpacing: 0.5 }}>
+                                            {cleanTeam((pred.innings === 2 ? pred.team2 : pred.team1) || "")}
+                                        </span>
                                         <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore}</span>
                                         <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
                                         <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>Rate {pred.currentRunRate || ""}</span>
+                                        {pred.innings === 2 && pred.target > 0 && (
+                                            <>
+                                                <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
+                                                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Target <span style={{ color: "#fff", fontWeight: 700 }}>{pred.target}</span></span>
+                                            </>
+                                        )}
                                         {pred.momentum !== undefined && pred.currentRunRate > 0 && (
                                             <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: pred.momentum > 0.5 ? "rgba(0,200,150,0.25)" : pred.momentum < -0.5 ? "rgba(229,62,62,0.25)" : "rgba(255,255,255,0.1)", color: pred.momentum > 0.5 ? "#00D4AA" : pred.momentum < -0.5 ? "#FF6B6B" : "rgba(255,255,255,0.7)" }}>
                                                 {pred.momentum > 0 ? "+" : ""}{pred.momentum ? pred.momentum.toFixed(1) : "0"} vs avg
