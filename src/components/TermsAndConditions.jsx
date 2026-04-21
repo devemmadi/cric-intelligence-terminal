@@ -8,11 +8,9 @@ const C = {
     navy: "#354D97", gold: "#C8961E",
 };
 
-// Set page title
-if (typeof document !== "undefined") document.title = "Terms & Conditions | CricIntelligence";
-
 export default function TermsAndConditions() {
     useEffect(() => {
+        document.title = "Terms & Conditions | CricIntelligence";
         let el = document.querySelector("link[rel='canonical']");
         if (!el) { el = document.createElement('link'); el.setAttribute('rel', 'canonical'); document.head.appendChild(el); }
         el.setAttribute('href', 'https://www.cricintelligence.com/terms');
