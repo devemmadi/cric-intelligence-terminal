@@ -1578,18 +1578,6 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                       <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${prob}%`, background: getTeamColor(pred.team1), transition: "width 0.8s" }} />
                     </div>
                     <div style={{ padding: "14px 14px 12px" }}>
-                      {/* Bet CTA — TOP, first thing user sees */}
-                      <div style={{ marginBottom: 12 }}>
-                        <div style={{ fontSize: 9, color: C.muted, marginBottom: 8 }}>Act on this AI signal</div>
-                        <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
-                          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2, background: prob >= 65 || prob <= 35 ? "linear-gradient(135deg,#00C896,#00A37A)" : C.navy, border: "none", borderRadius: 10, padding: "11px 14px", textDecoration: "none", fontWeight: 900, fontSize: 13, color: "#fff", boxShadow: prob >= 65 || prob <= 35 ? "0 4px 16px rgba(0,200,150,0.4)" : "none" }}>
-                          <span>🎰 BET {prob >= 50 ? cleanTeam(pred.team1) : cleanTeam(pred.team2)} TO WIN</span>
-                          {(prob >= 65 || prob <= 35) && <span style={{ fontSize: 9, opacity: 0.8, fontWeight: 600 }}>HIGH CONFIDENCE SIGNAL</span>}
-                        </a>
-                        <div style={{ fontSize: 9, color: C.muted, textAlign: "center", marginTop: 6 }}>
-                          18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: C.muted }}>BeGambleAware.org</a>
-                        </div>
-                      </div>
                       {/* Divider */}
                       <div style={{ height: 1, background: C.border, marginBottom: 12 }} />
                       <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>AI PREDICTION SUMMARY</div>
