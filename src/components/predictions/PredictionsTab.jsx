@@ -1005,9 +1005,6 @@ function HeroDecision({ pred, prob, isEnded }) {
                 </div>
             )}
 
-            <div style={{ textAlign: "center", fontSize: 10, color: "rgba(255,255,255,0.22)" }}>
-                18+ · <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: "rgba(255,255,255,0.22)" }}>BeGambleAware.org</a>
-            </div>
         </div>
     );
 }
