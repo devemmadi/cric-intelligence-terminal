@@ -1629,6 +1629,68 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     </div>
                   </div>
                 )}
+                {/* ── LIVE PREDICTIONS ── */}
+                {pred?.livePredictions && (
+                    <div style={{ background: "#0D1117", border: "1px solid rgba(99,102,241,0.25)", borderRadius: 12, padding: "12px 14px" }}>
+                        <div style={{ fontSize: 10, fontWeight: 800, color: "#818CF8", letterSpacing: 1.5, marginBottom: 10 }}>🎯 LIVE PREDICTIONS</div>
+
+                        {/* Batsman 50 */}
+                        {pred.livePredictions.batsman50 && (() => {
+                            const b = pred.livePredictions.batsman50;
+                            const prob = b.prob;
+                            const color = b.done ? "#10B981" : prob >= 65 ? "#10B981" : prob >= 40 ? "#F59E0B" : "#EF4444";
+                            return (
+                                <div style={{ marginBottom: 10 }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#E2E8F0" }}>{b.label}</span>
+                                        <span style={{ fontSize: 13, fontWeight: 900, color }}>{b.done ? "✓" : `${prob}%`}</span>
+                                    </div>
+                                    <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 4, overflow: "hidden" }}>
+                                        <div style={{ width: `${prob}%`, height: "100%", background: color, borderRadius: 4, transition: "width 0.5s" }} />
+                                    </div>
+                                    <div style={{ fontSize: 9, color: "#64748B", marginTop: 3 }}>{b.detail}</div>
+                                </div>
+                            );
+                        })()}
+
+                        {/* Boundary next over */}
+                        {(() => {
+                            const b = pred.livePredictions.boundary;
+                            const color = b.prob >= 70 ? "#10B981" : b.prob >= 50 ? "#F59E0B" : "#EF4444";
+                            return (
+                                <div style={{ marginBottom: 10 }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#E2E8F0" }}>🏏 {b.label}</span>
+                                        <span style={{ fontSize: 13, fontWeight: 900, color }}>{b.prob}%</span>
+                                    </div>
+                                    <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 4, overflow: "hidden" }}>
+                                        <div style={{ width: `${b.prob}%`, height: "100%", background: color, borderRadius: 4 }} />
+                                    </div>
+                                    <div style={{ fontSize: 9, color: "#64748B", marginTop: 3 }}>{b.detail}</div>
+                                </div>
+                            );
+                        })()}
+
+                        {/* Wicket next 3 overs */}
+                        {(() => {
+                            const w = pred.livePredictions.wicket3overs;
+                            const color = w.prob >= 60 ? "#EF4444" : w.prob >= 40 ? "#F59E0B" : "#10B981";
+                            return (
+                                <div>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#E2E8F0" }}>🎳 {w.label}</span>
+                                        <span style={{ fontSize: 13, fontWeight: 900, color }}>{w.prob}%</span>
+                                    </div>
+                                    <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 4, overflow: "hidden" }}>
+                                        <div style={{ width: `${w.prob}%`, height: "100%", background: color, borderRadius: 4 }} />
+                                    </div>
+                                    <div style={{ fontSize: 9, color: "#64748B", marginTop: 3 }}>{w.detail}</div>
+                                </div>
+                            );
+                        })()}
+                    </div>
+                )}
+
                 {pred && pred.team1 && (
                     <div style={{ background: C.bg, borderRadius: 12, padding: "10px 12px" }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>MATCH CONTEXT</div>
