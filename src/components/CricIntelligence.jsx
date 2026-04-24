@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Logo from "./Logo";
 import RGFooter from "./RGFooter";
 import { C, GLOBAL_CSS } from "./shared/constants";
@@ -20,9 +21,23 @@ function setCanonical(url) {
 }
 
 export default function CricIntelligence() {
-    const [activeTab, setActiveTab] = useState("predict");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const VALID_TABS = ["predict", "matches", "pitch", "record", "media"];
+    const tabFromUrl = searchParams.get("tab");
+    const [activeTab, setActiveTabState] = useState(
+        VALID_TABS.includes(tabFromUrl) ? tabFromUrl : "predict"
+    );
     const [liveTime, setLiveTime] = useState(new Date());
     const [moreOpen, setMoreOpen] = useState(false);
+
+    const setActiveTab = (tab) => {
+        setActiveTabState(tab);
+        if (tab === "predict") {
+            setSearchParams({}, { replace: true });
+        } else {
+            setSearchParams({ tab }, { replace: true });
+        }
+    };
 
     const { liveMatches, selectedMatch, selectMatch, pred, liveStatus, isFirstLoad, isPredLoading } = useMatchData();
 
