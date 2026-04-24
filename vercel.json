@@ -2,6 +2,14 @@
   "buildCommand": "node node_modules/react-scripts/bin/react-scripts.js build",
   "outputDirectory": "build",
   "framework": "create-react-app",
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "cricintelligence.com" }],
+      "destination": "https://www.cricintelligence.com/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/predictions/ipl-2026", "destination": "/predictions/ipl-2026.html" },
     { "source": "/predictions/t20-predictions", "destination": "/predictions/t20-predictions.html" },
