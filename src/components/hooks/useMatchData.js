@@ -54,8 +54,13 @@ export default function useMatchData() {
                     merged.deteriorationFactor = predData.deteriorationFactor ?? scorecardData.deteriorationFactor;
                     merged.currentPhase = predData.currentPhase ?? scorecardData.currentPhase;
                     merged.playerContext = predData.playerContext ?? scorecardData.playerContext;
-                    if (scorecardData.score > 0 || scorecardData.overs > 0) {
+                    // Always update displayScore — it's correct from scorecardData.
+                    // Guard only numeric fields to avoid zeroing a valid cached score,
+                    // BUT allow innings 2 start (score=0, overs=0 is valid then).
+                    if (scorecardData.displayScore) {
                         merged.displayScore = scorecardData.displayScore;
+                    }
+                    if (scorecardData.score > 0 || scorecardData.overs > 0 || scorecardData.innings === 2) {
                         merged.score = scorecardData.score;
                         merged.wickets = scorecardData.wickets;
                         merged.overs = scorecardData.overs;
@@ -127,8 +132,12 @@ export default function useMatchData() {
                     t2ImageId: m.t2ImageId || m.team2ImageId || 0,
                     day: m.matchType?.toUpperCase() || "T20",
                     detail: m.name || "",
-                    t1Score: m.score?.[0]?.r ?? null, t1Wkts: m.score?.[0]?.w ?? null,
-                    t2Score: m.score?.[1]?.r ?? null,
+                    t1Score: m.t1Runs ?? m.score?.[0]?.r ?? null,
+                    t1Wkts:  m.t1Wkts ?? m.score?.[0]?.w ?? null,
+                    t1Overs: m.t1Overs ?? null,
+                    t2Score: m.t2Runs ?? m.score?.[1]?.r ?? null,
+                    t2Wkts:  m.t2Wkts ?? m.score?.[1]?.w ?? null,
+                    t2Overs: m.t2Overs ?? null,
                 };
             });
 
