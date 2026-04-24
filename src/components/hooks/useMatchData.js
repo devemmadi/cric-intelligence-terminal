@@ -132,12 +132,12 @@ export default function useMatchData() {
                     t2ImageId: m.t2ImageId || m.team2ImageId || 0,
                     day: m.matchType?.toUpperCase() || "T20",
                     detail: m.name || "",
-                    t1Score: m.t1Runs ?? m.score?.[0]?.r ?? null,
-                    t1Wkts:  m.t1Wkts ?? m.score?.[0]?.w ?? null,
-                    t1Overs: m.t1Overs ?? null,
-                    t2Score: m.t2Runs ?? m.score?.[1]?.r ?? null,
-                    t2Wkts:  m.t2Wkts ?? m.score?.[1]?.w ?? null,
-                    t2Overs: m.t2Overs ?? null,
+                    t1Score: m.t1Runs != null ? m.t1Runs : (m.innings === 1 && m.score > 0 ? m.score : null),
+                    t1Wkts:  m.t1Wkts != null ? m.t1Wkts : (m.innings === 1 ? m.wickets : null),
+                    t1Overs: m.t1Overs != null ? m.t1Overs : (m.innings === 1 ? m.overs : null),
+                    t2Score: m.t2Runs != null ? m.t2Runs : (m.innings === 2 && m.score > 0 ? m.score : null),
+                    t2Wkts:  m.t2Wkts != null ? m.t2Wkts : (m.innings === 2 ? m.wickets : null),
+                    t2Overs: m.t2Overs != null ? m.t2Overs : (m.innings === 2 ? m.overs : null),
                 };
             });
 
