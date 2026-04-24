@@ -1632,7 +1632,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                 {/* ── LIVE PREDICTIONS ── */}
                 {pred?.livePredictions && (
                     <div style={{ background: "#0D1117", border: "1px solid rgba(99,102,241,0.25)", borderRadius: 12, padding: "12px 14px" }}>
-                        <div style={{ fontSize: 10, fontWeight: 800, color: "#818CF8", letterSpacing: 1.5, marginBottom: 10 }}>🎯 LIVE PREDICTIONS</div>
+                        <div style={{ fontSize: 10, fontWeight: 800, color: "#818CF8", letterSpacing: 1.5, marginBottom: 10 }}>🎯 WHAT HAPPENS NEXT?</div>
 
                         {/* Batsman 50 */}
                         {pred.livePredictions.batsman50 && (() => {
