@@ -1496,34 +1496,25 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     </div>
                                 </div>
 
-                                {/* Right column: scorecard + win prob */}
+                                {/* Right column: scorecard + match intel */}
                                 <div style={{ position: "sticky", top: 54, display: "flex", flexDirection: "column", gap: 14 }}>
                                     {pred.batters && pred.batters.length > 0 && (
                                         <LiveScorecard batters={pred.batters} bowler={pred.bowler || {}} />
                                     )}
-                                    <div className="card" style={{ padding: 22 }}>
-                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 4 }}>Win probability</div>
-                                        <div style={{ fontSize: 15, fontWeight: 800, color: winColor, marginBottom: 8, letterSpacing: 0.3 }}>{winMsg}</div>
-                                        <WinArc value={prob} />
-                                        <div style={{ fontSize: 11, color: C.muted, marginTop: 6, textAlign: "center" }}>{cleanTeam(pred.team1)} · {prob}%</div>
-                                    </div>
-                                    <div className="card" style={{ padding: 22 }}>
-                                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 10 }}>Match intel</div>
-                                        {pred.pressureScore !== undefined && (
-                                            <div style={{ marginBottom: 14 }}>
-                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                                                    <span style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase" }}>Batting Pressure</span>
-                                                    <span style={{ fontSize: 13, fontWeight: 900, color: pred.pressureScore > 70 ? C.red : pred.pressureScore > 45 ? C.amber : C.green }}>
-                                                        {pred.pressureScore > 75 ? "Batters under fire" : pred.pressureScore > 55 ? "Tension rising" : pred.pressureScore > 35 ? "Even contest" : "In control"}
-                                                    </span>
-                                                </div>
-                                                <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 6, overflow: "hidden" }}>
-                                                    <div style={{ height: "100%", width: pred.pressureScore + "%", borderRadius: 6, transition: "width 0.6s ease", background: pred.pressureScore > 70 ? "linear-gradient(90deg,#E53E3E,#FF6B6B)" : pred.pressureScore > 45 ? "linear-gradient(90deg,#DD6B20,#F6AD55)" : "linear-gradient(90deg,#276749,#68D391)" }} />
-                                                </div>
+                                    {pred.pressureScore !== undefined && (
+                                        <div className="card" style={{ padding: 22 }}>
+                                            <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 10 }}>Match intel</div>
+                                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                                                <span style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1.2, textTransform: "uppercase" }}>Batting Pressure</span>
+                                                <span style={{ fontSize: 13, fontWeight: 900, color: pred.pressureScore > 70 ? C.red : pred.pressureScore > 45 ? C.amber : C.green }}>
+                                                    {pred.pressureScore > 75 ? "Batters under fire" : pred.pressureScore > 55 ? "Tension rising" : pred.pressureScore > 35 ? "Even contest" : "In control"}
+                                                </span>
                                             </div>
-                                        )}
-                                        <div style={{ background: C.bg, borderRadius: 8, padding: "10px 12px", fontSize: 12, color: C.muted }}>{pred.weatherImpact?.tip || "Bright conditions favour batters."}</div>
-                                    </div>
+                                            <div style={{ height: 8, background: "rgba(255,255,255,0.1)", borderRadius: 6, overflow: "hidden" }}>
+                                                <div style={{ height: "100%", width: pred.pressureScore + "%", borderRadius: 6, transition: "width 0.6s ease", background: pred.pressureScore > 70 ? "linear-gradient(90deg,#E53E3E,#FF6B6B)" : pred.pressureScore > 45 ? "linear-gradient(90deg,#DD6B20,#F6AD55)" : "linear-gradient(90deg,#276749,#68D391)" }} />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -1613,19 +1604,6 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                           </div>
                         );
                       })()}
-                      {/* Next over + wicket risk */}
-                      {pred.nextOvers?.[0] && (<>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                          <span style={{ fontSize: 11, color: C.muted }}>Next over</span>
-                          <span style={{ fontSize: 13, fontWeight: 800, color: C.text }}>{pred.nextOvers[0].runRange} runs</span>
-                        </div>
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-                          <span style={{ fontSize: 11, color: C.muted }}>Wicket risk</span>
-                          <span style={{ fontSize: 12, fontWeight: 700, color: pred.nextOvers[0].wicketProb > 40 ? C.red : pred.nextOvers[0].wicketProb > 25 ? C.amber : C.green }}>
-                            {pred.nextOvers[0].wicketProb > 40 ? "High" : pred.nextOvers[0].wicketProb > 25 ? "Med" : "Low"} · {pred.nextOvers[0].wicketProb}%
-                          </span>
-                        </div>
-                      </>)}
                     </div>
                   </div>
                 )}
@@ -1699,7 +1677,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             ["Phase", pred.currentPhase || ""],
                             ["Pitch", pred.pitchLabel || ""],
                             ["Weather", pred.weatherImpact?.condition || ""],
-                        ].map(([l, v]) => (
+                        ].filter(([, v]) => v).map(([l, v]) => (
                             <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
                                 <span style={{ fontSize: 11, color: C.muted }}>{l}</span>
                                 <span style={{ fontSize: 11, fontWeight: 700, color: C.text, maxWidth: 110, textAlign: "right" }}>{v}</span>
