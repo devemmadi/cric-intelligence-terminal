@@ -1281,8 +1281,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
     // Compute isEnded at top level so all child sections can use it
-    const _st = selectedMatch?.rawStatus || pred?.matchStatus || "";
-    const isEnded = selectedMatch?.status === "ENDED" || _st.toLowerCase().includes("won by") || _st.toLowerCase().includes(" beat ") || _st.toLowerCase().includes("match tied") || _st.toLowerCase().includes("no result");
+    // pred?.matchEnded comes from backend build_pred — most reliable signal
+    const _st = selectedMatch?.rawStatus || pred?.matchStatus || pred?.status || "";
+    const isEnded = pred?.matchEnded === true || selectedMatch?.status === "ENDED" || _st.toLowerCase().includes("won by") || _st.toLowerCase().includes(" beat ") || _st.toLowerCase().includes("match tied") || _st.toLowerCase().includes("no result");
 
     return (
         <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px minmax(0,1fr) 240px", minHeight: "calc(100vh - 54px)", width: "100%" }}>
@@ -1408,8 +1409,8 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             {/* ── MINI TRUST BLOCK ── */}
                             <MiniTrustBlock />
 
-                            {/* ── FAIR ODDS (collapsed below hero) ── */}
-                            {pred.aiProbability !== undefined && (() => {
+                            {/* ── FAIR ODDS (live matches only) ── */}
+                            {!isEnded && pred.aiProbability !== undefined && (() => {
                               const t1p = prob;
                               const t2p = Math.round((100 - t1p) * 10) / 10;
                               return (
@@ -1431,7 +1432,35 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
                             {!isEnded && <NextOverIntelligence pred={pred} />}
 
-                            <div className="cr" style={{ display: "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
+                            {/* ── MATCH RESULT CARD (ended matches only) ── */}
+                            {isEnded && (
+                                <div style={{ background: "linear-gradient(135deg,#0f1a2e,#1a2a50)", border: "1px solid rgba(0,200,150,0.3)", borderRadius: 16, padding: "28px 24px", marginBottom: 14, textAlign: "center" }}>
+                                    <div style={{ fontSize: 28, marginBottom: 8 }}>🏆</div>
+                                    <div style={{ fontSize: 11, fontWeight: 800, color: "#00c896", letterSpacing: 2, marginBottom: 10 }}>MATCH RESULT</div>
+                                    <div style={{ fontSize: 18, fontWeight: 900, color: "#fff", lineHeight: 1.4, marginBottom: 8 }}>
+                                        {_st || "Match Completed"}
+                                    </div>
+                                    {pred.team1 && (
+                                        <div style={{ display: "flex", justifyContent: "center", gap: 32, marginTop: 16 }}>
+                                            <div style={{ textAlign: "center" }}>
+                                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 4 }}>{cleanTeam(pred.team1)}</div>
+                                                <div style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>
+                                                    {pred.innings >= 2 ? `${pred.t1Runs ?? ""}/${pred.t1Wkts ?? ""}` : `${pred.score}/${pred.wickets}`}
+                                                </div>
+                                            </div>
+                                            <div style={{ textAlign: "center", color: "rgba(255,255,255,0.3)", fontSize: 18, paddingTop: 18 }}>vs</div>
+                                            <div style={{ textAlign: "center" }}>
+                                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginBottom: 4 }}>{cleanTeam(pred.team2)}</div>
+                                                <div style={{ fontSize: 20, fontWeight: 900, color: "#fff" }}>
+                                                    {pred.innings >= 2 ? `${pred.t2Runs ?? pred.score}/${pred.t2Wkts ?? pred.wickets}` : "—"}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            <div className="cr" style={{ display: isEnded ? "none" : "grid", gridTemplateColumns: "3fr 2fr", gap: 16, marginBottom: 14, alignItems: "start" }}>
                                 {/* Next overs card */}
                                 <div className="card" style={{ padding: 22, marginBottom: 14 }}>
                                     <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 14 }}>{`Next ${(pred?.nextOvers || []).length} overs prediction`}</div>
@@ -1518,8 +1547,8 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 </div>
                             </div>
 
-                            {/* Live Probability Graph */}
-                            {pred.overs > 0 && (
+                            {/* Live Probability Graph (live matches only) */}
+                            {!isEnded && pred.overs > 0 && (
                                 <div style={{ marginBottom: 14 }}>
                                     <LiveProbabilityGraph pred={pred} />
                                 </div>
@@ -1561,13 +1590,24 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
             <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14, position: "sticky", top: 54, height: "calc(100vh - 54px)", overflowY: "auto", alignSelf: "start" }}>
                 {pred && pred.team1 && (
                   <div style={{ borderRadius: 14, overflow: "hidden", border: `1px solid ${C.border}`, background: C.bg }}>
-                    {/* Team probability mini-bar */}
-                    <div style={{ height: 4, background: `${getTeamColor(pred.team2)}66`, position: "relative" }}>
-                      <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${prob}%`, background: getTeamColor(pred.team1), transition: "width 0.8s" }} />
-                    </div>
+                    {/* Team probability mini-bar — hidden when ended */}
+                    {!isEnded && (
+                      <div style={{ height: 4, background: `${getTeamColor(pred.team2)}66`, position: "relative" }}>
+                        <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${prob}%`, background: getTeamColor(pred.team1), transition: "width 0.8s" }} />
+                      </div>
+                    )}
                     <div style={{ padding: "14px 14px 12px" }}>
                       {/* Divider */}
                       <div style={{ height: 1, background: C.border, marginBottom: 12 }} />
+                      {isEnded ? (
+                        /* Ended match: show result summary instead of live probability */
+                        <div style={{ textAlign: "center", padding: "6px 0 10px" }}>
+                          <div style={{ fontSize: 18, marginBottom: 6 }}>🏆</div>
+                          <div style={{ fontSize: 9, fontWeight: 800, color: "#00c896", letterSpacing: 1.5, marginBottom: 8 }}>FINAL RESULT</div>
+                          <div style={{ fontSize: 12, fontWeight: 700, color: C.text, lineHeight: 1.5 }}>{_st || "Match Completed"}</div>
+                        </div>
+                      ) : (
+                        <>
                       <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>AI PREDICTION SUMMARY</div>
                       {/* Win prob — big */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 14 }}>
@@ -1604,11 +1644,13 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                           </div>
                         );
                       })()}
+                        </>
+                      )}
                     </div>
                   </div>
                 )}
-                {/* ── LIVE PREDICTIONS ── */}
-                {pred?.livePredictions && (
+                {/* ── LIVE PREDICTIONS (hidden for ended matches) ── */}
+                {!isEnded && pred?.livePredictions && (
                     <div style={{ background: "#0D1117", border: "1px solid rgba(99,102,241,0.25)", borderRadius: 12, padding: "12px 14px" }}>
                         <div style={{ fontSize: 10, fontWeight: 800, color: "#818CF8", letterSpacing: 1.5, marginBottom: 10 }}>🎯 WHAT HAPPENS NEXT?</div>
 
