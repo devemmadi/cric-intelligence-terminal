@@ -181,8 +181,15 @@ function NextOverIntelligence({ pred }) {
     );
 }
 
-function LiveScorecard({ batters, bowler }) {
+function LiveScorecard({ batters, bowler, matchType }) {
     if (!batters || batters.length === 0) return null;
+    const isODI  = (matchType || "").toLowerCase() === "odi";
+    const isTest = (matchType || "").toLowerCase() === "test";
+    // SR thresholds are format-specific:
+    // T20: fast=150+, good=120+, ok=80+, slow=<80
+    // ODI: fast=100+, good=80+,  ok=60+, slow=<60
+    // Test: fast=80+, good=60+,  ok=40+, slow=<40
+    const [srFast, srGood, srOk] = isTest ? [80, 60, 40] : isODI ? [100, 80, 60] : [150, 120, 80];
     return (
         <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, overflow: "hidden", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
 
@@ -204,8 +211,8 @@ function LiveScorecard({ batters, bowler }) {
 
                 {batters.map((b, i) => {
                     const sr = b.sr ? Math.round(b.sr) : 0;
-                    const srColor = sr >= 180 ? "#15803D" : sr >= 150 ? "#16A34A" : sr >= 120 ? "#B45309" : sr >= 80 ? "#64748B" : "#DC2626";
-                    const srBg   = sr >= 150 ? "#DCFCE7" : sr >= 120 ? "#FEF3C7" : sr < 80 ? "#FEE2E2" : "#F1F5F9";
+                    const srColor = sr >= srFast ? "#15803D" : sr >= srGood ? "#16A34A" : sr >= srOk ? "#B45309" : sr >= srOk * 0.7 ? "#64748B" : "#DC2626";
+                    const srBg   = sr >= srFast ? "#DCFCE7" : sr >= srGood ? "#FEF3C7" : sr < srOk * 0.7 ? "#FEE2E2" : "#F1F5F9";
                     return (
                         <div key={i} style={{
                             display: "grid", gridTemplateColumns: "1fr 44px 44px 58px", gap: 4,
@@ -1528,7 +1535,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 {/* Right column: scorecard + match intel */}
                                 <div style={{ position: "sticky", top: 54, display: "flex", flexDirection: "column", gap: 14 }}>
                                     {pred.batters && pred.batters.length > 0 && (
-                                        <LiveScorecard batters={pred.batters} bowler={pred.bowler || {}} />
+                                        <LiveScorecard batters={pred.batters} bowler={pred.bowler || {}} matchType={pred.matchType} />
                                     )}
                                     {pred.pressureScore !== undefined && (
                                         <div className="card" style={{ padding: 22 }}>

@@ -179,9 +179,8 @@ export default function useMatchData() {
         return () => clearInterval(t);
     }, [fetchMatches]);
 
-    // Prediction auto-refreshes every 30s for selected match
-    // (10s was causing a race: backend can take >10s, stale-check aborted the response
-    //  and left isPredLoading stuck true)
+    // Prediction auto-refreshes every 20s for selected match
+    // (10s caused races when backend took >10s; 20s is safe with 5s backend cache)
     useEffect(() => {
         const mid = selectedMatch?.matchId || selectedMatch?.id;
         if (!mid && !selectedMatch?.t1) return;
@@ -189,7 +188,7 @@ export default function useMatchData() {
             const m = selectedMatchRef.current;
             const id = m?.matchId || m?.id;
             fetchPred(id, m?.t1 || "", m?.t2 || "");
-        }, 30000);
+        }, 20000);
         return () => clearInterval(t);
     }, [selectedMatch?.id, fetchPred]);
 
