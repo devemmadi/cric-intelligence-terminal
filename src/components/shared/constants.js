@@ -55,8 +55,8 @@ body { background: ${C.bg}; }
 @keyframes blink2 { 0%,100%{opacity:1} 50%{opacity:0.3} }
 @keyframes labelPulse { 0%,100%{box-shadow:0 0 12px currentColor,0 2px 8px rgba(0,0,0,0.2)} 50%{box-shadow:0 0 24px currentColor,0 4px 16px rgba(0,0,0,0.3)} }
 .fade { animation: fadeUp .35s cubic-bezier(.22,.68,0,1.2) forwards; }
-.card { background: ${C.surface}; border: 1px solid ${C.border}; border-radius: 16px; transition: box-shadow .25s, transform .25s; }
-.card:hover { box-shadow: 0 8px 32px rgba(30,45,107,0.15); transform: translateY(-1px); }
+.card { background: ${C.surface}; border: 1px solid ${C.border}; border-radius: 16px; transition: box-shadow .25s, transform .25s; position: relative; z-index: 1; }
+.card:hover { box-shadow: 0 8px 32px rgba(30,45,107,0.15); transform: translateY(-1px); z-index: 2; }
 .match-pill { transition: all .2s cubic-bezier(.22,.68,0,1.2); cursor: pointer; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); padding: 8px 12px; background: rgba(255,255,255,0.07); margin-bottom: 5px; color: rgba(255,255,255,0.75); }
 .match-pill:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.13); transform: translateX(2px); }
 .match-pill.sel { border-color: ${C.gold}; background: rgba(200,150,30,0.18); box-shadow: 0 2px 12px rgba(200,150,30,0.2); }

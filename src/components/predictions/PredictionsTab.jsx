@@ -1314,7 +1314,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                 {(selectedMatch || pred) && (
                     <>
                         {/* Match header — uses selectedMatch immediately, falls back to pred */}
-                        <div style={{ background: `linear-gradient(135deg, ${getTeamColor(pred?.team1 || selectedMatch?.t1)}22 0%, #1a2760 40%, #253580 60%, ${getTeamColor(pred?.team2 || selectedMatch?.t2)}22 100%)`, padding: "16px 24px 20px", position: "sticky", top: 54, zIndex: 10, color: "#fff", borderBottom: `1px solid rgba(255,255,255,0.08)` }}>
+                        <div style={{ background: `linear-gradient(135deg, ${getTeamColor(pred?.team1 || selectedMatch?.t1)}22 0%, #1a2760 40%, #253580 60%, ${getTeamColor(pred?.team2 || selectedMatch?.t2)}22 100%)`, padding: "16px 24px 20px", position: "sticky", top: 54, zIndex: 150, color: "#fff", borderBottom: `1px solid rgba(255,255,255,0.08)` }}>
                             {/* Thin loading bar at top */}
                             {isPredLoading && (
                                 <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
