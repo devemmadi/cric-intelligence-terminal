@@ -1289,7 +1289,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
     // Compute isEnded at top level so all child sections can use it
     // pred?.matchEnded comes from backend build_pred — most reliable signal
-    const _st = selectedMatch?.rawStatus || pred?.matchStatus || pred?.status || "";
+    const _st = selectedMatch?.rawStatus || pred?.matchStatus || "";
     const isEnded = pred?.matchEnded === true || selectedMatch?.status === "ENDED" || _st.toLowerCase().includes("won by") || _st.toLowerCase().includes(" beat ") || _st.toLowerCase().includes("match tied") || _st.toLowerCase().includes("no result");
 
     return (
