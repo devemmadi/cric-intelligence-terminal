@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function RGFooter() {
     return (
@@ -23,11 +24,11 @@ export default function RGFooter() {
                             ["/predictions/ipl-2026", "IPL 2026 Predictions"],
                             ["/privacy", "Privacy Policy"],
                             ["/terms", "Terms & Conditions"],
-                        ].map(([href, label]) => (
-                            <a key={label} href={href} style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", textDecoration: "none", transition: "color .15s" }}
+                        ].map(([to, label]) => (
+                            <Link key={label} to={to} style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", textDecoration: "none", transition: "color .15s" }}
                                 onMouseOver={e => e.target.style.color = "#C8961E"}
                                 onMouseOut={e => e.target.style.color = "rgba(255,255,255,0.5)"}
-                            >{label}</a>
+                            >{label}</Link>
                         ))}
                     </div>
                     <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>

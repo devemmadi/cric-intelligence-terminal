@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React from "react";
+import { Link } from "react-router-dom";
 
 /**
  * Shared CricIntelligence logo — use this everywhere.
@@ -28,8 +29,8 @@ export default function Logo({ size = 28, href = "/" }) {
     );
 
     return (
-        <a href={href} style={{ textDecoration: "none" }}>
+        <Link to={href} style={{ textDecoration: "none" }}>
             {content}
-        </a>
+        </Link>
     );
 }

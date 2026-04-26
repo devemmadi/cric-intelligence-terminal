@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Logo from "./Logo";
 import RGFooter from "./RGFooter";
 
@@ -59,6 +59,7 @@ function setCanonical(url) {
 
 export default function InternationalPredictionPage() {
     const { matchup } = useParams();
+    const navigate = useNavigate();
     const [openFaq, setOpenFaq] = useState(null);
 
     const slug  = (matchup || "").toLowerCase();
@@ -70,7 +71,7 @@ export default function InternationalPredictionPage() {
     const t2 = INT_TEAMS[t2key];
 
     // Fallback to home if teams not found
-    if (!t1 || !t2) { window.location.href = "/"; return null; }
+    if (!t1 || !t2) { navigate("/", { replace: true }); return null; }
 
     const h2h    = getH2H(t1key, t2key);
     const total  = h2h.t1w + h2h.t2w;

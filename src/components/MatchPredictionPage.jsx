@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Logo from "./Logo";
 import RGFooter from "./RGFooter";
 
@@ -71,6 +71,7 @@ function MetaTags({ t1, t2, slug }) {
 
 export default function MatchPredictionPage() {
     const { matchup } = useParams();
+    const navigate = useNavigate();
     const parts = (matchup || "").toLowerCase().replace(/-ipl-2026$/, "").replace(/-ipl2026$/, "");
     const vsIdx = parts.indexOf("-vs-");
     const t1key = vsIdx > -1 ? parts.slice(0, vsIdx) : "";
@@ -79,7 +80,7 @@ export default function MatchPredictionPage() {
     const t2 = TEAMS[t2key];
 
     if (!t1 || !t2) {
-        window.location.href = "/";
+        navigate("/", { replace: true });
         return null;
     }
 
