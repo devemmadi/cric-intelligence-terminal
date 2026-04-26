@@ -10,9 +10,21 @@ const OddsCalculator = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    let el = document.querySelector("link[rel='canonical']");
-    if (!el) { el = document.createElement('link'); el.setAttribute('rel', 'canonical'); document.head.appendChild(el); }
-    el.setAttribute('href', 'https://www.cricintelligence.com/odds');
+    const title = "Cricket Odds Calculator — Find Value Bets Using AI Win Probability | CricIntelligence";
+    const desc  = "Free cricket odds calculator. Enter the AI win probability and bookmaker odds to instantly see your edge, implied probability, and expected value. Built for IPL 2026 betting analysis.";
+    const url   = "https://www.cricintelligence.com/odds";
+    document.title = title;
+    const sm = (name, content, prop) => {
+      let el = document.querySelector(prop ? `meta[property="${name}"]` : `meta[name="${name}"]`);
+      if (!el) { el = document.createElement("meta"); prop ? el.setAttribute("property", name) : el.setAttribute("name", name); document.head.appendChild(el); }
+      el.setAttribute("content", content);
+    };
+    sm("description", desc);
+    sm("og:title", title, true); sm("og:description", desc, true); sm("og:url", url, true);
+    sm("twitter:title", title); sm("twitter:description", desc);
+    let can = document.querySelector("link[rel='canonical']");
+    if (!can) { can = document.createElement('link'); can.setAttribute('rel', 'canonical'); document.head.appendChild(can); }
+    can.setAttribute('href', url);
   }, []);
 
   const calculate = () => {

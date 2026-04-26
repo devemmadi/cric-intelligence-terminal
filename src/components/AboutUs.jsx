@@ -9,9 +9,9 @@ const C = {
     navy: "#1E2D6B", gold: "#C8961E", green: "#00B894",
 };
 
-function setMeta(name, content) {
-    let el = document.querySelector(`meta[name="${name}"]`);
-    if (!el) { el = document.createElement("meta"); el.setAttribute("name", name); document.head.appendChild(el); }
+function setMeta(name, content, prop) {
+    let el = document.querySelector(prop ? `meta[property="${name}"]` : `meta[name="${name}"]`);
+    if (!el) { el = document.createElement("meta"); prop ? el.setAttribute("property", name) : el.setAttribute("name", name); document.head.appendChild(el); }
     el.setAttribute("content", content);
 }
 
@@ -25,8 +25,13 @@ export default function AboutUs() {
     const [openFaq, setOpenFaq] = useState(null);
 
     useEffect(() => {
-        document.title = "About CricIntelligence — AI Cricket Predictions Platform | Free IPL 2026";
-        setMeta("description", "CricIntelligence uses machine learning trained on 1.7M+ matches to deliver real-time cricket win probability, IPL 2026 predictions, and pitch analysis. Learn how our AI works.");
+        const title = "About CricIntelligence — AI Cricket Predictions Platform | Free IPL 2026";
+        const desc  = "CricIntelligence uses machine learning trained on 1.7M+ matches to deliver real-time cricket win probability, IPL 2026 predictions, and pitch analysis. Learn how our AI works.";
+        const url   = "https://www.cricintelligence.com/about";
+        document.title = title;
+        setMeta("description", desc);
+        setMeta("og:title", title, true); setMeta("og:description", desc, true); setMeta("og:url", url, true);
+        setMeta("twitter:title", title); setMeta("twitter:description", desc);
     }, []);
 
     const handleCopy = () => {

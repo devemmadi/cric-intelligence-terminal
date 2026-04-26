@@ -16,10 +16,21 @@ const FACTORS = [
 
 export default function CricketWinProbability() {
     useEffect(() => {
-        document.title = "Cricket Win Probability Explained — How AI Predicts Matches | CricIntelligence";
-        let el = document.querySelector("link[rel='canonical']");
-        if (!el) { el = document.createElement("link"); el.setAttribute("rel", "canonical"); document.head.appendChild(el); }
-        el.setAttribute("href", "https://www.cricintelligence.com/predictions/cricket-win-probability");
+        const title = "Cricket Win Probability Explained — How AI Predicts Matches | CricIntelligence";
+        const desc  = "How does AI calculate cricket win probability? Learn how CricIntelligence uses venue stats, live run rate, wickets in hand, pitch conditions and player matchups to predict match outcomes.";
+        const url   = "https://www.cricintelligence.com/predictions/cricket-win-probability";
+        document.title = title;
+        const sm = (name, content, prop) => {
+            let el = document.querySelector(prop ? `meta[property="${name}"]` : `meta[name="${name}"]`);
+            if (!el) { el = document.createElement("meta"); prop ? el.setAttribute("property", name) : el.setAttribute("name", name); document.head.appendChild(el); }
+            el.setAttribute("content", content);
+        };
+        sm("description", desc);
+        sm("og:title", title, true); sm("og:description", desc, true); sm("og:url", url, true);
+        sm("twitter:title", title); sm("twitter:description", desc);
+        let can = document.querySelector("link[rel='canonical']");
+        if (!can) { can = document.createElement("link"); can.setAttribute("rel", "canonical"); document.head.appendChild(can); }
+        can.setAttribute("href", url);
     }, []);
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>

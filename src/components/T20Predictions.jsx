@@ -23,10 +23,21 @@ const T20_LEAGUES = [
 
 export default function T20Predictions() {
     useEffect(() => {
-        document.title = "T20 Cricket Predictions — AI Over-by-Over Analysis | CricIntelligence";
-        let el = document.querySelector("link[rel='canonical']");
-        if (!el) { el = document.createElement("link"); el.setAttribute("rel", "canonical"); document.head.appendChild(el); }
-        el.setAttribute("href", "https://www.cricintelligence.com/predictions/t20-predictions");
+        const title = "T20 Cricket Predictions — AI Over-by-Over Analysis | CricIntelligence";
+        const desc  = "AI T20 cricket predictions with live over-by-over forecasts. Win probability updated every ball for IPL 2026, T20 World Cup, The Hundred, BBL, and PSL. Free, no sign-up needed.";
+        const url   = "https://www.cricintelligence.com/predictions/t20-predictions";
+        document.title = title;
+        const sm = (name, content, prop) => {
+            let el = document.querySelector(prop ? `meta[property="${name}"]` : `meta[name="${name}"]`);
+            if (!el) { el = document.createElement("meta"); prop ? el.setAttribute("property", name) : el.setAttribute("name", name); document.head.appendChild(el); }
+            el.setAttribute("content", content);
+        };
+        sm("description", desc);
+        sm("og:title", title, true); sm("og:description", desc, true); sm("og:url", url, true);
+        sm("twitter:title", title); sm("twitter:description", desc);
+        let can = document.querySelector("link[rel='canonical']");
+        if (!can) { can = document.createElement("link"); can.setAttribute("rel", "canonical"); document.head.appendChild(can); }
+        can.setAttribute("href", url);
     }, []);
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>

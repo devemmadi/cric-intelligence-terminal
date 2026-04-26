@@ -28,10 +28,21 @@ const FAQS = [
 
 export default function IPL2026Predictions() {
     useEffect(() => {
-        document.title = "IPL 2026 Predictions & Win Probability — AI Cricket Analysis | CricIntelligence";
-        let el = document.querySelector("link[rel='canonical']");
-        if (!el) { el = document.createElement("link"); el.setAttribute("rel", "canonical"); document.head.appendChild(el); }
-        el.setAttribute("href", "https://www.cricintelligence.com/predictions/ipl-2026");
+        const title = "IPL 2026 Predictions & Win Probability — AI Cricket Analysis | CricIntelligence";
+        const desc  = "Free AI-powered IPL 2026 predictions. Live win probability for every match, over-by-over forecasts, pitch analysis, and head-to-head data. Updated every ball. 80.2% accuracy.";
+        const url   = "https://www.cricintelligence.com/predictions/ipl-2026";
+        document.title = title;
+        const sm = (name, content, prop) => {
+            let el = document.querySelector(prop ? `meta[property="${name}"]` : `meta[name="${name}"]`);
+            if (!el) { el = document.createElement("meta"); prop ? el.setAttribute("property", name) : el.setAttribute("name", name); document.head.appendChild(el); }
+            el.setAttribute("content", content);
+        };
+        sm("description", desc);
+        sm("og:title", title, true); sm("og:description", desc, true); sm("og:url", url, true);
+        sm("twitter:title", title); sm("twitter:description", desc);
+        let can = document.querySelector("link[rel='canonical']");
+        if (!can) { can = document.createElement("link"); can.setAttribute("rel", "canonical"); document.head.appendChild(can); }
+        can.setAttribute("href", url);
     }, []);
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>

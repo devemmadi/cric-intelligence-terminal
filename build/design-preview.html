@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>CricIntelligence — Design Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Georgia&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #080D16; color: #E8EDF5; min-height: 100vh; }
+
+/* ── NAV — UNCHANGED ── */
+nav {
+  background: #1E2D6B; border-bottom: 1px solid #2a3f5f;
+  padding: 0 20px; height: 54px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+.logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+.logo-cric  { font-weight: 800; font-size: 13px; color: #fff; letter-spacing: 2px; font-family: Georgia, serif; }
+.logo-intel { font-weight: 400; font-size: 9px; color: #C8961E; letter-spacing: 3.5px; font-family: Georgia, serif; }
+.nav-tabs { display: flex; gap: 2px; }
+.nt { padding: 6px 14px; border-radius: 6px; border: none; font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; }
+.nt.on  { background: rgba(255,255,255,0.12); color: #fff; font-weight: 700; }
+.nt.off { background: transparent; color: rgba(255,255,255,0.6); font-weight: 400; }
+.nav-r { display: flex; align-items: center; gap: 8px; }
+.notify { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); font-size: 12px; font-family: 'Inter',sans-serif; cursor: pointer; }
+.pip { width: 6px; height: 6px; border-radius: 50%; background: #10B981; animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+.clock { font-size: 11px; color: rgba(255,255,255,.55); }
+
+/* ── LAYOUT ── */
+.wrap { display: grid; grid-template-columns: 210px 1fr 190px; min-height: calc(100vh - 54px); }
+
+/* ── LEFT SIDEBAR ── */
+.lsb { background: #0D1525; border-right: 1px solid rgba(255,255,255,0.05); padding: 14px 10px; }
+.sb-sec { font-size: 9px; font-weight: 700; color: #374151; letter-spacing: 1.5px; text-transform: uppercase; padding: 0 8px; margin: 14px 0 6px; }
+.sb-sec:first-child { margin-top: 0; }
+.mi { padding: 10px 10px; border-radius: 8px; cursor: pointer; margin-bottom: 2px; border: 1px solid transparent; transition: background .12s; }
+.mi:hover { background: rgba(255,255,255,0.03); }
+.mi.sel { background: rgba(200,150,30,0.06); border-color: rgba(200,150,30,0.18); }
+.mi-name { font-size: 12px; font-weight: 600; color: #D1D5DB; margin-bottom: 3px; }
+.mi-info { font-size: 10px; color: #4B5563; }
+.ltag { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; border-radius: 3px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); font-size: 9px; font-weight: 700; color: #EF4444; margin-bottom: 4px; }
+.ldot { width: 4px; height: 4px; border-radius: 50%; background: #EF4444; animation: blink 1.5s infinite; }
+
+/* ── MAIN ── */
+main { min-width: 0; }
+
+/* Match title bar */
+.mtb {
+  padding: 16px 24px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: #0D1525;
+}
+.mtb-top { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #4B5563; margin-bottom: 10px; }
+.mtb-sep { color: rgba(255,255,255,0.08); }
+.mtb-live { color: #10B981; font-weight: 600; }
+.mtb-teams { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.t1n { font-size: 30px; font-weight: 900; color: #F9FAFB; letter-spacing: -1px; }
+.t2n { font-size: 30px; font-weight: 900; color: #374151; letter-spacing: -1px; }
+.vsn { font-size: 12px; color: #374151; font-weight: 500; }
+.score-strip { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ss-chip { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; padding: 5px 11px; }
+.ss-v { font-size: 12px; font-weight: 700; color: #E5E7EB; }
+.ss-d { width: 1px; height: 10px; background: rgba(255,255,255,0.08); }
+.ss-s { font-size: 11px; color: #6B7280; }
+.badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+.badge.g { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.18); color: #10B981; }
+.badge.a { background: rgba(200,150,30,0.08); border: 1px solid rgba(200,150,30,0.18); color: #C8961E; }
+
+/* ── PROBABILITY HERO — THE BIG CHANGE ── */
+.prob-section { padding: 24px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+.prob-hero {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0;
+  background: #0D1525;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(200,150,30,0.12);
+}
+
+/* Left: giant number */
+.prob-left {
+  padding: 28px 32px;
+  background: linear-gradient(160deg, #131E3A 0%, #0D1525 100%);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  min-width: 160px;
+}
+.prob-big-num {
+  font-size: 80px; font-weight: 900; color: #C8961E;
+  letter-spacing: -4px; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.prob-pct-sym { font-size: 32px; letter-spacing: 0; }
+.prob-team-label { font-size: 11px; color: #6B7280; margin-top: 6px; text-align: center; }
+.prob-team-name  { font-size: 13px; font-weight: 700; color: #9CA3AF; text-align: center; }
+
+/* Right: bar + context */
+.prob-right { padding: 20px 22px; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+.prob-bar-row { display: flex; align-items: center; gap: 10px; }
+.pb-t1 { font-size: 12px; font-weight: 700; color: #C8961E; width: 70px; }
+.pb-t2 { font-size: 12px; font-weight: 600; color: #4B5563; width: 70px; text-align: right; }
+.pb-track { flex: 1; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+.pb-fill  { height: 100%; width: 68%; background: #C8961E; border-radius: 4px; }
+
+.prob-insight {
+  background: rgba(255,255,255,0.03); border-radius: 8px;
+  padding: 12px 14px; border-left: 2px solid #C8961E;
+}
+.pi-text { font-size: 12px; color: #9CA3AF; line-height: 1.7; }
+.pi-text b { color: #E5E7EB; font-weight: 600; }
+
+/* ── GRAPH — FULL WIDTH, BIGGER ── */
+.graph-section { padding: 0 24px 16px; }
+.section-label { font-size: 9px; font-weight: 700; color: #374151; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; padding-top: 20px; }
+.graph-wrap { background: #0D1525; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px 18px; }
+.gsv { width: 100%; display: block; }
+.g-axis { display: flex; justify-content: space-between; margin-top: 4px; }
+.ga { font-size: 9px; color: #374151; }
+
+/* ── STATS ROW — HORIZONTAL STRIP ── */
+.stats-section { padding: 0 24px 16px; }
+.stats-strip { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.sc {
+  background: #0D1525; border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px; padding: 14px 16px;
+}
+.sc-v { font-size: 22px; font-weight: 800; color: #E5E7EB; margin-bottom: 2px; }
+.sc-v.g { color: #10B981; }
+.sc-v.gold { color: #C8961E; }
+.sc-l { font-size: 9px; font-weight: 600; color: #4B5563; letter-spacing: .8px; text-transform: uppercase; }
+.sc-s { font-size: 10px; color: #374151; margin-top: 3px; }
+
+/* ── PROJECTION ── */
+.proj-section { padding: 0 24px 24px; }
+.proj-wrap { background: #0D1525; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 14px 16px; }
+.pr { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.pr:last-child { margin-bottom: 0; }
+.pr-l { font-size: 10px; color: #4B5563; width: 36px; text-align: right; flex-shrink: 0; }
+.pr-t { flex: 1; height: 5px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
+.pr-f { height: 100%; border-radius: 3px; background: rgba(200,150,30,0.4); }
+.pr-fn { height: 100%; border-radius: 3px; background: #C8961E; }
+.pr-n { font-size: 11px; font-weight: 700; color: #D1D5DB; width: 28px; flex-shrink: 0; }
+.pr-n.gold { color: #C8961E; }
+
+/* ── RIGHT SIDEBAR ── */
+.rsb { border-left: 1px solid rgba(255,255,255,0.05); background: #0D1525; padding: 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+
+.rc { background: #111827; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 13px; }
+.rc.val { border-color: rgba(16,185,129,0.18); background: rgba(16,185,129,0.03); }
+.rh { font-size: 9px; font-weight: 700; color: #374151; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 9px; }
+.r-odds { font-size: 28px; font-weight: 900; color: #C8961E; line-height: 1; }
+.r-team { font-size: 12px; font-weight: 600; color: #D1D5DB; margin-bottom: 2px; }
+.r-edge { font-size: 11px; color: #10B981; font-weight: 600; margin-bottom: 10px; }
+.r-btn { display: block; width: 100%; padding: 8px; background: #C8961E; border-radius: 6px; text-align: center; font-size: 11px; font-weight: 700; color: #080D16; text-decoration: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; }
+.div { height: 1px; background: rgba(255,255,255,0.05); margin: 4px 0; }
+.il { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; }
+.ik { font-size: 11px; color: #4B5563; }
+.iv { font-size: 11px; font-weight: 600; color: #D1D5DB; }
+.iv.g { color: #10B981; }
+.iv.gold { color: #C8961E; }
+.rg { font-size: 10px; color: #374151; line-height: 1.6; padding: 8px 10px; background: rgba(255,255,255,0.02); border-radius: 7px; border: 1px solid rgba(255,255,255,0.04); }
+.rg a { color: #C8961E; text-decoration: none; }
+</style>
+</head>
+<body>
+
+<!-- NAV — EXACT SAME AS CURRENT SITE -->
+<nav>
+  <a class="logo" href="#">
+    <svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" fill="#0D1B3E" rx="8"/>
+      <rect width="100" height="4" fill="#C8961E"/>
+      <rect y="96" width="100" height="4" fill="#C8961E"/>
+      <path d="M 62,18 A 32,32 0 1,0 62,82" fill="none" stroke="#C8961E" stroke-width="8" stroke-linecap="round"/>
+      <line x1="34" y1="30" x2="34" y2="70" stroke="white" stroke-width="4" stroke-linecap="round"/>
+      <line x1="44" y1="28" x2="44" y2="72" stroke="white" stroke-width="4" stroke-linecap="round"/>
+      <line x1="54" y1="30" x2="54" y2="70" stroke="white" stroke-width="4" stroke-linecap="round"/>
+      <line x1="31" y1="28" x2="57" y2="28" stroke="#C8961E" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div class="logo-text">
+      <span class="logo-cric">CRIC</span>
+      <span class="logo-intel">INTELLIGENCE</span>
+    </div>
+  </a>
+  <div class="nav-tabs">
+    <button class="nt on">Predictions</button>
+    <button class="nt off">Matches</button>
+    <button class="nt off">Pitch</button>
+    <button class="nt off">Record</button>
+    <button class="nt off">Media</button>
+    <button class="nt off">Odds</button>
+  </div>
+  <div class="nav-r">
+    <button class="notify">🔔 Notify me</button>
+    <div style="display:flex;align-items:center;gap:5px;">
+      <div class="pip"></div>
+      <span class="clock">14:35:15</span>
+    </div>
+  </div>
+</nav>
+
+<!-- BODY -->
+<div class="wrap">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="lsb">
+    <div class="sb-sec">Live</div>
+    <div class="mi sel">
+      <div class="ltag"><span class="ldot"></span>Live</div>
+      <div class="mi-name">RCB vs CSK</div>
+      <div class="mi-info">142/4 · 14.2 ov · Bengaluru</div>
+    </div>
+    <div class="sb-sec">Upcoming</div>
+    <div class="mi">
+      <div class="mi-name">MI vs KKR</div>
+      <div class="mi-info">Today · 7:30 PM · Wankhede</div>
+    </div>
+    <div class="mi">
+      <div class="mi-name">CSK vs SRH</div>
+      <div class="mi-info">Tomorrow · Chennai</div>
+    </div>
+    <div class="mi">
+      <div class="mi-name">RR vs GT</div>
+      <div class="mi-info">Apr 21 · Jaipur</div>
+    </div>
+    <div class="mi">
+      <div class="mi-name">PBKS vs LSG</div>
+      <div class="mi-info">Apr 22 · Mullanpur</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main>
+
+    <!-- Match title bar -->
+    <div class="mtb">
+      <div class="mtb-top">
+        <span>IPL 2026 · Match 26</span>
+        <span class="mtb-sep">·</span>
+        <span>M. Chinnaswamy Stadium</span>
+        <span class="mtb-sep">·</span>
+        <span class="mtb-live">2nd innings</span>
+      </div>
+      <div class="mtb-teams">
+        <span class="t1n">RCB</span>
+        <span class="vsn">vs</span>
+        <span class="t2n">CSK</span>
+      </div>
+      <div class="score-strip">
+        <div class="ss-chip">
+          <span class="ss-v">CSK 142/4</span>
+          <span class="ss-d"></span>
+          <span class="ss-s">14.2 ov</span>
+          <span class="ss-d"></span>
+          <span class="ss-s">CRR 9.8</span>
+          <span class="ss-d"></span>
+          <span class="ss-s">Target 168</span>
+        </div>
+        <span class="badge g">Rising</span>
+        <span class="badge a">Batting pitch</span>
+      </div>
+    </div>
+
+    <!-- WIN PROBABILITY — split panel, big number -->
+    <div class="prob-section">
+      <div class="section-label" style="padding-top:0;margin-bottom:12px;">Win Probability</div>
+      <div class="prob-hero">
+        <div class="prob-left">
+          <div class="prob-big-num">68<span class="prob-pct-sym">%</span></div>
+          <div class="prob-team-label">to win</div>
+          <div class="prob-team-name">RCB</div>
+        </div>
+        <div class="prob-right">
+          <div class="prob-bar-row">
+            <span class="pb-t1">RCB 68%</span>
+            <div class="pb-track"><div class="pb-fill"></div></div>
+            <span class="pb-t2">CSK 32%</span>
+          </div>
+          <div class="prob-insight">
+            <div class="pi-text">
+              CSK need <b>26 off 34 balls</b> — required rate climbing to 9.6.
+              RCB defending from strength. <b>Dew expected</b> in final overs,
+              which typically aids the batting side.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRAPH -->
+    <div class="graph-section">
+      <div class="section-label">Probability Timeline</div>
+      <div class="graph-wrap">
+        <svg class="gsv" viewBox="0 0 560 110" preserveAspectRatio="none" height="110">
+          <defs>
+            <linearGradient id="gf" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#C8961E" stop-opacity=".18"/>
+              <stop offset="100%" stop-color="#C8961E" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <line x1="0" y1="55" x2="560" y2="55" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="3,4"/>
+          <text x="4" y="52" fill="rgba(255,255,255,0.1)" font-size="7" font-family="Inter,sans-serif">50%</text>
+          <path d="M0,68 C40,66 80,63 120,59 C160,55 200,70 240,75 C280,78 320,62 360,52 C400,42 440,34 480,26 C510,20 535,17 560,14 L560,110 L0,110 Z" fill="url(#gf)"/>
+          <path d="M0,68 C40,66 80,63 120,59 C160,55 200,70 240,75 C280,78 320,62 360,52 C400,42 440,34 480,26 C510,20 535,17 560,14" fill="none" stroke="#C8961E" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="560" cy="14" r="4" fill="#C8961E"/>
+          <circle cx="560" cy="14" r="8" fill="rgba(200,150,30,0.18)"/>
+        </svg>
+        <div class="g-axis">
+          <span class="ga">Toss</span><span class="ga">6 ov</span>
+          <span class="ga">10 ov</span><span class="ga">15 ov</span><span class="ga">Now</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-section">
+      <div class="section-label">Match Intelligence</div>
+      <div class="stats-strip">
+        <div class="sc">
+          <div class="sc-v g">High</div>
+          <div class="sc-l">AI Confidence</div>
+          <div class="sc-s">Prob > 65%</div>
+        </div>
+        <div class="sc">
+          <div class="sc-v gold">Rising</div>
+          <div class="sc-l">Momentum</div>
+          <div class="sc-s">Last 3 ov: 38 runs</div>
+        </div>
+        <div class="sc">
+          <div class="sc-v">9.6</div>
+          <div class="sc-l">Required Rate</div>
+          <div class="sc-s">26 needed, 3.4 ov left</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTION -->
+    <div class="proj-section">
+      <div class="section-label">Score Projection — 1st innings</div>
+      <div class="proj-wrap">
+        <div class="pr"><span class="pr-l">6 ov</span><div class="pr-t"><div class="pr-f" style="width:34%"></div></div><span class="pr-n">56</span></div>
+        <div class="pr"><span class="pr-l">10 ov</span><div class="pr-t"><div class="pr-f" style="width:57%"></div></div><span class="pr-n">96</span></div>
+        <div class="pr"><span class="pr-l">15 ov</span><div class="pr-t"><div class="pr-f" style="width:80%"></div></div><span class="pr-n">134</span></div>
+        <div class="pr"><span class="pr-l">Final</span><div class="pr-t"><div class="pr-fn" style="width:100%"></div></div><span class="pr-n gold">167</span></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="rsb">
+
+    <div class="rc val">
+      <div class="rh">Value bet</div>
+      <div class="r-team">RCB to win</div>
+      <div class="r-odds">2.10</div>
+      <div class="r-edge">+11% edge vs AI</div>
+      <a class="r-btn" href="#">Check on Bet365</a>
+    </div>
+
+    <div class="rc">
+      <div class="rh">Track Record</div>
+      <div class="il"><span class="ik">Accuracy</span><span class="iv g">80%</span></div>
+      <div class="div"></div>
+      <div class="il"><span class="ik">Predictions</span><span class="iv">45 verified</span></div>
+      <div class="div"></div>
+      <div class="il"><span class="ik">Last 10</span><span class="iv g">8/10</span></div>
+    </div>
+
+    <div class="rc">
+      <div class="rh">Match Info</div>
+      <div class="il"><span class="ik">Pitch</span><span class="iv gold">Batting</span></div>
+      <div class="div"></div>
+      <div class="il"><span class="ik">Avg 1st inn</span><span class="iv">183</span></div>
+      <div class="div"></div>
+      <div class="il"><span class="ik">Dew</span><span class="iv g">Likely</span></div>
+      <div class="div"></div>
+      <div class="il"><span class="ik">RCB home</span><span class="iv g">68% W</span></div>
+    </div>
+
+    <div class="rg">18+ only. Gamble responsibly.<br/><a href="#">BeGambleAware.org</a> · 0808 8020 133</div>
+
+  </aside>
+</div>
+
+</body>
+</html>

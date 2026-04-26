@@ -9,9 +9,9 @@ const C = {
     navy: "#1E2D6B", gold: "#C8961E", green: "#00B894",
 };
 
-function setMeta(name, content) {
-    let el = document.querySelector(`meta[name="${name}"]`);
-    if (!el) { el = document.createElement("meta"); el.setAttribute("name", name); document.head.appendChild(el); }
+function setMeta(name, content, prop) {
+    let el = document.querySelector(prop ? `meta[property="${name}"]` : `meta[name="${name}"]`);
+    if (!el) { el = document.createElement("meta"); prop ? el.setAttribute("property", name) : el.setAttribute("name", name); document.head.appendChild(el); }
     el.setAttribute("content", content);
 }
 
@@ -22,8 +22,13 @@ export default function HowItWorks() {
         el.setAttribute('href', 'https://www.cricintelligence.com/how-it-works');
     }, []);
     useEffect(() => {
-        document.title = "How CricIntelligence Works — AI Cricket Win Probability Explained";
-        setMeta("description", "Learn how CricIntelligence uses machine learning, venue history, pitch data, and live ball-by-ball stats to predict cricket match outcomes in real time.");
+        const title = "How CricIntelligence Works — AI Cricket Win Probability Explained";
+        const desc  = "Learn how CricIntelligence uses machine learning, venue history, pitch data, and live ball-by-ball stats to predict cricket match outcomes in real time.";
+        const url   = "https://www.cricintelligence.com/how-it-works";
+        document.title = title;
+        setMeta("description", desc);
+        setMeta("og:title", title, true); setMeta("og:description", desc, true); setMeta("og:url", url, true);
+        setMeta("twitter:title", title); setMeta("twitter:description", desc);
     }, []);
 
     const steps = [
