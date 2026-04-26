@@ -1292,6 +1292,10 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     const _st = selectedMatch?.rawStatus || pred?.matchStatus || "";
     const isEnded = pred?.matchEnded === true || selectedMatch?.status === "ENDED" || _st.toLowerCase().includes("won by") || _st.toLowerCase().includes(" beat ") || _st.toLowerCase().includes("match tied") || _st.toLowerCase().includes("no result");
 
+    // Is any match currently live?
+    const hasLive = liveMatches.some(m => m.status === "LIVE");
+    const nextMatch = liveMatches.find(m => m.status === "UPCOMING");
+
     return (
         <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px minmax(0,1fr) 240px", minHeight: "calc(100vh - 54px)", width: "100%" }}>
             {/* LEFT SIDEBAR */}
@@ -1305,6 +1309,21 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
             {/* MAIN CONTENT */}
             <main className="mc" style={{ padding: 0, minWidth: 0 }}>
+                {/* No live match banner — shown when all matches are ended */}
+                {!hasLive && (selectedMatch || pred) && (
+                    <div style={{ background: "#0d1535", borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "9px 20px", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                        <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#64748b", display: "inline-block", flexShrink: 0 }} />
+                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>No match live right now</span>
+                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>·</span>
+                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>IPL matches at 3:30 PM &amp; 7:30 PM IST</span>
+                        {nextMatch && (
+                            <>
+                                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>·</span>
+                                <span style={{ fontSize: 12, color: "#F59E0B", fontWeight: 600 }}>Next: {nextMatch.t1} vs {nextMatch.t2}</span>
+                            </>
+                        )}
+                    </div>
+                )}
                 {/* Show NoMatchesScreen only if no match selected and not loading */}
                 {!selectedMatch && !pred && !isPredLoading && (
                     <NoMatchesScreen upcomingMatches={liveMatches.filter(m => m.status === "UPCOMING")} />
