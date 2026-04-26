@@ -1585,9 +1585,14 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 </div>
                             </div>
 
-                            {/* Live Probability Graph (live matches only) */}
-                            {!isEnded && pred.overs > 0 && (
+                            {/* Probability Graph — live and ended matches */}
+                            {pred.overs > 0 && (pred.probHistory?.length > 1 || !isEnded) && (
                                 <div style={{ marginBottom: 14 }}>
+                                    {isEnded && pred.probHistory?.length > 1 && (
+                                        <div style={{ fontSize: 11, fontWeight: 700, color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginBottom: 6, paddingLeft: 2 }}>
+                                            Match Probability Timeline
+                                        </div>
+                                    )}
                                     <LiveProbabilityGraph pred={pred} />
                                 </div>
                             )}
