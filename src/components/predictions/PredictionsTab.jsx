@@ -1724,7 +1724,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         {[
                             ["Format", pred.matchType?.toUpperCase() || "T20"],
                             ["Phase", pred.currentPhase || ""],
-                            ["Pitch", pred.pitchLabel || ""],
+                            ["Pitch", pred.pitchLabel ? `${pred.pitchLabel}${pred.pitchSource ? ` · ${pred.pitchSource}` : ""}` : ""],
                             ["Weather", pred.weatherImpact?.condition || ""],
                         ].filter(([, v]) => v).map(([l, v]) => (
                             <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
