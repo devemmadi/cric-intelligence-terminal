@@ -1760,6 +1760,97 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     </div>
                 )}
 
+                {/* ── BETTOR'S VIEW ── */}
+                {pred && pred.team1 && !isEnded && (() => {
+                    const vbs = (pred.valueBets || []).filter(v => v.odds > 1.0);
+                    const hasOdds = vbs.length > 0;
+
+                    // Confidence: how far from 50% is our AI
+                    const aiProb = pred.aiProbability ?? 50;
+                    const confGap = Math.abs(aiProb - 50);
+                    const confLabel = confGap >= 20 ? "High" : confGap >= 10 ? "Medium" : "Low";
+                    const confColor = confGap >= 20 ? C.green : confGap >= 10 ? C.amber : C.muted;
+
+                    // Momentum shift from probHistory
+                    const hist = pred.probHistory || [];
+                    let momentumShift = null;
+                    if (hist.length >= 3) {
+                        const recent = hist[hist.length - 1]?.prob ?? 50;
+                        const earlier = hist[hist.length - 3]?.prob ?? 50;
+                        const delta = recent - earlier;
+                        if (Math.abs(delta) >= 8) {
+                            momentumShift = { delta: Math.round(delta), dir: delta > 0 ? "↑" : "↓" };
+                        }
+                    }
+
+                    // Score range (innings 1 only)
+                    let scoreRange = null;
+                    if (pred.innings === 1 && pred.overs > 2 && pred.score > 0) {
+                        const remainOvers = 20 - (pred.overs || 0);
+                        const crr = pred.currentRunRate || 0;
+                        const projFinal = Math.round(pred.score + crr * remainOvers);
+                        scoreRange = { lo: projFinal - 12, hi: projFinal + 12 };
+                    }
+
+                    return (
+                        <div style={{ background: "#0d1535", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "10px 12px" }}>
+                            <div style={{ fontSize: 10, fontWeight: 700, color: C.gold, letterSpacing: 1, textTransform: "uppercase", marginBottom: 10 }}>⚡ Bettor's View</div>
+
+                            {/* Confidence */}
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>AI Confidence</span>
+                                <span style={{ fontSize: 11, fontWeight: 700, color: confColor }}>{confLabel}</span>
+                            </div>
+
+                            {/* Momentum shift */}
+                            {momentumShift && (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Momentum</span>
+                                    <span style={{ fontSize: 11, fontWeight: 700, color: momentumShift.delta > 0 ? C.green : C.red }}>
+                                        {momentumShift.dir} {Math.abs(momentumShift.delta)}% swing
+                                    </span>
+                                </div>
+                            )}
+
+                            {/* Score range */}
+                            {scoreRange && (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+                                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Projected total</span>
+                                    <span style={{ fontSize: 11, fontWeight: 700, color: "#fff" }}>{scoreRange.lo}–{scoreRange.hi}</span>
+                                </div>
+                            )}
+
+                            {/* Bookmaker vs AI */}
+                            {hasOdds ? (
+                                <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8, marginTop: 4 }}>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", marginBottom: 6 }}>BOOKMAKER vs AI</div>
+                                    {vbs.slice(0, 2).map((v, i) => {
+                                        const edgeColor = v.edge > 5 ? C.green : v.edge < -5 ? C.red : C.amber;
+                                        const badge = v.rating === "STRONG VALUE" ? "🔥 STRONG VALUE" : v.rating === "VALUE" ? "✅ VALUE" : v.rating === "AVOID" ? "❌ AVOID" : "— FAIR";
+                                        const badgeColor = v.rating === "STRONG VALUE" || v.rating === "VALUE" ? C.green : v.rating === "AVOID" ? C.red : C.muted;
+                                        return (
+                                            <div key={i} style={{ marginBottom: i < vbs.length - 1 ? 8 : 0 }}>
+                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
+                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", maxWidth: 110, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.team}</span>
+                                                    <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor }}>{badge}</span>
+                                                </div>
+                                                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>Bookie: {v.impliedProb}% · AI: {v.aiProb}%</span>
+                                                    <span style={{ fontSize: 10, fontWeight: 700, color: edgeColor }}>{v.edge > 0 ? "+" : ""}{v.edge}%</span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            ) : (
+                                <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8, marginTop: 4, fontSize: 10, color: "rgba(255,255,255,0.3)", textAlign: "center" }}>
+                                    Live odds unavailable
+                                </div>
+                            )}
+                        </div>
+                    );
+                })()}
+
                 <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center" }}>
                     <a href="/about" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>About Us</a>
                     <span style={{ color: C.border, margin: "0 6px" }}>·</span>
