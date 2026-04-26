@@ -38,145 +38,103 @@ function Spark({ data }) {
 function NextOverIntelligence({ pred }) {
     if (!pred) return null;
 
-    // ── MOMENTUM (left card) ─────────────────────────────────────────────────
     const history = pred.overHistory || [];
-    const last5 = history.slice(-5);
-    const last3Runs = pred.playerContext?.last3Runs || 0;
-    const last3Wkts = pred.playerContext?.last3Wkts || 0;
-    const crr = pred.currentRunRate || 0;
-
-    let momentumLabel = "STEADY";
-    let momentumColor = "#f59e0b";
-    let momentumArrow = "→";
-    if (last5.length >= 3) {
-        const half = Math.ceil(last5.length / 2);
-        const firstSum = last5.slice(0, half).reduce((s, o) => s + (o.runs || 0), 0);
-        const secondSum = last5.slice(half).reduce((s, o) => s + (o.runs || 0), 0);
-        const ratio = secondSum / (firstSum || 1);
-        if (ratio > 1.25) { momentumLabel = "RISING"; momentumColor = "#22c55e"; momentumArrow = "↑"; }
-        else if (ratio < 0.75) { momentumLabel = "FALLING"; momentumColor = "#ef4444"; momentumArrow = "↓"; }
-    } else if (last3Runs > 22) { momentumLabel = "RISING"; momentumColor = "#22c55e"; momentumArrow = "↑"; }
-    else if (last3Runs < 10) { momentumLabel = "FALLING"; momentumColor = "#ef4444"; momentumArrow = "↓"; }
-
-    const maxBar = Math.max(...last5.map(o => o.runs || 0), 1);
-
-    // ── PRESSURE (right card) ────────────────────────────────────────────────
-    const rrr = pred.requiredRunRate || 0;
-    const innings = pred.innings || 1;
-    const partnership = pred.playerContext?.partnershipRuns || 0;
+    const last5   = history.slice(-5);
+    const crr      = pred.currentRunRate || 0;
+    const rrr      = pred.requiredRunRate || 0;
+    const innings  = pred.innings || 1;
     const wicketsLeft = 10 - (pred.wickets || 0);
+    const partnership = pred.playerContext?.partnershipRuns || 0;
+    const last3Runs   = pred.playerContext?.last3Runs || 0;
+    const last3Wkts   = pred.playerContext?.last3Wkts || 0;
 
-    let pressureLabel = "On track";
-    let pressureColor = "#22c55e";
+    // ── Status line ─────────────────────────────────────────────────────────
+    let status = "", statusColor = C.amber, statusBg = "rgba(245,158,11,0.12)";
     if (innings === 2 && rrr > 0) {
         const gap = rrr - crr;
-        if (gap > 3)       { pressureLabel = "Chase in trouble";    pressureColor = "#ef4444"; }
-        else if (gap > 1)  { pressureLabel = "Falling behind"; pressureColor = "#f59e0b"; }
-        else if (gap < -2) { pressureLabel = "Chasing well";  pressureColor = "#22c55e"; }
-        else               { pressureLabel = "Too close to call"; pressureColor = "#60A5FA"; }
-    } else if (innings === 1) {
-        // Use momentum (vsAvg) for accuracy — raw CRR alone is misleading at high-scoring venues
+        if (gap > 3)        { status = "Chase slipping away"; statusColor = C.red; statusBg = "rgba(239,68,68,0.12)"; }
+        else if (gap > 1)   { status = "Need to accelerate";  statusColor = C.amber; statusBg = "rgba(245,158,11,0.12)"; }
+        else if (gap < -2)  { status = "Batting on top";      statusColor = C.green; statusBg = "rgba(16,185,129,0.12)"; }
+        else                { status = "Neck and neck";        statusColor = "#60A5FA"; statusBg = "rgba(96,165,250,0.12)"; }
+    } else {
         const vsAvg = pred.momentum || 0;
-        if (crr < 4 || vsAvg < -2)  { pressureLabel = "Scoring slow";  pressureColor = "#ef4444"; }
-        else if (vsAvg > 1)          { pressureLabel = "Ahead of pace";  pressureColor = "#22c55e"; }
-        else if (vsAvg < -0.5)       { pressureLabel = "Scoring slow";   pressureColor = "#ef4444"; }
-        else                         { pressureLabel = "On track";        pressureColor = "#f59e0b"; }
+        if (vsAvg > 1)      { status = "Batting ahead of pace"; statusColor = C.green; statusBg = "rgba(16,185,129,0.12)"; }
+        else if (vsAvg < -0.5 || crr < 4) { status = "Scoring below par"; statusColor = C.red; statusBg = "rgba(239,68,68,0.12)"; }
+        else                { status = "Steady scoring";         statusColor = C.amber; statusBg = "rgba(245,158,11,0.12)"; }
     }
 
-    const rrrBarPct = rrr > 0 ? Math.min(100, (crr / rrr) * 100) : 0;
-    const dangerousPartnership = partnership > 75;
-    const tailExposed = wicketsLeft <= 3;
-    const rateCritical = innings === 2 && rrr > crr + 4;
+    // ── Last 5 overs bars — use absolute scale so different runs show different heights ──
+    const hasValidBars = last5.length > 0 && last5.some(o => (o.runs || 0) !== (last5[0].runs || 0));
+    const maxBar = Math.max(...last5.map(o => o.runs || 0), 8); // min scale of 8 so small runs still show
 
     return (
-        <div style={{ padding: "0 0 4px 0", marginBottom: 14 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#E24B4A", animation: "blink2 1.5s infinite" }} />
-                <span style={{ fontSize: 13, fontWeight: 500, color: "#0A0A0A" }}>Match pulse</span>
-                <span style={{ fontSize: 12, color: "#64748B" }}>Live momentum &amp; pressure</span>
+        <div style={{ marginBottom: 14 }}>
+            {/* Header */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+                <div style={{ width: 7, height: 7, borderRadius: "50%", background: C.red, animation: "blink2 1.5s infinite" }} />
+                <span style={{ fontSize: 12, fontWeight: 700, color: C.muted, letterSpacing: 0.5 }}>LIVE MATCH PULSE</span>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 12 }}>
 
-                {/* ── LEFT: Momentum ──────────────────────────────────────── */}
-                <div style={{ background: "#1E2D6B", border: "2px solid #60A5FA", borderRadius: 12, padding: 14, boxShadow: "0 0 16px rgba(96,165,250,0.3)" }}>
-                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.5)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>Who's Dominating</div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-                        <span style={{ fontSize: 28, fontWeight: 900, color: momentumColor, lineHeight: 1 }}>{momentumArrow}</span>
-                        <span style={{ fontSize: 15, fontWeight: 800, color: momentumColor }}>{momentumLabel}</span>
-                    </div>
+            {/* Status banner */}
+            <div style={{ background: statusBg, border: `1px solid ${statusColor}40`, borderRadius: 10, padding: "10px 14px", marginBottom: 10, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ fontSize: 15, fontWeight: 800, color: statusColor }}>{status}</span>
+                {innings === 2 && rrr > 0 && (
+                    <span style={{ fontSize: 12, color: C.muted }}>
+                        Scoring <strong style={{ color: C.text }}>{crr.toFixed(1)}</strong> / need <strong style={{ color: rrr > crr ? C.red : C.green }}>{rrr.toFixed(1)}</strong> per over
+                    </span>
+                )}
+                {innings === 1 && (
+                    <span style={{ fontSize: 12, color: C.muted }}>
+                        Run rate <strong style={{ color: C.text }}>{crr.toFixed(1)}</strong>/ov
+                    </span>
+                )}
+            </div>
 
-                    {/* Last 5 overs bar chart */}
-                    {last5.length > 0 && (
-                        <div style={{ marginBottom: 12 }}>
-                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 6, letterSpacing: 0.5 }}>LAST {last5.length} OVERS</div>
-                            <div style={{ display: "flex", alignItems: "flex-end", gap: 3, height: 36 }}>
-                                {last5.map((ov, i) => {
-                                    const h = Math.max(5, ((ov.runs || 0) / maxBar) * 32);
-                                    const col = (ov.runs || 0) >= 10 ? "#22c55e" : (ov.runs || 0) >= 6 ? "#f59e0b" : "#60A5FA";
-                                    return (
-                                        <div key={i} title={`Ov ${ov.over}: ${ov.runs}r`} style={{ flex: 1, height: h, background: col, borderRadius: "3px 3px 0 0", position: "relative", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <span style={{ fontSize: 8, color: "#fff", fontWeight: 800 }}>{ov.runs}</span>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                            <div style={{ height: 2, background: "rgba(255,255,255,0.15)", borderRadius: 1, marginTop: 2 }} />
-                        </div>
-                    )}
-
-                    <div style={{ display: "flex", justifyContent: "space-between" }}>
-                        <div>
-                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>Last 3 overs</div>
-                            <div style={{ fontSize: 16, fontWeight: 900, color: last3Runs > 22 ? "#22c55e" : last3Runs > 14 ? "#f59e0b" : "#94A3B8" }}>
-                                {last3Runs}r{last3Wkts > 0 ? ` ${last3Wkts}w` : ""}
-                            </div>
-                        </div>
-                        <div style={{ textAlign: "right" }}>
-                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>Run Speed</div>
-                            <div style={{ fontSize: 16, fontWeight: 900, color: "#FFFFFF" }}>{crr.toFixed(2)}</div>
-                        </div>
+            {/* 3-column stats row */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginBottom: 10 }}>
+                {/* Last 3 overs */}
+                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 12px" }}>
+                    <div style={{ fontSize: 10, color: C.muted, marginBottom: 4, fontWeight: 600 }}>Last 3 overs</div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: last3Runs > 22 ? C.green : last3Runs > 14 ? C.amber : C.text }}>
+                        {last3Runs}r{last3Wkts > 0 ? <span style={{ fontSize: 13, color: C.red }}> {last3Wkts}w</span> : ""}
                     </div>
                 </div>
-
-                {/* ── RIGHT: Pressure ─────────────────────────────────────── */}
-                <div style={{ background: "#111A3E", border: "1.5px dashed rgba(255,255,255,0.2)", borderRadius: 12, padding: 14 }}>
-                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)", marginBottom: 8, letterSpacing: 1, textTransform: "uppercase", fontWeight: 700 }}>Match Situation</div>
-                    <div style={{ fontSize: 15, fontWeight: 800, color: pressureColor, marginBottom: 12 }}>{pressureLabel}</div>
-
-                    {/* RRR vs CRR bar — only in 2nd innings chase */}
-                    {innings === 2 && rrr > 0 && (
-                        <div style={{ marginBottom: 12 }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
-                                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.45)" }}>Scoring {crr.toFixed(2)}/ov</span>
-                                <span style={{ fontSize: 10, fontWeight: 700, color: crr >= rrr ? "#22c55e" : "#ef4444" }}>Need {rrr.toFixed(2)}/ov</span>
-                            </div>
-                            <div style={{ height: 7, background: "rgba(255,255,255,0.1)", borderRadius: 4, overflow: "hidden" }}>
-                                <div style={{ width: `${rrrBarPct}%`, height: "100%", background: crr >= rrr ? "#22c55e" : "#ef4444", borderRadius: 4, transition: "width 0.4s" }} />
-                            </div>
-                        </div>
-                    )}
-
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
-                        <div>
-                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>Partnership</div>
-                            <div style={{ fontSize: 16, fontWeight: 900, color: dangerousPartnership ? "#ef4444" : partnership > 30 ? "#f59e0b" : "#94A3B8" }}>{partnership} runs</div>
-                        </div>
-                        <div style={{ textAlign: "right" }}>
-                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.4)", marginBottom: 2 }}>Wkts left</div>
-                            <div style={{ fontSize: 16, fontWeight: 900, color: tailExposed ? "#ef4444" : wicketsLeft <= 6 ? "#f59e0b" : "#22c55e" }}>{wicketsLeft}</div>
-                        </div>
+                {/* Partnership */}
+                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 12px" }}>
+                    <div style={{ fontSize: 10, color: C.muted, marginBottom: 4, fontWeight: 600 }}>Partnership</div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: partnership > 75 ? C.red : partnership > 30 ? C.amber : C.text }}>
+                        {partnership}<span style={{ fontSize: 12, fontWeight: 500, color: C.muted }}> runs</span>
                     </div>
-
-                    <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
-                        {dangerousPartnership && <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(239,68,68,0.18)", color: "#ef4444", fontWeight: 600 }}>Dangerous partnership</span>}
-                        {tailExposed && <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(239,68,68,0.18)", color: "#ef4444", fontWeight: 600 }}>Tail exposed</span>}
-                        {rateCritical && <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(239,68,68,0.18)", color: "#ef4444", fontWeight: 600 }}>Falling behind target</span>}
-                        {!dangerousPartnership && !tailExposed && !rateCritical && (
-                            <span style={{ fontSize: 10, padding: "3px 8px", borderRadius: 6, background: "rgba(34,197,94,0.12)", color: "#22c55e", fontWeight: 600 }}>No major alerts</span>
-                        )}
+                </div>
+                {/* Wickets left */}
+                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 12px" }}>
+                    <div style={{ fontSize: 10, color: C.muted, marginBottom: 4, fontWeight: 600 }}>Wickets left</div>
+                    <div style={{ fontSize: 20, fontWeight: 900, color: wicketsLeft <= 3 ? C.red : wicketsLeft <= 6 ? C.amber : C.green }}>
+                        {wicketsLeft}<span style={{ fontSize: 12, fontWeight: 500, color: C.muted }}> wkts</span>
                     </div>
                 </div>
             </div>
+
+            {/* Last 5 overs mini bar chart — only if data actually varies */}
+            {last5.length >= 3 && (
+                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 12px" }}>
+                    <div style={{ fontSize: 10, color: C.muted, marginBottom: 8, fontWeight: 600 }}>RUNS PER OVER — LAST {last5.length}</div>
+                    <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 40 }}>
+                        {last5.map((ov, i) => {
+                            const runs = ov.runs || 0;
+                            const h = Math.max(6, (runs / maxBar) * 36);
+                            const col = runs >= 12 ? C.green : runs >= 7 ? C.amber : runs >= 4 ? "#60A5FA" : C.red;
+                            return (
+                                <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3 }}>
+                                    <span style={{ fontSize: 10, fontWeight: 800, color: col }}>{runs}</span>
+                                    <div style={{ width: "100%", height: h, background: col, borderRadius: "3px 3px 0 0", opacity: 0.85 }} />
+                                    <span style={{ fontSize: 9, color: C.muted }}>ov {ov.over || (history.length - last5.length + i + 1)}</span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
