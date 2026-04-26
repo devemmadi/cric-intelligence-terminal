@@ -29,6 +29,21 @@ export default function CricIntelligence() {
     );
     const [liveTime, setLiveTime] = useState(new Date());
     const [moreOpen, setMoreOpen] = useState(false);
+    const [installPrompt, setInstallPrompt] = useState(null);
+    const [showInstallBanner, setShowInstallBanner] = useState(false);
+
+    // Capture the browser's "Add to Home Screen" prompt
+    useEffect(() => {
+        const handler = (e) => {
+            e.preventDefault();
+            setInstallPrompt(e);
+            // Only show banner if not already installed and not dismissed before
+            const dismissed = localStorage.getItem('ci_install_dismissed');
+            if (!dismissed) setShowInstallBanner(true);
+        };
+        window.addEventListener('beforeinstallprompt', handler);
+        return () => window.removeEventListener('beforeinstallprompt', handler);
+    }, []);
 
     const setActiveTab = (tab) => {
         setActiveTabState(tab);
@@ -128,6 +143,34 @@ export default function CricIntelligence() {
                 </div>
             </nav>
 
+
+            {/* Add to Home Screen banner */}
+            {showInstallBanner && (
+                <div style={{ background: "#1E2D6B", borderBottom: "1px solid rgba(255,255,255,0.1)", padding: "10px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <span style={{ fontSize: 20 }}>🏏</span>
+                        <div>
+                            <div style={{ fontSize: 13, fontWeight: 700, color: "#fff" }}>Add to Home Screen</div>
+                            <div style={{ fontSize: 11, color: "rgba(255,255,255,0.55)" }}>Get live match alerts &amp; quick access</div>
+                        </div>
+                    </div>
+                    <div style={{ display: "flex", gap: 8, flexShrink: 0 }}>
+                        <button onClick={() => { localStorage.setItem('ci_install_dismissed', '1'); setShowInstallBanner(false); }}
+                            style={{ background: "none", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 8, padding: "5px 10px", color: "rgba(255,255,255,0.5)", fontSize: 12, cursor: "pointer", fontFamily: "Inter, system-ui" }}>
+                            Not now
+                        </button>
+                        <button onClick={() => {
+                            if (installPrompt) {
+                                installPrompt.prompt();
+                                installPrompt.userChoice.then(() => { setInstallPrompt(null); setShowInstallBanner(false); });
+                            }
+                        }}
+                            style={{ background: C.gold, border: "none", borderRadius: 8, padding: "5px 14px", color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "Inter, system-ui" }}>
+                            Install
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* TABS */}
             {activeTab === "predict" && (
