@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CricIntelligence — Design Preview v2</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<title>CricIntelligence — Design Preview v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Georgia&display=swap" rel="stylesheet"/>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -13,111 +13,104 @@
   --surface: #111827;
   --card:    #141E32;
   --border:  rgba(255,255,255,0.07);
+  --navy:    #1E2D6B;
+  --navy2:   #2A3F82;
   --gold:    #C8961E;
   --text:    #E2E8F0;
   --muted:   #4B5563;
   --muted2:  #6B7280;
   --green:   #10B981;
   --red:     #EF4444;
+  --amber:   #F59E0B;
 }
 
 body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
 
-/* NAV */
+/* ── NAV — EXACT COPY OF CURRENT SITE ── */
 nav {
-  height: 50px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
+  background: var(--navy);
+  border-bottom: 1px solid #2a3f5f;
   padding: 0 20px;
-  position: sticky; top: 0; z-index: 50;
+  height: 54px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
 }
-.logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
-.logo-icon {
-  width: 28px; height: 28px; border-radius: 6px;
-  background: linear-gradient(135deg, #1E2D6B, #2A3F82);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; font-weight: 900; color: var(--gold); letter-spacing: -0.5px;
-}
-.logo-name { font-size: 13px; font-weight: 700; color: var(--text); }
-.logo-tag  { font-size: 10px; color: var(--muted2); font-weight: 400; }
 
-.nav-links { display: flex; gap: 1px; }
-.nl {
-  padding: 5px 12px; border-radius: 5px; border: none;
-  background: none; font-family: 'Inter', sans-serif;
-  font-size: 12px; font-weight: 500; color: var(--muted2);
-  cursor: pointer; transition: all .12s;
-}
-.nl:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-.nl.on { color: var(--text); font-weight: 600; background: rgba(255,255,255,0.07); }
-.nl.odds-on { color: var(--gold); font-weight: 600; }
+/* Logo — exact match */
+.logo { display: flex; align-items: center; gap: 9px; text-decoration: none; cursor: pointer; }
+.logo svg { flex-shrink: 0; }
+.logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+.logo-cric { font-weight: 800; font-size: 13px; color: #fff; letter-spacing: 2px; font-family: Georgia, serif; }
+.logo-intel { font-weight: 400; font-size: 9px; color: var(--gold); letter-spacing: 3.5px; font-family: Georgia, serif; }
 
-.nav-right { display: flex; align-items: center; gap: 6px; }
-.live-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 2s infinite; }
+/* Nav tabs */
+.nav-tabs { display: flex; gap: 2px; align-items: center; }
+.tab-btn {
+  padding: 6px 14px; border-radius: 6px; border: none;
+  font-family: 'Inter', sans-serif; font-size: 13px;
+  cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; gap: 4px;
+}
+.tab-btn.off { background: transparent; color: rgba(255,255,255,0.6); font-weight: 400; }
+.tab-btn.off:hover { background: rgba(255,255,255,0.07); color: #fff; }
+.tab-btn.on  { background: rgba(255,255,255,0.12); color: #fff; font-weight: 700; }
+
+/* Notify button + live indicator */
+.nav-right { display: flex; align-items: center; gap: 8px; }
+.notify-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 6px;
+  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 500;
+  font-family: 'Inter', sans-serif; cursor: pointer;
+}
+.live-wrap { display: flex; align-items: center; gap: 5px; }
+.live-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 2s infinite; flex-shrink: 0; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
-.nav-time { font-size: 11px; color: var(--muted2); font-variant-numeric: tabular-nums; }
+.live-time { font-size: 11px; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; }
 
-/* LAYOUT */
-.layout { display: grid; grid-template-columns: 220px 1fr 200px; min-height: calc(100vh - 50px); }
+/* ── EVERYTHING BELOW NAV IS THE NEW DESIGN ── */
+
+.layout { display: grid; grid-template-columns: 220px 1fr 200px; min-height: calc(100vh - 54px); }
 
 /* LEFT SIDEBAR */
 .lsb {
-  background: var(--surface);
+  background: #111827;
   border-right: 1px solid var(--border);
-  padding: 12px 8px;
-  overflow-y: auto;
+  padding: 12px 8px; overflow-y: auto;
 }
 .sb-head {
-  font-size: 9px; font-weight: 700; color: var(--muted);
+  font-size: 9px; font-weight: 700; color: var(--muted2);
   letter-spacing: 1.2px; text-transform: uppercase;
-  padding: 0 8px; margin-bottom: 6px; margin-top: 10px;
+  padding: 0 8px; margin: 10px 0 6px;
 }
 .sb-head:first-child { margin-top: 0; }
-
 .mi {
-  padding: 9px 10px; border-radius: 7px;
-  cursor: pointer; border: 1px solid transparent;
-  margin-bottom: 2px; transition: all .12s;
+  padding: 9px 10px; border-radius: 7px; cursor: pointer;
+  border: 1px solid transparent; margin-bottom: 2px; transition: all .12s;
 }
 .mi:hover { background: rgba(255,255,255,0.03); }
-.mi.sel {
-  background: rgba(200,150,30,0.07);
-  border-color: rgba(200,150,30,0.2);
-}
+.mi.sel { background: rgba(200,150,30,0.07); border-color: rgba(200,150,30,0.2); }
 .mi-teams { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
 .mi-detail { font-size: 10px; color: var(--muted2); }
-
 .live-tag {
   display: inline-flex; align-items: center; gap: 4px;
-  padding: 1px 6px; border-radius: 3px;
+  padding: 1px 6px; border-radius: 3px; margin-bottom: 4px;
   background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.18);
-  font-size: 9px; font-weight: 700; color: var(--red);
-  letter-spacing: .3px; margin-bottom: 4px;
+  font-size: 9px; font-weight: 700; color: var(--red); letter-spacing: .3px;
 }
 .live-tag-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--red); animation: blink 1.5s infinite; }
 
 /* MAIN */
 main { min-width: 0; display: flex; flex-direction: column; }
 
-/* ── MATCH HEADER ── */
-.mh {
-  padding: 18px 22px 14px;
-  border-bottom: 1px solid var(--border);
-}
-.mh-meta {
-  font-size: 10px; color: var(--muted2); font-weight: 500;
-  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
-}
+.mh { padding: 18px 22px 14px; border-bottom: 1px solid var(--border); }
+.mh-meta { font-size: 10px; color: var(--muted2); font-weight: 500; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
 .mh-dot { color: rgba(255,255,255,.1); }
-
-.mh-teams {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
-}
+.mh-teams { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .mh-t1 { font-size: 26px; font-weight: 900; color: var(--text); letter-spacing: -.5px; }
-.mh-t2 { font-size: 26px; font-weight: 900; color: var(--muted); letter-spacing: -.5px; }
-.mh-vs  { font-size: 11px; color: var(--muted); font-weight: 600; }
-
+.mh-t2 { font-size: 26px; font-weight: 900; color: var(--muted2); letter-spacing: -.5px; }
+.mh-vs  { font-size: 11px; color: var(--muted2); font-weight: 600; }
 .score-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .score-chip {
   display: inline-flex; align-items: center; gap: 8px;
@@ -127,81 +120,50 @@ main { min-width: 0; display: flex; flex-direction: column; }
 .sc-main { font-size: 13px; font-weight: 700; color: var(--text); }
 .sc-div  { width: 1px; height: 11px; background: rgba(255,255,255,.1); }
 .sc-sub  { font-size: 11px; color: var(--muted2); }
-
-.tag {
-  display: inline-block; padding: 3px 9px; border-radius: 4px;
-  font-size: 10px; font-weight: 700; letter-spacing: .2px;
-}
+.tag { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: .2px; }
 .tag.green { background: rgba(16,185,129,.1); color: var(--green); border: 1px solid rgba(16,185,129,.2); }
 .tag.gold  { background: rgba(200,150,30,.1); color: var(--gold);  border: 1px solid rgba(200,150,30,.2); }
-.tag.red   { background: rgba(239,68,68,.1);  color: var(--red);   border: 1px solid rgba(239,68,68,.2);  }
 
-/* ── CONTENT AREA ── */
+/* CONTENT */
 .content { padding: 16px 22px 40px; flex: 1; }
 
-/* WIN PROBABILITY — hero section */
+/* WIN PROB HERO */
 .prob-hero {
-  background: var(--card);
-  border: 1px solid rgba(200,150,30,.15);
-  border-radius: 12px;
-  padding: 20px 22px;
-  margin-bottom: 12px;
+  background: var(--card); border: 1px solid rgba(200,150,30,.15);
+  border-radius: 12px; padding: 20px 22px; margin-bottom: 12px;
   display: flex; align-items: center; gap: 24px;
 }
-.prob-big { flex-shrink: 0; }
-.prob-num {
-  font-size: 64px; font-weight: 900; color: var(--gold);
-  letter-spacing: -3px; line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
+.prob-num { font-size: 64px; font-weight: 900; color: var(--gold); letter-spacing: -3px; line-height: 1; }
 .prob-pct { font-size: 24px; letter-spacing: 0; font-weight: 700; }
-.prob-who { font-size: 12px; color: var(--muted2); margin-top: 4px; font-weight: 500; }
-
+.prob-who { font-size: 12px; color: var(--muted2); margin-top: 4px; }
 .prob-right { flex: 1; min-width: 0; }
 .prob-bar-labels { display: flex; justify-content: space-between; margin-bottom: 7px; }
 .pb-l1 { font-size: 12px; font-weight: 700; color: var(--gold); }
 .pb-l2 { font-size: 12px; font-weight: 600; color: var(--muted2); }
-.prob-track {
-  height: 7px; background: rgba(255,255,255,0.06);
-  border-radius: 4px; overflow: hidden; margin-bottom: 10px;
-}
+.prob-track { height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
 .prob-fill { height: 100%; width: 68%; background: var(--gold); border-radius: 4px; }
-.prob-context { font-size: 11px; color: var(--muted2); line-height: 1.6; }
+.prob-context { font-size: 11px; color: var(--muted2); line-height: 1.7; }
 .prob-context strong { color: var(--text); font-weight: 600; }
 
-/* ── GRAPH ── */
-.graph-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 12px; padding: 16px 18px; margin-bottom: 12px;
-}
-.gc-head {
-  font-size: 10px; font-weight: 700; color: var(--muted);
-  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
-}
+/* GRAPH */
+.graph-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+.gc-head { font-size: 10px; font-weight: 700; color: var(--muted2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
 .graph-svg { width: 100%; display: block; }
 .graph-axis { display: flex; justify-content: space-between; margin-top: 5px; }
 .ga-label { font-size: 9px; color: var(--muted); }
 
-/* ── 3-COL STATS ── */
+/* STATS 3 */
 .stats3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.stat-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 10px; padding: 14px 14px;
-}
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
 .stat-val { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
 .stat-val.g { color: var(--green); }
 .stat-val.gold { color: var(--gold); }
 .stat-lbl { font-size: 9px; font-weight: 600; color: var(--muted2); letter-spacing: .5px; text-transform: uppercase; }
 .stat-sub2 { font-size: 10px; color: var(--muted); margin-top: 3px; }
 
-/* ── PROJECTION ── */
-.proj-card {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 10px; padding: 14px 16px;
-}
-.proj-row {
-  display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
-}
+/* PROJECTION */
+.proj-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.proj-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
 .proj-row:last-child { margin-bottom: 0; }
 .proj-lbl { font-size: 10px; color: var(--muted2); width: 36px; flex-shrink: 0; text-align: right; }
 .proj-track { flex: 1; height: 5px; background: rgba(255,255,255,.05); border-radius: 3px; overflow: hidden; }
@@ -211,89 +173,78 @@ main { min-width: 0; display: flex; flex-direction: column; }
 .proj-num.gold { color: var(--gold); }
 
 /* RIGHT SIDEBAR */
-.rsb {
-  border-left: 1px solid var(--border);
-  padding: 14px 12px;
-  overflow-y: auto;
-  display: flex; flex-direction: column; gap: 10px;
-}
-.rc {
-  background: var(--card); border: 1px solid var(--border);
-  border-radius: 10px; padding: 13px;
-}
+.rsb { border-left: 1px solid var(--border); padding: 14px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.rc { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px; }
 .rc.value-card { border-color: rgba(16,185,129,.2); background: rgba(16,185,129,.03); }
-.rc-head { font-size: 9px; font-weight: 700; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
+.rc-head { font-size: 9px; font-weight: 700; color: var(--muted2); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
 .rc-val { font-size: 26px; font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 2px; }
 .rc-team { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
 .rc-edge { font-size: 11px; color: var(--green); font-weight: 600; margin-bottom: 10px; }
 .rc-btn {
   display: block; width: 100%; padding: 8px;
-  background: var(--gold); border-radius: 6px;
-  text-align: center; font-size: 11px; font-weight: 700;
-  color: #0C1220; text-decoration: none; border: none; cursor: pointer;
-  font-family: 'Inter', sans-serif;
+  background: var(--gold); border-radius: 6px; text-align: center;
+  font-size: 11px; font-weight: 700; color: #0C1220;
+  text-decoration: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif;
 }
-
-.divider { height: 1px; background: var(--border); margin: 6px 0; }
+.divider { height: 1px; background: var(--border); margin: 4px 0; }
 .info-line { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
 .il-key { font-size: 11px; color: var(--muted2); }
 .il-val { font-size: 11px; font-weight: 600; color: var(--text); }
 .il-val.g { color: var(--green); }
 .il-val.gold { color: var(--gold); }
-
-.rg-note {
-  font-size: 10px; color: var(--muted); line-height: 1.6;
-  padding: 8px 10px; background: rgba(255,255,255,.03);
-  border-radius: 7px; border: 1px solid var(--border);
-}
+.rg-note { font-size: 10px; color: var(--muted2); line-height: 1.6; padding: 8px 10px; background: rgba(255,255,255,.03); border-radius: 7px; border: 1px solid var(--border); }
 .rg-note a { color: var(--gold); text-decoration: none; }
 
-/* ── COMPARISON SECTION ── */
-.compare {
-  background: var(--surface); border-top: 1px solid var(--border);
-  padding: 28px 32px;
-}
-.compare h2 { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 20px; }
-.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 48px; max-width: 620px; }
-.cf { display: flex; align-items: flex-start; gap: 8px; }
-.cf-icon { font-size: 12px; margin-top: 1px; flex-shrink: 0; }
-.cf-text { font-size: 12px; color: var(--muted2); line-height: 1.5; }
-.cf-text b { color: var(--text); font-weight: 600; }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
+<!-- ── NAV — SAME AS CURRENT SITE ── -->
 <nav>
+  <!-- Logo — exact replica -->
   <a class="logo" href="#">
-    <div class="logo-icon">CI</div>
-    <div>
-      <div class="logo-name">CricIntelligence</div>
-      <div class="logo-tag">AI Predictions</div>
+    <svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" fill="#0D1B3E" rx="8"/>
+      <rect width="100" height="4" fill="#C8961E"/>
+      <rect y="96" width="100" height="4" fill="#C8961E"/>
+      <path d="M 62,18 A 32,32 0 1,0 62,82" fill="none" stroke="#C8961E" stroke-width="8" stroke-linecap="round"/>
+      <line x1="34" y1="30" x2="34" y2="70" stroke="white" stroke-width="4" stroke-linecap="round"/>
+      <line x1="44" y1="28" x2="44" y2="72" stroke="white" stroke-width="4" stroke-linecap="round"/>
+      <line x1="54" y1="30" x2="54" y2="70" stroke="white" stroke-width="4" stroke-linecap="round"/>
+      <line x1="31" y1="28" x2="57" y2="28" stroke="#C8961E" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div class="logo-text">
+      <span class="logo-cric">CRIC</span>
+      <span class="logo-intel">INTELLIGENCE</span>
     </div>
   </a>
 
-  <div class="nav-links">
-    <button class="nl on">Predictions</button>
-    <button class="nl">Matches</button>
-    <button class="nl">Pitch</button>
-    <button class="nl">Record</button>
-    <button class="nl odds-on">Odds</button>
+  <!-- Tabs -->
+  <div class="nav-tabs">
+    <button class="tab-btn on">Predictions</button>
+    <button class="tab-btn off">Matches</button>
+    <button class="tab-btn off">More ▾</button>
   </div>
 
+  <!-- Right -->
   <div class="nav-right">
-    <div class="live-pip"></div>
-    <span class="nav-time">Live · 14:32</span>
+    <button class="notify-btn">🔔 Notify me</button>
+    <div class="live-wrap">
+      <div class="live-pip"></div>
+      <span class="live-time">14:35:15</span>
+    </div>
   </div>
 </nav>
 
-<!-- LAYOUT -->
+<!-- ── EVERYTHING BELOW = NEW DESIGN ── -->
 <div class="layout">
 
-  <!-- LEFT SIDEBAR -->
+  <!-- LEFT SIDEBAR — cleaner -->
   <aside class="lsb">
     <div class="sb-head">Live now</div>
-
     <div class="mi sel">
       <div class="live-tag"><span class="live-tag-dot"></span>Live</div>
       <div class="mi-teams">RCB vs CSK</div>
@@ -301,7 +252,6 @@ main { min-width: 0; display: flex; flex-direction: column; }
     </div>
 
     <div class="sb-head">Upcoming</div>
-
     <div class="mi">
       <div class="mi-teams">MI vs KKR</div>
       <div class="mi-detail">Today · 7:30 PM · Wankhede</div>
@@ -322,8 +272,6 @@ main { min-width: 0; display: flex; flex-direction: column; }
 
   <!-- MAIN -->
   <main>
-
-    <!-- Match header -->
     <div class="mh">
       <div class="mh-meta">
         <span>IPL 2026 · Match 26</span>
@@ -332,13 +280,11 @@ main { min-width: 0; display: flex; flex-direction: column; }
         <span class="mh-dot">·</span>
         <span style="color:var(--green);font-weight:600;">2nd innings</span>
       </div>
-
       <div class="mh-teams">
         <span class="mh-t1">RCB</span>
         <span class="mh-vs">vs</span>
         <span class="mh-t2">CSK</span>
       </div>
-
       <div class="score-row">
         <div class="score-chip">
           <span class="sc-main">CSK 142/4</span>
@@ -350,16 +296,15 @@ main { min-width: 0; display: flex; flex-direction: column; }
           <span class="sc-sub">Target 168</span>
         </div>
         <span class="tag green">Rising</span>
-        <span class="tag gold">Batting friendly pitch</span>
+        <span class="tag gold">Batting friendly</span>
       </div>
     </div>
 
-    <!-- Content -->
     <div class="content">
 
-      <!-- WIN PROBABILITY HERO -->
+      <!-- WIN PROB HERO -->
       <div class="prob-hero">
-        <div class="prob-big">
+        <div>
           <div class="prob-num">68<span class="prob-pct">%</span></div>
           <div class="prob-who">RCB win probability</div>
         </div>
@@ -370,9 +315,8 @@ main { min-width: 0; display: flex; flex-direction: column; }
           </div>
           <div class="prob-track"><div class="prob-fill"></div></div>
           <div class="prob-context">
-            CSK need <strong>26 off 34 balls</strong> — required rate at 9.6.
-            RCB defending from a position of <strong>strength</strong>.
-            Dew expected in final overs.
+            CSK need <strong>26 off 34 balls</strong> — required rate climbing to 9.6.
+            RCB defending strongly. Dew expected in final overs.
           </div>
         </div>
       </div>
@@ -387,16 +331,10 @@ main { min-width: 0; display: flex; flex-direction: column; }
               <stop offset="100%" stop-color="#C8961E" stop-opacity="0"/>
             </linearGradient>
           </defs>
-          <!-- 50% line -->
           <line x1="0" y1="50" x2="560" y2="50" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="3,4"/>
           <text x="4" y="47" fill="rgba(255,255,255,0.12)" font-size="7" font-family="Inter,sans-serif">50%</text>
-          <!-- Area fill -->
-          <path d="M0,62 C40,60 80,58 120,55 C160,52 200,68 240,72 C280,75 320,60 360,50 C400,40 440,33 480,26 C510,22 535,18 560,15 L560,100 L0,100 Z"
-                fill="url(#gf)"/>
-          <!-- Line -->
-          <path d="M0,62 C40,60 80,58 120,55 C160,52 200,68 240,72 C280,75 320,60 360,50 C400,40 440,33 480,26 C510,22 535,18 560,15"
-                fill="none" stroke="#C8961E" stroke-width="1.8" stroke-linejoin="round"/>
-          <!-- Current point -->
+          <path d="M0,62 C40,60 80,58 120,55 C160,52 200,68 240,72 C280,75 320,60 360,50 C400,40 440,33 480,26 C510,22 535,18 560,15 L560,100 L0,100 Z" fill="url(#gf)"/>
+          <path d="M0,62 C40,60 80,58 120,55 C160,52 200,68 240,72 C280,75 320,60 360,50 C400,40 440,33 480,26 C510,22 535,18 560,15" fill="none" stroke="#C8961E" stroke-width="1.8" stroke-linejoin="round"/>
           <circle cx="560" cy="15" r="3.5" fill="#C8961E"/>
           <circle cx="560" cy="15" r="7" fill="rgba(200,150,30,.2)"/>
         </svg>
@@ -419,7 +357,7 @@ main { min-width: 0; display: flex; flex-direction: column; }
         <div class="stat-card">
           <div class="stat-val gold">Rising</div>
           <div class="stat-lbl">Momentum</div>
-          <div class="stat-sub2">Last 3 overs: 38 runs</div>
+          <div class="stat-sub2">Last 3 ov: 38 runs</div>
         </div>
         <div class="stat-card">
           <div class="stat-val">9.6</div>
@@ -428,7 +366,7 @@ main { min-width: 0; display: flex; flex-direction: column; }
         </div>
       </div>
 
-      <!-- SCORE PROJECTION -->
+      <!-- PROJECTION -->
       <div class="proj-card">
         <div class="gc-head">Score Projection — 1st innings</div>
         <div style="margin-top:10px;">
@@ -460,7 +398,6 @@ main { min-width: 0; display: flex; flex-direction: column; }
 
   <!-- RIGHT SIDEBAR -->
   <aside class="rsb">
-
     <div class="rc value-card">
       <div class="rc-head">Value bet signal</div>
       <div class="rc-team">RCB to win</div>
@@ -471,106 +408,30 @@ main { min-width: 0; display: flex; flex-direction: column; }
 
     <div class="rc">
       <div class="rc-head">AI Track Record</div>
-      <div class="info-line">
-        <span class="il-key">Accuracy</span>
-        <span class="il-val g">80%</span>
-      </div>
+      <div class="info-line"><span class="il-key">Accuracy</span><span class="il-val g">80%</span></div>
       <div class="divider"></div>
-      <div class="info-line">
-        <span class="il-key">Predictions</span>
-        <span class="il-val">45 verified</span>
-      </div>
+      <div class="info-line"><span class="il-key">Predictions</span><span class="il-val">45 verified</span></div>
       <div class="divider"></div>
-      <div class="info-line">
-        <span class="il-key">Last 10</span>
-        <span class="il-val g">8 correct</span>
-      </div>
+      <div class="info-line"><span class="il-key">Last 10</span><span class="il-val g">8 correct</span></div>
     </div>
 
     <div class="rc">
       <div class="rc-head">Match Info</div>
-      <div class="info-line">
-        <span class="il-key">Pitch</span>
-        <span class="il-val gold">Batting</span>
-      </div>
+      <div class="info-line"><span class="il-key">Pitch</span><span class="il-val gold">Batting</span></div>
       <div class="divider"></div>
-      <div class="info-line">
-        <span class="il-key">Avg 1st inn</span>
-        <span class="il-val">183</span>
-      </div>
+      <div class="info-line"><span class="il-key">Avg 1st inn</span><span class="il-val">183</span></div>
       <div class="divider"></div>
-      <div class="info-line">
-        <span class="il-key">Dew likely</span>
-        <span class="il-val g">Yes</span>
-      </div>
+      <div class="info-line"><span class="il-key">Dew likely</span><span class="il-val g">Yes</span></div>
       <div class="divider"></div>
-      <div class="info-line">
-        <span class="il-key">RCB home W%</span>
-        <span class="il-val g">68%</span>
-      </div>
+      <div class="info-line"><span class="il-key">RCB home W%</span><span class="il-val g">68%</span></div>
     </div>
 
     <div class="rg-note">
       18+ only. Gamble responsibly.<br/>
       <a href="https://www.begambleaware.org">BeGambleAware.org</a> · 0808 8020 133
     </div>
-
   </aside>
-</div>
 
-<!-- WHAT CHANGED -->
-<div class="compare">
-  <h2>What changed from current site</h2>
-  <div class="compare-grid">
-    <div class="cf">
-      <span class="cf-icon">🔴</span>
-      <div class="cf-text"><b>Before:</b> 5+ accent colors competing (cyan, amber, green, red, gold)</div>
-    </div>
-    <div class="cf">
-      <span class="cf-icon">🟢</span>
-      <div class="cf-text"><b>After:</b> Gold only as accent — everything else is white/grey</div>
-    </div>
-    <div class="cf">
-      <span class="cf-icon">🔴</span>
-      <div class="cf-text"><b>Before:</b> Emojis in nav tabs, card headers, every label</div>
-    </div>
-    <div class="cf">
-      <span class="cf-icon">🟢</span>
-      <div class="cf-text"><b>After:</b> Zero emojis in UI — clean text only throughout</div>
-    </div>
-    <div class="cf">
-      <span class="cf-icon">🔴</span>
-      <div class="cf-text"><b>Before:</b> Win probability as a semicircle arc gauge</div>
-    </div>
-    <div class="cf">
-      <span class="cf-icon">🟢</span>
-      <div class="cf-text"><b>After:</b> Big 68% number as the hero — impossible to miss</div>
-    </div>
-    <div class="cf">
-      <span class="cf-icon">🔴</span>
-      <div class="cf-text"><b>Before:</b> Gradient borders on every card, visual noise</div>
-    </div>
-    <div class="cf">
-      <span class="cf-icon">🟢</span>
-      <div class="cf-text"><b>After:</b> Single consistent 1px border — clean separation</div>
-    </div>
-    <div class="cf">
-      <span class="cf-icon">🔴</span>
-      <div class="cf-text"><b>Before:</b> ALL CAPS on every single label and heading</div>
-    </div>
-    <div class="cf">
-      <span class="cf-icon">🟢</span>
-      <div class="cf-text"><b>After:</b> ALL CAPS only on section labels — hierarchy clear</div>
-    </div>
-    <div class="cf">
-      <span class="cf-icon">🔴</span>
-      <div class="cf-text"><b>Before:</b> Track record hidden in "More" dropdown</div>
-    </div>
-    <div class="cf">
-      <span class="cf-icon">🟢</span>
-      <div class="cf-text"><b>After:</b> Always visible in right sidebar — builds trust</div>
-    </div>
-  </div>
 </div>
 
 </body>
