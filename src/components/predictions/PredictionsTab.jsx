@@ -962,15 +962,15 @@ function HeroDecision({ pred, prob, isEnded }) {
                 <div style={{ display: "flex", alignItems: "center", gap: 0, marginBottom: 12 }}>
                     {/* T1 block */}
                     <div style={{ flex: 1, textAlign: "center" }}>
-                        <div style={{ fontSize: 24, fontWeight: 900, color: "#fff", letterSpacing: -0.5 }}>{t1}</div>
-                        <div style={{ fontSize: 26, fontWeight: 900, color: t1Color, letterSpacing: -1, lineHeight: 1.1 }}>{prob}%</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 4 }}>{t1}</div>
+                        <div style={{ fontSize: 52, fontWeight: 900, color: t1Color, letterSpacing: -2, lineHeight: 1 }}>{prob}<span style={{ fontSize: 22, letterSpacing: 0 }}>%</span></div>
                     </div>
                     {/* vs divider */}
-                    <div style={{ width: 1, height: 48, background: "rgba(255,255,255,0.1)", flexShrink: 0 }} />
+                    <div style={{ width: 1, height: 56, background: "rgba(255,255,255,0.08)", flexShrink: 0 }} />
                     {/* T2 block */}
                     <div style={{ flex: 1, textAlign: "center" }}>
-                        <div style={{ fontSize: 24, fontWeight: 900, color: "#fff", letterSpacing: -0.5 }}>{t2}</div>
-                        <div style={{ fontSize: 26, fontWeight: 900, color: t2Color, letterSpacing: -1, lineHeight: 1.1 }}>{Math.round((100 - prob) * 10) / 10}%</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 4 }}>{t2}</div>
+                        <div style={{ fontSize: 52, fontWeight: 900, color: t2Color, letterSpacing: -2, lineHeight: 1 }}>{Math.round((100 - prob) * 10) / 10}<span style={{ fontSize: 22, letterSpacing: 0 }}>%</span></div>
                     </div>
                 </div>
 
@@ -1452,12 +1452,12 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
                 {/* Compact trust strip — shown when a match IS loaded */}
                 {(selectedMatch || pred) && (
-                    <div style={{ background: "rgba(0,184,148,0.06)", borderBottom: "1px solid rgba(0,184,148,0.12)", padding: "6px 20px", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                        <span style={{ fontSize: 11, color: "#00B894", fontWeight: 700 }}>🎯 80%+ accurate</span>
-                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>·</span>
-                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>45+ verified IPL 2026 predictions</span>
-                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>·</span>
-                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.35)" }}>Updated every ball</span>
+                    <div style={{ background: "rgba(255,255,255,0.03)", borderBottom: `1px solid ${C.border}`, padding: "6px 20px", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: 11, color: "#10B981", fontWeight: 700 }}>80%+ accurate</span>
+                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
+                        <span style={{ fontSize: 11, color: C.muted }}>45+ verified IPL 2026 predictions</span>
+                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
+                        <span style={{ fontSize: 11, color: C.muted }}>Updated every ball</span>
                     </div>
                 )}
 
@@ -1538,10 +1538,10 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         {!pred && isPredLoading && (
                             <div style={{ padding: "24px 20px" }}>
                                 {[1, 2, 3].map(i => (
-                                    <div key={i} style={{ background: "#fff", borderRadius: 14, padding: 20, marginBottom: 14, border: "1px solid #E2E8F0" }}>
-                                        <div style={{ height: 12, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 6, width: "40%", marginBottom: 12 }} />
-                                        <div style={{ height: 32, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 8, width: "70%", marginBottom: 12 }} />
-                                        <div style={{ height: 8, background: "linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 4, width: "100%", marginBottom: 8 }} />
+                                    <div key={i} style={{ background: "#111827", borderRadius: 14, padding: 20, marginBottom: 14, border: "1px solid rgba(255,255,255,0.07)" }}>
+                                        <div style={{ height: 12, background: "linear-gradient(90deg,#1a2540 25%,#243050 50%,#1a2540 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 6, width: "40%", marginBottom: 12 }} />
+                                        <div style={{ height: 32, background: "linear-gradient(90deg,#1a2540 25%,#243050 50%,#1a2540 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 8, width: "70%", marginBottom: 12 }} />
+                                        <div style={{ height: 8, background: "linear-gradient(90deg,#1a2540 25%,#243050 50%,#1a2540 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 4, width: "100%", marginBottom: 8 }} />
                                     </div>
                                 ))}
                             </div>
@@ -1550,12 +1550,11 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             {/* TRUST BAR */}
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", paddingBottom: 12 }}>
                                 {[
-                                    { label: "⚡ Live data from Cricbuzz" },
-                                    { label: "🤖 ML model — score projections + partnerships" },
-                                    { label: "🔄 Auto-refreshes every 30s" },
-                                    ...(pred.venue ? [{ label: `📍 ${pred.venue}` }] : []),
+                                    { label: "Live data from Cricbuzz" },
+                                    { label: "ML model — updates every ball" },
+                                    ...(pred.venue ? [{ label: pred.venue }] : []),
                                 ].map((item) => (
-                                    <span key={item.label} style={{ fontSize: 10, color: C.muted, background: "rgba(100,116,139,0.12)", border: `1px solid ${C.border}`, borderRadius: 20, padding: "3px 10px" }}>
+                                    <span key={item.label} style={{ fontSize: 10, color: C.muted, background: "rgba(255,255,255,0.05)", border: `1px solid ${C.border}`, borderRadius: 20, padding: "3px 10px" }}>
                                         {item.label}
                                     </span>
                                 ))}
@@ -1572,7 +1571,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                               const t1p = prob;
                               const t2p = Math.round((100 - t1p) * 10) / 10;
                               return (
-                              <div style={{ background: "#fff", border: `1px solid ${C.border}`, borderRadius: 12, padding: "10px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 0 }}>
+                              <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "10px 16px", marginBottom: 14, display: "flex", alignItems: "center", gap: 0 }}>
                                 <div style={{ textAlign: "center", flex: 1 }}>
                                   <div style={{ fontSize: 9, fontWeight: 700, color: C.muted, letterSpacing: 0.8, marginBottom: 3 }}>FAIR ODDS · {cleanTeam(pred.team1)}</div>
                                   <div style={{ fontSize: 16, fontWeight: 900, color: C.text }}>{t1p > 0 ? (100 / t1p).toFixed(2) : "—"}</div>

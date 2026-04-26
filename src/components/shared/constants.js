@@ -2,11 +2,11 @@
 export const API_BASE = "https://cricintel-backend-production.up.railway.app";
 
 export const C = {
-    bg: "#F0F2F8", surface: "#FFFFFF", border: "#DDE2EF",
-    text: "#0A0A0A", muted: "#64748B", accent: "#1E2D6B",
-    green: "#00B894", red: "#E53E3E", amber: "#F59E0B", gold: "#C8961E",
+    bg: "#080D16", surface: "#111827", border: "rgba(255,255,255,0.07)",
+    text: "#E2E8F0", muted: "#6B7280", accent: "#4A6FD4",
+    green: "#10B981", red: "#EF4444", amber: "#F59E0B", gold: "#C8961E",
     navy: "#1E2D6B", navyMid: "#2A3F82", navyLight: "#4A5FAD",
-    sidebarBg: "#141D4A",
+    sidebarBg: "#0D1525",
 };
 
 export const IPL_TEAMS = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
@@ -65,8 +65,8 @@ body { background: ${C.bg}; }
 .tab-btn.on { background: rgba(255,255,255,0.18); color: #fff; font-weight: 700; }
 .over-card { border-radius: 14px; border: 1.5px solid ${C.border}; padding: 14px 10px; text-align: center; background: ${C.surface}; transition: all .2s cubic-bezier(.22,.68,0,1.2); cursor: pointer; position: relative; overflow: hidden; }
 .over-card:hover { border-color: ${C.navyLight}; transform: translateY(-3px); box-shadow: 0 6px 24px rgba(30,45,107,0.15); }
-.over-card.sel { border-color: ${C.navy}; background: linear-gradient(135deg,#EEF3FF,#E5EDFF); box-shadow: 0 4px 16px rgba(30,45,107,0.18); }
-.btn-p { background: linear-gradient(135deg, ${C.text}, #333); color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-family: Inter, system-ui; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: opacity .2s, transform .1s; }
+.over-card.sel { border-color: ${C.gold}; background: rgba(200,150,30,0.1); box-shadow: 0 4px 16px rgba(200,150,30,0.12); }
+.btn-p { background: linear-gradient(135deg, #1E2D6B, #2A3F82); color: #fff; border: none; border-radius: 10px; padding: 14px 24px; font-family: Inter, system-ui; font-size: 14px; font-weight: 600; cursor: pointer; width: 100%; transition: opacity .2s, transform .1s; }
 .btn-p:hover { opacity: 0.88; transform: translateY(-1px); }
 .btn-p:active { transform: translateY(0); }
 @media (max-width: 700px) {
