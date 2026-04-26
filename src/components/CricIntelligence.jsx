@@ -28,7 +28,6 @@ export default function CricIntelligence() {
         VALID_TABS.includes(tabFromUrl) ? tabFromUrl : "predict"
     );
     const [liveTime, setLiveTime] = useState(new Date());
-    const [moreOpen, setMoreOpen] = useState(false);
     const navigate = useNavigate();
     const [installPrompt, setInstallPrompt] = useState(null);
     const [showInstallBanner, setShowInstallBanner] = useState(false);
@@ -58,13 +57,6 @@ export default function CricIntelligence() {
     const { liveMatches, selectedMatch, selectMatch, pred, liveStatus, isFirstLoad, isPredLoading } = useMatchData();
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
-    // Close "More" dropdown when clicking outside
-    useEffect(() => {
-        if (!moreOpen) return;
-        const handler = () => setMoreOpen(false);
-        document.addEventListener("click", handler);
-        return () => document.removeEventListener("click", handler);
-    }, [moreOpen]);
 
     // Set canonical for main app — always points to homepage
     useEffect(() => { setCanonical("https://www.cricintelligence.com/"); }, []);
@@ -105,35 +97,17 @@ export default function CricIntelligence() {
                 <div onClick={() => { setActiveTab("predict"); window.scrollTo(0, 0); }} style={{ cursor: "pointer" }}>
                     <Logo href="/" />
                 </div>
-                <div style={{ display: "flex", gap: 2, alignItems: "center", position: "relative" }}>
-                    {/* Primary tabs — always visible */}
-                    {[["predict", "Predictions"], ["matches", "Matches"]].map(([k, label]) => (
+                <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
+                    {[["predict", "Predictions"], ["matches", "Matches"], ["pitch", "Pitch"], ["record", "Record"], ["media", "Media"]].map(([k, label]) => (
                         <button key={k} className={`tab-btn ${activeTab === k ? "on" : ""}`}
-                            onClick={() => { setActiveTab(k); setMoreOpen(false); }}>
+                            onClick={() => { setActiveTab(k); }}>
                             <span>{label}</span>
                         </button>
                     ))}
-                    {/* More ▾ dropdown for secondary tabs */}
-                    <div style={{ position: "relative" }}>
-                        <button
-                            className={`tab-btn ${["pitch","record","media","odds"].includes(activeTab) ? "on" : ""}`}
-                            onClick={(e) => { e.stopPropagation(); setMoreOpen(o => !o); }}
-                            style={{ gap: 4 }}>
-                            <span>More</span>
-                            <span style={{ fontSize: 9, opacity: 0.7 }}>{moreOpen ? "▲" : "▼"}</span>
-                        </button>
-                        {moreOpen && (
-                            <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, background: "#1E2D6B", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10, overflow: "hidden", zIndex: 200, minWidth: 140, boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
-                                {[["pitch", "🏟️", "Pitch Analysis"], ["record", "📊", "Track Record"], ["media", "📰", "Media"], ["odds", "🎲", "Odds"]].map(([k, icon, label]) => (
-                                    <button key={k}
-                                        onClick={() => { if (k === "odds") { navigate("/odds"); setMoreOpen(false); } else { setActiveTab(k); setMoreOpen(false); } }}
-                                        style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 16px", background: activeTab === k ? "rgba(255,255,255,0.1)" : "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: activeTab === k ? 700 : 500, color: activeTab === k ? "#fff" : "rgba(255,255,255,0.65)", fontFamily: "Inter, system-ui", textAlign: "left" }}>
-                                        <span>{icon}</span><span>{label}</span>
-                                    </button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
+                    <button className={`tab-btn ${activeTab === "odds" ? "on" : ""}`}
+                        onClick={() => navigate("/odds")}>
+                        <span>Odds</span>
+                    </button>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <NotifyButton />
