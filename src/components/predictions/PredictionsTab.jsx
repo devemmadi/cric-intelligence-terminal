@@ -1056,7 +1056,7 @@ function FeaturedMatchHero() {
                 </div>
                 <div style={{ display:"flex", alignItems:"center", gap:6 }}>
                     <span style={{ width:6, height:6, borderRadius:"50%", background:"#F59E0B", display:"inline-block", animation:"pulse 2s infinite" }} />
-                    <span style={{ fontSize:10, fontWeight:700, color:"#F59E0B", letterSpacing:0.5 }}>TODAY · 7:30 PM IST</span>
+                    <span style={{ fontSize:10, fontWeight:700, color:"#F59E0B", letterSpacing:0.5 }}>TODAY · 3:00 PM BST</span>
                 </div>
             </div>
 
@@ -1310,20 +1310,32 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
             {/* MAIN CONTENT */}
             <main className="mc" style={{ padding: 0, minWidth: 0 }}>
                 {/* No live match banner — shown when all matches are ended */}
-                {!hasLive && (selectedMatch || pred) && (
-                    <div style={{ background: "#0d1535", borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "9px 20px", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                        <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#64748b", display: "inline-block", flexShrink: 0 }} />
-                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>No match live right now</span>
-                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>·</span>
-                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>IPL matches at 3:30 PM &amp; 7:30 PM IST</span>
-                        {nextMatch && (
-                            <>
-                                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>·</span>
-                                <span style={{ fontSize: 12, color: "#F59E0B", fontWeight: 600 }}>Next: {nextMatch.t1} vs {nextMatch.t2}</span>
-                            </>
-                        )}
-                    </div>
-                )}
+                {!hasLive && (selectedMatch || pred) && (() => {
+                    // Detect BST (last Sun March → last Sun October) vs GMT
+                    const now = new Date();
+                    const jan = new Date(now.getFullYear(), 0, 1);
+                    const jul = new Date(now.getFullYear(), 6, 1);
+                    const isBST = now.getTimezoneOffset() < Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+                    const tz = isBST ? "BST" : "GMT";
+                    // IST is UTC+5:30 → BST=UTC+1 → IST-4:30 → 3:30PM IST=11:00 BST, 7:30PM IST=3:00PM BST
+                    //                  GMT=UTC+0 → IST-5:30 → 3:30PM IST=10:00 GMT, 7:30PM IST=2:00PM GMT
+                    const t1 = isBST ? "11:00 AM" : "10:00 AM";
+                    const t2 = isBST ? "3:00 PM" : "2:00 PM";
+                    return (
+                        <div style={{ background: "#0d1535", borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "9px 20px", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                            <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#64748b", display: "inline-block", flexShrink: 0 }} />
+                            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>No match live right now</span>
+                            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>·</span>
+                            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>IPL: {t1} &amp; {t2} {tz}</span>
+                            {nextMatch && (
+                                <>
+                                    <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>·</span>
+                                    <span style={{ fontSize: 12, color: "#F59E0B", fontWeight: 600 }}>Next: {nextMatch.t1} vs {nextMatch.t2}</span>
+                                </>
+                            )}
+                        </div>
+                    );
+                })()}
                 {/* Show NoMatchesScreen only if no match selected and not loading */}
                 {!selectedMatch && !pred && !isPredLoading && (
                     <NoMatchesScreen upcomingMatches={liveMatches.filter(m => m.status === "UPCOMING")} />
@@ -1820,31 +1832,37 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 </div>
                             )}
 
-                            {/* Bookmaker vs AI */}
+                            {/* UK Bookmaker vs AI */}
                             {hasOdds ? (
                                 <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8, marginTop: 4 }}>
-                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", marginBottom: 6 }}>BOOKMAKER vs AI</div>
+                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", marginBottom: 6 }}>BEST UK ODDS vs AI</div>
                                     {vbs.slice(0, 2).map((v, i) => {
                                         const edgeColor = v.edge > 5 ? C.green : v.edge < -5 ? C.red : C.amber;
-                                        const badge = v.rating === "STRONG VALUE" ? "🔥 STRONG VALUE" : v.rating === "VALUE" ? "✅ VALUE" : v.rating === "AVOID" ? "❌ AVOID" : "— FAIR";
+                                        const badge = v.rating === "STRONG VALUE" ? "🔥 STRONG" : v.rating === "VALUE" ? "✅ VALUE" : v.rating === "AVOID" ? "❌ AVOID" : "FAIR";
                                         const badgeColor = v.rating === "STRONG VALUE" || v.rating === "VALUE" ? C.green : v.rating === "AVOID" ? C.red : C.muted;
                                         return (
                                             <div key={i} style={{ marginBottom: i < vbs.length - 1 ? 8 : 0 }}>
                                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
-                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", maxWidth: 110, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.team}</span>
+                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.team}</span>
                                                     <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor }}>{badge}</span>
                                                 </div>
-                                                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>Bookie: {v.impliedProb}% · AI: {v.aiProb}%</span>
-                                                    <span style={{ fontSize: 10, fontWeight: 700, color: edgeColor }}>{v.edge > 0 ? "+" : ""}{v.edge}%</span>
+                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>{v.odds.toFixed(2)} · AI: {v.aiProb}%</span>
+                                                    <span style={{ fontSize: 10, fontWeight: 700, color: edgeColor }}>{v.edge > 0 ? "+" : ""}{v.edge}% edge</span>
                                                 </div>
                                             </div>
                                         );
                                     })}
+                                    {vbs.some(v => v.isValue) && (
+                                        <a href="https://www.bet365.com" target="_blank" rel="noopener noreferrer sponsored"
+                                            style={{ display: "block", marginTop: 8, textAlign: "center", fontSize: 10, color: "#F59E0B", fontWeight: 600, textDecoration: "none", background: "rgba(245,158,11,0.1)", borderRadius: 6, padding: "4px 0" }}>
+                                            Check odds at Bet365 →
+                                        </a>
+                                    )}
                                 </div>
                             ) : (
                                 <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8, marginTop: 4, fontSize: 10, color: "rgba(255,255,255,0.3)", textAlign: "center" }}>
-                                    Live odds unavailable
+                                    UK live odds unavailable
                                 </div>
                             )}
                         </div>
