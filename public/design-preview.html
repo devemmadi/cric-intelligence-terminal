@@ -3,208 +3,175 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>CricIntelligence — Design Preview v3</title>
+<title>CricIntelligence — Design Preview</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Georgia&display=swap" rel="stylesheet"/>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', sans-serif; background: #080D16; color: #E8EDF5; min-height: 100vh; }
 
-:root {
-  --bg:      #0C1220;
-  --surface: #111827;
-  --card:    #141E32;
-  --border:  rgba(255,255,255,0.07);
-  --navy:    #1E2D6B;
-  --navy2:   #2A3F82;
-  --gold:    #C8961E;
-  --text:    #E2E8F0;
-  --muted:   #4B5563;
-  --muted2:  #6B7280;
-  --green:   #10B981;
-  --red:     #EF4444;
-  --amber:   #F59E0B;
-}
-
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
-/* ── NAV — EXACT COPY OF CURRENT SITE ── */
+/* ── NAV — UNCHANGED ── */
 nav {
-  background: var(--navy);
-  border-bottom: 1px solid #2a3f5f;
-  padding: 0 20px;
-  height: 54px;
+  background: #1E2D6B; border-bottom: 1px solid #2a3f5f;
+  padding: 0 20px; height: 54px;
   display: flex; align-items: center; justify-content: space-between;
   position: sticky; top: 0; z-index: 100;
 }
-
-/* Logo — exact match */
-.logo { display: flex; align-items: center; gap: 9px; text-decoration: none; cursor: pointer; }
-.logo svg { flex-shrink: 0; }
+.logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
 .logo-text { display: flex; flex-direction: column; line-height: 1.1; }
-.logo-cric { font-weight: 800; font-size: 13px; color: #fff; letter-spacing: 2px; font-family: Georgia, serif; }
-.logo-intel { font-weight: 400; font-size: 9px; color: var(--gold); letter-spacing: 3.5px; font-family: Georgia, serif; }
-
-/* Nav tabs */
-.nav-tabs { display: flex; gap: 2px; align-items: center; }
-.tab-btn {
-  padding: 6px 14px; border-radius: 6px; border: none;
-  font-family: 'Inter', sans-serif; font-size: 13px;
-  cursor: pointer; transition: all .15s;
-  display: flex; align-items: center; gap: 4px;
-}
-.tab-btn.off { background: transparent; color: rgba(255,255,255,0.6); font-weight: 400; }
-.tab-btn.off:hover { background: rgba(255,255,255,0.07); color: #fff; }
-.tab-btn.on  { background: rgba(255,255,255,0.12); color: #fff; font-weight: 700; }
-
-/* Notify button + live indicator */
-.nav-right { display: flex; align-items: center; gap: 8px; }
-.notify-btn {
-  display: flex; align-items: center; gap: 6px;
-  padding: 6px 12px; border-radius: 6px;
-  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 500;
-  font-family: 'Inter', sans-serif; cursor: pointer;
-}
-.live-wrap { display: flex; align-items: center; gap: 5px; }
-.live-pip { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 2s infinite; flex-shrink: 0; }
+.logo-cric  { font-weight: 800; font-size: 13px; color: #fff; letter-spacing: 2px; font-family: Georgia, serif; }
+.logo-intel { font-weight: 400; font-size: 9px; color: #C8961E; letter-spacing: 3.5px; font-family: Georgia, serif; }
+.nav-tabs { display: flex; gap: 2px; }
+.nt { padding: 6px 14px; border-radius: 6px; border: none; font-family: 'Inter', sans-serif; font-size: 13px; cursor: pointer; }
+.nt.on  { background: rgba(255,255,255,0.12); color: #fff; font-weight: 700; }
+.nt.off { background: transparent; color: rgba(255,255,255,0.6); font-weight: 400; }
+.nav-r { display: flex; align-items: center; gap: 8px; }
+.notify { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 6px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.7); font-size: 12px; font-family: 'Inter',sans-serif; cursor: pointer; }
+.pip { width: 6px; height: 6px; border-radius: 50%; background: #10B981; animation: blink 2s infinite; }
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
-.live-time { font-size: 11px; color: rgba(255,255,255,0.55); font-variant-numeric: tabular-nums; }
+.clock { font-size: 11px; color: rgba(255,255,255,.55); }
 
-/* ── EVERYTHING BELOW NAV IS THE NEW DESIGN ── */
+/* ── LAYOUT ── */
+.wrap { display: grid; grid-template-columns: 210px 1fr 190px; min-height: calc(100vh - 54px); }
 
-.layout { display: grid; grid-template-columns: 220px 1fr 200px; min-height: calc(100vh - 54px); }
-
-/* LEFT SIDEBAR */
-.lsb {
-  background: #111827;
-  border-right: 1px solid var(--border);
-  padding: 12px 8px; overflow-y: auto;
-}
-.sb-head {
-  font-size: 9px; font-weight: 700; color: var(--muted2);
-  letter-spacing: 1.2px; text-transform: uppercase;
-  padding: 0 8px; margin: 10px 0 6px;
-}
-.sb-head:first-child { margin-top: 0; }
-.mi {
-  padding: 9px 10px; border-radius: 7px; cursor: pointer;
-  border: 1px solid transparent; margin-bottom: 2px; transition: all .12s;
-}
+/* ── LEFT SIDEBAR ── */
+.lsb { background: #0D1525; border-right: 1px solid rgba(255,255,255,0.05); padding: 14px 10px; }
+.sb-sec { font-size: 9px; font-weight: 700; color: #374151; letter-spacing: 1.5px; text-transform: uppercase; padding: 0 8px; margin: 14px 0 6px; }
+.sb-sec:first-child { margin-top: 0; }
+.mi { padding: 10px 10px; border-radius: 8px; cursor: pointer; margin-bottom: 2px; border: 1px solid transparent; transition: background .12s; }
 .mi:hover { background: rgba(255,255,255,0.03); }
-.mi.sel { background: rgba(200,150,30,0.07); border-color: rgba(200,150,30,0.2); }
-.mi-teams { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-.mi-detail { font-size: 10px; color: var(--muted2); }
-.live-tag {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 1px 6px; border-radius: 3px; margin-bottom: 4px;
-  background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.18);
-  font-size: 9px; font-weight: 700; color: var(--red); letter-spacing: .3px;
+.mi.sel { background: rgba(200,150,30,0.06); border-color: rgba(200,150,30,0.18); }
+.mi-name { font-size: 12px; font-weight: 600; color: #D1D5DB; margin-bottom: 3px; }
+.mi-info { font-size: 10px; color: #4B5563; }
+.ltag { display: inline-flex; align-items: center; gap: 3px; padding: 1px 6px; border-radius: 3px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.15); font-size: 9px; font-weight: 700; color: #EF4444; margin-bottom: 4px; }
+.ldot { width: 4px; height: 4px; border-radius: 50%; background: #EF4444; animation: blink 1.5s infinite; }
+
+/* ── MAIN ── */
+main { min-width: 0; }
+
+/* Match title bar */
+.mtb {
+  padding: 16px 24px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: #0D1525;
 }
-.live-tag-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--red); animation: blink 1.5s infinite; }
+.mtb-top { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #4B5563; margin-bottom: 10px; }
+.mtb-sep { color: rgba(255,255,255,0.08); }
+.mtb-live { color: #10B981; font-weight: 600; }
+.mtb-teams { display: flex; align-items: baseline; gap: 10px; margin-bottom: 10px; }
+.t1n { font-size: 30px; font-weight: 900; color: #F9FAFB; letter-spacing: -1px; }
+.t2n { font-size: 30px; font-weight: 900; color: #374151; letter-spacing: -1px; }
+.vsn { font-size: 12px; color: #374151; font-weight: 500; }
+.score-strip { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.ss-chip { display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px; padding: 5px 11px; }
+.ss-v { font-size: 12px; font-weight: 700; color: #E5E7EB; }
+.ss-d { width: 1px; height: 10px; background: rgba(255,255,255,0.08); }
+.ss-s { font-size: 11px; color: #6B7280; }
+.badge { padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+.badge.g { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.18); color: #10B981; }
+.badge.a { background: rgba(200,150,30,0.08); border: 1px solid rgba(200,150,30,0.18); color: #C8961E; }
 
-/* MAIN */
-main { min-width: 0; display: flex; flex-direction: column; }
+/* ── PROBABILITY HERO — THE BIG CHANGE ── */
+.prob-section { padding: 24px; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-.mh { padding: 18px 22px 14px; border-bottom: 1px solid var(--border); }
-.mh-meta { font-size: 10px; color: var(--muted2); font-weight: 500; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
-.mh-dot { color: rgba(255,255,255,.1); }
-.mh-teams { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.mh-t1 { font-size: 26px; font-weight: 900; color: var(--text); letter-spacing: -.5px; }
-.mh-t2 { font-size: 26px; font-weight: 900; color: var(--muted2); letter-spacing: -.5px; }
-.mh-vs  { font-size: 11px; color: var(--muted2); font-weight: 600; }
-.score-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.score-chip {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,.09);
-  border-radius: 7px; padding: 6px 12px;
-}
-.sc-main { font-size: 13px; font-weight: 700; color: var(--text); }
-.sc-div  { width: 1px; height: 11px; background: rgba(255,255,255,.1); }
-.sc-sub  { font-size: 11px; color: var(--muted2); }
-.tag { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 10px; font-weight: 700; letter-spacing: .2px; }
-.tag.green { background: rgba(16,185,129,.1); color: var(--green); border: 1px solid rgba(16,185,129,.2); }
-.tag.gold  { background: rgba(200,150,30,.1); color: var(--gold);  border: 1px solid rgba(200,150,30,.2); }
-
-/* CONTENT */
-.content { padding: 16px 22px 40px; flex: 1; }
-
-/* WIN PROB HERO */
 .prob-hero {
-  background: var(--card); border: 1px solid rgba(200,150,30,.15);
-  border-radius: 12px; padding: 20px 22px; margin-bottom: 12px;
-  display: flex; align-items: center; gap: 24px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0;
+  background: #0D1525;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid rgba(200,150,30,0.12);
 }
-.prob-num { font-size: 64px; font-weight: 900; color: var(--gold); letter-spacing: -3px; line-height: 1; }
-.prob-pct { font-size: 24px; letter-spacing: 0; font-weight: 700; }
-.prob-who { font-size: 12px; color: var(--muted2); margin-top: 4px; }
-.prob-right { flex: 1; min-width: 0; }
-.prob-bar-labels { display: flex; justify-content: space-between; margin-bottom: 7px; }
-.pb-l1 { font-size: 12px; font-weight: 700; color: var(--gold); }
-.pb-l2 { font-size: 12px; font-weight: 600; color: var(--muted2); }
-.prob-track { height: 7px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
-.prob-fill { height: 100%; width: 68%; background: var(--gold); border-radius: 4px; }
-.prob-context { font-size: 11px; color: var(--muted2); line-height: 1.7; }
-.prob-context strong { color: var(--text); font-weight: 600; }
 
-/* GRAPH */
-.graph-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
-.gc-head { font-size: 10px; font-weight: 700; color: var(--muted2); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; }
-.graph-svg { width: 100%; display: block; }
-.graph-axis { display: flex; justify-content: space-between; margin-top: 5px; }
-.ga-label { font-size: 9px; color: var(--muted); }
-
-/* STATS 3 */
-.stats3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 12px; }
-.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
-.stat-val { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
-.stat-val.g { color: var(--green); }
-.stat-val.gold { color: var(--gold); }
-.stat-lbl { font-size: 9px; font-weight: 600; color: var(--muted2); letter-spacing: .5px; text-transform: uppercase; }
-.stat-sub2 { font-size: 10px; color: var(--muted); margin-top: 3px; }
-
-/* PROJECTION */
-.proj-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
-.proj-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-.proj-row:last-child { margin-bottom: 0; }
-.proj-lbl { font-size: 10px; color: var(--muted2); width: 36px; flex-shrink: 0; text-align: right; }
-.proj-track { flex: 1; height: 5px; background: rgba(255,255,255,.05); border-radius: 3px; overflow: hidden; }
-.proj-fill  { height: 100%; border-radius: 3px; background: rgba(200,150,30,.45); }
-.proj-final { height: 100%; border-radius: 3px; background: var(--gold); }
-.proj-num { font-size: 11px; font-weight: 700; color: var(--text); width: 26px; flex-shrink: 0; }
-.proj-num.gold { color: var(--gold); }
-
-/* RIGHT SIDEBAR */
-.rsb { border-left: 1px solid var(--border); padding: 14px 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-.rc { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 13px; }
-.rc.value-card { border-color: rgba(16,185,129,.2); background: rgba(16,185,129,.03); }
-.rc-head { font-size: 9px; font-weight: 700; color: var(--muted2); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; }
-.rc-val { font-size: 26px; font-weight: 900; color: var(--gold); line-height: 1; margin-bottom: 2px; }
-.rc-team { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
-.rc-edge { font-size: 11px; color: var(--green); font-weight: 600; margin-bottom: 10px; }
-.rc-btn {
-  display: block; width: 100%; padding: 8px;
-  background: var(--gold); border-radius: 6px; text-align: center;
-  font-size: 11px; font-weight: 700; color: #0C1220;
-  text-decoration: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif;
+/* Left: giant number */
+.prob-left {
+  padding: 28px 32px;
+  background: linear-gradient(160deg, #131E3A 0%, #0D1525 100%);
+  border-right: 1px solid rgba(255,255,255,0.05);
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  min-width: 160px;
 }
-.divider { height: 1px; background: var(--border); margin: 4px 0; }
-.info-line { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; }
-.il-key { font-size: 11px; color: var(--muted2); }
-.il-val { font-size: 11px; font-weight: 600; color: var(--text); }
-.il-val.g { color: var(--green); }
-.il-val.gold { color: var(--gold); }
-.rg-note { font-size: 10px; color: var(--muted2); line-height: 1.6; padding: 8px 10px; background: rgba(255,255,255,.03); border-radius: 7px; border: 1px solid var(--border); }
-.rg-note a { color: var(--gold); text-decoration: none; }
+.prob-big-num {
+  font-size: 80px; font-weight: 900; color: #C8961E;
+  letter-spacing: -4px; line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.prob-pct-sym { font-size: 32px; letter-spacing: 0; }
+.prob-team-label { font-size: 11px; color: #6B7280; margin-top: 6px; text-align: center; }
+.prob-team-name  { font-size: 13px; font-weight: 700; color: #9CA3AF; text-align: center; }
 
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+/* Right: bar + context */
+.prob-right { padding: 20px 22px; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+.prob-bar-row { display: flex; align-items: center; gap: 10px; }
+.pb-t1 { font-size: 12px; font-weight: 700; color: #C8961E; width: 70px; }
+.pb-t2 { font-size: 12px; font-weight: 600; color: #4B5563; width: 70px; text-align: right; }
+.pb-track { flex: 1; height: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+.pb-fill  { height: 100%; width: 68%; background: #C8961E; border-radius: 4px; }
+
+.prob-insight {
+  background: rgba(255,255,255,0.03); border-radius: 8px;
+  padding: 12px 14px; border-left: 2px solid #C8961E;
+}
+.pi-text { font-size: 12px; color: #9CA3AF; line-height: 1.7; }
+.pi-text b { color: #E5E7EB; font-weight: 600; }
+
+/* ── GRAPH — FULL WIDTH, BIGGER ── */
+.graph-section { padding: 0 24px 16px; }
+.section-label { font-size: 9px; font-weight: 700; color: #374151; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 10px; padding-top: 20px; }
+.graph-wrap { background: #0D1525; border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px 18px; }
+.gsv { width: 100%; display: block; }
+.g-axis { display: flex; justify-content: space-between; margin-top: 4px; }
+.ga { font-size: 9px; color: #374151; }
+
+/* ── STATS ROW — HORIZONTAL STRIP ── */
+.stats-section { padding: 0 24px 16px; }
+.stats-strip { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.sc {
+  background: #0D1525; border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 10px; padding: 14px 16px;
+}
+.sc-v { font-size: 22px; font-weight: 800; color: #E5E7EB; margin-bottom: 2px; }
+.sc-v.g { color: #10B981; }
+.sc-v.gold { color: #C8961E; }
+.sc-l { font-size: 9px; font-weight: 600; color: #4B5563; letter-spacing: .8px; text-transform: uppercase; }
+.sc-s { font-size: 10px; color: #374151; margin-top: 3px; }
+
+/* ── PROJECTION ── */
+.proj-section { padding: 0 24px 24px; }
+.proj-wrap { background: #0D1525; border: 1px solid rgba(255,255,255,0.05); border-radius: 10px; padding: 14px 16px; }
+.pr { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.pr:last-child { margin-bottom: 0; }
+.pr-l { font-size: 10px; color: #4B5563; width: 36px; text-align: right; flex-shrink: 0; }
+.pr-t { flex: 1; height: 5px; background: rgba(255,255,255,0.04); border-radius: 3px; overflow: hidden; }
+.pr-f { height: 100%; border-radius: 3px; background: rgba(200,150,30,0.4); }
+.pr-fn { height: 100%; border-radius: 3px; background: #C8961E; }
+.pr-n { font-size: 11px; font-weight: 700; color: #D1D5DB; width: 28px; flex-shrink: 0; }
+.pr-n.gold { color: #C8961E; }
+
+/* ── RIGHT SIDEBAR ── */
+.rsb { border-left: 1px solid rgba(255,255,255,0.05); background: #0D1525; padding: 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+
+.rc { background: #111827; border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 13px; }
+.rc.val { border-color: rgba(16,185,129,0.18); background: rgba(16,185,129,0.03); }
+.rh { font-size: 9px; font-weight: 700; color: #374151; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 9px; }
+.r-odds { font-size: 28px; font-weight: 900; color: #C8961E; line-height: 1; }
+.r-team { font-size: 12px; font-weight: 600; color: #D1D5DB; margin-bottom: 2px; }
+.r-edge { font-size: 11px; color: #10B981; font-weight: 600; margin-bottom: 10px; }
+.r-btn { display: block; width: 100%; padding: 8px; background: #C8961E; border-radius: 6px; text-align: center; font-size: 11px; font-weight: 700; color: #080D16; text-decoration: none; border: none; cursor: pointer; font-family: 'Inter', sans-serif; }
+.div { height: 1px; background: rgba(255,255,255,0.05); margin: 4px 0; }
+.il { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; }
+.ik { font-size: 11px; color: #4B5563; }
+.iv { font-size: 11px; font-weight: 600; color: #D1D5DB; }
+.iv.g { color: #10B981; }
+.iv.gold { color: #C8961E; }
+.rg { font-size: 10px; color: #374151; line-height: 1.6; padding: 8px 10px; background: rgba(255,255,255,0.02); border-radius: 7px; border: 1px solid rgba(255,255,255,0.04); }
+.rg a { color: #C8961E; text-decoration: none; }
 </style>
 </head>
 <body>
 
-<!-- ── NAV — SAME AS CURRENT SITE ── -->
+<!-- NAV — EXACT SAME AS CURRENT SITE -->
 <nav>
-  <!-- Logo — exact replica -->
   <a class="logo" href="#">
     <svg width="28" height="28" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
       <rect width="100" height="100" fill="#0D1B3E" rx="8"/>
@@ -221,217 +188,202 @@ main { min-width: 0; display: flex; flex-direction: column; }
       <span class="logo-intel">INTELLIGENCE</span>
     </div>
   </a>
-
-  <!-- Tabs -->
   <div class="nav-tabs">
-    <button class="tab-btn on">Predictions</button>
-    <button class="tab-btn off">Matches</button>
-    <button class="tab-btn off">More ▾</button>
+    <button class="nt on">Predictions</button>
+    <button class="nt off">Matches</button>
+    <button class="nt off">More ▾</button>
   </div>
-
-  <!-- Right -->
-  <div class="nav-right">
-    <button class="notify-btn">🔔 Notify me</button>
-    <div class="live-wrap">
-      <div class="live-pip"></div>
-      <span class="live-time">14:35:15</span>
+  <div class="nav-r">
+    <button class="notify">🔔 Notify me</button>
+    <div style="display:flex;align-items:center;gap:5px;">
+      <div class="pip"></div>
+      <span class="clock">14:35:15</span>
     </div>
   </div>
 </nav>
 
-<!-- ── EVERYTHING BELOW = NEW DESIGN ── -->
-<div class="layout">
+<!-- BODY -->
+<div class="wrap">
 
-  <!-- LEFT SIDEBAR — cleaner -->
+  <!-- LEFT SIDEBAR -->
   <aside class="lsb">
-    <div class="sb-head">Live now</div>
+    <div class="sb-sec">Live</div>
     <div class="mi sel">
-      <div class="live-tag"><span class="live-tag-dot"></span>Live</div>
-      <div class="mi-teams">RCB vs CSK</div>
-      <div class="mi-detail">142/4 · 14.2 ov · Bengaluru</div>
+      <div class="ltag"><span class="ldot"></span>Live</div>
+      <div class="mi-name">RCB vs CSK</div>
+      <div class="mi-info">142/4 · 14.2 ov · Bengaluru</div>
     </div>
-
-    <div class="sb-head">Upcoming</div>
+    <div class="sb-sec">Upcoming</div>
     <div class="mi">
-      <div class="mi-teams">MI vs KKR</div>
-      <div class="mi-detail">Today · 7:30 PM · Wankhede</div>
-    </div>
-    <div class="mi">
-      <div class="mi-teams">CSK vs SRH</div>
-      <div class="mi-detail">Tomorrow · Chennai</div>
+      <div class="mi-name">MI vs KKR</div>
+      <div class="mi-info">Today · 7:30 PM · Wankhede</div>
     </div>
     <div class="mi">
-      <div class="mi-teams">RR vs GT</div>
-      <div class="mi-detail">Apr 21 · Jaipur</div>
+      <div class="mi-name">CSK vs SRH</div>
+      <div class="mi-info">Tomorrow · Chennai</div>
     </div>
     <div class="mi">
-      <div class="mi-teams">PBKS vs LSG</div>
-      <div class="mi-detail">Apr 22 · Mullanpur</div>
+      <div class="mi-name">RR vs GT</div>
+      <div class="mi-info">Apr 21 · Jaipur</div>
+    </div>
+    <div class="mi">
+      <div class="mi-name">PBKS vs LSG</div>
+      <div class="mi-info">Apr 22 · Mullanpur</div>
     </div>
   </aside>
 
   <!-- MAIN -->
   <main>
-    <div class="mh">
-      <div class="mh-meta">
+
+    <!-- Match title bar -->
+    <div class="mtb">
+      <div class="mtb-top">
         <span>IPL 2026 · Match 26</span>
-        <span class="mh-dot">·</span>
-        <span>M. Chinnaswamy Stadium, Bengaluru</span>
-        <span class="mh-dot">·</span>
-        <span style="color:var(--green);font-weight:600;">2nd innings</span>
+        <span class="mtb-sep">·</span>
+        <span>M. Chinnaswamy Stadium</span>
+        <span class="mtb-sep">·</span>
+        <span class="mtb-live">2nd innings</span>
       </div>
-      <div class="mh-teams">
-        <span class="mh-t1">RCB</span>
-        <span class="mh-vs">vs</span>
-        <span class="mh-t2">CSK</span>
+      <div class="mtb-teams">
+        <span class="t1n">RCB</span>
+        <span class="vsn">vs</span>
+        <span class="t2n">CSK</span>
       </div>
-      <div class="score-row">
-        <div class="score-chip">
-          <span class="sc-main">CSK 142/4</span>
-          <span class="sc-div"></span>
-          <span class="sc-sub">14.2 ov</span>
-          <span class="sc-div"></span>
-          <span class="sc-sub">CRR 9.8</span>
-          <span class="sc-div"></span>
-          <span class="sc-sub">Target 168</span>
+      <div class="score-strip">
+        <div class="ss-chip">
+          <span class="ss-v">CSK 142/4</span>
+          <span class="ss-d"></span>
+          <span class="ss-s">14.2 ov</span>
+          <span class="ss-d"></span>
+          <span class="ss-s">CRR 9.8</span>
+          <span class="ss-d"></span>
+          <span class="ss-s">Target 168</span>
         </div>
-        <span class="tag green">Rising</span>
-        <span class="tag gold">Batting friendly</span>
+        <span class="badge g">Rising</span>
+        <span class="badge a">Batting pitch</span>
       </div>
     </div>
 
-    <div class="content">
-
-      <!-- WIN PROB HERO -->
+    <!-- WIN PROBABILITY — split panel, big number -->
+    <div class="prob-section">
+      <div class="section-label" style="padding-top:0;margin-bottom:12px;">Win Probability</div>
       <div class="prob-hero">
-        <div>
-          <div class="prob-num">68<span class="prob-pct">%</span></div>
-          <div class="prob-who">RCB win probability</div>
+        <div class="prob-left">
+          <div class="prob-big-num">68<span class="prob-pct-sym">%</span></div>
+          <div class="prob-team-label">to win</div>
+          <div class="prob-team-name">RCB</div>
         </div>
         <div class="prob-right">
-          <div class="prob-bar-labels">
-            <span class="pb-l1">RCB 68%</span>
-            <span class="pb-l2">CSK 32%</span>
+          <div class="prob-bar-row">
+            <span class="pb-t1">RCB 68%</span>
+            <div class="pb-track"><div class="pb-fill"></div></div>
+            <span class="pb-t2">CSK 32%</span>
           </div>
-          <div class="prob-track"><div class="prob-fill"></div></div>
-          <div class="prob-context">
-            CSK need <strong>26 off 34 balls</strong> — required rate climbing to 9.6.
-            RCB defending strongly. Dew expected in final overs.
+          <div class="prob-insight">
+            <div class="pi-text">
+              CSK need <b>26 off 34 balls</b> — required rate climbing to 9.6.
+              RCB defending from strength. <b>Dew expected</b> in final overs,
+              which typically aids the batting side.
+            </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- GRAPH -->
-      <div class="graph-card">
-        <div class="gc-head">Probability Timeline</div>
-        <svg class="graph-svg" viewBox="0 0 560 100" preserveAspectRatio="none" height="100">
+    <!-- GRAPH -->
+    <div class="graph-section">
+      <div class="section-label">Probability Timeline</div>
+      <div class="graph-wrap">
+        <svg class="gsv" viewBox="0 0 560 110" preserveAspectRatio="none" height="110">
           <defs>
             <linearGradient id="gf" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#C8961E" stop-opacity=".2"/>
+              <stop offset="0%" stop-color="#C8961E" stop-opacity=".18"/>
               <stop offset="100%" stop-color="#C8961E" stop-opacity="0"/>
             </linearGradient>
           </defs>
-          <line x1="0" y1="50" x2="560" y2="50" stroke="rgba(255,255,255,0.06)" stroke-width="1" stroke-dasharray="3,4"/>
-          <text x="4" y="47" fill="rgba(255,255,255,0.12)" font-size="7" font-family="Inter,sans-serif">50%</text>
-          <path d="M0,62 C40,60 80,58 120,55 C160,52 200,68 240,72 C280,75 320,60 360,50 C400,40 440,33 480,26 C510,22 535,18 560,15 L560,100 L0,100 Z" fill="url(#gf)"/>
-          <path d="M0,62 C40,60 80,58 120,55 C160,52 200,68 240,72 C280,75 320,60 360,50 C400,40 440,33 480,26 C510,22 535,18 560,15" fill="none" stroke="#C8961E" stroke-width="1.8" stroke-linejoin="round"/>
-          <circle cx="560" cy="15" r="3.5" fill="#C8961E"/>
-          <circle cx="560" cy="15" r="7" fill="rgba(200,150,30,.2)"/>
+          <line x1="0" y1="55" x2="560" y2="55" stroke="rgba(255,255,255,0.05)" stroke-width="1" stroke-dasharray="3,4"/>
+          <text x="4" y="52" fill="rgba(255,255,255,0.1)" font-size="7" font-family="Inter,sans-serif">50%</text>
+          <path d="M0,68 C40,66 80,63 120,59 C160,55 200,70 240,75 C280,78 320,62 360,52 C400,42 440,34 480,26 C510,20 535,17 560,14 L560,110 L0,110 Z" fill="url(#gf)"/>
+          <path d="M0,68 C40,66 80,63 120,59 C160,55 200,70 240,75 C280,78 320,62 360,52 C400,42 440,34 480,26 C510,20 535,17 560,14" fill="none" stroke="#C8961E" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="560" cy="14" r="4" fill="#C8961E"/>
+          <circle cx="560" cy="14" r="8" fill="rgba(200,150,30,0.18)"/>
         </svg>
-        <div class="graph-axis">
-          <span class="ga-label">Toss</span>
-          <span class="ga-label">6 overs</span>
-          <span class="ga-label">10 overs</span>
-          <span class="ga-label">15 overs</span>
-          <span class="ga-label">Now</span>
+        <div class="g-axis">
+          <span class="ga">Toss</span><span class="ga">6 ov</span>
+          <span class="ga">10 ov</span><span class="ga">15 ov</span><span class="ga">Now</span>
         </div>
       </div>
-
-      <!-- 3 STATS -->
-      <div class="stats3">
-        <div class="stat-card">
-          <div class="stat-val g">High</div>
-          <div class="stat-lbl">AI Confidence</div>
-          <div class="stat-sub2">Prob > 65%</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-val gold">Rising</div>
-          <div class="stat-lbl">Momentum</div>
-          <div class="stat-sub2">Last 3 ov: 38 runs</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-val">9.6</div>
-          <div class="stat-lbl">Required Rate</div>
-          <div class="stat-sub2">26 needed, 3.4 ov left</div>
-        </div>
-      </div>
-
-      <!-- PROJECTION -->
-      <div class="proj-card">
-        <div class="gc-head">Score Projection — 1st innings</div>
-        <div style="margin-top:10px;">
-          <div class="proj-row">
-            <span class="proj-lbl">6 ov</span>
-            <div class="proj-track"><div class="proj-fill" style="width:34%"></div></div>
-            <span class="proj-num">56</span>
-          </div>
-          <div class="proj-row">
-            <span class="proj-lbl">10 ov</span>
-            <div class="proj-track"><div class="proj-fill" style="width:57%"></div></div>
-            <span class="proj-num">96</span>
-          </div>
-          <div class="proj-row">
-            <span class="proj-lbl">15 ov</span>
-            <div class="proj-track"><div class="proj-fill" style="width:80%"></div></div>
-            <span class="proj-num">134</span>
-          </div>
-          <div class="proj-row">
-            <span class="proj-lbl">Final</span>
-            <div class="proj-track"><div class="proj-final" style="width:100%"></div></div>
-            <span class="proj-num gold">167</span>
-          </div>
-        </div>
-      </div>
-
     </div>
+
+    <!-- STATS -->
+    <div class="stats-section">
+      <div class="section-label">Match Intelligence</div>
+      <div class="stats-strip">
+        <div class="sc">
+          <div class="sc-v g">High</div>
+          <div class="sc-l">AI Confidence</div>
+          <div class="sc-s">Prob > 65%</div>
+        </div>
+        <div class="sc">
+          <div class="sc-v gold">Rising</div>
+          <div class="sc-l">Momentum</div>
+          <div class="sc-s">Last 3 ov: 38 runs</div>
+        </div>
+        <div class="sc">
+          <div class="sc-v">9.6</div>
+          <div class="sc-l">Required Rate</div>
+          <div class="sc-s">26 needed, 3.4 ov left</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTION -->
+    <div class="proj-section">
+      <div class="section-label">Score Projection — 1st innings</div>
+      <div class="proj-wrap">
+        <div class="pr"><span class="pr-l">6 ov</span><div class="pr-t"><div class="pr-f" style="width:34%"></div></div><span class="pr-n">56</span></div>
+        <div class="pr"><span class="pr-l">10 ov</span><div class="pr-t"><div class="pr-f" style="width:57%"></div></div><span class="pr-n">96</span></div>
+        <div class="pr"><span class="pr-l">15 ov</span><div class="pr-t"><div class="pr-f" style="width:80%"></div></div><span class="pr-n">134</span></div>
+        <div class="pr"><span class="pr-l">Final</span><div class="pr-t"><div class="pr-fn" style="width:100%"></div></div><span class="pr-n gold">167</span></div>
+      </div>
+    </div>
+
   </main>
 
   <!-- RIGHT SIDEBAR -->
   <aside class="rsb">
-    <div class="rc value-card">
-      <div class="rc-head">Value bet signal</div>
-      <div class="rc-team">RCB to win</div>
-      <div class="rc-val">2.10</div>
-      <div class="rc-edge">+11% edge vs AI prob</div>
-      <a class="rc-btn" href="#">Check on Bet365</a>
+
+    <div class="rc val">
+      <div class="rh">Value bet</div>
+      <div class="r-team">RCB to win</div>
+      <div class="r-odds">2.10</div>
+      <div class="r-edge">+11% edge vs AI</div>
+      <a class="r-btn" href="#">Check on Bet365</a>
     </div>
 
     <div class="rc">
-      <div class="rc-head">AI Track Record</div>
-      <div class="info-line"><span class="il-key">Accuracy</span><span class="il-val g">80%</span></div>
-      <div class="divider"></div>
-      <div class="info-line"><span class="il-key">Predictions</span><span class="il-val">45 verified</span></div>
-      <div class="divider"></div>
-      <div class="info-line"><span class="il-key">Last 10</span><span class="il-val g">8 correct</span></div>
+      <div class="rh">Track Record</div>
+      <div class="il"><span class="ik">Accuracy</span><span class="iv g">80%</span></div>
+      <div class="div"></div>
+      <div class="il"><span class="ik">Predictions</span><span class="iv">45 verified</span></div>
+      <div class="div"></div>
+      <div class="il"><span class="ik">Last 10</span><span class="iv g">8/10</span></div>
     </div>
 
     <div class="rc">
-      <div class="rc-head">Match Info</div>
-      <div class="info-line"><span class="il-key">Pitch</span><span class="il-val gold">Batting</span></div>
-      <div class="divider"></div>
-      <div class="info-line"><span class="il-key">Avg 1st inn</span><span class="il-val">183</span></div>
-      <div class="divider"></div>
-      <div class="info-line"><span class="il-key">Dew likely</span><span class="il-val g">Yes</span></div>
-      <div class="divider"></div>
-      <div class="info-line"><span class="il-key">RCB home W%</span><span class="il-val g">68%</span></div>
+      <div class="rh">Match Info</div>
+      <div class="il"><span class="ik">Pitch</span><span class="iv gold">Batting</span></div>
+      <div class="div"></div>
+      <div class="il"><span class="ik">Avg 1st inn</span><span class="iv">183</span></div>
+      <div class="div"></div>
+      <div class="il"><span class="ik">Dew</span><span class="iv g">Likely</span></div>
+      <div class="div"></div>
+      <div class="il"><span class="ik">RCB home</span><span class="iv g">68% W</span></div>
     </div>
 
-    <div class="rg-note">
-      18+ only. Gamble responsibly.<br/>
-      <a href="https://www.begambleaware.org">BeGambleAware.org</a> · 0808 8020 133
-    </div>
+    <div class="rg">18+ only. Gamble responsibly.<br/><a href="#">BeGambleAware.org</a> · 0808 8020 133</div>
+
   </aside>
-
 </div>
 
 </body>
