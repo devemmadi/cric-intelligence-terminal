@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 
 const OddsCalculator = () => {
@@ -6,6 +7,7 @@ const OddsCalculator = () => {
   const [bookOdds, setBookOdds] = useState('');
   const [bookmaker, setBookmaker] = useState('Bet365');
   const [result, setResult] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     let el = document.querySelector("link[rel='canonical']");
@@ -46,7 +48,7 @@ const OddsCalculator = () => {
         <div style={{ display: 'flex', gap: 4 }}>
           {tabs.map(([k, l]) => (
             <button key={k}
-              onClick={() => { if (k === 'odds') return; window.location.href = '/'; }}
+              onClick={() => { if (k === 'odds') return; navigate('/'); }}
               style={{
                 padding: '6px 14px', borderRadius: 6, border: 'none', cursor: 'pointer',
                 fontSize: 13, fontWeight: k === 'odds' ? 700 : 400,

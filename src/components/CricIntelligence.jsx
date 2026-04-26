@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import Logo from "./Logo";
 import RGFooter from "./RGFooter";
 import { C, GLOBAL_CSS } from "./shared/constants";
@@ -29,6 +29,7 @@ export default function CricIntelligence() {
     );
     const [liveTime, setLiveTime] = useState(new Date());
     const [moreOpen, setMoreOpen] = useState(false);
+    const navigate = useNavigate();
     const [installPrompt, setInstallPrompt] = useState(null);
     const [showInstallBanner, setShowInstallBanner] = useState(false);
 
@@ -125,7 +126,7 @@ export default function CricIntelligence() {
                             <div onClick={(e) => e.stopPropagation()} style={{ position: "absolute", top: "calc(100% + 8px)", right: 0, background: "#1E2D6B", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 10, overflow: "hidden", zIndex: 200, minWidth: 140, boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }}>
                                 {[["pitch", "🏟️", "Pitch Analysis"], ["record", "📊", "Track Record"], ["media", "📰", "Media"], ["odds", "🎲", "Odds"]].map(([k, icon, label]) => (
                                     <button key={k}
-                                        onClick={() => { if (k === "odds") { window.location.href = "/odds"; } else { setActiveTab(k); setMoreOpen(false); } }}
+                                        onClick={() => { if (k === "odds") { navigate("/odds"); setMoreOpen(false); } else { setActiveTab(k); setMoreOpen(false); } }}
                                         style={{ display: "flex", alignItems: "center", gap: 8, width: "100%", padding: "10px 16px", background: activeTab === k ? "rgba(255,255,255,0.1)" : "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: activeTab === k ? 700 : 500, color: activeTab === k ? "#fff" : "rgba(255,255,255,0.65)", fontFamily: "Inter, system-ui", textAlign: "left" }}>
                                         <span>{icon}</span><span>{label}</span>
                                     </button>
