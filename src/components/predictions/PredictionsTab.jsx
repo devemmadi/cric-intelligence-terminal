@@ -978,9 +978,23 @@ function HeroDecision({ pred, prob, isEnded }) {
                 <div style={{ height: 6, borderRadius: 3, background: `${t2Color}44`, overflow: "hidden", marginBottom: 5 }}>
                     <div style={{ width: `${prob}%`, height: "100%", background: `linear-gradient(90deg, ${t1Color}, ${t1Color}cc)`, borderRadius: 3, transition: "width 0.8s cubic-bezier(.4,0,.2,1)" }} />
                 </div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.35)", textAlign: "center" }}>
+                <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.35)", textAlign: "center", marginBottom: 10 }}>
                     {favTeam} favoured · <span style={{ color: signalColor }}>{confidence} confidence</span>
                 </div>
+                {/* Twitter share button */}
+                {(() => {
+                    const tweetText = `${t1} vs ${t2} — AI gives ${favTeam} a ${favProb}% win probability right now 🏏\n\nFree AI cricket predictions, updated every ball →`;
+                    const tweetUrl = `https://www.cricintelligence.com`;
+                    const hashtags = `IPL2026,Cricket,CricketPredictions`;
+                    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent(tweetUrl)}&hashtags=${hashtags}`;
+                    return (
+                        <a href={twitterUrl} target="_blank" rel="noreferrer noopener"
+                            style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "7px 14px", background: "rgba(29,161,242,0.12)", border: "1px solid rgba(29,161,242,0.25)", borderRadius: 8, color: "#1DA1F2", fontSize: 12, fontWeight: 700, textDecoration: "none", width: "100%" }}>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                            Share this prediction
+                        </a>
+                    );
+                })()}
             </div>
 
             {/* 3 reasons */}
