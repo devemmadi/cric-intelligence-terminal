@@ -104,9 +104,9 @@ export default function CricIntelligence() {
                             <span>{label}</span>
                         </button>
                     ))}
-                    <button className={`tab-btn ${activeTab === "odds" ? "on" : ""}`}
-                        onClick={() => navigate("/odds")}>
-                        <span>Odds</span>
+                    <button className="tab-btn"
+                        onClick={() => navigate("/live-odds")}>
+                        <span style={{ color: "#FBBF24" }}>Live Odds</span>
                     </button>
                     <button className="tab-btn"
                         onClick={() => navigate("/accuracy")}>

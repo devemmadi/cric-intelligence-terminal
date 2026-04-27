@@ -16,6 +16,7 @@ import CricketWinProbability from './components/CricketWinProbability';
 import T20Predictions from './components/T20Predictions';
 import MatchPredictionPage from './components/MatchPredictionPage';
 import AccuracyDashboard from './components/AccuracyDashboard';
+import LiveOdds from './components/LiveOdds';
 import './App.css';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
                     <Route path="/predictions/international/:matchup" element={<InternationalPredictionPage />} />
                     <Route path="/cricket-predictions-uk" element={<CricketPredictionsUK />} />
                     <Route path="/accuracy" element={<AccuracyDashboard />} />
+                    <Route path="/live-odds" element={<LiveOdds />} />
                     <Route path="/predictions/:matchup" element={<MatchPredictionPage />} />
                     <Route path="*" element={<CricIntelligence />} />
                 </Routes>
