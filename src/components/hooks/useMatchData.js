@@ -109,7 +109,7 @@ export default function useMatchData() {
             const list = Array.isArray(data) ? data : data.data || [];
             if (!list.length) return;
 
-            const rawMapped = list.slice(0, 40).map((m, i) => {
+            const rawMapped = list.slice(0, 60).map((m, i) => {
                 const rawStatus = m.status || "";
                 let status;
                 if (isMatchEnded(rawStatus)) {
