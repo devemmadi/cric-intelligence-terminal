@@ -108,6 +108,10 @@ export default function CricIntelligence() {
                         onClick={() => navigate("/odds")}>
                         <span>Odds</span>
                     </button>
+                    <button className="tab-btn"
+                        onClick={() => navigate("/accuracy")}>
+                        <span style={{ color: "#10B981" }}>Accuracy</span>
+                    </button>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <NotifyButton />
