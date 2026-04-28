@@ -119,7 +119,7 @@ function NextOverIntelligence({ pred }) {
             {last5.length >= 3 && (
                 <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 12px" }}>
                     <div style={{ fontSize: 10, color: C.muted, marginBottom: 8, fontWeight: 600 }}>RUNS PER OVER — LAST {last5.length}</div>
-                    <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 40 }}>
+                    <div style={{ display: "flex", alignItems: "flex-end", gap: 4, height: 56 }}>
                         {last5.map((ov, i) => {
                             const runs = ov.runs || 0;
                             const h = Math.max(6, (runs / maxBar) * 36);
