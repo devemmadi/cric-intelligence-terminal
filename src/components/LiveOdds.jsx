@@ -77,8 +77,87 @@ function TeamOddsRow({ teamName, odds, implied, aiProb, edge, rating }) {
     );
 }
 
+function BookmakerTable({ bookmakers, team1, team2 }) {
+    if (!bookmakers || bookmakers.length === 0) return null;
+
+    // Find best odds per team across all bookmakers to highlight
+    let best1 = 0, best2 = 0;
+    const t1words = team1.toLowerCase().split(" ").filter(w => w.length > 2);
+    const t2words = team2.toLowerCase().split(" ").filter(w => w.length > 2);
+
+    bookmakers.forEach(bk => {
+        Object.entries(bk.odds || {}).forEach(([name, price]) => {
+            const nl = name.toLowerCase();
+            if (t1words.some(w => nl.includes(w))) best1 = Math.max(best1, price);
+            else best2 = Math.max(best2, price);
+        });
+    });
+
+    return (
+        <div style={{ borderTop: `1px solid ${BORDER}`, background: "rgba(0,0,0,0.25)" }}>
+            {/* Table header */}
+            <div style={{
+                display: "grid", gridTemplateColumns: "1fr 80px 80px",
+                padding: "6px 14px", gap: 8,
+                borderBottom: `1px solid ${BORDER}`,
+            }}>
+                <div style={{ fontSize: 9, fontWeight: 700, color: MUTED, letterSpacing: 0.8 }}>BOOKMAKER</div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: MUTED, letterSpacing: 0.8, textAlign: "center" }}>
+                    {team1.split(" ").slice(-1)[0].toUpperCase()}
+                </div>
+                <div style={{ fontSize: 9, fontWeight: 700, color: MUTED, letterSpacing: 0.8, textAlign: "center" }}>
+                    {team2.split(" ").slice(-1)[0].toUpperCase()}
+                </div>
+            </div>
+            {bookmakers.map((bk, i) => {
+                let p1 = null, p2 = null;
+                Object.entries(bk.odds || {}).forEach(([name, price]) => {
+                    const nl = name.toLowerCase();
+                    if (t1words.some(w => nl.includes(w))) p1 = price;
+                    else p2 = price;
+                });
+                return (
+                    <div key={i} style={{
+                        display: "grid", gridTemplateColumns: "1fr 80px 80px",
+                        padding: "7px 14px", gap: 8, alignItems: "center",
+                        borderBottom: i < bookmakers.length - 1 ? `1px solid rgba(255,255,255,0.04)` : "none",
+                        background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)",
+                    }}>
+                        <div style={{ fontSize: 12, color: "#94A3B8" }}>{bk.name}</div>
+                        <div style={{ textAlign: "center" }}>
+                            {p1 != null ? (
+                                <span style={{
+                                    fontSize: 13, fontWeight: 700,
+                                    color: p1 === best1 ? GREEN : TEXT,
+                                }}>
+                                    {p1.toFixed(2)}{p1 === best1 ? " ✓" : ""}
+                                </span>
+                            ) : <span style={{ color: MUTED, fontSize: 11 }}>—</span>}
+                        </div>
+                        <div style={{ textAlign: "center" }}>
+                            {p2 != null ? (
+                                <span style={{
+                                    fontSize: 13, fontWeight: 700,
+                                    color: p2 === best2 ? GREEN : TEXT,
+                                }}>
+                                    {p2.toFixed(2)}{p2 === best2 ? " ✓" : ""}
+                                </span>
+                            ) : <span style={{ color: MUTED, fontSize: 11 }}>—</span>}
+                        </div>
+                    </div>
+                );
+            })}
+            <div style={{ padding: "5px 14px 7px", fontSize: 10, color: MUTED }}>
+                ✓ = best available odds · {bookmakers.length} bookmakers
+            </div>
+        </div>
+    );
+}
+
 function MatchCard({ match }) {
+    const [showBk, setShowBk] = useState(false);
     const isLive = match.status === "LIVE";
+    const hasBk  = match.bookmakers && match.bookmakers.length > 0;
 
     const sportLabel = (match.sport || "").replace("cricket_", "").replace(/_/g, " ").toUpperCase();
 
@@ -148,7 +227,7 @@ function MatchCard({ match }) {
                 borderBottom: `1px solid ${BORDER}`,
                 background: "rgba(255,255,255,0.02)",
             }}>
-                {["TEAM", "ODDS", "MARKET%", "AI%", "EDGE", "RATING"].map(h => (
+                {["TEAM", "BEST ODDS", "MARKET%", "AI%", "EDGE", "RATING"].map(h => (
                     <div key={h} style={{ fontSize: 9, fontWeight: 700, color: MUTED, letterSpacing: 0.8, textAlign: h === "TEAM" ? "left" : "center" }}>
                         {h === "RATING" ? <span style={{ textAlign: "right", display: "block" }}>{h}</span> : h}
                     </div>
@@ -171,6 +250,32 @@ function MatchCard({ match }) {
                 edge={match.team2Edge}
                 rating={match.team2Rating}
             />
+
+            {/* Toggle bookmaker breakdown */}
+            {hasBk && (
+                <button
+                    onClick={() => setShowBk(v => !v)}
+                    style={{
+                        width: "100%", background: "rgba(255,255,255,0.025)",
+                        border: "none", borderTop: `1px solid ${BORDER}`,
+                        color: MUTED, fontSize: 11, fontWeight: 600,
+                        padding: "7px 14px", cursor: "pointer", textAlign: "left",
+                        display: "flex", alignItems: "center", gap: 6,
+                    }}
+                >
+                    <span>{showBk ? "▲" : "▼"}</span>
+                    {showBk ? "Hide" : "Show"} all bookmakers ({match.bookmakers.length})
+                </button>
+            )}
+
+            {/* Per-bookmaker table */}
+            {showBk && hasBk && (
+                <BookmakerTable
+                    bookmakers={match.bookmakers}
+                    team1={match.team1}
+                    team2={match.team2}
+                />
+            )}
         </div>
     );
 }
