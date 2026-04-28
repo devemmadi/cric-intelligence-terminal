@@ -15,6 +15,11 @@ export default function PrivacyPolicy() {
         let el = document.querySelector("link[rel='canonical']");
         if (!el) { el = document.createElement('link'); el.setAttribute('rel', 'canonical'); document.head.appendChild(el); }
         el.setAttribute('href', 'https://www.cricintelligence.com/privacy');
+        // noindex — Privacy page doesn't need search ranking
+        let robots = document.querySelector("meta[name='robots']");
+        if (!robots) { robots = document.createElement('meta'); robots.setAttribute('name', 'robots'); document.head.appendChild(robots); }
+        robots.setAttribute('content', 'noindex, nofollow');
+        return () => { robots.setAttribute('content', 'index, follow'); };
     }, []);
     return (
         <div style={{ minHeight: "100vh", background: C.bg, fontFamily: "Inter, -apple-system, system-ui", color: C.text }}>
