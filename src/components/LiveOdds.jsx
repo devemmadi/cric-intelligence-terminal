@@ -4,87 +4,61 @@ import { useNavigate } from "react-router-dom";
 import { API_BASE, C } from "./shared/constants";
 import Logo from "./Logo";
 
-const BG       = "#0B1120";
-const SURFACE  = "#111827";
-const BORDER   = "rgba(255,255,255,0.08)";
-const TEXT      = "#E2E8F0";
-const MUTED    = "#64748B";
-const GREEN    = "#10B981";
-const RED      = "#EF4444";
-const AMBER    = "#F59E0B";
-const GOLD     = "#FBBF24";
-const BLUE     = "#60A5FA";
-const NAVY     = "#1E2D6B";
+const BG      = "#0B1120";
+const SURFACE = "#111827";
+const BORDER  = "rgba(255,255,255,0.08)";
+const TEXT    = "#E2E8F0";
+const MUTED   = "#64748B";
+const GREEN   = "#10B981";
+const RED     = "#EF4444";
+const AMBER   = "#F59E0B";
+const NAVY    = "#1E2D6B";
 
-function EdgeBadge({ edge, rating }) {
-    const isPositive = edge > 0;
-    const isStrong   = rating === "STRONG VALUE";
-    const isValue    = rating === "VALUE";
-    const isFair     = rating === "FAIR";
+// Short team name from full string e.g. "Punjab Kings" → "Punjab Kings"
+function shortName(name) {
+    return (name || "").split(",")[0].trim();
+}
 
-    const bg    = isStrong ? "#14532D" : isValue ? "#1A3A2A" : isFair ? "#1C1F2B" : "#2D1515";
-    const color = isStrong ? GREEN : isValue ? "#4ADE80" : isFair ? MUTED : RED;
-    const label = isStrong ? "🔥 STRONG VALUE" : isValue ? "✅ VALUE" : isFair ? "— FAIR" : "❌ AVOID";
-
+function SportBadge({ sport }) {
+    const label = (sport || "").replace("cricket_", "").replace(/_/g, " ").toUpperCase();
+    const isIPL = label.includes("IPL");
+    const color = isIPL ? "#FBBF24" : "#94A3B8";
+    const bg    = isIPL ? "rgba(251,191,36,0.12)" : "rgba(148,163,184,0.1)";
     return (
-        <span style={{
-            display: "inline-block",
-            background: bg, color,
-            fontSize: 10, fontWeight: 700, letterSpacing: 0.5,
-            padding: "3px 8px", borderRadius: 5,
-        }}>
-            {label}
+        <span style={{ fontSize: 9, fontWeight: 700, color, background: bg, padding: "2px 7px", borderRadius: 4 }}>
+            {label || "CRICKET"}
         </span>
     );
 }
 
-function TeamOddsRow({ teamName, odds, implied, aiProb, edge, rating }) {
-    const isPositiveEdge = edge > 0;
-    const edgeColor = edge > 5 ? GREEN : edge > -5 ? MUTED : RED;
-
+function AiEdgePill({ edge, rating }) {
+    const isValue  = rating === "VALUE" || rating === "STRONG VALUE";
+    const isStrong = rating === "STRONG VALUE";
+    if (!isValue) return null;
     return (
-        <div style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 60px 70px 70px 80px 110px",
-            gap: 8,
-            alignItems: "center",
-            padding: "10px 14px",
-            borderBottom: `1px solid ${BORDER}`,
+        <span style={{
+            fontSize: 10, fontWeight: 700, letterSpacing: 0.3,
+            padding: "2px 8px", borderRadius: 5,
+            background: isStrong ? "rgba(16,185,129,0.18)" : "rgba(74,222,128,0.12)",
+            color: isStrong ? GREEN : "#4ADE80",
         }}>
-            <div style={{ fontSize: 13, fontWeight: 600, color: TEXT }}>{teamName}</div>
-            <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: GOLD }}>{odds.toFixed(2)}</div>
-                <div style={{ fontSize: 9, color: MUTED }}>ODDS</div>
-            </div>
-            <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: TEXT }}>{implied.toFixed(1)}%</div>
-                <div style={{ fontSize: 9, color: MUTED }}>MARKET</div>
-            </div>
-            <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: BLUE }}>{aiProb.toFixed(1)}%</div>
-                <div style={{ fontSize: 9, color: MUTED }}>AI</div>
-            </div>
-            <div style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: edgeColor }}>
-                    {isPositiveEdge ? "+" : ""}{edge.toFixed(1)}%
-                </div>
-                <div style={{ fontSize: 9, color: MUTED }}>EDGE</div>
-            </div>
-            <div style={{ textAlign: "right" }}>
-                <EdgeBadge edge={edge} rating={rating} />
-            </div>
-        </div>
+            {isStrong ? "🔥 AI: Strong Value" : "✅ AI: Value"} ({edge > 0 ? "+" : ""}{edge.toFixed(1)}%)
+        </span>
     );
 }
 
-function BookmakerTable({ bookmakers, team1, team2 }) {
-    if (!bookmakers || bookmakers.length === 0) return null;
+function MatchCard({ match }) {
+    const [expanded, setExpanded] = useState(true); // open by default
+    const isLive = match.status === "LIVE";
+    const t1 = shortName(match.team1);
+    const t2 = shortName(match.team2);
 
-    // Find best odds per team across all bookmakers to highlight
+    const bookmakers = match.bookmakers || [];
+    const t1words = t1.toLowerCase().split(" ").filter(w => w.length > 2);
+    const t2words = t2.toLowerCase().split(" ").filter(w => w.length > 2);
+
+    // Best odds for highlighting
     let best1 = 0, best2 = 0;
-    const t1words = team1.toLowerCase().split(" ").filter(w => w.length > 2);
-    const t2words = team2.toLowerCase().split(" ").filter(w => w.length > 2);
-
     bookmakers.forEach(bk => {
         Object.entries(bk.odds || {}).forEach(([name, price]) => {
             const nl = name.toLowerCase();
@@ -93,188 +67,177 @@ function BookmakerTable({ bookmakers, team1, team2 }) {
         });
     });
 
-    return (
-        <div style={{ borderTop: `1px solid ${BORDER}`, background: "rgba(0,0,0,0.25)" }}>
-            {/* Table header */}
-            <div style={{
-                display: "grid", gridTemplateColumns: "1fr 80px 80px",
-                padding: "6px 14px", gap: 8,
-                borderBottom: `1px solid ${BORDER}`,
-            }}>
-                <div style={{ fontSize: 9, fontWeight: 700, color: MUTED, letterSpacing: 0.8 }}>BOOKMAKER</div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: MUTED, letterSpacing: 0.8, textAlign: "center" }}>
-                    {team1.split(" ").slice(-1)[0].toUpperCase()}
-                </div>
-                <div style={{ fontSize: 9, fontWeight: 700, color: MUTED, letterSpacing: 0.8, textAlign: "center" }}>
-                    {team2.split(" ").slice(-1)[0].toUpperCase()}
-                </div>
-            </div>
-            {bookmakers.map((bk, i) => {
-                let p1 = null, p2 = null;
-                Object.entries(bk.odds || {}).forEach(([name, price]) => {
-                    const nl = name.toLowerCase();
-                    if (t1words.some(w => nl.includes(w))) p1 = price;
-                    else p2 = price;
-                });
-                return (
-                    <div key={i} style={{
-                        display: "grid", gridTemplateColumns: "1fr 80px 80px",
-                        padding: "7px 14px", gap: 8, alignItems: "center",
-                        borderBottom: i < bookmakers.length - 1 ? `1px solid rgba(255,255,255,0.04)` : "none",
-                        background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.015)",
-                    }}>
-                        <div style={{ fontSize: 12, color: "#94A3B8" }}>{bk.name}</div>
-                        <div style={{ textAlign: "center" }}>
-                            {p1 != null ? (
-                                <span style={{
-                                    fontSize: 13, fontWeight: 700,
-                                    color: p1 === best1 ? GREEN : TEXT,
-                                }}>
-                                    {p1.toFixed(2)}{p1 === best1 ? " ✓" : ""}
-                                </span>
-                            ) : <span style={{ color: MUTED, fontSize: 11 }}>—</span>}
-                        </div>
-                        <div style={{ textAlign: "center" }}>
-                            {p2 != null ? (
-                                <span style={{
-                                    fontSize: 13, fontWeight: 700,
-                                    color: p2 === best2 ? GREEN : TEXT,
-                                }}>
-                                    {p2.toFixed(2)}{p2 === best2 ? " ✓" : ""}
-                                </span>
-                            ) : <span style={{ color: MUTED, fontSize: 11 }}>—</span>}
-                        </div>
-                    </div>
-                );
-            })}
-            <div style={{ padding: "5px 14px 7px", fontSize: 10, color: MUTED }}>
-                ✓ = best available odds · {bookmakers.length} bookmakers
-            </div>
-        </div>
-    );
-}
-
-function MatchCard({ match }) {
-    const [showBk, setShowBk] = useState(false);
-    const isLive = match.status === "LIVE";
-    const hasBk  = match.bookmakers && match.bookmakers.length > 0;
-
-    const sportLabel = (match.sport || "").replace("cricket_", "").replace(/_/g, " ").toUpperCase();
+    // Fallback to match.team1Odds/team2Odds if bookmakers array empty
+    if (best1 === 0) best1 = match.team1Odds || 0;
+    if (best2 === 0) best2 = match.team2Odds || 0;
 
     return (
         <div style={{
             background: SURFACE,
-            border: `1px solid ${isLive ? "rgba(16,185,129,0.35)" : BORDER}`,
-            borderRadius: 12,
-            marginBottom: 12,
+            border: `1px solid ${isLive ? "rgba(16,185,129,0.4)" : BORDER}`,
+            borderRadius: 14,
+            marginBottom: 14,
             overflow: "hidden",
-            boxShadow: isLive ? "0 0 0 1px rgba(16,185,129,0.15)" : "none",
+            boxShadow: isLive ? "0 0 0 1px rgba(16,185,129,0.12), 0 4px 24px rgba(0,0,0,0.3)" : "0 2px 12px rgba(0,0,0,0.2)",
         }}>
-            {/* Header */}
+            {/* ── Header ── */}
             <div style={{
-                padding: "10px 14px",
+                padding: "12px 16px",
                 background: isLive ? "rgba(16,185,129,0.07)" : "rgba(255,255,255,0.02)",
                 borderBottom: `1px solid ${BORDER}`,
-                display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 6,
+                display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, flexWrap: "wrap",
             }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                     {isLive && (
                         <span style={{
                             display: "inline-flex", alignItems: "center", gap: 4,
                             background: "rgba(16,185,129,0.15)", color: GREEN,
-                            fontSize: 10, fontWeight: 700, padding: "2px 7px", borderRadius: 4,
+                            fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 4,
                         }}>
-                            <span style={{ width: 6, height: 6, borderRadius: "50%", background: GREEN, display: "inline-block", animation: "pulse 1.5s infinite" }} />
+                            <span style={{ width: 6, height: 6, borderRadius: "50%", background: GREEN, display: "inline-block", animation: "livepulse 1.5s infinite" }} />
                             LIVE
                         </span>
                     )}
-                    <span style={{ fontSize: 13, fontWeight: 700, color: TEXT }}>
-                        {match.team1} vs {match.team2}
-                    </span>
+                    <span style={{ fontSize: 15, fontWeight: 800, color: TEXT }}>{t1} vs {t2}</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    {match.seriesName && (
-                        <span style={{ fontSize: 10, color: MUTED }}>{match.seriesName}</span>
-                    )}
-                    {sportLabel && (
-                        <span style={{
-                            fontSize: 9, fontWeight: 700, color: AMBER,
-                            background: "rgba(245,158,11,0.12)", padding: "2px 6px", borderRadius: 4,
-                        }}>{sportLabel}</span>
-                    )}
+                    {match.seriesName && <span style={{ fontSize: 10, color: MUTED }}>{match.seriesName}</span>}
+                    <SportBadge sport={match.sport} />
                 </div>
             </div>
 
-            {/* Live score if available */}
-            {match.liveScore && match.status === "LIVE" && (
-                <div style={{
-                    padding: "6px 14px", background: "rgba(16,185,129,0.04)",
-                    borderBottom: `1px solid ${BORDER}`,
-                    fontSize: 12, color: MUTED,
-                }}>
+            {/* ── Live score ── */}
+            {isLive && match.liveScore && (
+                <div style={{ padding: "6px 16px", background: "rgba(16,185,129,0.04)", borderBottom: `1px solid ${BORDER}`, fontSize: 12, color: "#86EFAC" }}>
                     {match.liveScore.innings === 2
                         ? `Innings 2: ${match.liveScore.runs}/${match.liveScore.wickets} (${match.liveScore.overs} ov) · Target: ${match.liveScore.target}`
-                        : `Innings 1: ${match.liveScore.runs}/${match.liveScore.wickets} (${match.liveScore.overs} ov)`
-                    }
+                        : `Innings 1: ${match.liveScore.runs}/${match.liveScore.wickets} (${match.liveScore.overs} ov)`}
                 </div>
             )}
 
-            {/* Column headers */}
+            {/* ── Best odds summary bar ── */}
             <div style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 60px 70px 70px 80px 110px",
-                gap: 8, padding: "6px 14px",
-                borderBottom: `1px solid ${BORDER}`,
-                background: "rgba(255,255,255,0.02)",
+                display: "grid", gridTemplateColumns: "1fr auto 1fr",
+                padding: "14px 16px", gap: 8, alignItems: "center",
+                borderBottom: bookmakers.length > 0 ? `1px solid ${BORDER}` : "none",
             }}>
-                {["TEAM", "BEST ODDS", "MARKET%", "AI%", "EDGE", "RATING"].map(h => (
-                    <div key={h} style={{ fontSize: 9, fontWeight: 700, color: MUTED, letterSpacing: 0.8, textAlign: h === "TEAM" ? "left" : "center" }}>
-                        {h === "RATING" ? <span style={{ textAlign: "right", display: "block" }}>{h}</span> : h}
+                {/* Team 1 */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                    <div style={{ fontSize: 12, color: MUTED, fontWeight: 600 }}>{t1}</div>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                        <span style={{ fontSize: 28, fontWeight: 900, color: GREEN, lineHeight: 1 }}>
+                            {best1 > 0 ? best1.toFixed(2) : "—"}
+                        </span>
+                        <span style={{ fontSize: 10, color: MUTED }}>best odds</span>
                     </div>
-                ))}
+                    <AiEdgePill edge={match.team1Edge} rating={match.team1Rating} />
+                </div>
+
+                {/* VS divider */}
+                <div style={{
+                    width: 36, height: 36, borderRadius: "50%",
+                    background: "rgba(255,255,255,0.05)", border: `1px solid ${BORDER}`,
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 10, fontWeight: 800, color: MUTED, flexShrink: 0,
+                }}>VS</div>
+
+                {/* Team 2 */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-end" }}>
+                    <div style={{ fontSize: 12, color: MUTED, fontWeight: 600 }}>{t2}</div>
+                    <div style={{ display: "flex", alignItems: "baseline", gap: 6 }}>
+                        <span style={{ fontSize: 10, color: MUTED }}>best odds</span>
+                        <span style={{ fontSize: 28, fontWeight: 900, color: GREEN, lineHeight: 1 }}>
+                            {best2 > 0 ? best2.toFixed(2) : "—"}
+                        </span>
+                    </div>
+                    <AiEdgePill edge={match.team2Edge} rating={match.team2Rating} />
+                </div>
             </div>
 
-            <TeamOddsRow
-                teamName={match.team1}
-                odds={match.team1Odds}
-                implied={match.team1Implied}
-                aiProb={match.team1AiProb}
-                edge={match.team1Edge}
-                rating={match.team1Rating}
-            />
-            <TeamOddsRow
-                teamName={match.team2}
-                odds={match.team2Odds}
-                implied={match.team2Implied}
-                aiProb={match.team2AiProb}
-                edge={match.team2Edge}
-                rating={match.team2Rating}
-            />
+            {/* ── Per-bookmaker table ── */}
+            {bookmakers.length > 0 && (
+                <>
+                    {/* Toggle */}
+                    <button
+                        onClick={() => setExpanded(v => !v)}
+                        style={{
+                            width: "100%", background: "rgba(255,255,255,0.02)",
+                            border: "none", borderBottom: expanded ? `1px solid ${BORDER}` : "none",
+                            color: MUTED, fontSize: 11, fontWeight: 600,
+                            padding: "8px 16px", cursor: "pointer", textAlign: "left",
+                            display: "flex", alignItems: "center", justifyContent: "space-between",
+                        }}
+                    >
+                        <span>📊 Compare all bookmakers ({bookmakers.length})</span>
+                        <span>{expanded ? "▲ Hide" : "▼ Show"}</span>
+                    </button>
 
-            {/* Toggle bookmaker breakdown */}
-            {hasBk && (
-                <button
-                    onClick={() => setShowBk(v => !v)}
-                    style={{
-                        width: "100%", background: "rgba(255,255,255,0.025)",
-                        border: "none", borderTop: `1px solid ${BORDER}`,
-                        color: MUTED, fontSize: 11, fontWeight: 600,
-                        padding: "7px 14px", cursor: "pointer", textAlign: "left",
-                        display: "flex", alignItems: "center", gap: 6,
-                    }}
-                >
-                    <span>{showBk ? "▲" : "▼"}</span>
-                    {showBk ? "Hide" : "Show"} all bookmakers ({match.bookmakers.length})
-                </button>
-            )}
+                    {expanded && (
+                        <div>
+                            {/* Table header */}
+                            <div style={{
+                                display: "grid", gridTemplateColumns: "1fr 90px 90px",
+                                padding: "6px 16px", borderBottom: `1px solid ${BORDER}`,
+                                background: "rgba(0,0,0,0.2)",
+                            }}>
+                                <span style={{ fontSize: 10, fontWeight: 700, color: MUTED, letterSpacing: 0.8 }}>BOOKMAKER</span>
+                                <span style={{ fontSize: 10, fontWeight: 700, color: MUTED, letterSpacing: 0.8, textAlign: "center" }}>{t1.split(" ").pop()}</span>
+                                <span style={{ fontSize: 10, fontWeight: 700, color: MUTED, letterSpacing: 0.8, textAlign: "center" }}>{t2.split(" ").pop()}</span>
+                            </div>
 
-            {/* Per-bookmaker table */}
-            {showBk && hasBk && (
-                <BookmakerTable
-                    bookmakers={match.bookmakers}
-                    team1={match.team1}
-                    team2={match.team2}
-                />
+                            {bookmakers.map((bk, i) => {
+                                let p1 = null, p2 = null;
+                                Object.entries(bk.odds || {}).forEach(([name, price]) => {
+                                    const nl = name.toLowerCase();
+                                    if (t1words.some(w => nl.includes(w))) p1 = price;
+                                    else p2 = price;
+                                });
+                                const isBest1 = p1 && p1 === best1;
+                                const isBest2 = p2 && p2 === best2;
+                                return (
+                                    <div key={i} style={{
+                                        display: "grid", gridTemplateColumns: "1fr 90px 90px",
+                                        padding: "9px 16px", alignItems: "center",
+                                        borderBottom: i < bookmakers.length - 1 ? `1px solid rgba(255,255,255,0.04)` : "none",
+                                        background: i % 2 === 0 ? "transparent" : "rgba(255,255,255,0.012)",
+                                    }}>
+                                        <span style={{ fontSize: 13, color: "#CBD5E1" }}>{bk.name}</span>
+                                        <div style={{ textAlign: "center" }}>
+                                            {p1 != null ? (
+                                                <span style={{
+                                                    fontSize: 15, fontWeight: 700,
+                                                    color: isBest1 ? GREEN : TEXT,
+                                                    background: isBest1 ? "rgba(16,185,129,0.1)" : "transparent",
+                                                    padding: isBest1 ? "2px 8px" : "2px 8px",
+                                                    borderRadius: 5,
+                                                }}>
+                                                    {p1.toFixed(2)}{isBest1 ? " ✓" : ""}
+                                                </span>
+                                            ) : <span style={{ color: MUTED, fontSize: 12 }}>—</span>}
+                                        </div>
+                                        <div style={{ textAlign: "center" }}>
+                                            {p2 != null ? (
+                                                <span style={{
+                                                    fontSize: 15, fontWeight: 700,
+                                                    color: isBest2 ? GREEN : TEXT,
+                                                    background: isBest2 ? "rgba(16,185,129,0.1)" : "transparent",
+                                                    padding: isBest2 ? "2px 8px" : "2px 8px",
+                                                    borderRadius: 5,
+                                                }}>
+                                                    {p2.toFixed(2)}{isBest2 ? " ✓" : ""}
+                                                </span>
+                                            ) : <span style={{ color: MUTED, fontSize: 12 }}>—</span>}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+
+                            <div style={{ padding: "6px 16px 8px", fontSize: 10, color: MUTED }}>
+                                ✓ = best available price · {bookmakers.length} bookmakers
+                            </div>
+                        </div>
+                    )}
+                </>
             )}
         </div>
     );
@@ -282,15 +245,14 @@ function MatchCard({ match }) {
 
 function Skeleton() {
     return (
-        <div style={{ padding: "0 16px" }}>
+        <div>
             {[1, 2, 3].map(i => (
                 <div key={i} style={{
-                    background: SURFACE, borderRadius: 12, marginBottom: 12, overflow: "hidden",
-                    animation: "pulse 1.5s ease-in-out infinite",
+                    background: SURFACE, borderRadius: 14, marginBottom: 14,
+                    animation: "livepulse 1.5s ease-in-out infinite",
                 }}>
-                    <div style={{ height: 44, background: "rgba(255,255,255,0.04)", borderBottom: `1px solid ${BORDER}` }} />
-                    <div style={{ height: 42, borderBottom: `1px solid ${BORDER}` }} />
-                    <div style={{ height: 42 }} />
+                    <div style={{ height: 50, background: "rgba(255,255,255,0.04)", borderBottom: `1px solid ${BORDER}` }} />
+                    <div style={{ height: 80 }} />
                 </div>
             ))}
         </div>
@@ -298,14 +260,14 @@ function Skeleton() {
 }
 
 export default function LiveOdds() {
-    const [data,     setData]     = useState(null);
-    const [loading,  setLoading]  = useState(true);
-    const [filter,   setFilter]   = useState("ALL"); // ALL | LIVE | UPCOMING | VALUE
+    const [data,      setData]      = useState(null);
+    const [loading,   setLoading]   = useState(true);
+    const [filter,    setFilter]    = useState("ALL");
     const [lastFetch, setLastFetch] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
-        document.title = "Live Cricket Odds vs AI Predictions | CricIntelligence";
+        document.title = "Live Cricket Odds Comparison | CricIntelligence";
     }, []);
 
     const fetchOdds = useCallback(async () => {
@@ -324,7 +286,7 @@ export default function LiveOdds() {
 
     useEffect(() => {
         fetchOdds();
-        const t = setInterval(fetchOdds, 60000); // refresh every 60s
+        const t = setInterval(fetchOdds, 60000);
         return () => clearInterval(t);
     }, [fetchOdds]);
 
@@ -337,8 +299,8 @@ export default function LiveOdds() {
         return true;
     });
 
-    const liveCount    = allMatches.filter(m => m.status === "LIVE").length;
-    const valueCount   = allMatches.filter(m =>
+    const liveCount  = allMatches.filter(m => m.status === "LIVE").length;
+    const valueCount = allMatches.filter(m =>
         m.team1Rating === "VALUE" || m.team1Rating === "STRONG VALUE" ||
         m.team2Rating === "VALUE" || m.team2Rating === "STRONG VALUE"
     ).length;
@@ -346,16 +308,15 @@ export default function LiveOdds() {
     return (
         <div style={{ minHeight: "100vh", background: BG, fontFamily: "Inter, -apple-system, system-ui", color: TEXT }}>
             <style>{`
-                @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
-                .odds-tab { background: transparent; border: 1px solid rgba(255,255,255,0.12); color: #94A3B8; padding: 6px 14px; border-radius: 7px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
-                .odds-tab:hover { border-color: rgba(255,255,255,0.25); color: #E2E8F0; }
-                .odds-tab.active { background: #1E2D6B; border-color: #4A5FAD; color: #E2E8F0; }
-                .odds-tab-btn { background: transparent; border: none; cursor: pointer; }
+                @keyframes livepulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+                .odds-tab { background: transparent; border: 1px solid rgba(255,255,255,0.12); color: #94A3B8; padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+                .odds-tab:hover { border-color: rgba(255,255,255,0.3); color: #E2E8F0; }
+                .odds-tab.active { background: #1E2D6B; border-color: #4A5FAD; color: #fff; }
             `}</style>
 
             {/* Nav */}
             <nav style={{
-                background: C.navy, borderBottom: `1px solid ${C.navyLight}`,
+                background: C.navy, borderBottom: `1px solid rgba(255,255,255,0.08)`,
                 padding: "0 20px", height: 54,
                 display: "flex", alignItems: "center", justifyContent: "space-between",
                 position: "sticky", top: 0, zIndex: 100,
@@ -363,20 +324,19 @@ export default function LiveOdds() {
                 <div onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
                     <Logo href="/" />
                 </div>
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    <button className="odds-tab-btn" onClick={() => navigate("/")} style={{ color: MUTED, fontSize: 12 }}>← Back</button>
-                </div>
+                <button onClick={() => navigate("/")} style={{ background: "none", border: "none", color: MUTED, fontSize: 12, cursor: "pointer" }}>← Back</button>
             </nav>
 
-            {/* Header */}
-            <div style={{ padding: "28px 20px 0", maxWidth: 780, margin: "0 auto" }}>
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+            <div style={{ maxWidth: 760, margin: "0 auto", padding: "28px 16px 100px" }}>
+
+                {/* Header */}
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginBottom: 20 }}>
                     <div>
                         <h1 style={{ fontSize: 22, fontWeight: 800, margin: "0 0 4px", color: TEXT }}>
-                            📊 Live Odds vs AI
+                            🏏 Live Odds Comparison
                         </h1>
                         <p style={{ margin: 0, fontSize: 13, color: MUTED }}>
-                            Bookmaker implied probability vs CricIntel AI prediction · Edge = AI − Market
+                            Best odds across UK bookmakers · ✓ = best price available
                         </p>
                     </div>
                     {lastFetch && (
@@ -386,56 +346,48 @@ export default function LiveOdds() {
                     )}
                 </div>
 
-                {/* Stats bar */}
-                <div style={{ display: "flex", gap: 12, marginTop: 16, flexWrap: "wrap" }}>
+                {/* Stats */}
+                <div style={{ display: "flex", gap: 10, marginBottom: 18, flexWrap: "wrap" }}>
                     {[
-                        { label: "Matches with Odds", value: allMatches.length, color: TEXT },
-                        { label: "Live Now",           value: liveCount,        color: GREEN },
-                        { label: "Value Opportunities",value: valueCount,       color: AMBER },
+                        { label: "Matches",   value: allMatches.length, color: TEXT },
+                        { label: "Live Now",  value: liveCount,         color: GREEN },
+                        { label: "AI Value",  value: valueCount,        color: AMBER },
                     ].map(s => (
                         <div key={s.label} style={{
                             background: SURFACE, border: `1px solid ${BORDER}`,
-                            borderRadius: 8, padding: "8px 14px",
-                            minWidth: 100,
+                            borderRadius: 10, padding: "8px 16px", minWidth: 80,
                         }}>
-                            <div style={{ fontSize: 20, fontWeight: 800, color: s.color }}>{s.value}</div>
+                            <div style={{ fontSize: 22, fontWeight: 800, color: s.color }}>{s.value}</div>
                             <div style={{ fontSize: 10, color: MUTED, marginTop: 1 }}>{s.label}</div>
                         </div>
                     ))}
                 </div>
 
                 {/* Filters */}
-                <div style={{ display: "flex", gap: 8, marginTop: 16, marginBottom: 20, flexWrap: "wrap" }}>
+                <div style={{ display: "flex", gap: 8, marginBottom: 20, flexWrap: "wrap" }}>
                     {[
                         { key: "ALL",      label: `All (${allMatches.length})` },
                         { key: "LIVE",     label: `🔴 Live (${liveCount})` },
-                        { key: "UPCOMING", label: `Upcoming` },
-                        { key: "VALUE",    label: `⚡ Value (${valueCount})` },
+                        { key: "UPCOMING", label: "Upcoming" },
+                        { key: "VALUE",    label: `⚡ AI Value (${valueCount})` },
                     ].map(f => (
-                        <button
-                            key={f.key}
-                            className={`odds-tab ${filter === f.key ? "active" : ""}`}
-                            onClick={() => setFilter(f.key)}
-                        >
+                        <button key={f.key} className={`odds-tab ${filter === f.key ? "active" : ""}`} onClick={() => setFilter(f.key)}>
                             {f.label}
                         </button>
                     ))}
                 </div>
-            </div>
 
-            {/* Content */}
-            <div style={{ maxWidth: 780, margin: "0 auto", padding: "0 16px 100px" }}>
+                {/* Content */}
                 {loading ? (
                     <Skeleton />
                 ) : filtered.length === 0 ? (
-                    <div style={{
-                        textAlign: "center", padding: "60px 20px",
-                        color: MUTED, fontSize: 14,
-                    }}>
-                        <div style={{ fontSize: 36, marginBottom: 12 }}>📭</div>
-                        {allMatches.length === 0
-                            ? "No cricket odds available right now. Bookmakers may not have opened markets yet."
-                            : "No matches in this filter. Try 'All'."}
+                    <div style={{ textAlign: "center", padding: "60px 20px", color: MUTED }}>
+                        <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
+                        <div style={{ fontSize: 14 }}>
+                            {allMatches.length === 0
+                                ? "No cricket odds available yet. Bookmakers open markets closer to match time."
+                                : "No matches in this filter. Try 'All'."}
+                        </div>
                     </div>
                 ) : (
                     filtered.map(m => <MatchCard key={m.matchKey || m.team1 + m.team2} match={m} />)
@@ -443,17 +395,13 @@ export default function LiveOdds() {
 
                 {/* Disclaimer */}
                 <div style={{
-                    marginTop: 32, padding: "14px 16px",
-                    background: "rgba(255,255,255,0.03)",
-                    border: `1px solid ${BORDER}`,
-                    borderRadius: 10,
-                    fontSize: 11, color: MUTED, lineHeight: 1.6,
+                    marginTop: 24, padding: "12px 16px",
+                    background: "rgba(255,255,255,0.02)", border: `1px solid ${BORDER}`,
+                    borderRadius: 10, fontSize: 11, color: MUTED, lineHeight: 1.6,
                 }}>
                     <strong style={{ color: TEXT }}>ℹ️ For informational purposes only.</strong>{" "}
-                    Odds data sourced from The Odds API. AI probabilities are model predictions — not financial advice.
-                    CricIntelligence does not facilitate betting or financial transactions.
-                    Edge = AI predicted probability minus bookmaker implied probability.
-                    Positive edge means our model is more bullish than the market.
+                    Odds from The Odds API (UK bookmakers). AI value = AI probability exceeds bookmaker implied probability.
+                    CricIntelligence does not facilitate gambling. 18+ · BeGambleAware.org
                 </div>
             </div>
         </div>
