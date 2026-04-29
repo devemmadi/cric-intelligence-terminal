@@ -1635,15 +1635,37 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                                         {last3r > 0 && <BarStat label="Last 3 overs" value={last3r * 3} max={100} color={last3r > 25 ? "#00FF94" : last3r > 15 ? "#FFB800" : "#64748B"} text={`${last3r}r${last3w > 0 ? ` ${last3w}w` : ""} · ${last3r > 25 ? "Hot" : last3r > 15 ? "Moving" : "Dry"}`} />}
                                                         {pship > 0 && <BarStat label="Partnership" value={Math.min(100, pship)} max={100} color={pship > 50 ? "#FF4444" : pship > 25 ? "#FFB800" : "#64748B"} text={`${pship} · ${pship > 50 ? "Dangerous" : pship > 25 ? "Building" : "New"}`} />}
                                                     </div>
-                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 5 }}>
-                                                        <span style={{ fontSize: 36, fontWeight: 900, color: "#FFFFFF", lineHeight: 1, letterSpacing: -1 }}>{ov.runRange}</span>
-                                                        <span style={{ fontSize: 12, color: "#CBD5E1" }}>runs expected</span>
+                                                    {/* Expected runs + O/U */}
+                                                    <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
+                                                        <span style={{ fontSize: 36, fontWeight: 900, color: "#FFFFFF", lineHeight: 1, letterSpacing: -1 }}>{ov.expectedRuns}</span>
+                                                        <span style={{ fontSize: 13, color: "#CBD5E1" }}>runs expected</span>
                                                     </div>
-                                                    <div style={{ height: 5, background: C.border, borderRadius: 3 }}>
+                                                    {/* Over/Under probabilities */}
+                                                    {ov.ouLine != null && (
+                                                        <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+                                                            <div style={{
+                                                                flex: 1, padding: "7px 10px", borderRadius: 8, textAlign: "center",
+                                                                background: ov.overPct > ov.underPct ? "rgba(16,185,129,0.18)" : "rgba(255,255,255,0.06)",
+                                                                border: `1px solid ${ov.overPct > ov.underPct ? "rgba(16,185,129,0.4)" : "rgba(255,255,255,0.1)"}`,
+                                                            }}>
+                                                                <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 2, letterSpacing: 0.8 }}>OVER {ov.ouLine}</div>
+                                                                <div style={{ fontSize: 18, fontWeight: 900, color: ov.overPct > ov.underPct ? "#10B981" : "#E2E8F0" }}>{ov.overPct}%</div>
+                                                            </div>
+                                                            <div style={{
+                                                                flex: 1, padding: "7px 10px", borderRadius: 8, textAlign: "center",
+                                                                background: ov.underPct > ov.overPct ? "rgba(16,185,129,0.18)" : "rgba(255,255,255,0.06)",
+                                                                border: `1px solid ${ov.underPct > ov.overPct ? "rgba(16,185,129,0.4)" : "rgba(255,255,255,0.1)"}`,
+                                                            }}>
+                                                                <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 2, letterSpacing: 0.8 }}>UNDER {ov.ouLine}</div>
+                                                                <div style={{ fontSize: 18, fontWeight: 900, color: ov.underPct > ov.overPct ? "#10B981" : "#E2E8F0" }}>{ov.underPct}%</div>
+                                                            </div>
+                                                        </div>
+                                                    )}
+                                                    <div style={{ height: 5, background: C.border, borderRadius: 3, marginBottom: 5 }}>
                                                         <div style={{ height: "100%", width: runFill + "%", background: "linear-gradient(90deg, #4A90E2, #00D4AA)", borderRadius: 3, transition: "width 0.4s" }} />
                                                     </div>
-                                                    <div style={{ display: "flex", justifyContent: "space-between", marginTop: 5 }}>
-                                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#FFFFFF" }}>Expected: {ov.expectedRuns} runs</span>
+                                                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                                        <span style={{ fontSize: 11, color: "#94A3B8" }}>{ov.confidence}% confidence</span>
                                                         <span style={{ fontSize: 11, fontWeight: 700, color: wc }}>
                                                             {ov.wicketProb > 40 ? "⚠ Wicket likely soon" : ov.wicketProb > 25 ? "Wicket possible" : "Batsmen safe"}
                                                         </span>
