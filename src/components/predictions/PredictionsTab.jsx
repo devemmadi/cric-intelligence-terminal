@@ -643,6 +643,115 @@ function BowlerWicketCard({ analysis }) {
 }
 
 // ─── Pitch Reality Card ───────────────────────────────────────────────────────
+// --- Live Pitch Read Card --------------------------------------------------
+function LivePitchReadCard({ data }) {
+    if (!data || !data.behavior || data.behavior === 'READING' || data.oversRead < 4) return null;
+
+    const beh = data.behavior || 'BALANCED';
+    const score = data.score || 50;
+    const mainColor = score >= 65 ? '#16A34A' : score >= 45 ? '#B45309' : '#DC2626';
+    const bgColor   = score >= 65 ? '#F0FDF4'  : score >= 45 ? '#FFFBEB'  : '#FEF2F2';
+    const barColor  = score >= 65 ? '#22C55E'  : score >= 45 ? '#F59E0B'  : '#EF4444';
+    const hasBowlerSplit = data.spinEco != null && data.paceEco != null;
+    const trend = data.rpoTrend || 0;
+    const trendIcon  = trend > 1 ? '↑' : trend < -1 ? '↓' : '→';
+    const trendColor = trend > 1 ? '#16A34A' : trend < -1 ? '#DC2626' : '#94A3B8';
+
+    return (
+        <div style={{ background: bgColor, border: `1.5px solid ${mainColor}30`, borderRadius: 16,
+            overflow: 'hidden', marginBottom: 14 }}>
+            <div style={{ padding: '10px 16px', background: mainColor,
+                display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 15 }}>&#127936;</span>
+                <span style={{ fontSize: 11, fontWeight: 800, color: '#fff', letterSpacing: 1 }}>
+                    LIVE PITCH READING
+                </span>
+                <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', marginLeft: 'auto' }}>
+                    {data.confidence} CONFIDENCE &middot; {data.oversRead} overs read
+                </span>
+            </div>
+            <div style={{ padding: '14px 16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                    <div>
+                        <div style={{ fontSize: 18, fontWeight: 900, color: mainColor, letterSpacing: 0.5 }}>
+                            {beh}
+                        </div>
+                        <div style={{ fontSize: 13, color: '#475569', marginTop: 2 }}>
+                            {data.behaviorLabel}
+                        </div>
+                    </div>
+                    <div style={{ marginLeft: 'auto', textAlign: 'center', flexShrink: 0 }}>
+                        <div style={{ fontSize: 22, fontWeight: 900, color: mainColor }}>{score}</div>
+                        <div style={{ fontSize: 9, color: '#94A3B8', letterSpacing: 0.5 }}>BAT SCORE</div>
+                    </div>
+                </div>
+                <div style={{ height: 6, background: '#E2E8F0', borderRadius: 3, marginBottom: 12, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: `${Math.min(100, score)}%`, background: barColor,
+                        borderRadius: 3, transition: 'width 0.4s ease' }} />
+                </div>
+                {hasBowlerSplit && (
+                    <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                        <div style={{ flex: 1, background: '#fff', borderRadius: 10, padding: '8px 12px',
+                            border: '1px solid #E2E8F0', textAlign: 'center' }}>
+                            <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700 }}>SPINNERS</div>
+                            <div style={{ fontSize: 17, fontWeight: 900,
+                                color: (data.spinAdvantage || 0) >= 1.5 ? '#7C3AED' : '#0F172A' }}>
+                                {data.spinEco != null ? data.spinEco.toFixed(1) : '-'}
+                            </div>
+                            <div style={{ fontSize: 9, color: '#94A3B8' }}>economy</div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', fontSize: 18, color: '#CBD5E1', fontWeight: 900 }}>
+                            {(data.spinAdvantage || 0) >= 1.5 ? '<' : (data.spinAdvantage || 0) <= -1.5 ? '>' : '~'}
+                        </div>
+                        <div style={{ flex: 1, background: '#fff', borderRadius: 10, padding: '8px 12px',
+                            border: '1px solid #E2E8F0', textAlign: 'center' }}>
+                            <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700 }}>PACERS</div>
+                            <div style={{ fontSize: 17, fontWeight: 900,
+                                color: (data.spinAdvantage || 0) <= -1.5 ? '#DC2626' : '#0F172A' }}>
+                                {data.paceEco != null ? data.paceEco.toFixed(1) : '-'}
+                            </div>
+                            <div style={{ fontSize: 9, color: '#94A3B8' }}>economy</div>
+                        </div>
+                    </div>
+                )}
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                    <div style={{ flex: 1, background: '#fff', borderRadius: 10, padding: '8px 12px',
+                        border: '1px solid #E2E8F0' }}>
+                        <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700 }}>ACTUAL RPO</div>
+                        <div style={{ fontSize: 17, fontWeight: 900, color: '#0F172A' }}>
+                            {data.actualRPO != null ? data.actualRPO.toFixed(1) : '-'}
+                            <span style={{ fontSize: 13, color: trendColor, marginLeft: 4 }}>{trendIcon}</span>
+                        </div>
+                        <div style={{ fontSize: 9, color: '#94A3B8' }}>venue avg {data.venueAvgRPO != null ? data.venueAvgRPO.toFixed(1) : '-'}</div>
+                    </div>
+                    {(data.dotRateRecent || 0) > 0 && (
+                        <div style={{ flex: 1, background: '#fff', borderRadius: 10, padding: '8px 12px',
+                            border: '1px solid #E2E8F0' }}>
+                            <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700 }}>DOT BALL RATE</div>
+                            <div style={{ fontSize: 17, fontWeight: 900,
+                                color: (data.dotRateRecent || 0) > 0.5 ? '#DC2626' : '#0F172A' }}>
+                                {Math.round((data.dotRateRecent || 0) * 100)}%
+                            </div>
+                            <div style={{ fontSize: 9, color: '#94A3B8' }}>last 4 overs</div>
+                        </div>
+                    )}
+                </div>
+                {data.signals && data.signals.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                        {data.signals.map((sig, i) => (
+                            <div key={i} style={{ fontSize: 12, color: '#475569',
+                                display: 'flex', gap: 6, alignItems: 'flex-start' }}>
+                                <span style={{ color: mainColor, fontWeight: 900, flexShrink: 0 }}>◆</span>
+                                <span>{sig}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
 function PitchRealityCard({ analysis }) {
     if (!analysis || !analysis.classification) return null;
 
@@ -1723,6 +1832,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 <div style={{ marginBottom: 14 }}>
                                     <BatterAnalysisCard analysis={pred.playerAnalysis.batters} />
                                     <BowlerWicketCard analysis={pred.playerAnalysis.bowler} />
+                                    <LivePitchReadCard data={pred.livePitchRead} />
                                     <PitchRealityCard analysis={pred.playerAnalysis.pitch} />
                                 </div>
                             )}
