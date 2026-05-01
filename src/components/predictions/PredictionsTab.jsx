@@ -644,6 +644,122 @@ function BowlerWicketCard({ analysis }) {
 
 // ─── Pitch Reality Card ───────────────────────────────────────────────────────
 // --- Live Pitch Read Card --------------------------------------------------
+// --- Match Intelligence Card -----------------------------------------------
+function MatchIntelligenceCard({ data, innings, overs }) {
+    if (!data || (!data.parDeviation && !data.chaseFeasibility)) return null;
+
+    const adj = data.adjustment || 0;
+    const adjColor = adj > 0 ? '#16A34A' : adj < 0 ? '#DC2626' : '#94A3B8';
+    const adjSign  = adj > 0 ? '+' : '';
+
+    // Inn 1: par deviation display
+    const pd = data.parDeviation;
+    const cf = data.chaseFeasibility;
+    const mom = data.momentum;
+
+    // Chase feasibility color
+    const cfColor = cf >= 70 ? '#16A34A' : cf >= 40 ? '#B45309' : '#DC2626';
+    const cfLabel = cf >= 80 ? 'Very gettable'
+        : cf >= 60 ? 'Chasing well'
+        : cf >= 40 ? 'Tight chase'
+        : cf >= 20 ? 'Difficult chase'
+        : 'Near impossible';
+
+    const momIcon  = mom > 0.2 ? '↑' : mom < -0.2 ? '↓' : '→';
+    const momColor = mom > 0.2 ? '#16A34A' : mom < -0.2 ? '#DC2626' : '#94A3B8';
+
+    return (
+        <div style={{ background: '#F8FAFC', border: '1px solid #E2E8F0',
+            borderRadius: 16, overflow: 'hidden', marginBottom: 14 }}>
+            <div style={{ padding: '10px 16px', background: '#1E293B',
+                display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 15 }}>🧠</span>
+                <span style={{ fontSize: 11, fontWeight: 800, color: '#fff', letterSpacing: 1 }}>
+                    MATCH INTELLIGENCE
+                </span>
+                {adj !== 0 && (
+                    <span style={{ marginLeft: 'auto', fontSize: 12, fontWeight: 900,
+                        color: adjColor, background: adjColor + '22',
+                        padding: '2px 10px', borderRadius: 20 }}>
+                        {adjSign}{adj} pts
+                    </span>
+                )}
+            </div>
+            <div style={{ padding: '14px 16px' }}>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+
+                    {/* Inn 1: Par score */}
+                    {pd && innings === 1 && (
+                        <div style={{ flex: '1 1 120px', background: '#fff', borderRadius: 10,
+                            padding: '10px 14px', border: '1px solid #E2E8F0', minWidth: 110 }}>
+                            <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700 }}>vs PAR</div>
+                            <div style={{ fontSize: 20, fontWeight: 900,
+                                color: pd.runs_deviation >= 0 ? '#16A34A' : '#DC2626' }}>
+                                {pd.runs_deviation >= 0 ? '+' : ''}{pd.runs_deviation}
+                            </div>
+                            <div style={{ fontSize: 10, color: '#94A3B8' }}>
+                                par {pd.expected_runs} runs
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Inn 2: Chase feasibility */}
+                    {cf != null && innings === 2 && (
+                        <div style={{ flex: '1 1 120px', background: '#fff', borderRadius: 10,
+                            padding: '10px 14px', border: `1.5px solid ${cfColor}40`, minWidth: 110 }}>
+                            <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700 }}>CHASE</div>
+                            <div style={{ fontSize: 20, fontWeight: 900, color: cfColor }}>{cf}%</div>
+                            <div style={{ fontSize: 10, color: cfColor, fontWeight: 600 }}>{cfLabel}</div>
+                        </div>
+                    )}
+
+                    {/* RRR */}
+                    {data.rrr > 0 && innings === 2 && (
+                        <div style={{ flex: '1 1 90px', background: '#fff', borderRadius: 10,
+                            padding: '10px 14px', border: '1px solid #E2E8F0', minWidth: 90 }}>
+                            <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700 }}>REQ. RATE</div>
+                            <div style={{ fontSize: 20, fontWeight: 900,
+                                color: data.rrr > 12 ? '#DC2626' : data.rrr > 9 ? '#B45309' : '#0F172A' }}>
+                                {data.rrr?.toFixed(1)}
+                            </div>
+                            <div style={{ fontSize: 10, color: '#94A3B8' }}>
+                                {data.runsNeeded} off {data.oversLeft} ov
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Momentum */}
+                    {mom != null && Math.abs(mom) > 0.1 && (
+                        <div style={{ flex: '1 1 90px', background: '#fff', borderRadius: 10,
+                            padding: '10px 14px', border: '1px solid #E2E8F0', minWidth: 90 }}>
+                            <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 700 }}>MOMENTUM</div>
+                            <div style={{ fontSize: 22, fontWeight: 900, color: momColor }}>{momIcon}</div>
+                            <div style={{ fontSize: 10, color: momColor, fontWeight: 600 }}>
+                                {mom > 0.3 ? 'Batting surge' : mom > 0.1 ? 'Slight +' : mom < -0.3 ? 'Bowling surge' : 'Slight -'}
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Intelligence signals */}
+                {data.signals && data.signals.length > 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+                        {data.signals.map((sig, i) => (
+                            <div key={i} style={{ fontSize: 12, color: '#334155',
+                                display: 'flex', gap: 6, alignItems: 'flex-start',
+                                background: '#fff', padding: '7px 10px', borderRadius: 8,
+                                border: '1px solid #F1F5F9' }}>
+                                <span style={{ color: '#7C3AED', fontWeight: 900, flexShrink: 0 }}>◆</span>
+                                <span>{sig}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
+
 function LivePitchReadCard({ data }) {
     if (!data || !data.behavior || data.behavior === 'READING' || data.oversRead < 4) return null;
 
@@ -1832,6 +1948,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 <div style={{ marginBottom: 14 }}>
                                     <BatterAnalysisCard analysis={pred.playerAnalysis.batters} />
                                     <BowlerWicketCard analysis={pred.playerAnalysis.bowler} />
+                                    <MatchIntelligenceCard data={pred.matchIntelligence} innings={pred.innings} overs={pred.overs} />
                                     <LivePitchReadCard data={pred.livePitchRead} />
                                     <PitchRealityCard analysis={pred.playerAnalysis.pitch} />
                                 </div>
