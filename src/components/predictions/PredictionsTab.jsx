@@ -1184,13 +1184,25 @@ Write like a Sky Sports commentator — punchy, specific, no generic phrases.`;
         else
             reasons.push(`${battingTeam} at ${crr.toFixed(1)}/ov — ${momentum > 0.5 ? "above expected rate 📈" : momentum < -0.5 ? "below expected rate 📉" : "on expected rate ⚖️"}`);
 
-        // Bullet 2 — Striker SR + bowler economy (real ball-by-ball data)
+        // Bullet 2 — Live pitch behavior (actual ball data) > static venue tag
+        const lpr = pred.livePitchRead || {};
+        const lprBehavior = lpr.behavior || "";
+        const lprConf = lpr.confidence || "LOW";
+        // Wickets sanity: 3+ wickets in <10 overs = pitch is NOT flat regardless of venue
+        const earlyWicketsStress = (pred.wickets || 0) >= 3 && (pred.overs || 0) < 10;
+        const wickets = pred.wickets || 0;
         if (strikerSR > 0 && bowlerEco > 0)
-            reasons.push(`Striker SR ${strikerSR.toFixed(0)} vs bowler eco ${bowlerEco.toFixed(1)} — ${strikerSR > bowlerEco * 10 ? "batter dominating" : bowlerEco < 7 ? "bowler on top" : "even battle"}`);
-        else if (pitchLbl)
-            reasons.push(`Pitch: ${pitchLbl} — ${pitchLbl.toLowerCase().includes("flat") || pitchLbl.toLowerCase().includes("bat") ? "batting-friendly, big total possible" : "bowlers in it, 160 could be competitive"}`);
+            reasons.push(`Striker SR ${strikerSR.toFixed(0)} vs bowler eco ${bowlerEco.toFixed(1)} — ${strikerSR > bowlerEco * 10 ? "batter dominating" : bowlerEco < 7 ? "bowler on top" : "even contest"}`);
+        else if (lprBehavior && lprConf !== "LOW")
+            reasons.push(`Live pitch read: ${lprBehavior.toLowerCase()} — ${lpr.summary || pitchLbl}`);
+        else if (earlyWicketsStress)
+            reasons.push(`Pitch assisting bowlers — ${wickets} wickets in ${(pred.overs||0).toFixed(1)} overs despite ${pitchLbl || "neutral"} venue tag`);
+        else if (strikerSR > 0)
+            reasons.push(`Striker SR ${strikerSR.toFixed(0)} — ${strikerSR > 130 ? "attacking mode" : strikerSR > 100 ? "building innings" : "struggling for timing"}`);
+        else if (bowlerEco > 0)
+            reasons.push(`Current bowler eco ${bowlerEco.toFixed(1)} — ${bowlerEco < 7 ? "excellent spell, bowlers in control" : bowlerEco > 10 ? "expensive, batting team benefiting" : "tight spell"}`);
         else
-            reasons.push(pressure > 65 ? `Pressure index ${pressure}/100 — ${battingTeam} struggling` : `Pressure index ${pressure}/100 — comfortable batting`);
+            reasons.push(pressure > 65 ? `Pressure index ${pressure}/100 — ${battingTeam} under serious stress` : `Pressure index ${pressure}/100 — innings developing normally`);
 
         // Bullet 3 — Next over prediction (actual ML output, not generic phase text)
         if (nextOv && nextOv2)
