@@ -1,5 +1,12 @@
 # CricIntel Frontend — CLAUDE.md
 
+## ⚠️ Self-Update Rule
+**After every code change in this repo, update this CLAUDE.md in the same commit.**
+- New component added → add to File Structure section
+- Bug fixed → add to Common Bugs Fixed section
+- Polling interval changed → update Polling Intervals section
+- New pred field used from backend → document it in relevant component section
+
 ## Project
 - **Live URL:** https://www.cricintelligence.com (custom domain → Netlify)
 - **Netlify URL:** https://cricintelligence.netlify.app
