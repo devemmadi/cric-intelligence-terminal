@@ -1030,6 +1030,8 @@ function MiniTrustBlock() {
 function HeroDecision({ pred, prob, isEnded }) {
     const [countdown, setCountdown] = useState(30);
     const [viewers] = useState(() => Math.floor(Math.random() * 80) + 40); // FOMO: 40–120 viewers
+    const [aiNarrative, setAiNarrative] = useState(null);
+    const [narrativeLoading, setNarrativeLoading] = useState(false);
 
     // Countdown to next auto-refresh
     useEffect(() => {
@@ -1038,6 +1040,55 @@ function HeroDecision({ pred, prob, isEnded }) {
     }, []);
     // Reset countdown when pred changes (i.e. new data arrived)
     useEffect(() => { setCountdown(30); }, [pred?.overs]);
+
+    // Fetch Claude narrative when match or innings changes (not every ball)
+    useEffect(() => {
+        if (!pred || pred.aiProbability === undefined || isEnded) { setAiNarrative(null); return; }
+        const matchKey = `${pred.id}_${pred.innings}_${Math.floor((pred.overs || 0) / 3)}`;
+        let cancelled = false;
+        setNarrativeLoading(true);
+        const t1 = pred.team1 || "Team 1";
+        const t2 = pred.team2 || "Team 2";
+        const inn = pred.innings || 1;
+        const score = pred.score || pred.runs || 0;
+        const wkts = pred.wickets || 0;
+        const overs = pred.overs || 0;
+        const target = pred.target || 0;
+        const crr = pred.currentRunRate || 0;
+        const rrr = pred.requiredRunRate || 0;
+        const conf = (pred.confidenceSignals || {}).confidenceLevel || "LOW";
+        const signals = ((pred.confidenceSignals || {}).signalNames || []).join(", ");
+        const favProb_ = prob >= 50 ? prob : Math.round((100 - prob) * 10) / 10;
+        const favT = prob >= 50 ? t1 : t2;
+        const prompt = inn === 2
+            ? `You are a cricket expert analyst. Write 2 sharp sentences (no fluff, no "certainly") analysing this live T20 chase situation:
+${t2} chasing ${target}, currently ${score}/${wkts} in ${overs} overs. Need ${target - score} more. CRR: ${crr.toFixed(1)}, RRR: ${rrr.toFixed(1)}.
+Our AI gives ${favT} a ${favProb_}% chance. Confidence: ${conf}. Signals backing this: ${signals || "match situation"}.
+Write like a Sky Sports commentator — punchy, specific, no generic phrases.`
+            : `You are a cricket expert analyst. Write 2 sharp sentences (no fluff, no "certainly") analysing this live T20 first innings:
+${t1} batting first: ${score}/${wkts} in ${overs} overs. CRR: ${crr.toFixed(1)}.
+Our AI gives ${favT} a ${favProb_}% chance of winning. Confidence: ${conf}. Signals: ${signals || "early innings"}.
+Write like a Sky Sports commentator — punchy, specific, no generic phrases.`;
+        fetch(`${API_BASE}/claude-analysis`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ prompt })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (cancelled) return;
+            const text = data?.content?.[0]?.text || data?.content || null;
+            if (text && typeof text === "string" && text.length > 20) {
+                setAiNarrative(text.trim());
+            } else {
+                setAiNarrative(null);
+            }
+        })
+        .catch(() => { if (!cancelled) setAiNarrative(null); })
+        .finally(() => { if (!cancelled) setNarrativeLoading(false); });
+        return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pred?.id, pred?.innings, Math.floor((pred?.overs || 0) / 3)]);
 
     if (!pred || pred.aiProbability === undefined) return null;
 
@@ -1051,11 +1102,18 @@ function HeroDecision({ pred, prob, isEnded }) {
     const favProb = prob >= 50 ? prob : Math.round((100 - prob) * 10) / 10;
     const favTeamColor = prob >= 50 ? t1Color : t2Color;
 
+    // Use backend confidence signals (stacked) — not just raw probability
+    const _confData = pred.confidenceSignals || {};
+    const _confLevel = _confData.confidenceLevel || "LOW";
+    const _signalNames = _confData.signalNames || [];
+    const _signalCount = _confData.signalCount || 0;
+    const _totalSignals = _confData.totalSignals || 4;
+
     let signal, signalColor;
-    if (prob >= 65 || prob <= 35) {
+    if (_confLevel === "HIGH") {
         signal = "BET";
         signalColor = "#00C896";
-    } else if (prob >= 55 || prob <= 45) {
+    } else if (_confLevel === "MEDIUM") {
         signal = "WAIT";
         signalColor = "#F59E0B";
     } else {
@@ -1134,11 +1192,19 @@ function HeroDecision({ pred, prob, isEnded }) {
 
             {/* Main decision */}
             <div style={{ marginBottom: 16 }}>
-                {/* Signal label */}
-                <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: signalColor + "18", border: `1px solid ${signalColor}40`, borderRadius: 8, padding: "5px 12px", marginBottom: 14 }}>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: signalColor, letterSpacing: 1 }}>
-                        {signal === "BET" ? `🔥 HIGH-CONFIDENCE PICK` : signal === "WAIT" ? "⏳ WAIT FOR CLEARER SIGNAL" : "⚠️ TOO CLOSE TO CALL"}
-                    </span>
+                {/* Signal label + signal count chips */}
+                <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 7, marginBottom: 12 }}>
+                    <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: signalColor + "18", border: `1px solid ${signalColor}40`, borderRadius: 8, padding: "5px 12px" }}>
+                        <span style={{ fontSize: 11, fontWeight: 800, color: signalColor, letterSpacing: 1 }}>
+                            {signal === "BET" ? `🔥 BACKED — ${_signalCount}/${_totalSignals} SIGNALS AGREE` : signal === "WAIT" ? `⏳ WAIT — ${_signalCount}/${_totalSignals} SIGNALS` : "⚠️ TOO CLOSE TO CALL"}
+                        </span>
+                    </div>
+                    {/* Individual signal chips */}
+                    {_signalNames.map((s, i) => (
+                        <span key={i} style={{ fontSize: 9, fontWeight: 700, color: signalColor, background: signalColor + "14", border: `1px solid ${signalColor}30`, borderRadius: 20, padding: "3px 8px", letterSpacing: 0.5 }}>
+                            ✓ {s}
+                        </span>
+                    ))}
                 </div>
 
                 {/* Teams + probability row */}
@@ -1162,7 +1228,7 @@ function HeroDecision({ pred, prob, isEnded }) {
                     <div style={{ width: `${prob}%`, height: "100%", background: `linear-gradient(90deg, ${t1Color}, ${t1Color}cc)`, borderRadius: 3, transition: "width 0.8s cubic-bezier(.4,0,.2,1)" }} />
                 </div>
                 <div style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.35)", textAlign: "center", marginBottom: 10 }}>
-                    {favTeam} favoured · <span style={{ color: signalColor }}>{confidence} confidence</span>
+                    {favTeam} favoured · <span style={{ color: signalColor }}>{_confLevel === "HIGH" ? "High" : _confLevel === "MEDIUM" ? "Medium" : "Low"} confidence</span>
                 </div>
                 {/* Twitter share button */}
                 {(() => {
@@ -1180,7 +1246,18 @@ function HeroDecision({ pred, prob, isEnded }) {
                 })()}
             </div>
 
-            {/* 3 reasons */}
+            {/* Claude AI narrative — human expert analysis */}
+            {(aiNarrative || narrativeLoading) && (
+                <div style={{ background: "rgba(74,111,212,0.08)", border: "1px solid rgba(74,111,212,0.2)", borderRadius: 12, padding: "12px 14px", marginBottom: 12 }}>
+                    <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(74,111,212,0.8)", letterSpacing: 1.5, marginBottom: 6 }}>🤖 AI EXPERT ANALYSIS</div>
+                    {narrativeLoading && !aiNarrative
+                        ? <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontStyle: "italic" }}>Analysing match situation...</div>
+                        : <div style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", lineHeight: 1.6, fontStyle: "italic" }}>{aiNarrative}</div>
+                    }
+                </div>
+            )}
+
+            {/* 3 data-driven reasons */}
             <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "12px 14px", marginBottom: 16 }}>
                 {reasons.slice(0, 3).map((r, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: i < reasons.slice(0,3).length - 1 ? 9 : 0 }}>
