@@ -2256,21 +2256,46 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                 {pred && pred.team1 && (
                     <div style={{ background: C.bg, borderRadius: 12, padding: "10px 12px" }}>
                         <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>MATCH CONTEXT</div>
-                        {[
-                            ["Format", pred.matchType?.toUpperCase() || "T20"],
-                            ["Phase", pred.currentPhase || ""],
-                            ["Pitch", pred.pitchLabel ? `${pred.pitchLabel}${pred.pitchSource ? ` · ${pred.pitchSource}` : ""}` : ""],
-                            ["Weather", pred.weatherImpact?.condition || ""],
-                        ].filter(([, v]) => v).map(([l, v]) => (
-                            <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                                <span style={{ fontSize: 11, color: C.muted }}>{l}</span>
-                                <span style={{ fontSize: 11, fontWeight: 700, color: C.text, maxWidth: 110, textAlign: "right" }}>{v}</span>
-                            </div>
-                        ))}
-                        {pred.toss && (
+                        {(() => {
+                            // Smart pitch label: live behavior > weather override > wickets > venue tag
+                            const lpr = pred.livePitchRead || {};
+                            const weather = (pred.weatherImpact?.condition || "").toUpperCase();
+                            const isDamp = weather.includes("RAIN") || weather.includes("THUNDER") || weather.includes("STORM") || weather.includes("CLOUD") || weather.includes("OVERCAST");
+                            const earlyWkts = (pred.wickets || 0) >= 3 && (pred.overs || 0) < 10;
+                            const lprBehavior = lpr.behavior || "";
+                            const lprConf = lpr.confidence || "LOW";
+
+                            let pitchDisplay = "";
+                            if (lprBehavior && lprConf !== "LOW")
+                                pitchDisplay = lprBehavior;
+                            else if (isDamp && earlyWkts)
+                                pitchDisplay = "Damp & seaming — bowlers on top";
+                            else if (isDamp)
+                                pitchDisplay = "Damp conditions · swing expected";
+                            else if (earlyWkts)
+                                pitchDisplay = `Bowling-friendly · ${pred.wickets} wkts in ${(pred.overs||0).toFixed(1)} ov`;
+                            else if (pred.pitchLabel)
+                                pitchDisplay = `${pred.pitchLabel}${pred.pitchSource ? ` · ${pred.pitchSource}` : ""}`;
+
+                            const rows = [
+                                ["Format",  pred.matchType?.toUpperCase() || "T20"],
+                                ["Phase",   pred.currentPhase || ""],
+                                ["Pitch",   pitchDisplay],
+                                ["Weather", pred.weatherImpact?.condition || ""],
+                            ];
+                            return rows.filter(([, v]) => v).map(([l, v]) => (
+                                <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+                                    <span style={{ fontSize: 11, color: C.muted }}>{l}</span>
+                                    <span style={{ fontSize: 11, fontWeight: 700, color: C.text, maxWidth: 130, textAlign: "right" }}>{v}</span>
+                                </div>
+                            ));
+                        })()}
+                        {pred.toss?.winner && pred.toss?.decision && (
                             <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9, marginTop: 4 }}>
                                 <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>TOSS</div>
-                                <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>{pred.toss.winner} won · {pred.toss.decision}</div>
+                                <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>
+                                    {cleanTeam(pred.toss.winner)} won · chose to {pred.toss.decision === "bat" ? "🏏 bat" : "🎳 field"}
+                                </div>
                             </div>
                         )}
                     </div>
