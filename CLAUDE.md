@@ -1,0 +1,121 @@
+# CricIntel Frontend — CLAUDE.md
+
+## Project
+- **Live URL:** https://www.cricintelligence.com (custom domain → Netlify)
+- **Netlify URL:** https://cricintelligence.netlify.app
+- **Repo:** https://github.com/devemmadi/cric-intelligence-terminal
+- **Deploy:** Netlify — auto-deploys on `git push origin main`
+- **Stack:** React (CRA, no TypeScript), plain JS, inline styles
+
+## API
+```js
+// src/components/shared/constants.js
+API_BASE = "https://cricintel-backend-production.up.railway.app"
+```
+Never hardcode the Railway URL anywhere else — always import from constants.js.
+
+## File Structure
+```
+src/components/
+├── shared/
+│   ├── constants.js        ← API_BASE, colors (C), IPL_TEAMS, helpers
+│   ├── TeamLogo.jsx
+│   └── MatchCard.jsx
+├── hooks/
+│   └── useMatchData.js     ← ALL API logic (fetchMatches + fetchPred)
+├── predictions/
+│   └── PredictionsTab.jsx  ← Main prediction UI (2000+ lines)
+├── matches/
+│   └── MatchesTab.jsx
+├── CricIntelligence.jsx    ← Thin shell, imports everything
+└── TrackRecord.jsx         ← Accuracy dashboard
+```
+
+## Polling Intervals (useMatchData.js)
+- Matches list: every 5s (`setInterval(fetchMatches, 5000)`)
+- Prediction: every 12s (`setInterval(fetchPred, 12000)`)
+- DO NOT change these without reason — synced with backend cache TTL
+
+## PredictionsTab.jsx — Key Components (DO NOT restructure)
+| Component | What it does |
+|---|---|
+| `HeroDecision` | Main signal card — confidence, %, Claude narrative |
+| `PredictionCallBanner` | Secondary banner |
+| `MiniTrustBlock` | Track record badge |
+| `FeaturedMatchHero` | Pre-match upcoming card |
+
+### HeroDecision — Critical Logic (DO NOT overwrite)
+```js
+// Confidence from BACKEND signal stacking — not from raw prob%
+const _confData = pred.confidenceSignals || {};
+const _confLevel = _confData.confidenceLevel || "LOW";
+// HIGH   → "🔥 BACKED — 3/3 SIGNALS AGREE" (green)
+// MEDIUM → "⏳ WAIT — 2/4 SIGNALS" (amber)
+// LOW    → "⚠️ TOO CLOSE TO CALL" (red)
+
+// Claude AI narrative — async fetch every ~3 overs
+// useEffect deps: [pred?.id, pred?.innings, Math.floor(overs/3)]
+// Calls: POST /claude-analysis with Sky Sports-style prompt
+```
+
+### Pitch Label Priority (MATCH CONTEXT section)
+Always use this order — never show static venue tag when live data available:
+1. `pred.livePitchRead.behavior` (actual ball data, conf HIGH/MEDIUM)
+2. Weather override: RAIN/THUNDER/STORM/CLOUD → "Damp conditions"
+3. Wickets override: 3+ wkts before over 10 → "Bowling-friendly · X wkts"
+4. `pred.pitchLabel` — fallback only
+
+### Data Bullets (3 reasons in HeroDecision)
+Real data only — NO generic phrases:
+- Inn 1: CRR vs venue avg RPO | striker SR vs bowler eco | next over ML projection
+- Inn 2: exact RRR vs CRR with runs needed | partnership or wickets | last 3 overs stats
+
+### Toss Banner
+```js
+// Uses pred.toss.{winner, decision} from backend
+// Only renders if BOTH winner and decision are non-empty
+// Format: "🪙 RCB WON TOSS · CHOSE TO BAT FIRST 🏏"
+// Sub-label: "Dew factor..." (if field) or "Setting the target..." (if bat)
+```
+
+## Colors (from constants.js — always import C)
+```js
+C.bg = "#080D16"      C.surface = "#111827"   C.accent = "#4A6FD4"
+C.green = "#10B981"   C.red = "#EF4444"       C.amber = "#F59E0B"
+C.gold = "#C8961E"    C.muted = "#6B7280"     C.text = "#E2E8F0"
+```
+
+## CORS (backend whitelist)
+These domains are whitelisted on backend:
+- https://cricintelligence.com
+- https://www.cricintelligence.com
+- https://cric-intelligence-terminal.vercel.app
+- http://localhost:3000
+
+If adding a new deploy URL, update CORS in app_v5.py too.
+
+## .gitignore — IMPORTANT
+`node_modules/` is in .gitignore. NEVER commit node_modules.
+History: node_modules was committed before → broke Netlify (permission denied on Linux).
+Fixed April 2026 — 38,118 files removed in cleanup commit.
+
+## Dev Workflow
+1. Make changes locally
+2. `git add <specific files>` (never `git add .` blindly)
+3. `git commit -m "..."` 
+4. `git push origin main` → Netlify auto-deploys in ~2 min
+5. Test on https://cricintelligence.netlify.app
+
+## Common Bugs Fixed
+- Netlify "react-scripts: Permission denied" → node_modules in git (FIXED)
+- Old Railway URL in build → was `web-production-91f0.up.railway.app` (FIXED, now correct)
+- "Flat pitch" showing during thunderstorm + 3 wickets → livePitchRead + weather override (FIXED)
+- Toss showing "won ·" empty → null guard added (FIXED)
+- Generic bullet phrases → replaced with real match data (FIXED)
+
+## User Preferences
+- Telugu + English mixed communication is fine
+- Push to GitHub directly — no local testing required before deploy
+- Loosely coupled code — new features = new component files
+- One file change should not break others
+- Keep PredictionsTab.jsx sections intact — don't restructure existing components
