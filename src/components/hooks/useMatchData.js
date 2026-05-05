@@ -188,7 +188,7 @@ export default function useMatchData() {
             const m = selectedMatchRef.current;
             const id = m?.matchId || m?.id;
             fetchPred(id, m?.t1 || "", m?.t2 || "");
-        }, 20000);
+        }, 12000);
         return () => clearInterval(t);
     }, [selectedMatch?.id, fetchPred]);
 
