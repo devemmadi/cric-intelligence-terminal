@@ -1752,7 +1752,14 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 {(() => {
                                     const st = selectedMatch?.rawStatus || pred?.matchStatus || "";
                                     const isEnded = selectedMatch?.status === "ENDED" || st.toLowerCase().includes("won by") || st.toLowerCase().includes(" beat ") || st.toLowerCase().includes("match tied") || st.toLowerCase().includes("no result");
-                                    const isToss = !isEnded && st && (st.toLowerCase().includes("opt to") || st.toLowerCase().includes("won the toss") || st.toLowerCase().includes("chose to"));
+                                    // Structured toss from backend
+                                    const tossData = pred?.toss || {};
+                                    const tossWinner = tossData.winner || "";
+                                    const tossDecision = tossData.decision || "";
+                                    const hasToss = !!(tossWinner && tossDecision);
+                                    // Fallback: detect toss from status text
+                                    const isTossText = !isEnded && !hasToss && st && (st.toLowerCase().includes("opt to") || st.toLowerCase().includes("won the toss") || st.toLowerCase().includes("chose to"));
+
                                     if (isEnded && st) {
                                         return (
                                             <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(0,184,148,0.18)", border: "1px solid rgba(0,184,148,0.4)", borderRadius: 20, padding: "4px 16px", marginBottom: 10 }}>
@@ -1761,7 +1768,27 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                             </div>
                                         );
                                     }
-                                    if (!isToss) return null;
+                                    if (hasToss) {
+                                        const decisionEmoji = tossDecision === "bat" ? "🏏" : "🎳";
+                                        const decisionText = tossDecision === "bat" ? "BAT FIRST" : "BOWL FIRST";
+                                        const shortWinner = cleanTeam(tossWinner);
+                                        return (
+                                            <div style={{ display: "inline-flex", flexDirection: "column", alignItems: "center", gap: 4, marginBottom: 10 }}>
+                                                <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(200,150,30,0.15)", border: "1px solid rgba(200,150,30,0.45)", borderRadius: 20, padding: "6px 16px" }}>
+                                                    <span style={{ fontSize: 15 }}>🪙</span>
+                                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                                                        <span style={{ fontSize: 12, fontWeight: 900, color: "#C8961E", letterSpacing: 0.5 }}>
+                                                            {shortWinner} WON TOSS · CHOSE TO {decisionText} {decisionEmoji}
+                                                        </span>
+                                                        <span style={{ fontSize: 9, color: "rgba(200,150,30,0.65)", letterSpacing: 0.5 }}>
+                                                            {tossDecision === "field" ? "Dew factor — chasing advantage in T20s" : "Setting the target — pitch plays now"}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                    if (!isTossText) return null;
                                     return (
                                         <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(200,150,30,0.18)", border: "1px solid rgba(200,150,30,0.4)", borderRadius: 20, padding: "4px 12px", marginBottom: 10 }}>
                                             <span style={{ fontSize: 13 }}>🪙</span>
