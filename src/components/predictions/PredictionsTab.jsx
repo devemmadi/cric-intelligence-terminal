@@ -1136,34 +1136,77 @@ Write like a Sky Sports commentator — punchy, specific, no generic phrases.`;
     const rrr = pred.requiredRunRate || 0;
     const reasons = [];
 
+    // ── Real data bullets — numbers & facts only, no generic phrases ──────────
+    const pc = pred.playerContext || {};
+    const last3Runs = pc.last3Runs || 0;
+    const last3Wkts = pc.last3Wkts || 0;
+    const last3RR   = pc.last3RR   || 0;
+    const partRuns  = pc.partnershipRuns || 0;
+    const strikerSR = pc.strikerSR || 0;
+    const bowlerEco = pc.bowlerEco || 0;
+    const nextOv    = pred.nextOvers?.[0];
+    const nextOv2   = pred.nextOvers?.[1];
+    const pressure  = pred.pressureScore || 0;
+    const phase     = pred.currentPhase || "";
+    const pitchLbl  = pred.pitchLabel || "";
+
     if (inn === 2 && pred.target > 0) {
-        // Forward-looking chase narrative
-        if (rrr > crr + 2.5) reasons.push(`${battingTeam} are falling behind — need ${rrr.toFixed(1)}/ov, scoring only ${crr.toFixed(1)} 🔴`);
-        else if (crr > rrr + 1.5) reasons.push(`${battingTeam} are cruising — scoring ${crr.toFixed(1)}/ov, need just ${rrr.toFixed(1)} 🟢`);
-        else reasons.push(`It's right on the edge — ${battingTeam} need ${rrr.toFixed(1)}/ov, scoring ${crr.toFixed(1)} ⚡`);
-        if (wktsLeft <= 2) reasons.push(`Last ${wktsLeft} wicket${wktsLeft === 1 ? "" : "s"} — one more and it's over 🎯`);
-        else if (wktsLeft <= 4) reasons.push(`Only ${wktsLeft} wickets left — tail coming in soon ⚠️`);
-        else reasons.push(`${wktsLeft} wickets still in hand — plenty of batting left`);
-        const ballsLeftOv = (ballsLeft / 6).toFixed(1);
-        if (needed <= 0) reasons.push(`Target achieved — match complete 🏆`);
-        else if (ballsLeft <= 0) reasons.push(`${needed} needed off last ball — nail-biting finish! 🎯`);
-        else if (needed <= 12 && ballsLeft >= 6) reasons.push(`Just ${needed} needed off ${ballsLeftOv} overs — should be comfortable`);
-        else if (needed > ballsLeft) reasons.push(`${needed} needed off ${ballsLeft} balls — asking rate is brutal`);
+        // Bullet 1 — RRR vs CRR with exact numbers
+        const gap = crr - rrr;
+        if (gap > 2)       reasons.push(`${battingTeam} ahead — scoring ${crr.toFixed(1)}/ov, need only ${rrr.toFixed(1)}/ov · ${needed} to win 🟢`);
+        else if (gap < -2) reasons.push(`${battingTeam} behind — need ${rrr.toFixed(1)}/ov, scoring ${crr.toFixed(1)}/ov · ${needed} off ${ballsLeft} balls 🔴`);
+        else               reasons.push(`Neck and neck — ${battingTeam} need ${rrr.toFixed(1)}/ov, scoring ${crr.toFixed(1)}/ov · ${needed} needed ⚡`);
+
+        // Bullet 2 — Wickets + partnership fact
+        if (wktsLeft <= 2)      reasons.push(`Only ${wktsLeft} wicket${wktsLeft === 1 ? "" : "s"} left — tail in, game effectively over 🎯`);
+        else if (partRuns > 30) reasons.push(`Current partnership: ${partRuns} runs — dangerous pair at crease, building pressure on ${t1}`);
+        else if (wktsLeft <= 4) reasons.push(`${wktsLeft} wickets remaining — key batters still to come, but margin thin`);
+        else                    reasons.push(`${wktsLeft} wickets in hand — ${battingTeam} have resources, game alive`);
+
+        // Bullet 3 — Last 3 overs momentum OR next over prediction
+        if (last3Runs > 0 && last3Wkts > 0)
+            reasons.push(`Last 3 overs: ${last3Runs} runs, ${last3Wkts} wicket${last3Wkts > 1 ? "s" : ""} — momentum shifting to ${t1}`);
+        else if (last3Runs > 0 && last3RR > rrr + 1)
+            reasons.push(`Last 3 overs: ${last3Runs} runs at ${last3RR.toFixed(1)}/ov — above required rate, chasing well 🔥`);
+        else if (last3Runs > 0 && last3RR < rrr - 1.5)
+            reasons.push(`Last 3 overs: only ${last3Runs} runs at ${last3RR.toFixed(1)}/ov — momentum with ${t1} now`);
+        else if (nextOv)
+            reasons.push(`Over ${nextOv.over} projection: ${nextOv.runRange} runs expected · O/U line ${nextOv.ouLine}`);
+        else
+            reasons.push(pressure > 65 ? `Pressure index ${pressure}/100 — ${battingTeam} under serious stress` : `Match in balance — pressure index ${pressure}/100`);
+
     } else if (inn === 1 && crr > 0) {
-        const vsAvg = pred.momentum || 0;
-        if (vsAvg > 0.5) reasons.push(`${battingTeam} are batting above par — building a big total 📈`);
-        else if (vsAvg < -0.5) reasons.push(`${battingTeam} are struggling — below expected run rate 📉`);
-        else reasons.push(`${battingTeam} are on track — even contest so far ⚖️`);
-        const pitch = (pred.pitchLabel || "").toLowerCase();
-        if (pitch.includes("bowl") || pitch.includes("spin") || pitch.includes("seam")) reasons.push("Pitch helping bowlers — expect pressure to build");
-        else if (pitch.includes("bat") || pitch.includes("flat")) reasons.push("Flat pitch — batters in total control today");
-        if (pred.currentPhase === "POWERPLAY") reasons.push("Powerplay: next 2 overs set the tone for the chase");
-        else if (pred.currentPhase === "DEATH OVERS") reasons.push("Death overs — finishers can swing this either way");
-        else if (pred.currentPhase === "MIDDLE OVERS") reasons.push("Middle overs — a wicket now changes everything");
+        // Bullet 1 — CRR vs venue average with exact numbers
+        const momentum = pred.momentum || 0;
+        const venueAvg = (pred.venueHistory?.avg_first_innings) || 0;
+        if (venueAvg > 0)
+            reasons.push(`${battingTeam} scoring ${crr.toFixed(1)}/ov vs ${(venueAvg / 20).toFixed(1)}/ov venue avg — ${momentum > 0.5 ? "above par 📈" : momentum < -0.5 ? "below par 📉" : "on par ⚖️"}`);
+        else
+            reasons.push(`${battingTeam} at ${crr.toFixed(1)}/ov — ${momentum > 0.5 ? "above expected rate 📈" : momentum < -0.5 ? "below expected rate 📉" : "on expected rate ⚖️"}`);
+
+        // Bullet 2 — Striker SR + bowler economy (real ball-by-ball data)
+        if (strikerSR > 0 && bowlerEco > 0)
+            reasons.push(`Striker SR ${strikerSR.toFixed(0)} vs bowler eco ${bowlerEco.toFixed(1)} — ${strikerSR > bowlerEco * 10 ? "batter dominating" : bowlerEco < 7 ? "bowler on top" : "even battle"}`);
+        else if (pitchLbl)
+            reasons.push(`Pitch: ${pitchLbl} — ${pitchLbl.toLowerCase().includes("flat") || pitchLbl.toLowerCase().includes("bat") ? "batting-friendly, big total possible" : "bowlers in it, 160 could be competitive"}`);
+        else
+            reasons.push(pressure > 65 ? `Pressure index ${pressure}/100 — ${battingTeam} struggling` : `Pressure index ${pressure}/100 — comfortable batting`);
+
+        // Bullet 3 — Next over prediction (actual ML output, not generic phase text)
+        if (nextOv && nextOv2)
+            reasons.push(`Next 2 overs projection: ${nextOv.runRange} then ${nextOv2.runRange} runs · ${phase}`);
+        else if (nextOv)
+            reasons.push(`Over ${nextOv.over}: AI projects ${nextOv.runRange} runs · O/U ${nextOv.ouLine} · ${Math.round(nextOv.confidence || 0)}% confidence`);
+        else if (last3Runs > 0)
+            reasons.push(`Last 3 overs: ${last3Runs} runs, ${last3Wkts} wicket${last3Wkts !== 1 ? "s" : ""} — recent run rate ${last3RR.toFixed(1)}/ov`);
+        else
+            reasons.push(`${phase} — pressure index ${pressure}/100`);
     }
-    while (reasons.length < 3) {
-        if (pred.nextOvers?.[0]) { reasons.push(`Next over: ${pred.nextOvers[0].runRange} runs expected`); break; }
-        reasons.push(pred.pressureScore > 65 ? "Batting under heavy pressure" : "Match developing normally");
+
+    // Fallback if still empty
+    while (reasons.length < 2) {
+        if (nextOv) { reasons.push(`Over ${nextOv.over}: ${nextOv.runRange} runs projected · O/U ${nextOv.ouLine}`); break; }
+        reasons.push(`Pressure index ${pressure}/100 — match ${pressure > 65 ? "under pressure" : "balanced"}`);
         break;
     }
 
