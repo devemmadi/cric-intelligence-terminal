@@ -4,6 +4,7 @@ import { C, API_BASE, cleanTeam, IPL_TEAMS, PSL_TEAMS, getLeague } from "../shar
 import TeamLogo from "../shared/TeamLogo";
 import { MatchPill } from "../shared/MatchCard";
 import LiveProbabilityGraph from "./LiveProbabilityGraph";
+import LiveEngine from "./LiveEngine";
 
 // ─── Small sub-components (only used inside predictions) ──────────────────────
 
@@ -1718,6 +1719,7 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSelect, pred, liveStatus, isFirstLoad, isPredLoading }) {
     const [activeOver, setActiveOver] = useState(0);
+    const [activeView, setActiveView] = useState("prediction"); // "prediction" | "liveengine"
     // Backend aiProbability: innings 1 = team1's win %, innings 2 = chasing team2's win %
     // Normalize to always represent team1's win probability for consistent display
     const _rawProb = pred?.aiProbability ?? 50;
@@ -1779,7 +1781,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     <NoMatchesScreen upcomingMatches={liveMatches.filter(m => m.status === "UPCOMING")} />
                 )}
 
-                {/* Compact trust strip — shown when a match IS loaded */}
+                {/* Compact trust strip + view switcher — shown when a match IS loaded */}
                 {(selectedMatch || pred) && (
                     <div style={{ background: "rgba(255,255,255,0.03)", borderBottom: `1px solid ${C.border}`, padding: "6px 20px", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                         <span style={{ fontSize: 11, color: "#10B981", fontWeight: 700 }}>80%+ accurate</span>
@@ -1787,6 +1789,19 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         <span style={{ fontSize: 11, color: C.muted }}>45+ verified IPL 2026 predictions</span>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
                         <span style={{ fontSize: 11, color: C.muted }}>Updated every ball</span>
+                        {/* View switcher — right side */}
+                        <div style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
+                            <button className={`tab-btn${activeView === "prediction" ? " on" : ""}`}
+                                onClick={() => setActiveView("prediction")}
+                                style={{ fontSize: 11, padding: "4px 10px" }}>
+                                📊 Prediction
+                            </button>
+                            <button className={`tab-btn${activeView === "liveengine" ? " on" : ""}`}
+                                onClick={() => setActiveView("liveengine")}
+                                style={{ fontSize: 11, padding: "4px 10px" }}>
+                                ⚡ Live Engine
+                            </button>
+                        </div>
                     </div>
                 )}
 
@@ -1902,7 +1917,14 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 ))}
                             </div>
                         )}
-                        {pred && <div style={{ padding: "16px" }}>
+                        {/* ── LIVE ENGINE VIEW ── */}
+                        {activeView === "liveengine" && (
+                            <div style={{ padding: "0 16px" }}>
+                                <LiveEngine pred={pred} />
+                            </div>
+                        )}
+
+                        {pred && activeView === "prediction" && <div style={{ padding: "16px" }}>
                             {/* TRUST BAR */}
                             <div style={{ display: "flex", gap: 8, flexWrap: "wrap", paddingBottom: 12 }}>
                                 {[
