@@ -84,6 +84,25 @@ export default function LiveEngine({ pred }) {
         return () => clearInterval(timerRef.current);
     }, [fetchPure]);
 
+    // Match not started or no data
+    const overs = pred?.overs || 0;
+    const isUpcoming = !pred?.id || overs === 0;
+
+    if (isUpcoming) return (
+        <div style={{ padding: 40, textAlign: "center" }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>⏳</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 8 }}>
+                Match hasn't started yet
+            </div>
+            <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6, maxWidth: 280, margin: "0 auto" }}>
+                Live Engine activates once the match begins. It reads real ball-by-ball data to predict the next 3 overs using pure live math — no career stats, no models.
+            </div>
+            <div style={{ marginTop: 20, padding: "10px 16px", background: "rgba(74,111,212,0.1)", border: `1px solid rgba(74,111,212,0.2)`, borderRadius: 10, fontSize: 12, color: C.accent }}>
+                ⚡ Will auto-load when {pred?.team1 || "the match"} vs {pred?.team2 || ""} starts
+            </div>
+        </div>
+    );
+
     if (!pred?.id) return (
         <div style={{ padding: 32, textAlign: "center", color: C.muted, fontSize: 14 }}>
             Select a live match to see Live Engine
