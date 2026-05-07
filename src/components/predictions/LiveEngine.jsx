@@ -2,56 +2,55 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { API_BASE, C } from "../shared/constants";
 
-// Wicket risk color
-const riskColor = r => r === "HIGH" ? C.red : r === "MEDIUM" ? C.amber : C.green;
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-// Run range bar — visual width relative to max expected
-function RunBar({ lo, hi, expected, max = 20 }) {
-    const pctLo  = Math.round((lo  / max) * 100);
-    const pctHi  = Math.round((hi  / max) * 100);
-    const pctMid = Math.round((expected / max) * 100);
-    return (
-        <div style={{ position: "relative", height: 6, background: "rgba(255,255,255,0.08)", borderRadius: 4, margin: "8px 0" }}>
-            {/* range band */}
-            <div style={{
-                position: "absolute", left: `${pctLo}%`, width: `${pctHi - pctLo}%`,
-                height: "100%", background: "rgba(74,111,212,0.40)", borderRadius: 4,
-            }} />
-            {/* midpoint dot */}
-            <div style={{
-                position: "absolute", left: `${pctMid}%`, top: "50%",
-                transform: "translate(-50%,-50%)",
-                width: 10, height: 10, borderRadius: "50%",
-                background: C.accent, border: "2px solid #fff",
-                boxShadow: `0 0 8px ${C.accent}`,
-            }} />
-        </div>
-    );
+function getMood(pitchBehavior, trend) {
+    const pb = (pitchBehavior || "").toLowerCase();
+    if (pb.includes("flat") || pb.includes("bat dominant"))
+        return { emoji: "🔥", label: "Batters are dominating!", color: "#F59E0B" };
+    if (pb.includes("bowling dominant"))
+        return { emoji: "💪", label: "Bowlers are in full control", color: C.green };
+    if (pb.includes("bowlers on top"))
+        return { emoji: "😤", label: "Bowlers are winning this battle", color: C.green };
+    return { emoji: "⚔️", label: "Even contest — could go either way", color: C.accent };
 }
 
-// Phase snapshot pill
-function PhasePill({ phase, isLatest }) {
-    const border = isLatest ? C.gold : "rgba(255,255,255,0.10)";
-    const bg     = isLatest ? "rgba(200,150,30,0.12)" : "rgba(255,255,255,0.04)";
-    return (
-        <div style={{
-            padding: "8px 12px", borderRadius: 10,
-            border: `1px solid ${border}`, background: bg,
-            minWidth: 70, textAlign: "center",
-        }}>
-            <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>{phase.label}</div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: C.text }}>{phase.rpo}</div>
-            <div style={{ fontSize: 10, color: C.muted }}>rpo</div>
-            {phase.wkts > 0 && (
-                <div style={{ fontSize: 10, color: C.red, marginTop: 2 }}>{phase.wkts}w</div>
-            )}
-        </div>
-    );
+function getStrikerLabel(sr, balls) {
+    if (balls < 6) return { text: "Just started", color: C.muted };
+    if (sr >= 200) return { text: "ON FIRE ⚡", color: "#F97316" };
+    if (sr >= 150) return { text: "Scoring very fast 🔥", color: C.amber };
+    if (sr >= 120) return { text: "Scoring well 🏏", color: C.green };
+    if (sr >= 80)  return { text: "Building slowly 🧱", color: C.muted };
+    return { text: "Struggling 🐢", color: C.red };
 }
+
+function getBowlerLabel(eco, overs) {
+    if (overs < 1) return { text: "Just started", color: C.muted };
+    if (eco <= 6)  return { text: "Very tight 🔒", color: C.green };
+    if (eco <= 8)  return { text: "Good spell 👍", color: C.green };
+    if (eco <= 10) return { text: "Getting hit a bit 😬", color: C.amber };
+    return { text: "Expensive 💸", color: C.red };
+}
+
+function getWicketLabel(pct, risk) {
+    if (risk === "HIGH" || pct > 40)  return { text: "DANGER! Wicket very likely 🔴", color: C.red };
+    if (risk === "MEDIUM" || pct > 20) return { text: "Wicket possible 🟡", color: C.amber };
+    return { text: "Safe — unlikely to get out 🟢", color: C.green };
+}
+
+function getRunsLabel(lo, hi) {
+    const mid = Math.round((lo + hi) / 2);
+    if (mid >= 16) return "💥 Big over coming!";
+    if (mid >= 12) return "🏃 Solid scoring";
+    if (mid >= 8)  return "⚖️ Normal over";
+    return "🔒 Tight over";
+}
+
+// ── Main Component ────────────────────────────────────────────────────────────
 
 export default function LiveEngine({ pred }) {
-    const [data,    setData]    = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [data,      setData]      = useState(null);
+    const [loading,   setLoading]   = useState(false);
     const [lastFetch, setLastFetch] = useState(0);
     const timerRef = useRef(null);
 
@@ -76,7 +75,6 @@ export default function LiveEngine({ pred }) {
         setLoading(false);
     }, [pred?.id, pred?.innings, pred?.overs]);
 
-    // Fetch on mount + when overs change + every 12s
     useEffect(() => {
         fetchPure();
         clearInterval(timerRef.current);
@@ -84,33 +82,38 @@ export default function LiveEngine({ pred }) {
         return () => clearInterval(timerRef.current);
     }, [fetchPure]);
 
-    // Match not started or no data
-    const overs = pred?.overs || 0;
+    const overs      = pred?.overs || 0;
     const isUpcoming = !pred?.id || overs === 0;
 
+    // ── Not started yet ──
     if (isUpcoming) return (
         <div style={{ padding: 40, textAlign: "center" }}>
-            <div style={{ fontSize: 36, marginBottom: 12 }}>⏳</div>
-            <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 8 }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>⏳</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: C.text, marginBottom: 8 }}>
                 Match hasn't started yet
             </div>
-            <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.6, maxWidth: 280, margin: "0 auto" }}>
-                Live Engine activates once the match begins. It reads real ball-by-ball data to predict the next 3 overs using pure live math — no career stats, no models.
+            <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7, maxWidth: 280, margin: "0 auto" }}>
+                Once the match begins, we'll predict the next 3 overs using live ball-by-ball data — no guessing, no averages.
             </div>
-            <div style={{ marginTop: 20, padding: "10px 16px", background: "rgba(74,111,212,0.1)", border: `1px solid rgba(74,111,212,0.2)`, borderRadius: 10, fontSize: 12, color: C.accent }}>
-                ⚡ Will auto-load when {pred?.team1 || "the match"} vs {pred?.team2 || ""} starts
+            <div style={{
+                marginTop: 20, padding: "10px 16px",
+                background: "rgba(74,111,212,0.1)",
+                border: `1px solid rgba(74,111,212,0.2)`,
+                borderRadius: 10, fontSize: 12, color: C.accent,
+            }}>
+                ⚡ Auto-loads when {pred?.team1 || "the match"} vs {pred?.team2 || ""} starts
             </div>
         </div>
     );
 
     if (!pred?.id) return (
         <div style={{ padding: 32, textAlign: "center", color: C.muted, fontSize: 14 }}>
-            Select a live match to see Live Engine
+            Select a live match to see predictions
         </div>
     );
 
-    const phases = data?.phases || [];
-    const preds  = data?.predictions || [];
+    const preds = data?.predictions || [];
+    const mood  = getMood(data?.pitchBehavior, data?.trend);
 
     return (
         <div style={{ padding: "16px 0", animation: "fadeUp .35s forwards" }}>
@@ -140,194 +143,183 @@ export default function LiveEngine({ pred }) {
                         padding: "4px 8px", borderRadius: 6,
                         background: "rgba(255,255,255,0.05)",
                     }}>
-                        {lastFetch ? `Updated ${Math.round((Date.now()-lastFetch)/1000)}s ago` : "Loading..."}
+                        {lastFetch ? `Updated ${Math.round((Date.now() - lastFetch) / 1000)}s ago` : "Loading..."}
                     </div>
                 </div>
             </div>
 
-            {/* ── Live Pitch Behavior (inferred from match, no pre-match label) ── */}
+            {/* ── Match Mood — big simple verdict ── */}
             {data && (
                 <div style={{
-                    background: C.surface, border: `1px solid rgba(255,255,255,0.07)`,
-                    borderRadius: 14, padding: "14px 16px", marginBottom: 14,
-                    borderLeft: `3px solid ${data.pitchColor}`,
+                    background: C.surface,
+                    border: `1px solid rgba(255,255,255,0.07)`,
+                    borderLeft: `4px solid ${mood.color}`,
+                    borderRadius: 14, padding: "16px 18px",
+                    marginBottom: 14,
+                    display: "flex", alignItems: "center", gap: 14,
                 }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                        <div>
-                            <div style={{ fontSize: 10, color: C.muted, marginBottom: 4, letterSpacing: 1 }}>
-                                PITCH BEHAVIOR (from live match)
-                            </div>
-                            <div style={{ fontSize: 15, fontWeight: 700, color: data.pitchColor }}>
-                                {data.pitchBehavior}
-                            </div>
-                            <div style={{ fontSize: 12, color: C.muted, marginTop: 3 }}>
-                                {data.wicketBehavior}
-                            </div>
+                    <div style={{ fontSize: 36 }}>{mood.emoji}</div>
+                    <div>
+                        <div style={{ fontSize: 11, color: C.muted, marginBottom: 3, letterSpacing: 1 }}>
+                            WHAT'S HAPPENING RIGHT NOW
                         </div>
-                        <div style={{ textAlign: "right" }}>
-                            <div style={{ fontSize: 10, color: C.muted }}>Trend</div>
-                            <div style={{ fontSize: 13, fontWeight: 600, color: C.text }}>
-                                {data.trendLabel}
-                            </div>
-                            <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>
-                                Base {data.baseRPO} rpo
-                            </div>
+                        <div style={{ fontSize: 17, fontWeight: 800, color: mood.color }}>
+                            {mood.label}
+                        </div>
+                        <div style={{ fontSize: 12, color: C.muted, marginTop: 3 }}>
+                            {data.trendLabel} · {data.wicketBehavior}
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* ── Phase Snapshots (pitch behavior by 3-over chunks) ── */}
-            {phases.length > 0 && (
-                <div style={{ marginBottom: 14 }}>
-                    <div style={{ fontSize: 10, color: C.muted, letterSpacing: 1, marginBottom: 8 }}>
-                        PHASE BREAKDOWN (pitch changing every 3 overs)
-                    </div>
-                    <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }}>
-                        {phases.map((ph, i) => (
-                            <PhasePill key={ph.label} phase={ph} isLatest={i === phases.length - 1} />
-                        ))}
-                        {/* Trend arrow between phases */}
-                    </div>
-                    {phases.length >= 2 && (
-                        <div style={{ fontSize: 11, color: C.muted, marginTop: 6 }}>
-                            {(() => {
-                                const diff = phases[phases.length-1].rpo - phases[phases.length-2].rpo;
-                                if (diff > 1.5)  return `📈 Last phase +${diff.toFixed(1)} rpo — pitch flattening`;
-                                if (diff < -1.5) return `📉 Last phase ${diff.toFixed(1)} rpo — bowlers taking grip`;
-                                return `➡ Phase-to-phase pace steady (±${Math.abs(diff).toFixed(1)} rpo)`;
-                            })()}
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* ── Striker + Bowler THIS match factors ── */}
+            {/* ── Striker + Bowler — plain English ── */}
             {data && (data.striker || data.bowler) && (
-                <div style={{
-                    display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14,
-                }}>
-                    {data.striker && (
-                        <div style={{
-                            background: "rgba(255,255,255,0.04)", borderRadius: 12,
-                            border: "1px solid rgba(255,255,255,0.07)", padding: "10px 12px",
-                        }}>
-                            <div style={{ fontSize: 10, color: C.muted, marginBottom: 4 }}>STRIKER THIS INNINGS</div>
-                            <div style={{ fontSize: 14, fontWeight: 700, color: C.text }}>{data.striker.name}</div>
-                            <div style={{ fontSize: 20, fontWeight: 800, color: data.striker.sr >= 150 ? C.green : data.striker.sr >= 100 ? C.amber : C.red }}>
-                                SR {data.striker.sr}
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 14 }}>
+
+                    {data.striker && (() => {
+                        const label = getStrikerLabel(data.striker.sr, data.striker.balls);
+                        return (
+                            <div style={{
+                                background: "rgba(255,255,255,0.04)", borderRadius: 12,
+                                border: "1px solid rgba(255,255,255,0.07)", padding: "12px 14px",
+                            }}>
+                                <div style={{ fontSize: 10, color: C.muted, marginBottom: 4 }}>BATTER</div>
+                                <div style={{ fontSize: 14, fontWeight: 700, color: C.text, marginBottom: 2 }}>
+                                    {data.striker.name}
+                                </div>
+                                <div style={{ fontSize: 13, fontWeight: 700, color: label.color, marginBottom: 4 }}>
+                                    {label.text}
+                                </div>
+                                <div style={{ fontSize: 12, color: C.muted }}>
+                                    {data.striker.runs} runs · {data.striker.balls} balls
+                                </div>
+                                <div style={{ fontSize: 12, color: C.muted }}>
+                                    SR {data.striker.sr} this innings
+                                </div>
                             </div>
-                            <div style={{ fontSize: 11, color: C.muted }}>{data.striker.runs} off {data.striker.balls} balls</div>
-                            <div style={{ fontSize: 10, color: C.muted, marginTop: 3 }}>
-                                Factor: {data.striker.factor > 1 ? "+" : ""}{((data.striker.factor - 1)*100).toFixed(0)}% on base
+                        );
+                    })()}
+
+                    {data.bowler && (() => {
+                        const label = getBowlerLabel(data.bowler.eco, data.bowler.overs);
+                        return (
+                            <div style={{
+                                background: "rgba(255,255,255,0.04)", borderRadius: 12,
+                                border: "1px solid rgba(255,255,255,0.07)", padding: "12px 14px",
+                            }}>
+                                <div style={{ fontSize: 10, color: C.muted, marginBottom: 4 }}>BOWLER</div>
+                                <div style={{ fontSize: 14, fontWeight: 700, color: C.text, marginBottom: 2 }}>
+                                    {data.bowler.name}
+                                </div>
+                                <div style={{ fontSize: 13, fontWeight: 700, color: label.color, marginBottom: 4 }}>
+                                    {label.text}
+                                </div>
+                                <div style={{ fontSize: 12, color: C.muted }}>
+                                    {data.bowler.eco} runs/over this spell
+                                </div>
+                                <div style={{ fontSize: 12, color: C.muted }}>
+                                    {data.bowler.wickets} wickets in {data.bowler.overs} overs
+                                </div>
                             </div>
-                        </div>
-                    )}
-                    {data.bowler && (
-                        <div style={{
-                            background: "rgba(255,255,255,0.04)", borderRadius: 12,
-                            border: "1px solid rgba(255,255,255,0.07)", padding: "10px 12px",
-                        }}>
-                            <div style={{ fontSize: 10, color: C.muted, marginBottom: 4 }}>BOWLER THIS SPELL</div>
-                            <div style={{ fontSize: 14, fontWeight: 700, color: C.text }}>{data.bowler.name}</div>
-                            <div style={{ fontSize: 20, fontWeight: 800, color: data.bowler.eco <= 6 ? C.green : data.bowler.eco <= 9 ? C.amber : C.red }}>
-                                {data.bowler.eco} eco
-                            </div>
-                            <div style={{ fontSize: 11, color: C.muted }}>{data.bowler.wickets}w in {data.bowler.overs} ov</div>
-                            <div style={{ fontSize: 10, color: C.muted, marginTop: 3 }}>
-                                Factor: {data.bowler.factor < 1 ? "" : "+"}{((data.bowler.factor - 1)*100).toFixed(0)}% on base
-                            </div>
-                        </div>
-                    )}
+                        );
+                    })()}
                 </div>
             )}
 
-            {/* ── Next 3 Overs Predictions ── */}
-            <div style={{ fontSize: 10, color: C.muted, letterSpacing: 1, marginBottom: 8 }}>
-                NEXT 3 OVERS — PURE LIVE MATH
-            </div>
-
+            {/* ── Next 3 Overs — simple cards ── */}
             {preds.length === 0 && !loading && (
                 <div style={{ textAlign: "center", color: C.muted, fontSize: 13, padding: 24 }}>
-                    {data ? "Match complete or insufficient live data" : "Fetching live data..."}
+                    {data ? "Match complete or not enough live data yet" : "Fetching live data..."}
                 </div>
             )}
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                {preds.map((ov, i) => (
-                    <div key={ov.over} style={{
-                        background: C.surface,
-                        border: `1px solid ${i === 0 ? C.accent : "rgba(255,255,255,0.07)"}`,
-                        borderRadius: 14, padding: "14px 16px",
-                        boxShadow: i === 0 ? `0 0 20px rgba(74,111,212,0.12)` : "none",
-                    }}>
-                        {/* Row 1: over label + confidence */}
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <div style={{
-                                    fontSize: 11, fontWeight: 700, color: "#fff",
-                                    background: i === 0 ? C.accent : "rgba(255,255,255,0.12)",
-                                    padding: "3px 9px", borderRadius: 20,
-                                }}>
-                                    {ov.label}
-                                </div>
-                                <div style={{ fontSize: 10, color: C.muted }}>{ov.phase}</div>
-                            </div>
-                            <div style={{ fontSize: 10, color: C.muted }}>
-                                {ov.confidence}% conf
-                            </div>
-                        </div>
-
-                        {/* Row 2: runs expected */}
-                        <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
-                            <div style={{ fontSize: 28, fontWeight: 900, color: C.text, lineHeight: 1 }}>
-                                {ov.range}
-                            </div>
-                            <div style={{ fontSize: 12, color: C.muted }}>runs expected</div>
-                        </div>
-
-                        {/* Run bar */}
-                        <RunBar lo={ov.low} hi={ov.high} expected={ov.expectedRuns} />
-
-                        {/* Row 3: wicket probability */}
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                                <div style={{
-                                    width: 8, height: 8, borderRadius: "50%",
-                                    background: riskColor(ov.wicketRisk),
-                                }} />
-                                <div style={{ fontSize: 12, color: C.muted }}>
-                                    Wicket: <span style={{ color: riskColor(ov.wicketRisk), fontWeight: 600 }}>
-                                        {ov.wicketPct}% ({ov.wicketRisk})
-                                    </span>
-                                </div>
-                            </div>
-                            {ov.factors.length > 0 && (
-                                <div style={{ fontSize: 10, color: C.muted, textAlign: "right", maxWidth: 140 }}>
-                                    {ov.factors[0]}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Second factor if present */}
-                        {ov.factors.length > 1 && (
-                            <div style={{ fontSize: 10, color: C.muted, marginTop: 4 }}>
-                                {ov.factors[1]}
-                            </div>
-                        )}
+            {preds.length > 0 && (
+                <>
+                    <div style={{ fontSize: 11, color: C.muted, letterSpacing: 1, marginBottom: 10 }}>
+                        WHAT TO EXPECT NEXT
                     </div>
-                ))}
-            </div>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                        {preds.map((ov, i) => {
+                            const wktLabel  = getWicketLabel(ov.wicketPct, ov.wicketRisk);
+                            const runsLabel = getRunsLabel(ov.low, ov.high);
+                            const isNext    = i === 0;
+                            return (
+                                <div key={ov.over} style={{
+                                    background: C.surface,
+                                    border: `1px solid ${isNext ? C.accent : "rgba(255,255,255,0.07)"}`,
+                                    borderRadius: 14, padding: "14px 16px",
+                                    boxShadow: isNext ? `0 0 20px rgba(74,111,212,0.12)` : "none",
+                                }}>
+                                    {/* Over label */}
+                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                            <div style={{
+                                                fontSize: 11, fontWeight: 700, color: "#fff",
+                                                background: isNext ? C.accent : "rgba(255,255,255,0.12)",
+                                                padding: "3px 10px", borderRadius: 20,
+                                            }}>
+                                                {ov.label}
+                                            </div>
+                                            {isNext && (
+                                                <div style={{
+                                                    fontSize: 10, color: C.green, fontWeight: 600,
+                                                    background: "rgba(16,185,129,0.12)",
+                                                    padding: "2px 7px", borderRadius: 10,
+                                                }}>
+                                                    NEXT UP
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div style={{ fontSize: 11, color: C.muted }}>
+                                            {ov.confidence}% sure
+                                        </div>
+                                    </div>
 
-            {/* ── Footer note ── */}
+                                    {/* Big runs number */}
+                                    <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 6 }}>
+                                        <div style={{ fontSize: 32, fontWeight: 900, color: C.text, lineHeight: 1 }}>
+                                            {ov.range}
+                                        </div>
+                                        <div style={{ fontSize: 13, color: C.muted }}>runs expected</div>
+                                    </div>
+
+                                    {/* Simple run label */}
+                                    <div style={{ fontSize: 13, color: C.amber, fontWeight: 600, marginBottom: 10 }}>
+                                        {runsLabel}
+                                    </div>
+
+                                    {/* Wicket line */}
+                                    <div style={{
+                                        padding: "8px 12px", borderRadius: 10,
+                                        background: "rgba(255,255,255,0.03)",
+                                        border: `1px solid rgba(255,255,255,0.06)`,
+                                        fontSize: 13, color: wktLabel.color, fontWeight: 600,
+                                    }}>
+                                        {wktLabel.text}
+                                    </div>
+
+                                    {/* Factors in plain English */}
+                                    {ov.factors.length > 0 && (
+                                        <div style={{ fontSize: 11, color: C.muted, marginTop: 8, lineHeight: 1.5 }}>
+                                            📊 {ov.factors.join(" · ")}
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
+                    </div>
+                </>
+            )}
+
+            {/* ── Simple footer ── */}
             <div style={{
                 marginTop: 16, padding: "10px 14px", borderRadius: 10,
-                background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)",
-                fontSize: 10, color: C.muted, lineHeight: 1.6,
+                background: "rgba(255,255,255,0.03)",
+                border: "1px solid rgba(255,255,255,0.06)",
+                fontSize: 11, color: C.muted, lineHeight: 1.6,
             }}>
-                🔬 <strong style={{ color: "rgba(255,255,255,0.4)" }}>How this works:</strong> Uses only what's happening RIGHT NOW —
-                last 3 overs scoring rate (weighted), striker SR this innings, bowler eco this spell,
-                and phase trend detection. No historical averages. No career stats. Match tells us what the pitch is doing.
+                ⚡ <strong style={{ color: "rgba(255,255,255,0.4)" }}>How this works:</strong> We watch every ball being bowled right now — how fast the batter is hitting, how well the bowler is bowling, and what the pitch is doing — and predict what happens next.
             </div>
         </div>
     );

@@ -31,7 +31,8 @@ src/components/
 ├── hooks/
 │   └── useMatchData.js     ← ALL API logic (fetchMatches + fetchPred)
 ├── predictions/
-│   └── PredictionsTab.jsx  ← Main prediction UI (2000+ lines)
+│   ├── PredictionsTab.jsx  ← Main prediction UI (2000+ lines)
+│   └── LiveEngine.jsx      ← Next 3 overs live prediction panel
 ├── matches/
 │   └── MatchesTab.jsx
 ├── CricIntelligence.jsx    ← Thin shell, imports everything
@@ -113,12 +114,30 @@ Fixed April 2026 — 38,118 files removed in cleanup commit.
 4. `git push origin main` → Netlify auto-deploys in ~2 min
 5. Test on https://cricintelligence.netlify.app
 
+## LiveEngine.jsx — Plain English UX (redesigned May 2026)
+Calls `GET /pure-predict/{id}` every 12s. Translates raw numbers into human labels:
+
+| Helper | Input | Output example |
+|---|---|---|
+| `getMood(pitchBehavior, trend)` | "Flat pitch" | 🔥 Batters are dominating! |
+| `getStrikerLabel(sr, balls)` | sr=210, balls=20 | ON FIRE ⚡ |
+| `getBowlerLabel(eco, overs)` | eco=5.2, overs=2 | Very tight 🔒 |
+| `getWicketLabel(pct, risk)` | pct=45 | DANGER! Wicket very likely 🔴 |
+| `getRunsLabel(lo, hi)` | lo=14, hi=18 | 💥 Big over coming! |
+
+Key sections:
+- **"WHAT'S HAPPENING RIGHT NOW"** — mood card (replaces technical "PITCH BEHAVIOR")
+- **BATTER / BOWLER cards** — plain English performance labels
+- **"WHAT TO EXPECT NEXT"** — 3 over cards with big run number + wicket risk line
+- Polling: 12s (same as useMatchData.js — DO NOT change)
+
 ## Common Bugs Fixed
 - Netlify "react-scripts: Permission denied" → node_modules in git (FIXED)
 - Old Railway URL in build → was `web-production-91f0.up.railway.app` (FIXED, now correct)
 - "Flat pitch" showing during thunderstorm + 3 wickets → livePitchRead + weather override (FIXED)
 - Toss showing "won ·" empty → null guard added (FIXED)
 - Generic bullet phrases → replaced with real match data (FIXED)
+- LiveEngine showing raw numbers/factors → redesigned to plain English labels (FIXED May 2026)
 
 ## User Preferences
 - Telugu + English mixed communication is fine
