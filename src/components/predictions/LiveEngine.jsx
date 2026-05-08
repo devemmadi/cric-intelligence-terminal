@@ -83,7 +83,9 @@ export default function LiveEngine({ pred }) {
     }, [fetchPure]);
 
     const overs      = pred?.overs || 0;
-    const isUpcoming = !pred?.id || overs === 0;
+    // Match is live if: innings 2 started (target set) OR overs > 0
+    const matchLive  = (pred?.target > 0) || (pred?.innings > 1) || overs > 0;
+    const isUpcoming = !pred?.id || !matchLive;
 
     // ── Not started yet ──
     if (isUpcoming) return (
