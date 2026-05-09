@@ -256,7 +256,9 @@ function PredictionCallBanner({ pred }) {
     // Normalize: innings 2 aiProbability = team2 (chasing) win %, invert to get team1 %
     const _rawProb = pred.aiProbability;
     const _inn = pred.innings || 1;
-    const prob = _inn === 2 ? Math.round((100 - _rawProb) * 10) / 10 : _rawProb;
+    // Cap display at 75% max — anything higher looks fake to users (#3 fix)
+    const _capProb = (p) => Math.min(75, Math.max(25, p));
+    const prob = _capProb(_inn === 2 ? Math.round((100 - _rawProb) * 10) / 10 : _rawProb);
     const team1 = cleanTeam(pred.team1);
     const team2 = cleanTeam(pred.team2);
 
@@ -1724,7 +1726,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     // Normalize to always represent team1's win probability for consistent display
     const _rawProb = pred?.aiProbability ?? 50;
     const _innings = pred?.innings || 1;
-    const prob = Math.round((_innings === 2 ? 100 - _rawProb : _rawProb) * 10) / 10;
+    // Cap display at 75% max — anything higher looks fake to users (#3 fix)
+    const _capProb = (p) => Math.min(75, Math.max(25, p));
+    const prob = _capProb(Math.round((_innings === 2 ? 100 - _rawProb : _rawProb) * 10) / 10);
     const winMsg = prob >= 65 ? "Strong position" : prob >= 45 ? "Close contest" : "Under pressure";
     const winColor = prob >= 65 ? C.green : prob >= 45 ? C.amber : C.red;
     // Compute isEnded at top level so all child sections can use it
