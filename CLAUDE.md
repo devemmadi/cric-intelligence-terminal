@@ -138,6 +138,11 @@ Key sections:
 - Toss showing "won ·" empty → null guard added (FIXED)
 - Generic bullet phrases → replaced with real match data (FIXED)
 - LiveEngine showing raw numbers/factors → redesigned to plain English labels (FIXED May 2026)
+- Win probability displayed as fake high % (e.g. 97%) → capped at 75% max, floor 25% (FIXED May 2026)
+- MiniTrustBlock too subtle → redesigned as full social proof card: 38px hit rate, accuracy bar, last verified prediction tag (FIXED May 2026)
+- HeroDecision card no visual state change → dynamic border: RED pulse when pressureScore>70, GREEN glow when prob>=65 (FIXED May 2026)
+- Decision Zone sidebar generic → VERDICT + STRONGEST SIGNAL with live CRR/RRR/pressure specific numbers (FIXED May 2026)
+- Global keyframes: added redGlow + greenGlow to constants.js for border animations (May 2026)
 
 ## User Preferences
 - Telugu + English mixed communication is fine
