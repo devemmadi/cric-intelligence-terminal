@@ -989,7 +989,7 @@ function getTeamColor(name) {
   return "#1E2D6B";
 }
 
-// ─── Mini trust block — fetched live ─────────────────────────────────────────
+// ─── Mini trust block — fetched live (#4 Social Proof redesign) ──────────────
 function MiniTrustBlock() {
     const [info, setInfo] = useState(null);
     useEffect(() => {
@@ -997,32 +997,58 @@ function MiniTrustBlock() {
             .then(r => r.json())
             .then(d => {
                 const decided = (d.records || []).filter(r => r.correct !== null && r.correct !== undefined);
-                if (decided.length > 0) setInfo({ hitRate: d.hitRate, correct: decided.filter(r => r.correct).length, total: decided.length });
+                const lastCorrect = [...decided].reverse().find(r => r.correct === true);
+                const lastWrong   = [...decided].reverse().find(r => r.correct === false);
+                if (decided.length > 0) setInfo({
+                    hitRate: d.hitRate,
+                    correct: decided.filter(r => r.correct).length,
+                    total: decided.length,
+                    lastCorrect: lastCorrect ? `${lastCorrect.team1 || ""} vs ${lastCorrect.team2 || ""}`.trim() : null,
+                });
             })
             .catch(() => {});
     }, []);
     if (!info) return null;
-    const { hitRate, correct, total } = info;
+    const { hitRate, correct, total, lastCorrect } = info;
     const isGood = hitRate >= 55;
-    const hasEnoughData = total >= 10;
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: 10, background: isGood ? "rgba(0,200,150,0.06)" : "rgba(100,116,139,0.06)", border: `1px solid ${isGood ? "rgba(0,200,150,0.2)" : "rgba(100,116,139,0.2)"}`, borderRadius: 10, padding: "8px 14px", marginBottom: 12 }}>
-            {isGood ? (
-                <>
-                    <span style={{ fontSize: 18, fontWeight: 900, color: "#00C896" }}>{hitRate}%</span>
-                    <div style={{ flex: 1 }}>
-                        <span style={{ fontSize: 12, fontWeight: 700, color: C.text }}>AI Track Record </span>
-                        <span style={{ fontSize: 11, color: C.muted }}>{correct}/{total} verified</span>
-                    </div>
-                    <span style={{ fontSize: 10, fontWeight: 700, color: "#00C896", background: "rgba(0,200,150,0.12)", padding: "2px 8px", borderRadius: 20 }}>✓ Verified</span>
-                </>
-            ) : hasEnoughData ? (
-                <div style={{ flex: 1 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: C.muted }}>📊 {correct}/{total} matches tracked · Building accuracy</span>
+        <div style={{
+            background: isGood ? "linear-gradient(135deg,rgba(0,200,150,0.12),rgba(0,200,150,0.06))" : "rgba(100,116,139,0.08)",
+            border: `1.5px solid ${isGood ? "rgba(0,200,150,0.35)" : "rgba(100,116,139,0.25)"}`,
+            borderRadius: 14,
+            padding: "14px 16px",
+            marginBottom: 12,
+        }}>
+            {/* Header row */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ fontSize: 9, fontWeight: 800, color: isGood ? "#00C896" : C.muted, letterSpacing: 1.5 }}>📊 AI TRACK RECORD</span>
                 </div>
-            ) : (
+                {isGood && (
+                    <span style={{ fontSize: 9, fontWeight: 800, color: "#00C896", background: "rgba(0,200,150,0.15)", border: "1px solid rgba(0,200,150,0.3)", padding: "2px 8px", borderRadius: 20 }}>✓ LIVE VERIFIED</span>
+                )}
+            </div>
+            {/* Big stat */}
+            <div style={{ display: "flex", alignItems: "flex-end", gap: 14, marginBottom: 8 }}>
+                <div>
+                    <div style={{ fontSize: 38, fontWeight: 900, color: isGood ? "#00C896" : C.muted, lineHeight: 1, letterSpacing: -1 }}>{hitRate}%</div>
+                    <div style={{ fontSize: 10, color: C.muted, marginTop: 2 }}>Accuracy rate</div>
+                </div>
                 <div style={{ flex: 1 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: C.muted }}>📊 {total} matches tracked · Early data</span>
+                    {/* Mini bar */}
+                    <div style={{ height: 5, background: "rgba(255,255,255,0.08)", borderRadius: 3, marginBottom: 4, overflow: "hidden" }}>
+                        <div style={{ width: hitRate + "%", height: "100%", background: isGood ? "linear-gradient(90deg,#00C896,#059669)" : C.muted, borderRadius: 3, transition: "width 0.8s" }} />
+                    </div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: C.text }}>{correct} correct of {total} verified</div>
+                    <div style={{ fontSize: 10, color: C.muted, marginTop: 1 }}>High-confidence calls only</div>
+                </div>
+            </div>
+            {/* Last correct prediction tag */}
+            {lastCorrect && isGood && (
+                <div style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(0,200,150,0.08)", border: "1px solid rgba(0,200,150,0.2)", borderRadius: 8, padding: "5px 10px" }}>
+                    <span style={{ fontSize: 13 }}>✅</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#00C896" }}>Last verified: </span>
+                    <span style={{ fontSize: 11, color: C.text }}>{lastCorrect}</span>
                 </div>
             )}
         </div>
@@ -1225,8 +1251,14 @@ Write like a Sky Sports commentator — punchy, specific, no generic phrases.`;
         break;
     }
 
+    // #5 Visual hierarchy — dynamic border based on match state
+    const isDanger  = pressure > 70;
+    const isDominating = prob >= 65;
+    const heroBorder = isDanger ? "2px solid rgba(239,68,68,0.7)" : isDominating ? "2px solid rgba(16,185,129,0.55)" : `1.5px solid ${signalColor}28`;
+    const heroAnim  = isDanger ? "redGlow 1.8s infinite" : isDominating ? "greenGlow 2.5s infinite" : "none";
+
     return (
-        <div style={{ background: signalBg, borderRadius: 20, padding: "20px", marginBottom: 14, position: "relative", overflow: "hidden", border: `1.5px solid ${signalColor}28`, boxShadow: `0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)` }}>
+        <div style={{ background: signalBg, borderRadius: 20, padding: "20px", marginBottom: 14, position: "relative", overflow: "hidden", border: heroBorder, boxShadow: `0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04)`, animation: heroAnim }}>
             {/* Subtle top accent line */}
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${signalColor}88, transparent)`, borderRadius: "20px 20px 0 0" }} />
             {/* Subtle glow */}
@@ -2193,9 +2225,26 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         </div>
                       ) : (
                         <>
-                      <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1.5, marginBottom: 12 }}>AI PREDICTION SUMMARY</div>
+                      {/* ── DECISION ZONE (#7 fix) ── */}
+                      <div style={{ fontSize: 9, color: "#F59E0B", fontWeight: 800, letterSpacing: 1.5, marginBottom: 8 }}>⚡ DECISION ZONE</div>
+
+                      {/* VERDICT */}
+                      {(() => {
+                        const favTeamSide = prob >= 55 ? cleanTeam(pred.team1) : prob <= 45 ? cleanTeam(pred.team2) : null;
+                        const edge = prob >= 70 ? "Strong edge" : prob >= 60 ? "Slight edge" : prob >= 55 ? "Marginal edge" : "Too close";
+                        const edgeColor = prob >= 70 ? C.green : prob >= 60 ? C.amber : prob >= 55 ? "#818cf8" : C.muted;
+                        return (
+                          <div style={{ background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "8px 10px", marginBottom: 8 }}>
+                            <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 3 }}>VERDICT</div>
+                            <div style={{ fontSize: 12, fontWeight: 800, color: edgeColor }}>
+                              {favTeamSide ? `${favTeamSide} — ${edge}` : "Even contest"}
+                            </div>
+                          </div>
+                        );
+                      })()}
+
                       {/* Win prob — big */}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 14 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: 10 }}>
                         <div>
                           <div style={{ fontSize: 10, color: C.muted, marginBottom: 2 }}>{cleanTeam(pred.team1)} win</div>
                           <div style={{ fontSize: 28, fontWeight: 900, color: prob >= 60 ? C.green : prob <= 40 ? C.red : C.amber, lineHeight: 1 }}>{prob}%</div>
@@ -2205,25 +2254,38 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                           <div style={{ fontSize: 22, fontWeight: 800, color: C.muted, lineHeight: 1 }}>{Math.round((100 - prob) * 10) / 10}%</div>
                         </div>
                       </div>
+
                       {/* Divider */}
                       <div style={{ height: 1, background: C.border, marginBottom: 10 }} />
-                      {/* Why factors */}
+
+                      {/* STRONGEST SIGNAL — specific language (#1 fix) */}
                       {(() => {
-                        const factors = [];
-                        const pitch = (pred.pitchLabel || "").toLowerCase();
-                        if (pitch.includes("bat")) factors.push({ label: "Batting pitch", color: "#22c55e" });
-                        else if (pitch.includes("bowl") || pitch.includes("spin") || pitch.includes("seam")) factors.push({ label: "Bowling pitch", color: "#f59e0b" });
-                        if (pred.currentPhase) factors.push({ label: pred.currentPhase, color: "#818cf8" });
-                        if (pred.pressureScore > 60) factors.push({ label: `Pressure ${pred.pressureScore}/100`, color: "#ef4444" });
-                        if (pred.bowlingFactor <= 0.84) factors.push({ label: "Elite bowling", color: "#22c55e" });
-                        if (pred.battingFactor >= 1.15) factors.push({ label: "Strong batting", color: "#22c55e" });
-                        if (factors.length === 0) return null;
+                        const signals = [];
+                        const crr = pred.crr || 0;
+                        const rrr = pred.rrr || 0;
+                        const overs = pred.overs || 0;
+                        const pitch = (pred.pitchLabel || pred.livePitchRead?.behavior || "").toLowerCase();
+
+                        if (pred.innings === 2 && rrr > 0 && crr > 0) {
+                          const diff = Math.abs(crr - rrr).toFixed(1);
+                          if (crr > rrr + 1.5) signals.push(`Scoring ${diff} above required rate`);
+                          else if (rrr > crr + 1.5) signals.push(`Need ${diff} more per over — under pressure`);
+                        }
+                        if (pred.pressureScore > 70) signals.push(`High pressure situation (${pred.pressureScore}/100)`);
+                        if (pred.bowlingFactor <= 0.84) signals.push("Current bowler controlling — tight spell");
+                        if (pred.battingFactor >= 1.15) signals.push("Batter dominating — above strike rate");
+                        if (pitch.includes("bat") || pitch.includes("flat")) signals.push(`Flat pitch — batting conditions`);
+                        else if (pitch.includes("bowl") || pitch.includes("spin") || pitch.includes("seam")) signals.push(`Bowling-friendly surface`);
+                        if (pred.currentPhase) signals.push(pred.currentPhase);
+                        if (signals.length === 0) return null;
                         return (
                           <div style={{ marginBottom: 10 }}>
-                            <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1.2, marginBottom: 6 }}>WHY</div>
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-                              {factors.slice(0, 4).map((f, i) => (
-                                <span key={i} style={{ fontSize: 10, fontWeight: 600, padding: "3px 8px", borderRadius: 20, background: f.color + "15", color: f.color, border: `1px solid ${f.color}30` }}>{f.label}</span>
+                            <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 5 }}>STRONGEST SIGNAL</div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                              {signals.slice(0, 2).map((s, i) => (
+                                <div key={i} style={{ fontSize: 10, fontWeight: 600, color: C.text, background: "rgba(255,255,255,0.04)", padding: "4px 8px", borderRadius: 6, borderLeft: `2px solid ${C.accent}` }}>
+                                  {s}
+                                </div>
                               ))}
                             </div>
                           </div>
