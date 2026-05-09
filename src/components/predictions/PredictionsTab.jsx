@@ -1790,7 +1790,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
                         <span style={{ fontSize: 11, color: C.muted }}>Updated every ball</span>
                         {/* View switcher — right side */}
-                        <div style={{ marginLeft: "auto", display: "flex", gap: 4 }}>
+                        <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
                             <button className={`tab-btn${activeView === "prediction" ? " on" : ""}`}
                                 onClick={() => setActiveView("prediction")}
                                 style={{ fontSize: 11, padding: "4px 10px" }}>
@@ -1798,8 +1798,25 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             </button>
                             <button className={`tab-btn${activeView === "liveengine" ? " on" : ""}`}
                                 onClick={() => setActiveView("liveengine")}
-                                style={{ fontSize: 11, padding: "4px 10px" }}>
+                                style={{
+                                    fontSize: 11, padding: "4px 10px",
+                                    background: activeView === "liveengine"
+                                        ? "linear-gradient(135deg,#10B981,#059669)"
+                                        : "linear-gradient(135deg,rgba(16,185,129,0.25),rgba(5,150,105,0.15))",
+                                    border: "1px solid #10B981",
+                                    color: "#fff",
+                                    fontWeight: 700,
+                                    position: "relative",
+                                }}>
                                 ⚡ Live Engine
+                                <span style={{
+                                    position: "absolute", top: -5, right: -5,
+                                    background: "#EF4444",
+                                    color: "#fff", fontSize: 8, fontWeight: 800,
+                                    padding: "1px 4px", borderRadius: 6,
+                                    animation: "pulse 1.5s infinite",
+                                    letterSpacing: 0.5,
+                                }}>LIVE</span>
                             </button>
                         </div>
                     </div>
