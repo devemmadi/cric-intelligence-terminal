@@ -2484,7 +2484,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
                                         {/* Kelly Criterion */}
                                         <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>KELLY CRITERION</div>
-                                        <div style={{ background: kelly > 0.03 ? "rgba(74,111,212,0.1)" : "rgba(255,255,255,0.03)", border: `1px solid ${kelly > 0.03 ? "rgba(74,111,212,0.3)" : C.border}`, borderRadius: 8, padding: "7px 10px" }}>
+                                        <div style={{ background: kelly > 0.03 ? "rgba(74,111,212,0.1)" : "rgba(255,255,255,0.03)", border: `1px solid ${kelly > 0.03 ? "rgba(74,111,212,0.3)" : C.border}`, borderRadius: 8, padding: "7px 10px", marginBottom: 8 }}>
                                             <div style={{ fontSize: 13, fontWeight: 900, color: kellyColor, marginBottom: 2 }}>
                                                 {kellyLabel}
                                             </div>
@@ -2494,6 +2494,35 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                                 </div>
                                             )}
                                         </div>
+
+                                        {/* Bayesian Credible Interval */}
+                                        {pred.bayesianCI && pred.bayesianCI.lo != null && (() => {
+                                            const ciLo = pred.bayesianCI.lo;
+                                            const ciHi = pred.bayesianCI.hi;
+                                            const ciWidth = ciHi - ciLo;
+                                            // Narrow CI = high certainty (good), wide = uncertain
+                                            const ciColor = ciWidth < 12 ? C.green : ciWidth < 22 ? C.amber : C.red;
+                                            const ciLabel = ciWidth < 12 ? "High certainty" : ciWidth < 22 ? "Moderate certainty" : "Uncertain — wait";
+                                            return (
+                                                <div>
+                                                    <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>BAYESIAN CONFIDENCE BAND</div>
+                                                    <div style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${ciColor}28`, borderRadius: 8, padding: "7px 10px" }}>
+                                                        <div style={{ display: "flex", alignItems: "baseline", gap: 6, marginBottom: 4 }}>
+                                                            <span style={{ fontSize: 15, fontWeight: 900, color: ciColor }}>{ciLo}–{ciHi}%</span>
+                                                            <span style={{ fontSize: 9, color: ciColor, fontWeight: 700, opacity: 0.75 }}>80% CI</span>
+                                                        </div>
+                                                        {/* Visual range bar */}
+                                                        <div style={{ position: "relative", height: 6, background: "rgba(255,255,255,0.08)", borderRadius: 3, marginBottom: 5, overflow: "visible" }}>
+                                                            <div style={{ position: "absolute", left: `${ciLo}%`, width: `${ciWidth}%`, height: "100%", background: ciColor, borderRadius: 3, opacity: 0.5 }} />
+                                                            <div style={{ position: "absolute", left: `${prob}%`, transform: "translateX(-50%)", width: 2, height: "100%", background: C.text }} />
+                                                        </div>
+                                                        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>
+                                                            {ciLabel} · Bayesian β-dist over {Math.round(pred.overs || 0)} overs
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
                                     </div>
                                 );
                             })()}
