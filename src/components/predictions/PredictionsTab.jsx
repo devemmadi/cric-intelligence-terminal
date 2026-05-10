@@ -2530,6 +2530,67 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     );
                 })()}
 
+                {/* ── Advanced Models Panel ──────────────────────────────── */}
+                {pred && (pred.ensembleAgreement?.verdict || pred.monteCarloProb || pred.hawkesWicketProb) && (
+                    <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
+                        <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>ADVANCED MODELS</div>
+
+                        {/* Ensemble Agreement */}
+                        {pred.ensembleAgreement?.verdict && (() => {
+                            const ev = pred.ensembleAgreement;
+                            const ec = ev.verdict === "CONSENSUS" ? C.green : ev.verdict === "PARTIAL" ? C.amber : C.red;
+                            const eIcon = ev.verdict === "CONSENSUS" ? "✅" : ev.verdict === "PARTIAL" ? "⚠️" : "⚡";
+                            return (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 7 }}>
+                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Model Consensus</span>
+                                    <span style={{ fontSize: 11, fontWeight: 800, color: ec }}>{eIcon} {ev.verdict} <span style={{ fontWeight: 400, fontSize: 9 }}>±{ev.spread}%</span></span>
+                                </div>
+                            );
+                        })()}
+
+                        {/* Monte Carlo cross-check */}
+                        {pred.monteCarloProb != null && (
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 7 }}>
+                                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Monte Carlo (8k sims)</span>
+                                <span style={{ fontSize: 11, fontWeight: 800, color: C.text }}>{pred.monteCarloProb}%</span>
+                            </div>
+                        )}
+
+                        {/* Hawkes wicket clustering */}
+                        {pred.hawkesWicketProb != null && (() => {
+                            const hp = Math.round(pred.hawkesWicketProb * 100);
+                            const hc = hp >= 45 ? C.red : hp >= 30 ? C.amber : C.green;
+                            const hl = hp >= 45 ? "🔴 COLLAPSE RISK" : hp >= 30 ? "⚠️ Elevated" : "✅ Stable";
+                            return (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 7 }}>
+                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Wicket Cluster Risk</span>
+                                    <span style={{ fontSize: 11, fontWeight: 800, color: hc }}>{hl} <span style={{ fontWeight: 400, fontSize: 9 }}>{hp}%</span></span>
+                                </div>
+                            );
+                        })()}
+
+                        {/* Kalman smoothed RPO */}
+                        {pred.kalmanRPO?.filtered != null && (
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 7 }}>
+                                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>True RPO (Kalman)</span>
+                                <span style={{ fontSize: 11, fontWeight: 800, color: C.text }}>{pred.kalmanRPO.filtered} <span style={{ fontWeight: 400, fontSize: 9, color: C.muted }}>±{pred.kalmanRPO.sigma}</span></span>
+                            </div>
+                        )}
+
+                        {/* Partnership survival */}
+                        {pred.partnershipSurvival?.survivalPct != null && (() => {
+                            const sp = pred.partnershipSurvival.survivalPct;
+                            const sc = sp >= 65 ? C.green : sp >= 40 ? C.amber : C.red;
+                            return (
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.5)" }}>Partnership Survival</span>
+                                    <span style={{ fontSize: 11, fontWeight: 800, color: sc }}>{sp}%</span>
+                                </div>
+                            );
+                        })()}
+                    </div>
+                )}
+
                 <div style={{ textAlign: "center" }}>
                     <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.25)", letterSpacing: 1.5, marginBottom: 8 }}>LIVE CRICKET INTELLIGENCE ENGINE</div>
                     <div style={{ display: "flex", justifyContent: "center", gap: 5, flexWrap: "wrap", marginBottom: 9 }}>
