@@ -1357,24 +1357,6 @@ Write like a Sky Sports commentator — punchy, specific, no generic phrases.`;
                 ))}
             </div>
 
-            {/* CTA */}
-            {signal === "BET" ? (
-                <a href="https://reffpa.com/L?tag=d_5453500m_97c_&site=5453500&ad=97" target="_blank" rel="noreferrer noopener"
-                    style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 3, background: `linear-gradient(135deg, ${signalColor}, #00A37A)`, borderRadius: 14, padding: "16px 20px", textDecoration: "none", color: "#fff", fontWeight: 900, fontSize: 17, letterSpacing: 0.3, boxShadow: `0 8px 28px ${signalColor}66`, marginBottom: 6, animation: "pulse 2.5s infinite" }}>
-                    <span>🎰 BET {favTeam} TO WIN — Act Now</span>
-                    <span style={{ fontSize: 10, fontWeight: 600, opacity: 0.75, letterSpacing: 1 }}>AI CONFIDENCE: {confidence.toUpperCase()} · {favProb}% WIN PROBABILITY</span>
-                </a>
-            ) : signal === "WAIT" ? (
-                <div style={{ textAlign: "center", padding: "13px", background: "rgba(245,158,11,0.12)", borderRadius: 12, border: "1px solid rgba(245,158,11,0.3)", marginBottom: 8 }}>
-                    <div style={{ fontSize: 14, fontWeight: 800, color: "#F59E0B", marginBottom: 2 }}>⏳ Not yet — wait for a clearer signal</div>
-                    <div style={{ fontSize: 10, color: "rgba(245,158,11,0.6)" }}>Match is too close right now</div>
-                </div>
-            ) : (
-                <div style={{ textAlign: "center", padding: "13px", background: "rgba(239,68,68,0.1)", borderRadius: 12, border: "1px solid rgba(239,68,68,0.25)", marginBottom: 8 }}>
-                    <div style={{ fontSize: 14, fontWeight: 800, color: "#EF4444", marginBottom: 2 }}>🚫 Skip this one — too unpredictable</div>
-                    <div style={{ fontSize: 10, color: "rgba(239,68,68,0.6)" }}>No edge found — protect your bankroll</div>
-                </div>
-            )}
 
         </div>
     );

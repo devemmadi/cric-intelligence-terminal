@@ -31,18 +31,8 @@ export default function RGFooter() {
                             >{label}</Link>
                         ))}
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-                        {/* Buy Me a Coffee */}
-                        <a href="https://buymeacoffee.com/cricintelligence" target="_blank" rel="noreferrer"
-                            style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#FFDD00", color: "#000", fontWeight: 700, fontSize: 12, padding: "6px 14px", borderRadius: 8, textDecoration: "none", transition: "opacity .15s" }}
-                            onMouseOver={e => e.currentTarget.style.opacity = "0.85"}
-                            onMouseOut={e => e.currentTarget.style.opacity = "1"}
-                        >
-                            ☕ Buy me a coffee
-                        </a>
-                        <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-                            © {new Date().getFullYear()} CricIntelligence
-                        </div>
+                    <div style={{ fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
+                        © {new Date().getFullYear()} CricIntelligence
                     </div>
                 </div>
 
