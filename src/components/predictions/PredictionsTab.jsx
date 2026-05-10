@@ -2527,16 +2527,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     );
                 })()}
 
-                {/* Buy Me a Coffee */}
-                <a href="https://www.buymeacoffee.com/devemmadi" target="_blank" rel="noopener noreferrer"
-                    style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 7, background: "#FFDD00", borderRadius: 10, padding: "9px 12px", textDecoration: "none", transition: "opacity 0.2s" }}
-                    onMouseEnter={e => e.currentTarget.style.opacity = "0.85"}
-                    onMouseLeave={e => e.currentTarget.style.opacity = "1"}>
-                    <span style={{ fontSize: 16 }}>☕</span>
-                    <span style={{ fontSize: 12, fontWeight: 800, color: "#000" }}>Buy me a coffee</span>
-                </a>
-
-                <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center" }}>
+<div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center" }}>
                     <a href="/about" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>About Us</a>
                     <span style={{ color: C.border, margin: "0 6px" }}>·</span>
                     <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>Contact</a>
