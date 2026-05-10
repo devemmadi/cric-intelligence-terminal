@@ -2503,31 +2503,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     );
                 })()}
 
-                {/* Mini signal banner — shows current AI call */}
-                {pred && pred.team1 && !isEnded && (() => {
-                    const _rp = pred.aiProbability ?? 50;
-                    const _inn = pred.innings || 1;
-                    const _p = Math.min(75, Math.max(25, Math.round((_inn === 2 ? 100 - _rp : _rp) * 10) / 10));
-                    const _confData = pred.confidenceSignals || {};
-                    const _confLevel = _confData.confidenceLevel || "LOW";
-                    let _cta, _ctaColor, _ctaBg;
-                    if (_p >= 65) { _cta = `BET ${cleanTeam(pred.team1)} TO WIN — Act Now`; _ctaColor = "#fff"; _ctaBg = "linear-gradient(135deg,#059669,#10B981)"; }
-                    else if (_p <= 35) { _cta = `BET ${cleanTeam(pred.team2)} TO WIN — Act Now`; _ctaColor = "#fff"; _ctaBg = "linear-gradient(135deg,#059669,#10B981)"; }
-                    else if (_p >= 55 || _p <= 45) { _cta = `⏳ WAIT — Too early to call`; _ctaColor = "#fff"; _ctaBg = "linear-gradient(135deg,#B45309,#F59E0B)"; }
-                    else { _cta = `⚠️ AVOID — Too close`; _ctaColor = "#fff"; _ctaBg = "linear-gradient(135deg,#991B1B,#EF4444)"; }
-                    return (
-                        <div style={{ background: _ctaBg, borderRadius: 10, padding: "10px 12px", textAlign: "center" }}>
-                            <div style={{ fontSize: 11, fontWeight: 900, color: _ctaColor, letterSpacing: 0.5, marginBottom: 3 }}>
-                                {_p >= 65 || _p <= 35 ? "🎯 " : ""}{_cta}
-                            </div>
-                            <div style={{ fontSize: 9, color: "rgba(255,255,255,0.8)", fontWeight: 700, letterSpacing: 0.8 }}>
-                                AI CONFIDENCE: {_confLevel} · {_p}% WIN PROBABILITY
-                            </div>
-                        </div>
-                    );
-                })()}
-
-<div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center" }}>
+                <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center" }}>
                     <a href="/about" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>About Us</a>
                     <span style={{ color: C.border, margin: "0 6px" }}>·</span>
                     <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>Contact</a>
