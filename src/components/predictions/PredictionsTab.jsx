@@ -2497,8 +2497,8 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
                                         {/* Bayesian Credible Interval */}
                                         {pred.bayesianCI && pred.bayesianCI.lo != null && (() => {
-                                            const ciLo = pred.bayesianCI.lo;
-                                            const ciHi = pred.bayesianCI.hi;
+                                            const ciLo = Math.round(pred.bayesianCI.lo * 10) / 10;
+                                            const ciHi = Math.round(pred.bayesianCI.hi * 10) / 10;
                                             const ciWidth = ciHi - ciLo;
                                             // Narrow CI = high certainty (good), wide = uncertain
                                             const ciColor = ciWidth < 12 ? C.green : ciWidth < 22 ? C.amber : C.red;
@@ -2517,7 +2517,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                                             <div style={{ position: "absolute", left: `${prob}%`, transform: "translateX(-50%)", width: 2, height: "100%", background: C.text }} />
                                                         </div>
                                                         <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>
-                                                            {ciLabel} · Bayesian β-dist over {Math.round(pred.overs || 0)} overs
+                                                            {ciLabel}{pred.overs > 0 ? ` · ${Math.round(pred.overs)} overs of data` : ""}
                                                         </div>
                                                     </div>
                                                 </div>
