@@ -2434,29 +2434,65 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 <span style={{ fontSize: 12, fontWeight: 800, color: _signalColor }}>{_signalLabel}</span>
                             </div>
 
-                            {/* MARKET VALUE — real bookmaker odds vs AI */}
+                            {/* MARKET VALUE + KELLY CRITERION */}
                             {(() => {
                                 const vbs = (pred.valueBets || []).filter(v => v.odds > 1.0 && !("draw" in (v.team||"").toLowerCase()));
-                                if (vbs.length === 0) return (
-                                    <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9 }}>
-                                        <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 3 }}>MARKET ODDS</div>
-                                        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>Live bookmaker odds unavailable</div>
-                                    </div>
-                                );
-                                const best = vbs.reduce((a, b) => b.edge > a.edge ? b : a, vbs[0]);
-                                const isValue = best.edge > 5;
-                                const valueColor = best.edge > 10 ? C.green : best.edge > 5 ? C.amber : C.muted;
-                                const valueBg = best.edge > 10 ? "rgba(16,185,129,0.1)" : best.edge > 5 ? "rgba(245,158,11,0.1)" : "rgba(255,255,255,0.03)";
+
+                                // Kelly Criterion: f* = (b×p − q) / b
+                                // b = odds−1, p = AI win prob, q = 1−p
+                                // Cap at 25% (half-Kelly is safer: cap at 12.5%)
+                                const kellyCalc = (oddsDecimal, winProb) => {
+                                    const p = winProb / 100;
+                                    const q = 1 - p;
+                                    const b = oddsDecimal - 1;
+                                    if (b <= 0) return 0;
+                                    const f = (b * p - q) / b;
+                                    return Math.max(0, Math.min(0.25, f)); // cap 25%
+                                };
+
+                                const hasBkOdds = vbs.length > 0;
+                                const best = hasBkOdds ? vbs.reduce((a, b) => b.edge > a.edge ? b : a, vbs[0]) : null;
+
+                                // Use bookmaker odds if available, else our fair odds
+                                const betOdds  = hasBkOdds ? best.odds : (100 / prob);
+                                const betProb  = hasBkOdds ? best.aiProb : prob;
+                                const kelly    = kellyCalc(betOdds, betProb);
+                                const kellyPct = (kelly * 100).toFixed(1);
+                                const halfKelly = (kelly * 50).toFixed(1); // half-Kelly recommended
+                                const kellyLabel = kelly <= 0 ? "No bet — no edge" : kelly < 0.03 ? "Tiny edge — skip" : kelly < 0.08 ? `Stake ${halfKelly}% (half-Kelly)` : `Stake ${halfKelly}% of bankroll`;
+                                const kellyColor = kelly <= 0 ? C.muted : kelly < 0.03 ? C.muted : kelly < 0.08 ? C.amber : C.green;
+
+                                const isValue = hasBkOdds && best.edge > 5;
+                                const valueColor = hasBkOdds ? (best.edge > 10 ? C.green : best.edge > 5 ? C.amber : C.muted) : C.muted;
+
                                 return (
                                     <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9 }}>
+                                        {/* Market value */}
                                         <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>MARKET VALUE</div>
-                                        <div style={{ background: valueBg, border: `1px solid ${valueColor}30`, borderRadius: 8, padding: "8px 10px" }}>
-                                            <div style={{ fontSize: 11, fontWeight: 900, color: valueColor, marginBottom: 3 }}>
-                                                {isValue ? `🔥 VALUE: BACK @ ${best.odds.toFixed(2)}` : `FAIR — No value right now`}
+                                        <div style={{ background: isValue ? "rgba(16,185,129,0.08)" : "rgba(255,255,255,0.03)", border: `1px solid ${valueColor}25`, borderRadius: 8, padding: "7px 10px", marginBottom: 8 }}>
+                                            <div style={{ fontSize: 11, fontWeight: 900, color: valueColor, marginBottom: 2 }}>
+                                                {hasBkOdds
+                                                    ? (isValue ? `🔥 VALUE: BACK @ ${best.odds.toFixed(2)}` : `FAIR — No value right now`)
+                                                    : `Fair odds: ${betOdds.toFixed(2)}`}
                                             </div>
-                                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)" }}>
-                                                {best.team} · AI prob {best.aiProb}% · {best.edge > 0 ? "+" : ""}{best.edge}% edge
+                                            {hasBkOdds && (
+                                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>
+                                                    {best.team} · AI {best.aiProb}% · {best.edge > 0 ? "+" : ""}{best.edge}% edge
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Kelly Criterion */}
+                                        <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>KELLY CRITERION</div>
+                                        <div style={{ background: kelly > 0.03 ? "rgba(74,111,212,0.1)" : "rgba(255,255,255,0.03)", border: `1px solid ${kelly > 0.03 ? "rgba(74,111,212,0.3)" : C.border}`, borderRadius: 8, padding: "7px 10px" }}>
+                                            <div style={{ fontSize: 13, fontWeight: 900, color: kellyColor, marginBottom: 2 }}>
+                                                {kellyLabel}
                                             </div>
+                                            {kelly > 0.03 && (
+                                                <div style={{ fontSize: 10, color: "rgba(255,255,255,0.4)" }}>
+                                                    Full Kelly: {kellyPct}% · Recommended: half-Kelly {halfKelly}%
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 );
