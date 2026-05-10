@@ -69,6 +69,7 @@ self.addEventListener('push', (e) => {
       tag: data.matchId || 'cricket-match',
       renotify: true,
       requireInteraction: false,
+      vibrate: [200, 100, 200, 100, 200],
     })
   );
 });

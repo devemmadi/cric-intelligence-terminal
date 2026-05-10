@@ -1738,6 +1738,49 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     const [activeOver, setActiveOver] = useState(0);
     const [activeView, setActiveView] = useState("prediction"); // "prediction" | "liveengine"
     const [secsSinceUpdate, setSecsSinceUpdate] = useState(0);
+    const [pushStatus, setPushStatus] = useState("idle"); // "idle" | "loading" | "on" | "denied"
+
+    // Push notification subscribe
+    const enableAlerts = async () => {
+        if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+            alert("Push notifications not supported in this browser.");
+            return;
+        }
+        setPushStatus("loading");
+        try {
+            const perm = await Notification.requestPermission();
+            if (perm !== "granted") { setPushStatus("denied"); return; }
+            const reg = await navigator.serviceWorker.ready;
+            // Fetch VAPID public key from backend
+            const vr = await fetch(`${API_BASE}/push/vapid-key`);
+            const { publicKey } = await vr.json();
+            if (!publicKey) { setPushStatus("idle"); alert("Push not configured on server."); return; }
+            // Convert VAPID key
+            const raw = atob(publicKey.replace(/-/g,"+").replace(/_/g,"/"));
+            const key = new Uint8Array([...raw].map(c => c.charCodeAt(0)));
+            const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: key });
+            await fetch(`${API_BASE}/push/subscribe`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(sub.toJSON()),
+            });
+            setPushStatus("on");
+        } catch (e) {
+            console.error("Push subscribe error:", e);
+            setPushStatus("idle");
+        }
+    };
+
+    // Check if already subscribed on mount
+    useEffect(() => {
+        if ("serviceWorker" in navigator && "PushManager" in window) {
+            navigator.serviceWorker.ready.then(reg => {
+                reg.pushManager.getSubscription().then(sub => {
+                    if (sub) setPushStatus("on");
+                });
+            });
+        }
+    }, []);
     // Reset counter every time pred changes (new data from backend)
     useEffect(() => { setSecsSinceUpdate(0); }, [pred?.overs, pred?.score]);
     useEffect(() => {
@@ -1817,6 +1860,14 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         <span style={{ fontSize: 11, fontWeight: 700, color: secsSinceUpdate <= 5 ? C.green : secsSinceUpdate <= 15 ? C.amber : C.muted }}>
                             🔄 Updated {secsSinceUpdate}s ago
                         </span>
+                        {/* Alert bell */}
+                        <button onClick={enableAlerts} disabled={pushStatus === "on" || pushStatus === "loading"}
+                            style={{ marginLeft: 4, background: pushStatus === "on" ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.06)", border: `1px solid ${pushStatus === "on" ? "rgba(16,185,129,0.4)" : C.border}`, borderRadius: 20, padding: "2px 10px", cursor: pushStatus === "on" ? "default" : "pointer", display: "flex", alignItems: "center", gap: 4 }}>
+                            <span style={{ fontSize: 11 }}>{pushStatus === "on" ? "🔔" : pushStatus === "loading" ? "⏳" : pushStatus === "denied" ? "🔕" : "🔔"}</span>
+                            <span style={{ fontSize: 10, fontWeight: 700, color: pushStatus === "on" ? C.green : C.muted }}>
+                                {pushStatus === "on" ? "Alerts ON" : pushStatus === "loading" ? "..." : pushStatus === "denied" ? "Blocked" : "Alerts"}
+                            </span>
+                        </button>
                         {/* View switcher — right side */}
                         <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
                             <button className={`tab-btn${activeView === "prediction" ? " on" : ""}`}
