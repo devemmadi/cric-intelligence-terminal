@@ -2369,10 +2369,38 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 <span style={{ fontSize: 11, color: C.muted, fontWeight: 600 }}>Momentum</span>
                                 <span style={{ fontSize: 11, fontWeight: 800, color: _momentumColor }}>{_momentumDir}</span>
                             </div>
-                            <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
                                 <span style={{ fontSize: 11, color: C.muted, fontWeight: 600 }}>AI Signal</span>
                                 <span style={{ fontSize: 12, fontWeight: 800, color: _signalColor }}>{_signalLabel}</span>
                             </div>
+
+                            {/* MARKET VALUE — real bookmaker odds vs AI */}
+                            {(() => {
+                                const vbs = (pred.valueBets || []).filter(v => v.odds > 1.0 && !("draw" in (v.team||"").toLowerCase()));
+                                if (vbs.length === 0) return (
+                                    <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9 }}>
+                                        <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 3 }}>MARKET ODDS</div>
+                                        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.3)" }}>Live bookmaker odds unavailable</div>
+                                    </div>
+                                );
+                                const best = vbs.reduce((a, b) => b.edge > a.edge ? b : a, vbs[0]);
+                                const isValue = best.edge > 5;
+                                const valueColor = best.edge > 10 ? C.green : best.edge > 5 ? C.amber : C.muted;
+                                const valueBg = best.edge > 10 ? "rgba(16,185,129,0.1)" : best.edge > 5 ? "rgba(245,158,11,0.1)" : "rgba(255,255,255,0.03)";
+                                return (
+                                    <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9 }}>
+                                        <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 6 }}>MARKET VALUE</div>
+                                        <div style={{ background: valueBg, border: `1px solid ${valueColor}30`, borderRadius: 8, padding: "8px 10px" }}>
+                                            <div style={{ fontSize: 11, fontWeight: 900, color: valueColor, marginBottom: 3 }}>
+                                                {isValue ? `🔥 VALUE: BACK @ ${best.odds.toFixed(2)}` : `FAIR — No value right now`}
+                                            </div>
+                                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)" }}>
+                                                {best.team} · AI prob {best.aiProb}% · {best.edge > 0 ? "+" : ""}{best.edge}% edge
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
                         </div>
                     );
                 })()}
