@@ -1347,12 +1347,13 @@ Write like a Sky Sports commentator — punchy, specific, no generic phrases.`;
                 </div>
             )}
 
-            {/* 3 data-driven reasons */}
-            <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", borderRadius: 12, padding: "12px 14px", marginBottom: 16 }}>
+            {/* WHY? — hero treatment (strongest feature) */}
+            <div style={{ background: "rgba(255,255,255,0.04)", border: `1px solid ${signalColor}28`, borderRadius: 12, padding: "14px 16px", marginBottom: 16 }}>
+                <div style={{ fontSize: 11, fontWeight: 900, color: signalColor, letterSpacing: 2, marginBottom: 12, opacity: 0.85 }}>WHY?</div>
                 {reasons.slice(0, 3).map((r, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 8, marginBottom: i < reasons.slice(0,3).length - 1 ? 9 : 0 }}>
-                        <span style={{ color: signalColor, fontSize: 9, marginTop: 4, flexShrink: 0 }}>●</span>
-                        <span style={{ fontSize: 13, color: "rgba(255,255,255,0.8)", lineHeight: 1.45 }}>{r}</span>
+                    <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: i < reasons.slice(0,3).length - 1 ? 12 : 0 }}>
+                        <span style={{ color: signalColor, fontSize: 12, marginTop: 3, flexShrink: 0 }}>●</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: "rgba(255,255,255,0.92)", lineHeight: 1.5 }}>{r}</span>
                     </div>
                 ))}
             </div>
@@ -1973,6 +1974,65 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 ))}
                             </div>
 
+                            {/* ── ONE MAIN INSIGHT — big headline ── */}
+                            {!isEnded && pred && pred.team1 && (() => {
+                                const _inn = pred.innings || 1;
+                                const _crr = pred.currentRunRate || 0;
+                                const _rrr = pred.requiredRunRate || 0;
+                                const _pressure = pred.pressureScore || 0;
+                                const _battingTeam = cleanTeam(_inn === 2 ? pred.team2 : pred.team1);
+                                const _fieldingTeam = cleanTeam(_inn === 2 ? pred.team1 : pred.team2);
+                                const _lpr = pred.livePitchRead || {};
+                                const _phase = (pred.currentPhase || "").toLowerCase().replace("_", " ");
+                                let _insight = "";
+                                if (_inn === 2 && _rrr > 0 && _crr > 0) {
+                                    const _gap = _crr - _rrr;
+                                    if (_gap >= 2) _insight = `${_battingTeam} in control — scoring ${_crr.toFixed(1)}/ov, need only ${_rrr.toFixed(1)}`;
+                                    else if (_gap <= -2) _insight = `${_fieldingTeam} taking over — ${_battingTeam} need ${_rrr.toFixed(1)}/ov, scoring ${_crr.toFixed(1)}`;
+                                    else _insight = `Neck and neck — ${_battingTeam} need ${_rrr.toFixed(1)}/ov, scoring ${_crr.toFixed(1)}`;
+                                } else if (_inn === 1 && _crr > 0) {
+                                    if (_pressure > 70) _insight = `${_fieldingTeam} bowling well — ${_battingTeam} under pressure`;
+                                    else if (_lpr.behavior && _lpr.confidence !== "LOW") _insight = `${_battingTeam} at ${_crr.toFixed(1)}/ov — ${_lpr.behavior.toLowerCase()}`;
+                                    else _insight = `${_battingTeam} ${_crr >= 9 ? "dominating" : _crr >= 7 ? "building momentum" : "under pressure"} — ${_crr.toFixed(1)}/ov${_phase ? ` in ${_phase}` : ""}`;
+                                }
+                                if (!_insight) return null;
+                                const _ic = prob >= 60 ? C.green : prob <= 40 ? C.red : C.amber;
+                                return (
+                                    <div style={{ textAlign: "center", marginBottom: 14, padding: "6px 0 2px" }}>
+                                        <div style={{ fontSize: 21, fontWeight: 900, color: _ic, lineHeight: 1.3, letterSpacing: -0.3 }}>{_insight}</div>
+                                    </div>
+                                );
+                            })()}
+
+                            {/* ── LIVE ALERT SYSTEM ── */}
+                            {!isEnded && pred && pred.team1 && (() => {
+                                const _hist = pred.probHistory || [];
+                                const _last3Wkts = pred.playerContext?.last3Wkts || 0;
+                                const _wktsLeft = 10 - (pred.wickets || 0);
+                                const _nextOv = pred.nextOvers?.[0];
+                                const _crr = pred.currentRunRate || 0;
+                                const _rrr = pred.requiredRunRate || 0;
+                                const _lpr = pred.livePitchRead || {};
+                                const _t1 = cleanTeam(pred.team1);
+                                const _t2 = cleanTeam(pred.team2);
+                                let _alert = null;
+                                if (_wktsLeft <= 2) _alert = { text: `🚨 Collapse Risk — only ${_wktsLeft} wicket${_wktsLeft === 1 ? "" : "s"} left`, color: "#EF4444", bg: "rgba(239,68,68,0.12)" };
+                                else if (_last3Wkts >= 2) _alert = { text: `🚨 Wicket Threat Rising — ${_last3Wkts} wickets in last 3 overs`, color: "#EF4444", bg: "rgba(239,68,68,0.12)" };
+                                else if (_hist.length >= 3) {
+                                    const _delta = (_hist[_hist.length-1]?.prob||50) - (_hist[_hist.length-3]?.prob||50);
+                                    if (Math.abs(_delta) >= 10) _alert = { text: `🚨 Momentum Shift — ${_delta > 0 ? _t1 : _t2} taking control`, color: "#F59E0B", bg: "rgba(245,158,11,0.12)" };
+                                }
+                                if (!_alert && pred.innings === 2 && _rrr > 0 && _rrr - _crr > 4) _alert = { text: `🚨 Chase Slipping Away — need ${_rrr.toFixed(1)}/ov, scoring ${_crr.toFixed(1)}`, color: "#EF4444", bg: "rgba(239,68,68,0.12)" };
+                                if (!_alert && _nextOv && _nextOv.expectedRuns >= 13) _alert = { text: `⚡ Big Over Incoming — AI projects ${_nextOv.expectedRuns} runs next over`, color: "#10B981", bg: "rgba(16,185,129,0.12)" };
+                                if (!_alert && _lpr.behavior && _lpr.behavior.toLowerCase().includes("slow")) _alert = { text: "🔵 Pitch Slowing Down — scoring getting harder", color: "#60A5FA", bg: "rgba(96,165,250,0.12)" };
+                                if (!_alert) return null;
+                                return (
+                                    <div style={{ background: _alert.bg, border: `1px solid ${_alert.color}50`, borderRadius: 10, padding: "10px 14px", marginBottom: 12, display: "flex", alignItems: "center", gap: 8, animation: "slideIn 0.4s ease" }}>
+                                        <span style={{ fontSize: 13, fontWeight: 800, color: _alert.color }}>{_alert.text}</span>
+                                    </div>
+                                );
+                            })()}
+
                             {/* ── HERO DECISION (replaces old hero bar + prediction call banner) ── */}
                             {!isEnded && <HeroDecision pred={pred} prob={prob} isEnded={isEnded} />}
 
@@ -2064,7 +2124,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                                             <span style={{ fontSize: 16, fontWeight: 900, color: "#fff" }}>Over {ov.over}</span>
                                                             <span style={{ fontSize: 9, fontWeight: 800, color: "#fff", background: phaseColor, padding: "2px 8px", borderRadius: 20 }}>{ov.phase}</span>
                                                         </div>
-                                                        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: 4 }}>{ov.confidence}% conf</span>
+                                                        <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', background: 'rgba(255,255,255,0.1)', padding: '2px 6px', borderRadius: 4 }}>{ov.confidence >= 80 ? "Strong Signal" : ov.confidence >= 65 ? "Moderate Edge" : ov.confidence >= 50 ? "Some confidence" : "Low confidence"}</span>
                                                     </div>
                                                     <div style={{ display: 'inline-block', marginBottom: 8, padding: '6px 16px', background: vBg, borderRadius: 20, boxShadow: `0 0 16px ${vBg}88`, animation: 'labelPulse 2s ease-in-out infinite' }}>
                                                         <span style={{ fontSize: 11, fontWeight: 900, color: '#FFFFFF', letterSpacing: 1.2, textTransform: "uppercase" }}>{vText}</span>
@@ -2106,7 +2166,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                                         <div style={{ height: "100%", width: runFill + "%", background: "linear-gradient(90deg, #4A90E2, #00D4AA)", borderRadius: 3, transition: "width 0.4s" }} />
                                                     </div>
                                                     <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                                        <span style={{ fontSize: 11, color: "#94A3B8" }}>{ov.confidence}% confidence</span>
+                                                        <span style={{ fontSize: 11, color: "#94A3B8" }}>{ov.confidence >= 80 ? "Strong Signal" : ov.confidence >= 65 ? "Moderate Edge" : ov.confidence >= 50 ? "Some confidence" : "Low confidence"}</span>
                                                         <span style={{ fontSize: 11, fontWeight: 700, color: wc }}>
                                                             {ov.wicketProb > 40 ? "⚠ Wicket likely soon" : ov.wicketProb > 25 ? "Wicket possible" : "Batsmen safe"}
                                                         </span>
@@ -2151,31 +2211,12 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 </div>
                             )}
 
-                            {/* ── Score Checkpoints + Partnership (betting reference) ── */}
-                            {pred.playerAnalysis && (pred.playerAnalysis.scoreProjection?.length > 0 || pred.playerAnalysis.partnership?.striker) && !isEnded && (
-                                <div style={{ marginBottom: 0 }}>
-                                    <ScoreCheckpointsCard projections={pred.playerAnalysis.scoreProjection} />
-                                    <PartnershipCard partnership={pred.playerAnalysis.partnership} />
-                                </div>
-                            )}
-
-                            {/* ── Player Analysis: Batter / Bowler / Pitch ── */}
+                            {/* ── Key panels: Key Risk / Momentum / Pitch ── */}
                             {pred.playerAnalysis && (
                                 <div style={{ marginBottom: 14 }}>
-                                    <BatterAnalysisCard analysis={pred.playerAnalysis.batters} />
                                     <BowlerWicketCard analysis={pred.playerAnalysis.bowler} />
                                     <MatchIntelligenceCard data={pred.matchIntelligence} innings={pred.innings} overs={pred.overs} />
                                     <LivePitchReadCard data={pred.livePitchRead} />
-                                    <PitchRealityCard analysis={pred.playerAnalysis.pitch} />
-                                </div>
-                            )}
-
-                            {pred.toss && (
-                                <div style={{ background: "linear-gradient(135deg,#1E2D6B,#253580)", borderRadius: 14, padding: "14px 18px", marginBottom: 14, display: "flex", alignItems: "center", gap: 12 }}>
-                                    <div>
-                                        <div style={{ fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 2 }}>TOSS</div>
-                                        <div style={{ fontSize: 14, fontWeight: 700, color: "#fff" }}>{pred.toss.winner} won - elected to {pred.toss.decision}</div>
-                                    </div>
                                 </div>
                             )}
 
@@ -2278,217 +2319,70 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     </div>
                   </div>
                 )}
-                {/* ── LIVE PREDICTIONS (hidden for ended matches) ── */}
-                {!isEnded && pred?.livePredictions && (
-                    <div style={{ background: "#0D1117", border: "1px solid rgba(99,102,241,0.25)", borderRadius: 12, padding: "12px 14px" }}>
-                        <div style={{ fontSize: 10, fontWeight: 800, color: "#818CF8", letterSpacing: 1.5, marginBottom: 10 }}>🎯 WHAT HAPPENS NEXT?</div>
-
-                        {/* Batsman 50 */}
-                        {pred.livePredictions.batsman50 && (() => {
-                            const b = pred.livePredictions.batsman50;
-                            const prob = b.prob;
-                            const color = b.done ? "#10B981" : prob >= 65 ? "#10B981" : prob >= 40 ? "#F59E0B" : "#EF4444";
-                            return (
-                                <div style={{ marginBottom: 10 }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#E2E8F0" }}>{b.label}</span>
-                                        <span style={{ fontSize: 13, fontWeight: 900, color }}>{b.done ? "✓" : `${prob}%`}</span>
-                                    </div>
-                                    <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 4, overflow: "hidden" }}>
-                                        <div style={{ width: `${prob}%`, height: "100%", background: color, borderRadius: 4, transition: "width 0.5s" }} />
-                                    </div>
-                                    <div style={{ fontSize: 9, color: "#64748B", marginTop: 3 }}>{b.detail}</div>
-                                </div>
-                            );
-                        })()}
-
-                        {/* Boundary next over */}
-                        {(() => {
-                            const b = pred.livePredictions.boundary;
-                            const color = b.prob >= 70 ? "#10B981" : b.prob >= 50 ? "#F59E0B" : "#EF4444";
-                            return (
-                                <div style={{ marginBottom: 10 }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#E2E8F0" }}>🏏 {b.label}</span>
-                                        <span style={{ fontSize: 13, fontWeight: 900, color }}>{b.prob}%</span>
-                                    </div>
-                                    <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 4, overflow: "hidden" }}>
-                                        <div style={{ width: `${b.prob}%`, height: "100%", background: color, borderRadius: 4 }} />
-                                    </div>
-                                    <div style={{ fontSize: 9, color: "#64748B", marginTop: 3 }}>{b.detail}</div>
-                                </div>
-                            );
-                        })()}
-
-                        {/* Wicket next 3 overs */}
-                        {(() => {
-                            const w = pred.livePredictions.wicket3overs;
-                            const color = w.prob >= 60 ? "#EF4444" : w.prob >= 40 ? "#F59E0B" : "#10B981";
-                            return (
-                                <div>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
-                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#E2E8F0" }}>🎳 {w.label}</span>
-                                        <span style={{ fontSize: 13, fontWeight: 900, color }}>{w.prob}%</span>
-                                    </div>
-                                    <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 4, overflow: "hidden" }}>
-                                        <div style={{ width: `${w.prob}%`, height: "100%", background: color, borderRadius: 4 }} />
-                                    </div>
-                                    <div style={{ fontSize: 9, color: "#64748B", marginTop: 3 }}>{w.detail}</div>
-                                </div>
-                            );
-                        })()}
-                    </div>
-                )}
-
-                {pred && pred.team1 && (
-                    <div style={{ background: C.bg, borderRadius: 12, padding: "10px 12px" }}>
-                        <div style={{ fontSize: 10, fontWeight: 700, color: C.muted, letterSpacing: 1, textTransform: "uppercase", marginBottom: 8 }}>MATCH CONTEXT</div>
-                        {(() => {
-                            // Smart pitch label: live behavior > weather override > wickets > venue tag
-                            const lpr = pred.livePitchRead || {};
-                            const weather = (pred.weatherImpact?.condition || "").toUpperCase();
-                            const isDamp = weather.includes("RAIN") || weather.includes("THUNDER") || weather.includes("STORM") || weather.includes("CLOUD") || weather.includes("OVERCAST");
-                            const earlyWkts = (pred.wickets || 0) >= 3 && (pred.overs || 0) < 10;
-                            const lprBehavior = lpr.behavior || "";
-                            const lprConf = lpr.confidence || "LOW";
-
-                            let pitchDisplay = "";
-                            if (lprBehavior && lprConf !== "LOW")
-                                pitchDisplay = lprBehavior;
-                            else if (isDamp && earlyWkts)
-                                pitchDisplay = "Damp & seaming — bowlers on top";
-                            else if (isDamp)
-                                pitchDisplay = "Damp conditions · swing expected";
-                            else if (earlyWkts)
-                                pitchDisplay = `Bowling-friendly · ${pred.wickets} wkts in ${(pred.overs||0).toFixed(1)} ov`;
-                            else if (pred.pitchLabel)
-                                pitchDisplay = `${pred.pitchLabel}${pred.pitchSource ? ` · ${pred.pitchSource}` : ""}`;
-
-                            const rows = [
-                                ["Format",  pred.matchType?.toUpperCase() || "T20"],
-                                ["Phase",   pred.currentPhase || ""],
-                                ["Pitch",   pitchDisplay],
-                                ["Weather", pred.weatherImpact?.condition || ""],
-                            ];
-                            return rows.filter(([, v]) => v).map(([l, v]) => (
-                                <div key={l} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-                                    <span style={{ fontSize: 11, color: C.muted }}>{l}</span>
-                                    <span style={{ fontSize: 11, fontWeight: 700, color: C.text, maxWidth: 130, textAlign: "right" }}>{v}</span>
-                                </div>
-                            ));
-                        })()}
-                        {pred.toss?.winner && pred.toss?.decision && (
-                            <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9, marginTop: 4 }}>
-                                <div style={{ fontSize: 10, color: C.muted, marginBottom: 3 }}>TOSS</div>
-                                <div style={{ fontSize: 11, fontWeight: 600, color: C.text }}>
-                                    {cleanTeam(pred.toss.winner)} won · chose to {pred.toss.decision === "bat" ? "🏏 bat" : "🎳 field"}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                )}
-
-                {/* ── BETTOR'S VIEW ── */}
+                {/* ── RISK LEVEL + MOMENTUM DIRECTION + AI SIGNAL ── */}
                 {pred && pred.team1 && !isEnded && (() => {
-                    const vbs = (pred.valueBets || []).filter(v => v.odds > 1.0);
-                    const hasOdds = vbs.length > 0;
-
-                    // Confidence: how far from 50% is our AI
-                    const aiProb = pred.aiProbability ?? 50;
-                    const confGap = Math.abs(aiProb - 50);
-                    const confLabel = confGap >= 20 ? "High" : confGap >= 10 ? "Medium" : "Low";
-                    const confColor = confGap >= 20 ? C.green : confGap >= 10 ? C.amber : C.muted;
-
-                    // Momentum shift from probHistory
-                    const hist = pred.probHistory || [];
-                    let momentumShift = null;
-                    if (hist.length >= 3) {
-                        const recent = hist[hist.length - 1]?.prob ?? 50;
-                        const earlier = hist[hist.length - 3]?.prob ?? 50;
-                        const delta = recent - earlier;
-                        if (Math.abs(delta) >= 8) {
-                            momentumShift = { delta: Math.round(delta), dir: delta > 0 ? "↑" : "↓" };
-                        }
-                    }
-
-                    // Score range (innings 1 only)
-                    let scoreRange = null;
-                    if (pred.innings === 1 && pred.overs > 2 && pred.score > 0) {
-                        const remainOvers = 20 - (pred.overs || 0);
-                        const crr = pred.currentRunRate || 0;
-                        const projFinal = Math.round(pred.score + crr * remainOvers);
-                        scoreRange = { lo: projFinal - 12, hi: projFinal + 12 };
-                    }
-
+                    const _hist = pred.probHistory || [];
+                    const _delta = _hist.length >= 3 ? (_hist[_hist.length-1]?.prob||50) - (_hist[_hist.length-3]?.prob||50) : 0;
+                    const _t1 = cleanTeam(pred.team1);
+                    const _t2 = cleanTeam(pred.team2);
+                    const _momentumDir = Math.abs(_delta) < 3 ? "Steady" : _delta > 0 ? `↑ ${_t1} rising` : `↑ ${_t2} rising`;
+                    const _momentumColor = Math.abs(_delta) < 3 ? C.muted : _delta > 0 ? C.green : C.red;
+                    const _pressure = pred.pressureScore || 0;
+                    const _riskLabel = _pressure > 70 ? "High" : _pressure > 45 ? "Medium" : "Low";
+                    const _riskColor = _pressure > 70 ? C.red : _pressure > 45 ? C.amber : C.green;
+                    const _confLevel = (pred.confidenceSignals || {}).confidenceLevel || "LOW";
+                    const _signalLabel = _confLevel === "HIGH" ? "Strong Signal" : _confLevel === "MEDIUM" ? "Moderate Edge" : "Watching";
+                    const _signalColor = _confLevel === "HIGH" ? C.green : _confLevel === "MEDIUM" ? C.amber : C.muted;
+                    // Best Read: strongest signal text
+                    const _crr = pred.currentRunRate || 0;
+                    const _rrr = pred.requiredRunRate || 0;
+                    const _inn = pred.innings || 1;
+                    let _bestRead = "";
+                    if (_inn === 2 && _rrr > 0 && _crr > 0) {
+                        const _g = _crr - _rrr;
+                        _bestRead = _g > 1.5 ? `${_t2} scoring above required rate` : _g < -1.5 ? `${_t2} behind on required rate` : "Chase evenly poised";
+                    } else if (pred.bowlingFactor <= 0.84) _bestRead = "Bowler controlling — tight spell";
+                    else if (pred.battingFactor >= 1.15) _bestRead = "Batter dominating — strike rate high";
+                    else if (_pressure > 65) _bestRead = "Batting side under pressure";
+                    else _bestRead = (pred.currentPhase || "").replace("_", " ") || "Match in balance";
                     return (
-                        <div style={{ background: "#0d1535", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, padding: "10px 12px" }}>
-                            <div style={{ fontSize: 10, fontWeight: 700, color: C.gold, letterSpacing: 1, textTransform: "uppercase", marginBottom: 10 }}>⚡ Bettor's View</div>
-
-                            {/* Confidence */}
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>AI Confidence</span>
-                                <span style={{ fontSize: 11, fontWeight: 700, color: confColor }}>{confLabel}</span>
+                        <div style={{ background: C.bg, borderRadius: 12, padding: "12px 12px", border: `1px solid ${C.border}` }}>
+                            <div style={{ fontSize: 9, fontWeight: 800, color: C.muted, letterSpacing: 1.5, marginBottom: 10 }}>MATCH INTELLIGENCE</div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
+                                <span style={{ fontSize: 11, color: C.muted, fontWeight: 600 }}>Match Edge</span>
+                                <span style={{ fontSize: 12, fontWeight: 800, color: prob >= 60 ? C.green : prob <= 40 ? C.red : C.amber }}>
+                                    {prob >= 65 ? `${_t1} — Strong` : prob >= 55 ? `${_t1} — Slight` : prob <= 35 ? `${_t2} — Strong` : prob <= 45 ? `${_t2} — Slight` : "Even contest"}
+                                </span>
                             </div>
-
-                            {/* Momentum shift */}
-                            {momentumShift && (
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Momentum</span>
-                                    <span style={{ fontSize: 11, fontWeight: 700, color: momentumShift.delta > 0 ? C.green : C.red }}>
-                                        {momentumShift.dir} {Math.abs(momentumShift.delta)}% swing
-                                    </span>
-                                </div>
-                            )}
-
-                            {/* Score range */}
-                            {scoreRange && (
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-                                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Projected total</span>
-                                    <span style={{ fontSize: 11, fontWeight: 700, color: "#fff" }}>{scoreRange.lo}–{scoreRange.hi}</span>
-                                </div>
-                            )}
-
-                            {/* UK Bookmaker vs AI */}
-                            {hasOdds ? (
-                                <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8, marginTop: 4 }}>
-                                    <div style={{ fontSize: 10, color: "rgba(255,255,255,0.35)", marginBottom: 6 }}>BEST UK ODDS vs AI</div>
-                                    {vbs.slice(0, 2).map((v, i) => {
-                                        const edgeColor = v.edge > 5 ? C.green : v.edge < -5 ? C.red : C.amber;
-                                        const badge = v.rating === "STRONG VALUE" ? "🔥 STRONG" : v.rating === "VALUE" ? "✅ VALUE" : v.rating === "AVOID" ? "❌ AVOID" : "FAIR";
-                                        const badgeColor = v.rating === "STRONG VALUE" || v.rating === "VALUE" ? C.green : v.rating === "AVOID" ? C.red : C.muted;
-                                        return (
-                                            <div key={i} style={{ marginBottom: i < vbs.length - 1 ? 8 : 0 }}>
-                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 2 }}>
-                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.6)", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{v.team}</span>
-                                                    <span style={{ fontSize: 10, fontWeight: 700, color: badgeColor }}>{badge}</span>
-                                                </div>
-                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                                    <span style={{ fontSize: 10, color: "rgba(255,255,255,0.35)" }}>{v.odds.toFixed(2)} · AI: {v.aiProb}%</span>
-                                                    <span style={{ fontSize: 10, fontWeight: 700, color: edgeColor }}>{v.edge > 0 ? "+" : ""}{v.edge}% edge</span>
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                    {vbs.some(v => v.isValue) && (
-                                        <a href="https://www.bet365.com" target="_blank" rel="noopener noreferrer sponsored"
-                                            style={{ display: "block", marginTop: 8, textAlign: "center", fontSize: 10, color: "#F59E0B", fontWeight: 600, textDecoration: "none", background: "rgba(245,158,11,0.1)", borderRadius: 6, padding: "4px 0" }}>
-                                            Check odds at Bet365 →
-                                        </a>
-                                    )}
-                                </div>
-                            ) : (
-                                <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 8, marginTop: 4, fontSize: 10, color: "rgba(255,255,255,0.3)", textAlign: "center" }}>
-                                    UK live odds unavailable
-                                </div>
-                            )}
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 9, gap: 8 }}>
+                                <span style={{ fontSize: 11, color: C.muted, fontWeight: 600, flexShrink: 0 }}>Best Read</span>
+                                <span style={{ fontSize: 11, fontWeight: 700, color: C.text, textAlign: "right", lineHeight: 1.3 }}>{_bestRead}</span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
+                                <span style={{ fontSize: 11, color: C.muted, fontWeight: 600 }}>Risk Level</span>
+                                <span style={{ fontSize: 12, fontWeight: 800, color: _riskColor }}>{_riskLabel}</span>
+                            </div>
+                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
+                                <span style={{ fontSize: 11, color: C.muted, fontWeight: 600 }}>Momentum</span>
+                                <span style={{ fontSize: 11, fontWeight: 800, color: _momentumColor }}>{_momentumDir}</span>
+                            </div>
+                            <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: 9, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                <span style={{ fontSize: 11, color: C.muted, fontWeight: 600 }}>AI Signal</span>
+                                <span style={{ fontSize: 12, fontWeight: 800, color: _signalColor }}>{_signalLabel}</span>
+                            </div>
                         </div>
                     );
                 })()}
 
-                <div style={{ fontSize: 10, color: C.muted, lineHeight: 1.6, textAlign: "center" }}>
-                    <a href="/about" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>About Us</a>
-                    <span style={{ color: C.border, margin: "0 6px" }}>·</span>
-                    <a href="mailto:emmadi.dev@gmail.com" style={{ color: C.accent, fontWeight: 600, textDecoration: "none" }}>Contact</a>
+                <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.25)", letterSpacing: 1.5, marginBottom: 8 }}>LIVE CRICKET INTELLIGENCE ENGINE</div>
+                    <div style={{ display: "flex", justifyContent: "center", gap: 5, flexWrap: "wrap", marginBottom: 9 }}>
+                        {["Pro Engine", "Verified Insights", "Real-time AI"].map(tag => (
+                            <span key={tag} style={{ fontSize: 9, fontWeight: 700, color: C.accent, background: "rgba(74,111,212,0.1)", border: "1px solid rgba(74,111,212,0.2)", borderRadius: 20, padding: "2px 8px" }}>{tag}</span>
+                        ))}
+                    </div>
+                    <a href="/about" style={{ fontSize: 10, color: C.muted, fontWeight: 600, textDecoration: "none", marginRight: 8 }}>About</a>
+                    <a href="mailto:emmadi.dev@gmail.com" style={{ fontSize: 10, color: C.muted, fontWeight: 600, textDecoration: "none" }}>Contact</a>
                 </div>
             </aside>
         </div>
