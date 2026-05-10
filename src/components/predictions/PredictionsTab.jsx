@@ -1737,6 +1737,13 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
 export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSelect, pred, liveStatus, isFirstLoad, isPredLoading }) {
     const [activeOver, setActiveOver] = useState(0);
     const [activeView, setActiveView] = useState("prediction"); // "prediction" | "liveengine"
+    const [secsSinceUpdate, setSecsSinceUpdate] = useState(0);
+    // Reset counter every time pred changes (new data from backend)
+    useEffect(() => { setSecsSinceUpdate(0); }, [pred?.overs, pred?.score]);
+    useEffect(() => {
+        const t = setInterval(() => setSecsSinceUpdate(s => s + 1), 1000);
+        return () => clearInterval(t);
+    }, []);
     // Backend aiProbability: innings 1 = team1's win %, innings 2 = chasing team2's win %
     // Normalize to always represent team1's win probability for consistent display
     const _rawProb = pred?.aiProbability ?? 50;
@@ -1807,7 +1814,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
                         <span style={{ fontSize: 11, color: C.muted }}>45+ verified IPL 2026 predictions</span>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
-                        <span style={{ fontSize: 11, color: C.muted }}>Updated every ball</span>
+                        <span style={{ fontSize: 11, fontWeight: 700, color: secsSinceUpdate <= 5 ? C.green : secsSinceUpdate <= 15 ? C.amber : C.muted }}>
+                            🔄 Updated {secsSinceUpdate}s ago
+                        </span>
                         {/* View switcher — right side */}
                         <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
                             <button className={`tab-btn${activeView === "prediction" ? " on" : ""}`}
