@@ -2136,30 +2136,28 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                                         {last3r > 0 && <BarStat label="Last 3 overs" value={last3r * 3} max={100} color={last3r > 25 ? "#00FF94" : last3r > 15 ? "#FFB800" : "#64748B"} text={`${last3r}r${last3w > 0 ? ` ${last3w}w` : ""} · ${last3r > 25 ? "Hot" : last3r > 15 ? "Moving" : "Dry"}`} />}
                                                         {pship > 0 && <BarStat label="Partnership" value={Math.min(100, pship)} max={100} color={pship > 50 ? "#FF4444" : pship > 25 ? "#FFB800" : "#64748B"} text={`${pship} · ${pship > 50 ? "Dangerous" : pship > 25 ? "Building" : "New"}`} />}
                                                     </div>
-                                                    {/* Expected runs + O/U */}
-                                                    <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
-                                                        <span style={{ fontSize: 36, fontWeight: 900, color: "#FFFFFF", lineHeight: 1, letterSpacing: -1 }}>{ov.expectedRuns}</span>
-                                                        <span style={{ fontSize: 13, color: "#CBD5E1" }}>runs expected</span>
-                                                    </div>
-                                                    {/* Over/Under probabilities */}
-                                                    {ov.ouLine != null && (
-                                                        <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
+                                                    {/* O/U Betting verdict — direct call */}
+                                                    {ov.ouLine != null ? (
+                                                        <div style={{ marginBottom: 8 }}>
+                                                            {/* Main verdict pill */}
                                                             <div style={{
-                                                                flex: 1, padding: "7px 10px", borderRadius: 8, textAlign: "center",
-                                                                background: ov.overPct > ov.underPct ? "rgba(16,185,129,0.18)" : "rgba(255,255,255,0.06)",
-                                                                border: `1px solid ${ov.overPct > ov.underPct ? "rgba(16,185,129,0.4)" : "rgba(255,255,255,0.1)"}`,
+                                                                background: ov.overPct > ov.underPct ? "rgba(16,185,129,0.15)" : "rgba(96,165,250,0.15)",
+                                                                border: `1.5px solid ${ov.overPct > ov.underPct ? "rgba(16,185,129,0.5)" : "rgba(96,165,250,0.5)"}`,
+                                                                borderRadius: 10, padding: "10px 14px", marginBottom: 6, textAlign: "center"
                                                             }}>
-                                                                <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 2, letterSpacing: 0.8 }}>OVER {ov.ouLine}</div>
-                                                                <div style={{ fontSize: 18, fontWeight: 900, color: ov.overPct > ov.underPct ? "#10B981" : "#E2E8F0" }}>{ov.overPct}%</div>
+                                                                <div style={{ fontSize: 9, color: "#94A3B8", letterSpacing: 1, marginBottom: 4 }}>FANCY BET — RUNS THIS OVER</div>
+                                                                <div style={{ fontSize: 20, fontWeight: 900, color: ov.overPct > ov.underPct ? "#10B981" : "#60A5FA" }}>
+                                                                    {ov.overPct > ov.underPct ? `✅ OVER ${ov.ouLine}` : `✅ UNDER ${ov.ouLine}`}
+                                                                </div>
+                                                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.5)", marginTop: 3 }}>
+                                                                    AI projects {ov.expectedRuns} runs · {ov.overPct > ov.underPct ? `${ov.overPct}% confident` : `${ov.underPct}% confident`}
+                                                                </div>
                                                             </div>
-                                                            <div style={{
-                                                                flex: 1, padding: "7px 10px", borderRadius: 8, textAlign: "center",
-                                                                background: ov.underPct > ov.overPct ? "rgba(16,185,129,0.18)" : "rgba(255,255,255,0.06)",
-                                                                border: `1px solid ${ov.underPct > ov.overPct ? "rgba(16,185,129,0.4)" : "rgba(255,255,255,0.1)"}`,
-                                                            }}>
-                                                                <div style={{ fontSize: 9, color: "#94A3B8", marginBottom: 2, letterSpacing: 0.8 }}>UNDER {ov.ouLine}</div>
-                                                                <div style={{ fontSize: 18, fontWeight: 900, color: ov.underPct > ov.overPct ? "#10B981" : "#E2E8F0" }}>{ov.underPct}%</div>
-                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 8 }}>
+                                                            <span style={{ fontSize: 36, fontWeight: 900, color: "#FFFFFF", lineHeight: 1, letterSpacing: -1 }}>{ov.expectedRuns}</span>
+                                                            <span style={{ fontSize: 13, color: "#CBD5E1" }}>runs expected</span>
                                                         </div>
                                                     )}
                                                     <div style={{ height: 5, background: C.border, borderRadius: 3, marginBottom: 5 }}>
@@ -2348,11 +2346,16 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     return (
                         <div style={{ background: C.bg, borderRadius: 12, padding: "12px 12px", border: `1px solid ${C.border}` }}>
                             <div style={{ fontSize: 9, fontWeight: 800, color: C.muted, letterSpacing: 1.5, marginBottom: 10 }}>MATCH INTELLIGENCE</div>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 9 }}>
-                                <span style={{ fontSize: 11, color: C.muted, fontWeight: 600 }}>Match Edge</span>
-                                <span style={{ fontSize: 12, fontWeight: 800, color: prob >= 60 ? C.green : prob <= 40 ? C.red : C.amber }}>
-                                    {prob >= 65 ? `${_t1} — Strong` : prob >= 55 ? `${_t1} — Slight` : prob <= 35 ? `${_t2} — Strong` : prob <= 45 ? `${_t2} — Slight` : "Even contest"}
-                                </span>
+                            {/* BACK / LAY / SKIP verdict */}
+                            <div style={{ background: prob >= 60 ? "rgba(16,185,129,0.1)" : prob <= 40 ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.08)", border: `1px solid ${prob >= 60 || prob <= 40 ? "rgba(16,185,129,0.3)" : "rgba(239,68,68,0.2)"}`, borderRadius: 8, padding: "8px 10px", marginBottom: 9 }}>
+                                <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 3 }}>VERDICT</div>
+                                <div style={{ fontSize: 13, fontWeight: 900, color: prob >= 60 ? C.green : prob <= 40 ? C.green : C.red }}>
+                                    {prob >= 65 ? `BACK ${_t1} @ ${(100/prob).toFixed(2)} or better` :
+                                     prob <= 35 ? `BACK ${_t2} @ ${(100/(100-prob)).toFixed(2)} or better` :
+                                     prob >= 55 ? `BACK ${_t1} — Low edge` :
+                                     prob <= 45 ? `BACK ${_t2} — Low edge` :
+                                     "SKIP — No clear edge"}
+                                </div>
                             </div>
                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 9, gap: 8 }}>
                                 <span style={{ fontSize: 11, color: C.muted, fontWeight: 600, flexShrink: 0 }}>Best Read</span>
