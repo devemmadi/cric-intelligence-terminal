@@ -2093,6 +2093,26 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 );
                             })()}
 
+                            {/* ── CLUTCH MOMENTS ── */}
+                            {!isEnded && pred.clutchMoments && pred.clutchMoments.length > 0 && (
+                                <div style={{ marginBottom: 12 }}>
+                                    {pred.clutchMoments.map((cm, i) => {
+                                        const bgColor = cm.severity === "CRITICAL" ? "rgba(239,68,68,0.10)" : cm.severity === "HIGH" ? "rgba(245,158,11,0.10)" : "rgba(74,111,212,0.08)";
+                                        const borderColor = cm.severity === "CRITICAL" ? "rgba(239,68,68,0.45)" : cm.severity === "HIGH" ? "rgba(245,158,11,0.40)" : "rgba(74,111,212,0.30)";
+                                        const textColor = cm.severity === "CRITICAL" ? C.red : cm.severity === "HIGH" ? C.amber : C.accent;
+                                        return (
+                                            <div key={cm.id} style={{ background: bgColor, border: `1px solid ${borderColor}`, borderRadius: 10, padding: "9px 14px", marginBottom: i < pred.clutchMoments.length - 1 ? 6 : 0 }}>
+                                                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                                                    <span style={{ fontSize: 13, fontWeight: 900, color: textColor }}>{cm.label}</span>
+                                                    <span style={{ fontSize: 9, fontWeight: 700, color: textColor, background: textColor + "20", borderRadius: 20, padding: "1px 7px", letterSpacing: 1 }}>{cm.severity}</span>
+                                                </div>
+                                                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.55)", marginTop: 3 }}>{cm.description}</div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+
                             {/* ── HERO DECISION (replaces old hero bar + prediction call banner) ── */}
                             {!isEnded && <HeroDecision pred={pred} prob={prob} isEnded={isEnded} />}
 
