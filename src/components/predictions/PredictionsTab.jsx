@@ -2551,6 +2551,59 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                 })()}
 
                 {/* ── Advanced Models Panel ──────────────────────────────── */}
+                {/* ── Ball-by-Ball Live Panel ── */}
+                {pred?.ballByBall?.ballSequence?.length > 0 && (
+                    <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
+                        <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>THIS OVER — BALL BY BALL</div>
+
+                        {/* Ball sequence dots */}
+                        <div style={{ display: "flex", gap: 5, marginBottom: 8, flexWrap: "wrap" }}>
+                            {pred.ballByBall.ballSequence.map((b, i) => {
+                                const isWkt = b === "W";
+                                const isBig = b === "4" || b === "6";
+                                const isDot = b === "0";
+                                const bg = isWkt ? C.red : isBig ? C.green : isDot ? "rgba(255,255,255,0.08)" : C.amber;
+                                const col = isWkt || isBig ? "#fff" : isDot ? "rgba(255,255,255,0.3)" : C.text;
+                                return (
+                                    <div key={i} style={{ width: 28, height: 28, borderRadius: "50%", background: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 900, color: col }}>
+                                        {b}
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* Dot % and boundary % bars */}
+                        <div style={{ display: "flex", gap: 10, marginBottom: 6 }}>
+                            {[
+                                { label: "Dot balls", val: pred.ballByBall.dotPct, color: C.red },
+                                { label: "Boundaries", val: pred.ballByBall.boundaryPct, color: C.green },
+                            ].map(({ label, val, color }) => (
+                                <div key={label} style={{ flex: 1 }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 2 }}>
+                                        <span style={{ fontSize: 9, color: C.muted }}>{label}</span>
+                                        <span style={{ fontSize: 9, fontWeight: 700, color }}>{val}%</span>
+                                    </div>
+                                    <div style={{ height: 4, background: "rgba(255,255,255,0.08)", borderRadius: 2 }}>
+                                        <div style={{ width: `${Math.min(100, val)}%`, height: "100%", background: color, borderRadius: 2 }} />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Pressure + trend */}
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 10, color: "rgba(255,255,255,0.45)" }}>
+                            {pred.ballByBall.dotsInARow >= 3 && (
+                                <span style={{ color: C.red, fontWeight: 700 }}>🔴 {pred.ballByBall.dotsInARow} dots in a row</span>
+                            )}
+                            {pred.ballByBall.overRpoTrend !== 0 && (
+                                <span style={{ color: pred.ballByBall.overRpoTrend > 0 ? C.green : C.red, fontWeight: 700 }}>
+                                    {pred.ballByBall.overRpoTrend > 0 ? "📈" : "📉"} {pred.ballByBall.overRpoTrend > 0 ? "+" : ""}{pred.ballByBall.overRpoTrend} last over
+                                </span>
+                            )}
+                        </div>
+                    </div>
+                )}
+
                 {pred && (pred.ensembleAgreement?.verdict || pred.monteCarloProb || pred.hawkesWicketProb) && (
                     <div style={{ background: "rgba(255,255,255,0.02)", border: `1px solid ${C.border}`, borderRadius: 10, padding: "10px 12px", marginBottom: 10 }}>
                         <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 8 }}>ADVANCED MODELS</div>
