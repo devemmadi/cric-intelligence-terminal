@@ -71,7 +71,7 @@ export default function CricIntelligence() {
             const t1 = pred.team1.split(",")[0].trim();
             const t2 = pred.team2.split(",")[0].trim();
             const prob = pred.aiProbability || 50;
-            document.title = `${t1} vs ${t2} — AI: ${prob}% Win Probability | CricIntelligence`;
+            document.title = `CricIntelligence — ${t1} vs ${t2} Live AI Predictions`;
         } else {
             document.title = "CricIntelligence - AI Cricket Predictions | Free IPL 2026";
         }
