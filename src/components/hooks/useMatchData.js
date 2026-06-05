@@ -106,7 +106,7 @@ export default function useMatchData() {
         try {
             const data = await fetch(`${API_BASE}/matches`).then(r => r.ok ? r.json() : null).catch(() => null);
             if (!data) return;
-            const list = Array.isArray(data) ? data : data.data || [];
+            const list = Array.isArray(data) ? data : data.matches || data.data || [];
             if (!list.length) return;
 
             const rawMapped = list.slice(0, 60).map((m, i) => {
