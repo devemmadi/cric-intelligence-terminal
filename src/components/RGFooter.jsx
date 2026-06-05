@@ -12,7 +12,7 @@ export default function RGFooter() {
         }}>
             <div style={{ maxWidth: 900, margin: "0 auto" }}>
 
-                {/* Top row — links + BMC button */}
+                {/* Top row — links */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 14 }}>
                     <div style={{ display: "flex", gap: 20, flexWrap: "wrap", alignItems: "center" }}>
                         {[
