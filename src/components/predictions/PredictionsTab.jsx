@@ -285,19 +285,19 @@ function PredictionCallBanner({ pred }) {
         return parts.slice(0, 3).join(" · ");
     }
 
-    // ── BET / WAIT / AVOID CTA ──────────────────────────────────────────────
+    // ── BACK / WAIT / NO EDGE CTA ───────────────────────────────────────────
     let ctaLabel, ctaColor, ctaBg, ctaBorder, ctaIcon;
     if (prob >= 65) {
-        ctaLabel = `BET ${team1}`; ctaIcon = "🟢";
+        ctaLabel = `BACK ${team1}`; ctaIcon = "🟢";
         ctaColor = "#00C896"; ctaBg = "rgba(0,200,150,0.15)"; ctaBorder = "rgba(0,200,150,0.5)";
     } else if (prob <= 35) {
-        ctaLabel = `BET ${team2}`; ctaIcon = "🟢";
+        ctaLabel = `BACK ${team2}`; ctaIcon = "🟢";
         ctaColor = "#00C896"; ctaBg = "rgba(0,200,150,0.15)"; ctaBorder = "rgba(0,200,150,0.5)";
     } else if (prob >= 55 || prob <= 45) {
         ctaLabel = "WAIT"; ctaIcon = "🟡";
         ctaColor = "#F59E0B"; ctaBg = "rgba(245,158,11,0.15)"; ctaBorder = "rgba(245,158,11,0.5)";
     } else {
-        ctaLabel = "AVOID"; ctaIcon = "🔴";
+        ctaLabel = "NO EDGE"; ctaIcon = "🔴";
         ctaColor = "#EF4444"; ctaBg = "rgba(239,68,68,0.15)"; ctaBorder = "rgba(239,68,68,0.5)";
     }
 
