@@ -397,6 +397,43 @@ export default function AccuracyDashboard() {
                             </div>
                         )}
 
+                        {/* Vitality Blast 2026 tracking */}
+                        <div style={{
+                            background: "linear-gradient(135deg, #0F1535 0%, #0B1A10 100%)",
+                            border: "1px solid rgba(16,185,129,0.3)",
+                            borderRadius: 12, padding: 24, marginBottom: 32,
+                        }}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 16 }}>
+                                <div>
+                                    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
+                                        <span style={{ fontSize: 10, fontWeight: 800, color: C.green, background: "rgba(16,185,129,0.15)", border: "1px solid rgba(16,185,129,0.35)", borderRadius: 20, padding: "3px 10px", letterSpacing: 1 }}>🏏 LIVE TRACKING</span>
+                                    </div>
+                                    <h3 style={{ color: C.text, fontSize: 18, fontWeight: 800, margin: 0 }}>Vitality Blast 2026</h3>
+                                    <p style={{ color: C.muted, fontSize: 13, margin: "4px 0 0" }}>T20 Blast live accuracy tracking — every match logged in real time</p>
+                                </div>
+                                <div style={{ textAlign: "center", background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)", borderRadius: 10, padding: "12px 20px" }}>
+                                    <div style={{ fontSize: 32, fontWeight: 900, color: C.green, lineHeight: 1 }}>{data?.vb_matches || 0}</div>
+                                    <div style={{ color: C.muted, fontSize: 11, marginTop: 4 }}>matches tracked</div>
+                                </div>
+                            </div>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12 }}>
+                                {[
+                                    { label: "Win prediction accuracy", value: data?.vb_accuracy ? `${data.vb_accuracy}%` : "Building…", color: C.green },
+                                    { label: "Season", value: "2026", color: C.muted },
+                                    { label: "Competition", value: "T20 Vitality Blast", color: C.muted },
+                                    { label: "Tracking started", value: "June 2026", color: C.muted },
+                                ].map(s => (
+                                    <div key={s.label} style={{ background: "rgba(255,255,255,0.04)", borderRadius: 8, padding: "12px 14px" }}>
+                                        <div style={{ color: C.muted, fontSize: 11, marginBottom: 4 }}>{s.label}</div>
+                                        <div style={{ color: s.color, fontSize: 16, fontWeight: 700 }}>{s.value}</div>
+                                    </div>
+                                ))}
+                            </div>
+                            <p style={{ color: C.muted, fontSize: 11, margin: "14px 0 0" }}>
+                                Each Vitality Blast match is tracked live — win prediction logged at over 10 and compared to the final result after the match. Results update automatically.
+                            </p>
+                        </div>
+
                         {/* Recent matches table */}
                         {recent.length > 0 && (
                             <div style={{

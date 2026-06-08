@@ -1140,13 +1140,13 @@ Write like a Sky Sports commentator — punchy, specific, no generic phrases.`;
 
     let signal, signalColor;
     if (_confLevel === "HIGH") {
-        signal = "BET";
+        signal = "BACK";
         signalColor = "#00C896";
     } else if (_confLevel === "MEDIUM") {
         signal = "WAIT";
         signalColor = "#F59E0B";
     } else {
-        signal = "AVOID";
+        signal = "NO EDGE";
         signalColor = "#EF4444";
     }
     const signalBg = "linear-gradient(145deg, #0F1535 0%, #141D4A 100%)";
@@ -1267,7 +1267,7 @@ Write like a Sky Sports commentator — punchy, specific, no generic phrases.`;
             {/* Top row: signal badge + meta */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 18 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: signalColor, animation: signal === "BET" ? "pulse 1.5s infinite" : "none", flexShrink: 0 }} />
+                    <div style={{ width: 8, height: 8, borderRadius: "50%", background: signalColor, animation: signal === "BACK" ? "pulse 1.5s infinite" : "none", flexShrink: 0 }} />
                     <span style={{ fontSize: 10, fontWeight: 800, color: signalColor, letterSpacing: 2 }}>AI SIGNAL</span>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
@@ -1286,7 +1286,7 @@ Write like a Sky Sports commentator — punchy, specific, no generic phrases.`;
                 <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 7, marginBottom: 12 }}>
                     <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: signalColor + "18", border: `1px solid ${signalColor}40`, borderRadius: 8, padding: "5px 12px" }}>
                         <span style={{ fontSize: 11, fontWeight: 800, color: signalColor, letterSpacing: 1 }}>
-                            {signal === "BET" ? `🔥 BACKED — ${_signalCount}/${_totalSignals} SIGNALS AGREE` : signal === "WAIT" ? `⏳ WAIT — ${_signalCount}/${_totalSignals} SIGNALS` : "⚠️ TOO CLOSE TO CALL"}
+                            {signal === "BACK" ? `🔥 BACK ${favTeam} — ${_signalCount}/${_totalSignals} SIGNALS` : signal === "WAIT" ? `⏳ WAIT — ${_signalCount}/${_totalSignals} SIGNALS` : "⚠️ NO EDGE — TOO CLOSE"}
                         </span>
                     </div>
                     {/* Individual signal chips */}
