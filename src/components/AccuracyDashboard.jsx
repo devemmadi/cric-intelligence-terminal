@@ -79,8 +79,8 @@ function StatCard({ label, value, sub, color, icon }) {
 function IndustryComparison({ ourAccuracy }) {
     const bars = [
         { label: "CricIntelligence (Live)", pct: ourAccuracy, color: C.green, bold: true },
-        { label: "Industry average (live)", pct: 75,          color: C.amber },
-        { label: "Industry average (pre-match)", pct: 60,     color: C.muted },
+        { label: "Typical live T20 models", pct: 70,          color: C.amber },
+        { label: "Pre-match models",        pct: 60,          color: C.muted },
         { label: "Coin flip (baseline)",   pct: 50,           color: "#475569" },
     ];
     return (
@@ -113,7 +113,7 @@ function IndustryComparison({ ourAccuracy }) {
             ))}
             <p style={{ color: C.muted, fontSize: 11, marginTop: 16, marginBottom: 0 }}>
                 Industry benchmarks sourced from academic literature on T20 win prediction.
-                Pre-match models typically achieve 55–65%. Live ball-by-ball models 70–80%+.
+                Pre-match models typically achieve 55–65%. Live ball-by-ball models average ~68–72%. Top-tier systems reach 75%+.
             </p>
         </div>
     );
@@ -181,7 +181,7 @@ export default function AccuracyDashboard() {
 
     useEffect(() => {
         const title = "AI Prediction Accuracy — Verified Results | CricIntelligence";
-        const desc  = "See exactly how accurate CricIntelligence AI predictions are. Verified win probability accuracy, score prediction MAE, tested on 400+ IPL matches.";
+        const desc  = "See exactly how accurate CricIntelligence AI predictions are. Verified win probability accuracy, score prediction MAE, tested on 400+ T20 matches including Vitality Blast and IPL.";
         const url   = "https://www.cricintelligence.com/accuracy";
         document.title = title;
         setMeta("description", desc);
@@ -296,9 +296,9 @@ export default function AccuracyDashboard() {
                                 icon="🎯"
                             />
                             <StatCard
-                                label="IPL Accuracy"
+                                label="T20 Tournament Accuracy"
                                 value={`${ipl_acc}%`}
-                                sub={`${(data.ipl_matches || 0).toLocaleString()} IPL matches`}
+                                sub={`${(data.ipl_matches || 0).toLocaleString()} T20 matches tracked`}
                                 color="#F59E0B"
                                 icon="🏆"
                             />
@@ -358,8 +358,7 @@ export default function AccuracyDashboard() {
                                         Industry context
                                     </div>
                                     <div style={{ color: C.muted, fontSize: 12 }}>
-                                        T20 pre-match models typically achieve 55–65%. Live ball-by-ball models with player stats reach 70–80%+.
-                                        Our {overall}% is in the top tier for open-source cricket AI.
+                                        T20 pre-match models typically achieve 55–65%. Live ball-by-ball models average ~68–72%. Our {overall}% places us above the live model average.
                                     </div>
                                 </div>
                             </div>

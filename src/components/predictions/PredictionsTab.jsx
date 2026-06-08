@@ -1853,9 +1853,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                 {/* Compact trust strip + view switcher — shown when a match IS loaded */}
                 {(selectedMatch || pred) && (
                     <div style={{ background: "rgba(255,255,255,0.03)", borderBottom: `1px solid ${C.border}`, padding: "6px 20px", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                        <span style={{ fontSize: 11, color: "#10B981", fontWeight: 700 }}>80%+ accurate</span>
+                        <span style={{ fontSize: 11, color: "#10B981", fontWeight: 700 }}>74%+ accurate</span>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
-                        <span style={{ fontSize: 11, color: C.muted }}>45+ verified IPL 2026 predictions</span>
+                        <span style={{ fontSize: 11, color: C.muted }}>Vitality Blast 2026 tracked live</span>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
                         <span style={{ fontSize: 11, fontWeight: 700, color: secsSinceUpdate <= 5 ? C.green : secsSinceUpdate <= 15 ? C.amber : C.muted }}>
                             🔄 Updated {secsSinceUpdate}s ago
