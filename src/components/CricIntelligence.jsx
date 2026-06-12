@@ -73,7 +73,7 @@ export default function CricIntelligence() {
             const prob = pred.aiProbability || 50;
             document.title = `CricIntelligence — ${t1} vs ${t2} Live AI Predictions`;
         } else {
-            document.title = "CricIntelligence - AI Cricket Predictions | Free IPL 2026";
+            document.title = "CricIntelligence — Free AI Cricket Predictions | Live Win Probability";
         }
     }, [pred?.team1, pred?.team2, pred?.aiProbability]);
 
