@@ -1593,17 +1593,28 @@ function NoMatchesScreen({ upcomingMatches }) {
     return (
         <div style={{ maxWidth: 860, margin: "0 auto", padding: "28px 20px 60px" }}>
 
-            {/* ── Featured match hero ── */}
-            <FeaturedMatchHero />
+            {/* ── Site intro hero — "what is this site" ── */}
+            <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "20px 24px", marginBottom: 20, textAlign: "center" }}>
+                <div style={{ fontSize: 24, fontWeight: 900, color: "#fff", marginBottom: 6 }}>🏏 Free AI Cricket Win Probability</div>
+                <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.6, marginBottom: 14 }}>Updated every ball · No sign-up · 74%+ accurate · All T20s</div>
+                <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
+                    {["📊 Win % live", "🎯 Score projection", "⚡ Next-over range", "🌍 IPL · Internationals · BBL"].map(f => (
+                        <span key={f} style={{ fontSize: 12, fontWeight: 600, color: C.text, background: "rgba(255,255,255,0.06)", border: `1px solid ${C.border}`, borderRadius: 20, padding: "4px 12px" }}>{f}</span>
+                    ))}
+                </div>
+            </div>
+
+            {/* ── Live prediction demo ── */}
+            <MockPredictionDemo />
 
             {/* ── Trust accuracy bar ── */}
             <TrustAccuracyBar />
 
+            {/* ── Featured match hero ── */}
+            <FeaturedMatchHero />
+
             {/* ── How it works ── */}
             <HowItWorksSteps />
-
-            {/* ── Live prediction demo ── */}
-            <MockPredictionDemo />
 
             {/* ── Upcoming fixtures ── */}
             {scheduleMatches.length > 0 && (
@@ -2001,16 +2012,33 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             </div>
                         </div>
 
-                        {/* Skeleton only when no pred at all (first ever load) */}
+                        {/* First load — show site intro + example while prediction fetches */}
                         {!pred && isPredLoading && (
-                            <div style={{ padding: "24px 20px" }}>
-                                {[1, 2, 3].map(i => (
-                                    <div key={i} style={{ background: "#111827", borderRadius: 14, padding: 20, marginBottom: 14, border: "1px solid rgba(255,255,255,0.07)" }}>
-                                        <div style={{ height: 12, background: "linear-gradient(90deg,#1a2540 25%,#243050 50%,#1a2540 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 6, width: "40%", marginBottom: 12 }} />
-                                        <div style={{ height: 32, background: "linear-gradient(90deg,#1a2540 25%,#243050 50%,#1a2540 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 8, width: "70%", marginBottom: 12 }} />
-                                        <div style={{ height: 8, background: "linear-gradient(90deg,#1a2540 25%,#243050 50%,#1a2540 75%)", backgroundSize: "200% 100%", animation: "shimmer 1.5s infinite", borderRadius: 4, width: "100%", marginBottom: 8 }} />
+                            <div style={{ padding: "20px 20px 0" }}>
+                                {/* Loading bar */}
+                                <div style={{ background: "rgba(74,111,212,0.12)", border: "1px solid rgba(74,111,212,0.2)", borderRadius: 10, padding: "12px 16px", marginBottom: 20, display: "flex", alignItems: "center", gap: 10 }}>
+                                    <span style={{ fontSize: 16, animation: "pulse 1.5s infinite" }}>🔄</span>
+                                    <div>
+                                        <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.85)" }}>
+                                            Fetching live AI prediction for {selectedMatch ? `${cleanTeam(selectedMatch.t1)} vs ${cleanTeam(selectedMatch.t2)}` : "live match"}...
+                                        </div>
+                                        <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>ML model — updates every ball · usually ready in 2–3s</div>
                                     </div>
-                                ))}
+                                </div>
+                                {/* Show site intro while waiting */}
+                                <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 20px", marginBottom: 16, textAlign: "center" }}>
+                                    <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", marginBottom: 6 }}>🏏 Free AI Cricket Win Probability</div>
+                                    <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.6 }}>Updated every ball · No sign-up needed · 74%+ accurate</div>
+                                    <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 14, flexWrap: "wrap" }}>
+                                        {[["📊","Win % live"], ["🎯","Score projection"], ["⚡","Next-over range"], ["🌍","All T20s"]].map(([icon, label]) => (
+                                            <div key={label} style={{ textAlign: "center" }}>
+                                                <div style={{ fontSize: 20 }}>{icon}</div>
+                                                <div style={{ fontSize: 11, color: C.muted, marginTop: 4, fontWeight: 600 }}>{label}</div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <MockPredictionDemo />
                             </div>
                         )}
                         {/* ── LIVE ENGINE VIEW ── */}
