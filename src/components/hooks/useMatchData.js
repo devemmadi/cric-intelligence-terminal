@@ -69,8 +69,9 @@ export default function useMatchData() {
                 }
                 const mList = window.__matchList || [];
                 const mMatch = mList.find(mx => mx.t1 === merged.team1 || mx.team1 === merged.team1);
-                merged.team1ImageId = mMatch?.t1ImageId || 0;
-                merged.team2ImageId = mMatch?.t2ImageId || 0;
+                const _getImgId = (team) => { try { return +localStorage.getItem("ci_imgid_" + team) || 0; } catch { return 0; } };
+                merged.team1ImageId = mMatch?.t1ImageId || _getImgId(merged.team1) || merged.team1ImageId || 0;
+                merged.team2ImageId = mMatch?.t2ImageId || _getImgId(merged.team2) || merged.team2ImageId || 0;
                 setPred(merged);
                 try {
                     localStorage.setItem("ci_pred_cache", JSON.stringify(merged));
@@ -79,8 +80,9 @@ export default function useMatchData() {
             } else if (predData && predData.team1) {
                 const mList = window.__matchList || [];
                 const mMatch = mList.find(mx => mx.t1 === predData.team1 || mx.team1 === predData.team1);
-                predData.team1ImageId = mMatch?.t1ImageId || 0;
-                predData.team2ImageId = mMatch?.t2ImageId || 0;
+                const _getImgId2 = (team) => { try { return +localStorage.getItem("ci_imgid_" + team) || 0; } catch { return 0; } };
+                predData.team1ImageId = mMatch?.t1ImageId || _getImgId2(predData.team1) || predData.team1ImageId || 0;
+                predData.team2ImageId = mMatch?.t2ImageId || _getImgId2(predData.team2) || predData.team2ImageId || 0;
                 setPred(predData);
             }
         } catch { }
@@ -168,10 +170,19 @@ export default function useMatchData() {
             setLiveStatus("live");
             setIsFirstLoad(false);
             try { localStorage.setItem("ci_matches_cache", JSON.stringify(mapped)); } catch { }
+            // Persist imageIds by team name so logos survive empty-list intervals
+            mapped.forEach(m => {
+                if (m.t1ImageId) try { localStorage.setItem("ci_imgid_" + m.t1, String(m.t1ImageId)); } catch {}
+                if (m.t2ImageId) try { localStorage.setItem("ci_imgid_" + m.t2, String(m.t2ImageId)); } catch {}
+            });
 
             // Auto-select on first load OR if selected match no longer exists in the list
             const currentId = selectedMatchRef.current?.matchId || selectedMatchRef.current?.id;
             const stillExists = currentId && mapped.some(m => (m.matchId || m.id) === currentId);
+            // If the selected match is gone from the new list, clear stale pred cache so old match doesn't linger
+            if (currentId && !stillExists) {
+                try { localStorage.removeItem("ci_pred_cache"); } catch {}
+            }
             if (!selectedMatchRef.current || !stillExists) {
                 const best = mapped.find(m => m.status === "LIVE") || mapped.find(m => m.status === "UPCOMING") || mapped[0];
                 if (best) {
