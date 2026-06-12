@@ -23,6 +23,8 @@ export default function useMatchData() {
     const selectedMatchRef = useRef(null);
     // Incremented every time a pred fetch starts — used to discard stale responses
     const predRequestIdRef = useRef(0);
+    // Counts consecutive empty-but-healthy responses (quota fine, just no matches)
+    const emptyHealthyCountRef = useRef(0);
 
     // ── PREDICTION — define first so selectMatch can call it ─────────────────
     const fetchPred = useCallback(async (matchId, t1 = "", t2 = "") => {
@@ -120,12 +122,25 @@ export default function useMatchData() {
                         setLiveMatches(updated);
                         try { localStorage.setItem("ci_matches_cache", JSON.stringify(updated)); } catch {}
                     }
-                    // Clear stale pred — quota exhausted means no live data, old pred is misleading
+                    // Clear stale pred — quota exhausted means no live data
                     setPred(null);
                     try { localStorage.removeItem("ci_pred_cache"); } catch {}
+                } else {
+                    // Backend healthy but genuinely no matches right now.
+                    // After 2 consecutive empty responses (10s apart) clear stale display.
+                    emptyHealthyCountRef.current++;
+                    if (emptyHealthyCountRef.current >= 2) {
+                        setLiveMatches([]);
+                        setPred(null);
+                        try {
+                            localStorage.removeItem("ci_pred_cache");
+                            localStorage.removeItem("ci_matches_cache");
+                        } catch {}
+                    }
                 }
                 return;
             }
+            emptyHealthyCountRef.current = 0;
 
             const rawMapped = list.slice(0, 60).map((m, i) => {
                 const rawStatus = m.status || "";
