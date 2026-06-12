@@ -12,6 +12,7 @@ import PitchTab from "./pitch/PitchTab";
 import NotifyButton from "./shared/NotifyButton";
 import TrackRecord from "./TrackRecord";
 import ErrorBoundary from "./shared/ErrorBoundary";
+import AboutSection from "./AboutSection";
 
 // Inject canonical tag dynamically so each page gets the right one
 function setCanonical(url) {
@@ -186,6 +187,7 @@ export default function CricIntelligence() {
             {activeTab === "media" && <ErrorBoundary label="Media"><MediaSection /></ErrorBoundary>}
             {activeTab === "record" && <ErrorBoundary label="Record"><TrackRecord /></ErrorBoundary>}
 
+            <AboutSection />
             <RGFooter />
 
             {/* MOBILE BOTTOM NAV */}
