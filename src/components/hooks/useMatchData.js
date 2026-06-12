@@ -107,7 +107,9 @@ export default function useMatchData() {
             const data = await fetch(`${API_BASE}/matches`).then(r => r.ok ? r.json() : null).catch(() => null);
             if (!data) return;
             const list = Array.isArray(data) ? data : data.matches || data.data || [];
-            if (!list.length) return;
+            // Only skip empty responses when we have no existing matches (avoid clearing on transient errors).
+            // If we already have matches and get an empty list, keep showing stale state.
+            if (!list.length && liveMatches.length > 0) return;
 
             const rawMapped = list.slice(0, 60).map((m, i) => {
                 const rawStatus = m.status || "";
