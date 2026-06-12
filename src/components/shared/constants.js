@@ -97,7 +97,9 @@ body { background: ${C.bg}; }
     .ts { flex-wrap: wrap !important; gap: 4px !important; padding: 6px 12px !important; }
     /* View switcher row compact */
     .vs-row { padding: 6px 12px !important; gap: 4px !important; }
+    .mob-intel { display: block !important; }
 }
 .mn { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: ${C.navy}; border-top: 1px solid ${C.navyLight}; padding: 8px 0 18px; z-index: 200; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); }
 .mt { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0; font-family: Inter, system-ui; }
+.mob-intel { display: none; }
 `;

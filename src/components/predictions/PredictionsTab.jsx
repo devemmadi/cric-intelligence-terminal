@@ -2116,6 +2116,49 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             {/* ── HERO DECISION (replaces old hero bar + prediction call banner) ── */}
                             {!isEnded && <HeroDecision pred={pred} prob={prob} isEnded={isEnded} />}
 
+                            {/* ── MOBILE VERDICT STRIP (right sidebar content on mobile) ── */}
+                            {!isEnded && pred && pred.team1 && (() => {
+                                const _pressure = pred.pressureScore || 0;
+                                const _riskLabel = _pressure > 70 ? "High" : _pressure > 45 ? "Medium" : "Low";
+                                const _riskColor = _pressure > 70 ? C.red : _pressure > 45 ? C.amber : C.green;
+                                const _confLevel = (pred.confidenceSignals || {}).confidenceLevel || "LOW";
+                                const _signalLabel = _confLevel === "HIGH" ? "Strong Signal" : _confLevel === "MEDIUM" ? "Moderate Edge" : "Watching";
+                                const _signalColor = _confLevel === "HIGH" ? C.green : _confLevel === "MEDIUM" ? C.amber : C.muted;
+                                const _hist = pred.probHistory || [];
+                                const _delta = _hist.length >= 3 ? (_hist[_hist.length-1]?.prob||50) - (_hist[_hist.length-3]?.prob||50) : 0;
+                                const _t1 = cleanTeam(pred.team1);
+                                const _t2 = cleanTeam(pred.team2);
+                                const _momentumDir = Math.abs(_delta) < 3 ? "Steady" : _delta > 0 ? `↑ ${_t1}` : `↑ ${_t2}`;
+                                const _momentumColor = Math.abs(_delta) < 3 ? C.muted : _delta > 0 ? C.green : C.red;
+                                const verdictText = prob >= 65 ? `BACK ${_t1}` : prob <= 35 ? `BACK ${_t2}` : prob >= 55 ? `BACK ${_t1} — low edge` : prob <= 45 ? `BACK ${_t2} — low edge` : "SKIP — too close";
+                                const verdictColor = prob >= 55 || prob <= 45 ? C.green : C.red;
+                                const fairOdds = (100 / prob).toFixed(2);
+                                return (
+                                    <div className="mob-intel" style={{ marginBottom: 14 }}>
+                                        <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 12, padding: "12px 14px" }}>
+                                            <div style={{ fontSize: 9, fontWeight: 800, color: C.muted, letterSpacing: 1.5, marginBottom: 10 }}>MATCH INTELLIGENCE</div>
+                                            <div style={{ background: verdictColor === C.green ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.08)", border: `1px solid ${verdictColor}40`, borderRadius: 8, padding: "8px 10px", marginBottom: 10 }}>
+                                                <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 1, marginBottom: 2 }}>VERDICT</div>
+                                                <div style={{ fontSize: 14, fontWeight: 900, color: verdictColor }}>{verdictText}</div>
+                                            </div>
+                                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
+                                                {[
+                                                    { label: "Risk Level", value: _riskLabel, color: _riskColor },
+                                                    { label: "Momentum", value: _momentumDir, color: _momentumColor },
+                                                    { label: "AI Signal", value: _signalLabel, color: _signalColor },
+                                                    { label: "Fair Odds", value: fairOdds, color: C.text },
+                                                ].map(({ label, value, color }) => (
+                                                    <div key={label} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "7px 10px" }}>
+                                                        <div style={{ fontSize: 9, color: C.muted, fontWeight: 700, letterSpacing: 0.8, marginBottom: 3 }}>{label}</div>
+                                                        <div style={{ fontSize: 12, fontWeight: 800, color }}>{value}</div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })()}
+
                             {/* ── MINI TRUST BLOCK ── */}
                             <MiniTrustBlock />
 

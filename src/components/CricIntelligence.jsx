@@ -190,11 +190,14 @@ export default function CricIntelligence() {
 
             {/* MOBILE BOTTOM NAV */}
             <nav className="mn">
-                {[["Predictions", "predict"], ["Matches", "matches"], ["Pitch", "pitch"], ["Record", "record"], ["Media", "media"]].map(([label, key]) => (
+                {[["Predict", "predict"], ["Matches", "matches"], ["Pitch", "pitch"], ["Record", "record"], ["Media", "media"]].map(([label, key]) => (
                     <button key={key} className="mt" onClick={() => setActiveTab(key)} style={{ opacity: activeTab === key ? 1 : 0.4 }}>
                         <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>{label}</span>
                     </button>
                 ))}
+                <button className="mt" onClick={() => navigate("/live-odds")} style={{ opacity: 0.4 }}>
+                    <span style={{ fontSize: 10, fontWeight: 600, color: "#FBBF24" }}>Odds</span>
+                </button>
             </nav>
         </div>
     );
