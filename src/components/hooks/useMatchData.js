@@ -107,9 +107,19 @@ export default function useMatchData() {
             const data = await fetch(`${API_BASE}/matches`).then(r => r.ok ? r.json() : null).catch(() => null);
             if (!data) return;
             const list = Array.isArray(data) ? data : data.matches || data.data || [];
-            // Only skip empty responses when we have no existing matches (avoid clearing on transient errors).
-            // If we already have matches and get an empty list, keep showing stale state.
-            if (!list.length && liveMatches.length > 0) return;
+            const quotaExhausted = !Array.isArray(data) && data?.quotaExhausted;
+            if (!list.length) {
+                // Quota exhausted + empty list: mark any live matches we're showing as ENDED
+                // so the user doesn't see a frozen mid-match state indefinitely.
+                if (quotaExhausted && liveMatches.length > 0) {
+                    const updated = liveMatches.map(m =>
+                        m.status === "LIVE" ? { ...m, status: "ENDED", matchEnded: true } : m
+                    );
+                    setLiveMatches(updated);
+                    try { localStorage.setItem("ci_matches_cache", JSON.stringify(updated)); } catch {}
+                }
+                return;
+            }
 
             const rawMapped = list.slice(0, 60).map((m, i) => {
                 const rawStatus = m.status || "";
