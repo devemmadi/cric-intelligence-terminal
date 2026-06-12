@@ -74,12 +74,18 @@ body { background: ${C.bg}; }
 @media (max-width: 700px) {
     .sl { display: none !important; }
     .sr { display: none !important; }
+    .ntg { display: none !important; }
     .mg { grid-template-columns: 1fr !important; }
     .cr { grid-template-columns: 1fr !important; }
     .og { grid-template-columns: repeat(2,1fr) !important; }
     .mn { display: flex !important; }
     .mc { padding: 12px !important; padding-bottom: 90px !important; }
-    .hn { font-size: 26px !important; }
+    .hn { font-size: 22px !important; }
+    body { overflow-x: hidden; }
+    /* Score display row wraps on mobile */
+    .score-row { flex-wrap: wrap !important; justify-content: center !important; gap: 6px !important; padding: 8px 12px !important; }
+    /* Match header compact padding */
+    .match-hdr { padding: 10px 14px 14px !important; }
     /* Hero card — bigger on mobile for thumb reach */
     .hero-cta { padding: 16px 20px !important; font-size: 17px !important; border-radius: 14px !important; }
     /* Full-width trust chips */
@@ -87,6 +93,10 @@ body { background: ${C.bg}; }
     .trust-bar span { font-size: 9px !important; }
     /* Compact fair odds row */
     .fair-odds { padding: 8px 12px !important; }
+    /* Trust strip wraps */
+    .ts { flex-wrap: wrap !important; gap: 4px !important; padding: 6px 12px !important; }
+    /* View switcher row compact */
+    .vs-row { padding: 6px 12px !important; gap: 4px !important; }
 }
 .mn { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: ${C.navy}; border-top: 1px solid ${C.navyLight}; padding: 8px 0 18px; z-index: 200; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); }
 .mt { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0; font-family: Inter, system-ui; }

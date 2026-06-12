@@ -1852,7 +1852,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
                 {/* Compact trust strip + view switcher — shown when a match IS loaded */}
                 {(selectedMatch || pred) && (
-                    <div style={{ background: "rgba(255,255,255,0.03)", borderBottom: `1px solid ${C.border}`, padding: "6px 20px", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                    <div className="vs-row" style={{ background: "rgba(255,255,255,0.03)", borderBottom: `1px solid ${C.border}`, padding: "6px 20px", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                         <span style={{ fontSize: 11, color: "#10B981", fontWeight: 700 }}>74%+ accurate</span>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
                         <span style={{ fontSize: 11, color: C.muted }}>Vitality Blast 2026 tracked live</span>
@@ -1905,7 +1905,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                 {(selectedMatch || pred) && (
                     <>
                         {/* Match header — uses selectedMatch immediately, falls back to pred */}
-                        <div style={{ background: `linear-gradient(135deg, ${getTeamColor(pred?.team1 || selectedMatch?.t1)}22 0%, #1a2760 40%, #253580 60%, ${getTeamColor(pred?.team2 || selectedMatch?.t2)}22 100%)`, padding: "16px 24px 20px", position: "sticky", top: 54, zIndex: 150, color: "#fff", borderBottom: `1px solid rgba(255,255,255,0.08)` }}>
+                        <div className="match-hdr" style={{ background: `linear-gradient(135deg, ${getTeamColor(pred?.team1 || selectedMatch?.t1)}22 0%, #1a2760 40%, #253580 60%, ${getTeamColor(pred?.team2 || selectedMatch?.t2)}22 100%)`, padding: "16px 24px 20px", position: "sticky", top: 54, zIndex: 150, color: "#fff", borderBottom: `1px solid rgba(255,255,255,0.08)` }}>
                             {/* Thin loading bar at top */}
                             {isPredLoading && (
                                 <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
@@ -1974,7 +1974,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     </div>
                                 </div>
                                 {pred?.displayScore && (
-                                    <div style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
+                                    <div className="score-row" style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
                                         <span style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", letterSpacing: 0.5 }}>
                                             {cleanTeam((pred.innings === 2 ? pred.team2 : pred.team1) || "")}
                                         </span>

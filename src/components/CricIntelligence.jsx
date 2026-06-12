@@ -97,7 +97,7 @@ export default function CricIntelligence() {
                 <div onClick={() => { setActiveTab("predict"); window.scrollTo(0, 0); }} style={{ cursor: "pointer" }}>
                     <Logo href="/" />
                 </div>
-                <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
+                <div className="ntg" style={{ display: "flex", gap: 2, alignItems: "center" }}>
                     {[["predict", "Predictions"], ["matches", "Matches"], ["pitch", "Pitch"], ["record", "Record"], ["media", "Media"]].map(([k, label]) => (
                         <button key={k} className={`tab-btn ${activeTab === k ? "on" : ""}`}
                             onClick={() => { setActiveTab(k); }}>
