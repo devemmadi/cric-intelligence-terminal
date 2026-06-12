@@ -111,14 +111,18 @@ export default function useMatchData() {
             const list = Array.isArray(data) ? data : data.matches || data.data || [];
             const quotaExhausted = !Array.isArray(data) && data?.quotaExhausted;
             if (!list.length) {
-                // Quota exhausted + empty list: mark any live matches we're showing as ENDED
-                // so the user doesn't see a frozen mid-match state indefinitely.
-                if (quotaExhausted && liveMatches.length > 0) {
-                    const updated = liveMatches.map(m =>
-                        m.status === "LIVE" ? { ...m, status: "ENDED", matchEnded: true } : m
-                    );
-                    setLiveMatches(updated);
-                    try { localStorage.setItem("ci_matches_cache", JSON.stringify(updated)); } catch {}
+                if (quotaExhausted) {
+                    // Mark any live matches as ENDED so the sidebar doesn't freeze
+                    if (liveMatches.length > 0) {
+                        const updated = liveMatches.map(m =>
+                            m.status === "LIVE" ? { ...m, status: "ENDED", matchEnded: true } : m
+                        );
+                        setLiveMatches(updated);
+                        try { localStorage.setItem("ci_matches_cache", JSON.stringify(updated)); } catch {}
+                    }
+                    // Clear stale pred — quota exhausted means no live data, old pred is misleading
+                    setPred(null);
+                    try { localStorage.removeItem("ci_pred_cache"); } catch {}
                 }
                 return;
             }
