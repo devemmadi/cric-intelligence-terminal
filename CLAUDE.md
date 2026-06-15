@@ -8,10 +8,10 @@
 - New pred field used from backend → document it in relevant component section
 
 ## Project
-- **Live URL:** https://www.cricintelligence.com (custom domain → Netlify)
-- **Netlify URL:** https://cricintelligence.netlify.app
+- **Live URL:** https://www.cricintelligence.com (custom domain → Vercel)
+- **Vercel URL:** https://cric-intelligence-terminal.vercel.app
 - **Repo:** https://github.com/devemmadi/cric-intelligence-terminal
-- **Deploy:** Netlify — auto-deploys on `git push origin main`
+- **Deploy:** Vercel — auto-deploys on `git push origin main`
 - **Stack:** React (CRA, no TypeScript), plain JS, inline styles
 
 ## API
