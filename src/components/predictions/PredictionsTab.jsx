@@ -5,6 +5,7 @@ import TeamLogo from "../shared/TeamLogo";
 import { MatchPill } from "../shared/MatchCard";
 import LiveProbabilityGraph from "./LiveProbabilityGraph";
 import LiveEngine from "./LiveEngine";
+import ScoreboardTab from "./ScoreboardTab";
 
 // ─── Small sub-components (only used inside predictions) ──────────────────────
 
@@ -1754,7 +1755,7 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
 // ─── Main export ──────────────────────────────────────────────────────────────
 export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSelect, pred, liveStatus, isFirstLoad, isPredLoading }) {
     const [activeOver, setActiveOver] = useState(0);
-    const [activeView, setActiveView] = useState("prediction"); // "prediction" | "liveengine"
+    const [activeView, setActiveView] = useState("prediction"); // "prediction" | "liveengine" | "scoreboard"
     const [secsSinceUpdate, setSecsSinceUpdate] = useState(0);
     const [pushStatus, setPushStatus] = useState("idle"); // "idle" | "loading" | "on" | "denied"
     const [scoreProjections, setScoreProjections] = useState([]);
@@ -1933,6 +1934,11 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     letterSpacing: 0.5,
                                 }}>LIVE</span>
                             </button>
+                            <button className={`tab-btn${activeView === "scoreboard" ? " on" : ""}`}
+                                onClick={() => setActiveView("scoreboard")}
+                                style={{ fontSize: 11, padding: "4px 10px" }}>
+                                📋 Scoreboard
+                            </button>
                         </div>
                     </div>
                 )}
@@ -2070,6 +2076,12 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         {activeView === "liveengine" && (
                             <div style={{ padding: "0 16px" }}>
                                 <LiveEngine pred={pred} />
+                            </div>
+                        )}
+                        {/* ── SCOREBOARD VIEW ── */}
+                        {activeView === "scoreboard" && (
+                            <div style={{ padding: "0 16px" }}>
+                                <ScoreboardTab matchId={pred?.id || selectedMatch?.id} />
                             </div>
                         )}
 
