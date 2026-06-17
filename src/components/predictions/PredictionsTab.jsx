@@ -1936,8 +1936,14 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             </button>
                             <button className={`tab-btn${activeView === "scoreboard" ? " on" : ""}`}
                                 onClick={() => setActiveView("scoreboard")}
-                                style={{ fontSize: 11, padding: "4px 10px" }}>
+                                style={{ fontSize: 11, padding: "4px 10px", position: "relative" }}>
                                 📋 Scoreboard
+                                <span style={{
+                                    position: "absolute", top: -5, right: -5,
+                                    background: "#EF4444", color: "#fff", fontSize: 8, fontWeight: 800,
+                                    padding: "1px 4px", borderRadius: 6, letterSpacing: 0.5,
+                                    lineHeight: 1.4, pointerEvents: "none",
+                                }}>NEW</span>
                             </button>
                         </div>
                     </div>
