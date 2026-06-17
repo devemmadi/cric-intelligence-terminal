@@ -32,7 +32,8 @@ src/components/
 │   └── useMatchData.js     ← ALL API logic (fetchMatches + fetchPred)
 ├── predictions/
 │   ├── PredictionsTab.jsx  ← Main prediction UI (2000+ lines)
-│   └── LiveEngine.jsx      ← Next 3 overs live prediction panel
+│   ├── LiveEngine.jsx      ← Next 3 overs live prediction panel
+│   └── ScoreboardTab.jsx   ← Full batting/bowling scorecard (polls /match/<id>/scoreboard every 12s)
 ├── matches/
 │   └── MatchesTab.jsx
 ├── CricIntelligence.jsx    ← Thin shell, imports everything
@@ -130,6 +131,14 @@ Key sections:
 - **BATTER / BOWLER cards** — plain English performance labels
 - **"WHAT TO EXPECT NEXT"** — 3 over cards with big run number + wicket risk line
 - Polling: 12s (same as useMatchData.js — DO NOT change)
+
+## ScoreboardTab.jsx — Scoreboard Feature (Jun 17, 2026)
+- Tab added to PredictionsTab.jsx view switcher: `📋 Scoreboard` with red `NEW` badge (top-right)
+- `activeView` now: `"prediction" | "liveengine" | "scoreboard"`
+- `ScoreboardTab` polls `GET /match/<id>/scoreboard` every 12s
+- Shows batting table (R/B/4s/6s/SR/dismissal), bowling table (O/M/R/W/Eco), extras, fall of wickets
+- Innings selector tabs shown when scoreboard has > 1 innings
+- Wickets column highlighted green when bowler.wickets > 0
 
 ## Common Bugs Fixed
 - Netlify "react-scripts: Permission denied" → node_modules in git (FIXED)
