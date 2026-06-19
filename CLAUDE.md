@@ -140,6 +140,25 @@ Key sections:
 - Innings selector tabs shown when scoreboard has > 1 innings
 - Wickets column highlighted green when bowler.wickets > 0
 
+## PitchTab.jsx — Validated Pitch Score (Jun 19, 2026)
+New components added at top of `PitchTab.jsx`:
+
+| Component | What it does |
+|---|---|
+| `computePitchScore(ovRuns, ovWkts)` | JS port of validated Python algo — r=0.689 on 12,951 matches |
+| `scoreColor(score)` | Maps 0-10 score to color (red→amber→green) |
+| `PitchScoreMeter` | Headline 0-10 gauge with gradient bar + narrative. Reads `pred.pitchScoreValidated` (from backend) or recomputes from `overHistory` |
+| `PitchEvolutionChart` | SVG line chart — pitch score after each over, color-coded zones |
+
+Rendered in this order inside `PitchTab`:
+1. ConditionBar (chips)
+2. **PitchScoreMeter** ← NEW headline
+3. **PitchEvolutionChart** ← NEW per-over chart
+4. BehaviourTimeline (existing)
+5. LiveCard / NextCard / PastRow (existing)
+
+Backend field consumed: `pred.pitchScoreValidated.{score, label, narrative}` (added Jun 19 backend commit c623c85f)
+
 ## Common Bugs Fixed
 - Netlify "react-scripts: Permission denied" → node_modules in git (FIXED)
 - Old Railway URL in build → was `web-production-91f0.up.railway.app` (FIXED, now correct)
