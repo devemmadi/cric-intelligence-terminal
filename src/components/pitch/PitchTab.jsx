@@ -2,6 +2,219 @@
 import React, { useMemo } from "react";
 import { C, cleanTeam } from "../shared/constants";
 
+// ─── JS port of _compute_pitch_score_live (validated r=0.689 on 12,951 T20 matches) ──
+function computePitchScore(ovRuns, ovWkts) {
+    const n = ovRuns.length;
+    if (n === 0) return { score: 5.0, label: "NEUTRAL", color: "#F59E0B", narrative: "No data yet" };
+
+    const pp_runs  = ovRuns.slice(0, Math.min(6, n)).reduce((a, b) => a + b, 0);
+    const pp_wkts  = ovWkts.slice(0, Math.min(6, n)).reduce((a, b) => a + b, 0);
+    const pp_overs = Math.min(6, n);
+    const pp_crr   = pp_runs / Math.max(pp_overs, 1);
+
+    let new_ball_score = 5.0;
+    if (pp_overs >= 3) {
+        const wkt_penalty    = Math.min(pp_wkts / 6.0, 1.0);
+        const crr_score      = Math.min(pp_crr / 12.0, 1.0);
+        new_ball_score = Math.max(0, Math.min(10, crr_score * 10 - wkt_penalty * 4));
+    }
+
+    let old_ball_score = 5.0;
+    let narrative_mid  = "middle overs data pending";
+    if (n > 6) {
+        const mid_runs  = ovRuns.slice(6, Math.min(15, n)).reduce((a, b) => a + b, 0);
+        const mid_overs = Math.min(15, n) - 6;
+        const mid_crr   = mid_runs / Math.max(mid_overs, 1);
+        const crr_change = mid_crr - pp_crr;
+        if (crr_change > 2.0)       { old_ball_score = 8.0; narrative_mid = `scoring jumped +${crr_change.toFixed(1)} RPO vs PP → pitch totally flat`; }
+        else if (crr_change > 0.5)  { old_ball_score = 6.5; narrative_mid = `+${crr_change.toFixed(1)} RPO increase → pitch settling`; }
+        else if (crr_change < -1.5) { old_ball_score = 3.0; narrative_mid = `scoring DROPPED ${crr_change.toFixed(1)} RPO → pitch gripping`; }
+        else if (crr_change < -0.5) { old_ball_score = 4.0; narrative_mid = `−${Math.abs(crr_change).toFixed(1)} RPO drop → mild grip`; }
+        else                        { old_ball_score = 5.5; narrative_mid = "consistent scoring → neutral surface"; }
+    }
+
+    const final_score = n > 6
+        ? new_ball_score * 0.45 + old_ball_score * 0.55
+        : new_ball_score;
+
+    let label, color;
+    if (final_score <= 2)   { label = "EXTREME BOWLING";  color = "#ef4444"; }
+    else if (final_score <= 4)   { label = "BOWLING PITCH";    color = "#f97316"; }
+    else if (final_score <= 5)   { label = "NEUTRAL-BOWLING";  color = "#eab308"; }
+    else if (final_score <= 6.5) { label = "NEUTRAL-BATTING";  color = "#84cc16"; }
+    else if (final_score <= 8.5) { label = "BATTING PITCH";    color = "#22c55e"; }
+    else                         { label = "BATTING PARADISE";  color = "#4ade80"; }
+
+    const pp_narrative = pp_overs >= 3
+        ? `PP ${pp_runs}/${pp_wkts} in ${pp_overs}ov (CRR ${pp_crr.toFixed(1)})`
+        : `PP in progress: ${pp_runs}/${pp_wkts} in ${pp_overs}ov`;
+
+    return {
+        score: Math.round(final_score * 100) / 100,
+        label,
+        color,
+        narrative: `${pp_narrative} | ${narrative_mid}`,
+        ppCRR: pp_crr,
+        ppWkts: pp_wkts,
+    };
+}
+
+// ─── Pitch score color gradient (0=red, 5=amber, 10=green) ──────────────────
+function scoreColor(score) {
+    if (score <= 2)   return "#ef4444";
+    if (score <= 4)   return "#f97316";
+    if (score <= 5)   return "#eab308";
+    if (score <= 6.5) return "#84cc16";
+    if (score <= 8.5) return "#22c55e";
+    return "#4ade80";
+}
+
+// ─── Big validated pitch score meter ─────────────────────────────────────────
+function PitchScoreMeter({ pred }) {
+    // Prefer backend validated score, fall back to computing from overHistory
+    const overHistory = pred?.overHistory || [];
+    const computed = useMemo(() => {
+        if (overHistory.length < 2) return null;
+        const ovR = overHistory.map(h => h.runs ?? 0);
+        const ovW = overHistory.map(h => h.wickets ?? 0);
+        return computePitchScore(ovR, ovW);
+    }, [overHistory.length, overHistory[overHistory.length - 1]?.runs]);
+
+    const vps  = pred?.pitchScoreValidated;
+    const score = vps?.score ?? computed?.score ?? null;
+    const label = vps?.label ?? computed?.label ?? null;
+    const narrative = vps?.narrative ?? computed?.narrative ?? null;
+    const color = score !== null ? scoreColor(score) : "#94A3B8";
+
+    if (score === null) return null;
+
+    const pct = Math.round((score / 10) * 100);
+
+    return (
+        <div style={{
+            background: `linear-gradient(135deg, #0D1117 0%, ${color}12 100%)`,
+            border: `1.5px solid ${color}55`,
+            borderRadius: 16, padding: "18px 20px", marginBottom: 14,
+        }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+                <div>
+                    <div style={{ fontSize: 10, color: "#475569", fontWeight: 700, letterSpacing: 1, marginBottom: 4 }}>PITCH SCORE · LIVE</div>
+                    <div style={{ fontSize: 11, color: color, fontWeight: 700, letterSpacing: 0.5 }}>{label}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                    <span style={{ fontSize: 42, fontWeight: 900, color, lineHeight: 1 }}>{score.toFixed(1)}</span>
+                    <span style={{ fontSize: 14, color: "#475569", marginLeft: 3 }}>/10</span>
+                </div>
+            </div>
+
+            {/* Gradient bar */}
+            <div style={{ position: "relative", height: 10, borderRadius: 6, background: "linear-gradient(to right, #ef4444, #f97316, #eab308, #84cc16, #22c55e)", marginBottom: 8 }}>
+                <div style={{
+                    position: "absolute", top: -3, left: `${Math.max(2, Math.min(96, pct))}%`,
+                    transform: "translateX(-50%)",
+                    width: 16, height: 16, borderRadius: "50%",
+                    background: color, border: "2px solid #0D1117",
+                    boxShadow: `0 0 8px ${color}`,
+                }} />
+            </div>
+
+            {/* Scale labels */}
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 8, color: "#334155", marginBottom: 10 }}>
+                <span>BOWLING</span><span>NEUTRAL</span><span>BATTING</span>
+            </div>
+
+            {/* Narrative */}
+            {narrative && (
+                <div style={{ fontSize: 11, color: "#64748B", lineHeight: 1.6, borderTop: "1px solid #1E293B", paddingTop: 10 }}>
+                    {narrative.replace(/^\[.*?\]\s*/, "")}
+                </div>
+            )}
+        </div>
+    );
+}
+
+// ─── Per-over pitch score evolution chart ─────────────────────────────────────
+function PitchEvolutionChart({ overHistory }) {
+    const points = useMemo(() => {
+        if (!overHistory || overHistory.length < 2) return [];
+        const sorted = [...overHistory].sort((a, b) => (a.over ?? a.overNum ?? 0) - (b.over ?? b.overNum ?? 0));
+        const ovR = sorted.map(h => h.runs ?? 0);
+        const ovW = sorted.map(h => h.wickets ?? 0);
+        const pts = [];
+        for (let i = 2; i <= ovR.length; i++) {
+            const { score, color } = computePitchScore(ovR.slice(0, i), ovW.slice(0, i));
+            pts.push({ over: i, score, color });
+        }
+        return pts;
+    }, [overHistory?.length, overHistory?.[overHistory?.length - 1]?.runs]);
+
+    if (points.length < 2) return null;
+
+    const W = 340, H = 80, PAD = 8;
+    const maxX = 20, minY = 0, maxY = 10;
+    const toX = (ov) => PAD + ((ov - 1) / (maxX - 1)) * (W - PAD * 2);
+    const toY = (sc) => H - PAD - ((sc - minY) / (maxY - minY)) * (H - PAD * 2);
+
+    const polyline = points.map(p => `${toX(p.over)},${toY(p.score)}`).join(" ");
+
+    // Zone bands
+    const zones = [
+        { y1: toY(10), y2: toY(6.5), color: "#22c55e10" },
+        { y1: toY(6.5), y2: toY(5),   color: "#84cc1610" },
+        { y1: toY(5),   y2: toY(3),   color: "#eab30810" },
+        { y1: toY(3),   y2: toY(0),   color: "#ef444410" },
+    ];
+
+    const last = points[points.length - 1];
+
+    return (
+        <div style={{ background: "#0D1117", borderRadius: 12, padding: "14px 16px", marginBottom: 14, border: "1px solid #1E293B" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+                <div style={{ fontSize: 10, color: "#334155", fontWeight: 700, letterSpacing: 1 }}>PITCH SCORE PER OVER</div>
+                <div style={{ fontSize: 11, color: last.color, fontWeight: 700 }}>
+                    Now: {last.score.toFixed(1)} · {last.over > 6 ? "mid/death" : "PP"}
+                </div>
+            </div>
+            <svg viewBox={`0 0 ${W} ${H}`} style={{ width: "100%", height: H, overflow: "visible" }}>
+                {/* Zone bands */}
+                {zones.map((z, i) => (
+                    <rect key={i} x={PAD} y={z.y1} width={W - PAD * 2} height={z.y2 - z.y1} fill={z.color} />
+                ))}
+                {/* Neutral line at 5 */}
+                <line x1={PAD} y1={toY(5)} x2={W - PAD} y2={toY(5)} stroke="#1E293B" strokeDasharray="3,3" strokeWidth={1} />
+                {/* Score line */}
+                <polyline points={polyline} fill="none" stroke="#4A6FD4" strokeWidth={2} strokeLinejoin="round" />
+                {/* Dots */}
+                {points.map((p, i) => (
+                    <circle key={i} cx={toX(p.over)} cy={toY(p.score)} r={i === points.length - 1 ? 5 : 3}
+                        fill={p.color} stroke="#0D1117" strokeWidth={1.5} />
+                ))}
+                {/* X axis labels — every 5 overs */}
+                {[1, 5, 10, 15, 20].map(ov => (
+                    <text key={ov} x={toX(ov)} y={H - 1} textAnchor="middle" fontSize={7} fill="#334155">{ov}</text>
+                ))}
+                {/* Y axis labels */}
+                {[0, 5, 10].map(sc => (
+                    <text key={sc} x={2} y={toY(sc) + 3} fontSize={7} fill="#334155">{sc}</text>
+                ))}
+            </svg>
+            {/* PP end marker */}
+            <div style={{ display: "flex", gap: 12, marginTop: 6 }}>
+                {[
+                    { color: "#22c55e", label: "Batting" },
+                    { color: "#eab308", label: "Neutral" },
+                    { color: "#ef4444", label: "Bowling" },
+                ].map((l, i) => (
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                        <div style={{ width: 8, height: 8, borderRadius: 2, background: l.color, opacity: 0.7 }} />
+                        <span style={{ fontSize: 9, color: "#334155" }}>{l.label}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 // ─── Segments ─────────────────────────────────────────────────────────────────
 const SEGMENTS = [
     { label: "1–4",   start: 1,  end: 4,  phase: "POWERPLAY" },
@@ -794,6 +1007,12 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
             {/* Condition chips */}
             <ConditionBar pitchKey={pitchKey} detr={detr} dew={dew} humidity={humidity} temp={temp} matchAvgRPO={matchAvgRPO} venueHistory={pred?.venueHistory} />
 
+            {/* Validated pitch score meter — headline signal */}
+            <PitchScoreMeter pred={pred} />
+
+            {/* Per-over pitch score evolution chart */}
+            <PitchEvolutionChart overHistory={pred?.overHistory} />
+
             {/* Full-match timeline strip */}
             <BehaviourTimeline segments={segments} currentOver={currentOver} />
 
@@ -851,7 +1070,7 @@ export default function PitchTab({ pred, selectedMatch, liveMatches, onMatchSele
             {/* Footer */}
             <div style={{ marginTop: 16, padding: "10px 14px", background: "rgba(255,255,255,0.02)", borderRadius: 10, border: "1px solid #1E293B" }}>
                 <div style={{ fontSize: 10, color: "#334155", lineHeight: 1.7 }}>
-                    Based on live match data (runs + wickets per over) and {pred?.venueHistory?.match_count ? `${pred.venueHistory.match_count} historical matches at this ground.` : "historical T20 data."} Updates every 10 seconds.
+                    Pitch score (0–10) validated on 12,951 T20 matches — r=0.689 correlation with INN1 total. {pred?.venueHistory?.match_count ? `${pred.venueHistory.match_count} historical matches at this ground.` : ""} Updates every 12s.
                 </div>
             </div>
         </div>
