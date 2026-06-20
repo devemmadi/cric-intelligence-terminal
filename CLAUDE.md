@@ -140,6 +140,26 @@ Key sections:
 - Innings selector tabs shown when scoreboard has > 1 innings
 - Wickets column highlighted green when bowler.wickets > 0
 
+## BatterMilestones.jsx — Milestone Predictions (Jun 20, 2026)
+New file: `src/components/predictions/BatterMilestones.jsx`
+
+Shows Bet365-style milestone probability cards for both current batters.
+
+| Field consumed | Source |
+|---|---|
+| `pred.batters[].{name, runs, balls, sr, isStriker}` | Current batters at crease |
+| `pred.playerAnalysis.batters[].{prob30plus, prob50plus}` | Backend ML probs (used when available) |
+| `pred.livePredictions.batsman50.prob` | Striker 50+ prob fallback |
+| `pred.playerAnalysis.partnership.ballsLeftMatch` | Balls remaining estimate |
+
+Milestone logic:
+- Prefers backend `prob30plus`/`prob50plus` from `playerAnalysis.batters` when `noData !== true`
+- Falls back to `livePredictions.batsman50.prob` for striker's 50+ when backend has no career data
+- Computes live SR-based probability as final fallback
+- Only renders when `!pred.matchEnded && pred.batters?.length > 0`
+
+Rendered in `PredictionsTab.jsx` after `LivePitchReadCard`, before sidebar.
+
 ## PitchTab.jsx — Validated Pitch Score (Jun 19, 2026)
 New components added at top of `PitchTab.jsx`:
 

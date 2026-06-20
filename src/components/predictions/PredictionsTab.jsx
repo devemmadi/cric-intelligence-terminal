@@ -6,6 +6,7 @@ import { MatchPill } from "../shared/MatchCard";
 import LiveProbabilityGraph from "./LiveProbabilityGraph";
 import LiveEngine from "./LiveEngine";
 import ScoreboardTab from "./ScoreboardTab";
+import BatterMilestones from "./BatterMilestones";
 
 // ─── Small sub-components (only used inside predictions) ──────────────────────
 
@@ -2412,6 +2413,11 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     <MatchIntelligenceCard data={pred.matchIntelligence} innings={pred.innings} overs={pred.overs} />
                                     <LivePitchReadCard data={pred.livePitchRead} />
                                 </div>
+                            )}
+
+                            {/* Batter Milestones */}
+                            {!pred.matchEnded && pred.batters?.length > 0 && (
+                                <BatterMilestones pred={pred} />
                             )}
 
 
