@@ -59,24 +59,48 @@ export default function CricIntelligence() {
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
 
-    // Set canonical for main app — always points to homepage
-    useEffect(() => { setCanonical("https://www.cricintelligence.com/"); }, []);
+    // Set canonical + title per tab
+    useEffect(() => {
+        const TAB_META = {
+            predict: {
+                url: "https://www.cricintelligence.com/",
+                title: pred?.team1 && pred?.team2
+                    ? `${pred.team1.split(",")[0].trim()} vs ${pred.team2.split(",")[0].trim()} — Live AI Predictions | CricIntelligence`
+                    : "CricIntelligence — Free AI Cricket Predictions | Live Win Probability",
+                desc: "Live AI cricket win probability updated every ball. T20 & ODI predictions, score projections, batter milestones. Free, no sign-up."
+            },
+            matches: {
+                url: "https://www.cricintelligence.com/?tab=matches",
+                title: "Live Cricket Matches — CricIntelligence",
+                desc: "All live cricket matches with AI win probability. T20, ODI and international cricket covered worldwide."
+            },
+            pitch: {
+                url: "https://www.cricintelligence.com/?tab=pitch",
+                title: "Live Pitch Analysis — CricIntelligence",
+                desc: "Real-time pitch score (0-10) validated on 12,951 T20 matches. r=0.689 correlation with innings total."
+            },
+            record: {
+                url: "https://www.cricintelligence.com/?tab=record",
+                title: "AI Prediction Track Record — CricIntelligence",
+                desc: "CricIntelligence accuracy: 81.5% on unseen 2025-26 matches. Proper holdout test, no data leakage."
+            },
+            media: {
+                url: "https://www.cricintelligence.com/?tab=media",
+                title: "Cricket AI in the Media — CricIntelligence",
+                desc: "CricIntelligence featured coverage and cricket AI analysis."
+            },
+        };
+        const meta = TAB_META[activeTab] || TAB_META.predict;
+        setCanonical(meta.url);
+        document.title = meta.title;
+        let descEl = document.querySelector("meta[name='description']");
+        if (descEl) descEl.setAttribute("content", meta.desc);
+    }, [activeTab, pred?.team1, pred?.team2]);
 
     useEffect(() => {
         document.body.style.background = (activeTab === "pitch" || activeTab === "record") ? "#0A0E1A" : C.bg;
         return () => { document.body.style.background = ""; };
     }, [activeTab]);
-
-    useEffect(() => {
-        if (pred?.team1 && pred?.team2) {
-            const t1 = pred.team1.split(",")[0].trim();
-            const t2 = pred.team2.split(",")[0].trim();
-            const prob = pred.aiProbability || 50;
-            document.title = `CricIntelligence — ${t1} vs ${t2} Live AI Predictions`;
-        } else {
-            document.title = "CricIntelligence — Free AI Cricket Predictions | Live Win Probability";
-        }
-    }, [pred?.team1, pred?.team2, pred?.aiProbability]);
 
     // When user clicks a match → go to Predictions tab
     const handleMatchClick = (m) => {

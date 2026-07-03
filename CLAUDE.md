@@ -179,6 +179,19 @@ Rendered in this order inside `PitchTab`:
 
 Backend field consumed: `pred.pitchScoreValidated.{score, label, narrative}` (added Jun 19 backend commit c623c85f)
 
+## SEO — Per-Tab Canonical + Meta (Jul 3, 2026)
+`CricIntelligence.jsx` `useEffect` sets canonical URL, `document.title`, and `<meta name="description">` on every `activeTab` change (and when live match teams load for the predict tab).
+
+| Tab | Canonical URL |
+|---|---|
+| predict | `https://www.cricintelligence.com/` |
+| matches | `https://www.cricintelligence.com/?tab=matches` |
+| pitch | `https://www.cricintelligence.com/?tab=pitch` |
+| record | `https://www.cricintelligence.com/?tab=record` |
+| media | `https://www.cricintelligence.com/?tab=media` |
+
+`src/index.js` has `<HelmetProvider>` wrapper (react-helmet-async installed). Canonical tag is set via `setCanonical()` DOM helper — no `<Helmet>` components needed (DOM manipulation is sufficient for SPA SEO).
+
 ## Common Bugs Fixed
 - Netlify "react-scripts: Permission denied" → node_modules in git (FIXED)
 - Old Railway URL in build → was `web-production-91f0.up.railway.app` (FIXED, now correct)
