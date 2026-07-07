@@ -1762,6 +1762,20 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     const [scoreProjections, setScoreProjections] = useState([]);
     const [partnershipPred, setPartnershipPred] = useState(null);
 
+    // Swipe gesture support for mobile view switching
+    const swipeStartX = useRef(null);
+    const VIEWS = ["prediction", "liveengine", "scoreboard"];
+    const handleTouchStart = (e) => { swipeStartX.current = e.touches[0].clientX; };
+    const handleTouchEnd = (e) => {
+        if (swipeStartX.current === null) return;
+        const dx = e.changedTouches[0].clientX - swipeStartX.current;
+        swipeStartX.current = null;
+        if (Math.abs(dx) < 60) return;
+        const cur = VIEWS.indexOf(activeView);
+        if (dx < 0 && cur < VIEWS.length - 1) setActiveView(VIEWS[cur + 1]);
+        if (dx > 0 && cur > 0) setActiveView(VIEWS[cur - 1]);
+    };
+
     // Push notification subscribe
     const enableAlerts = async () => {
         if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
@@ -1855,7 +1869,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
             />
 
             {/* MAIN CONTENT */}
-            <main className="mc" style={{ padding: 0, minWidth: 0 }}>
+            <main className="mc" style={{ padding: 0, minWidth: 0 }} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
                 {/* No live match banner — shown when all matches are ended */}
                 {!hasLive && (selectedMatch || pred) && (() => {
                     // Detect BST (last Sun March → last Sun October) vs GMT
@@ -1947,6 +1961,16 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 }}>NEW</span>
                             </button>
                         </div>
+                    </div>
+                )}
+
+                {/* Mobile swipe indicator dots — only shown when match is loaded */}
+                {(selectedMatch || pred) && (
+                    <div className="mob-swipe" style={{ display: "none", justifyContent: "center", alignItems: "center", gap: 6, padding: "6px 0 2px", background: "rgba(255,255,255,0.02)" }}>
+                        {VIEWS.map((v) => (
+                            <div key={v} onClick={() => setActiveView(v)} style={{ width: activeView === v ? 18 : 6, height: 6, borderRadius: 3, background: activeView === v ? C.accent : "rgba(255,255,255,0.2)", transition: "all 0.25s", cursor: "pointer" }} />
+                        ))}
+                        <span style={{ fontSize: 9, color: "rgba(255,255,255,0.3)", marginLeft: 4 }}>swipe</span>
                     </div>
                 )}
 

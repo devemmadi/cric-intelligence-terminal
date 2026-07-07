@@ -216,13 +216,15 @@ export default function CricIntelligence() {
 
             {/* MOBILE BOTTOM NAV */}
             <nav className="mn">
-                {[["Predict", "predict"], ["Matches", "matches"], ["Pitch", "pitch"], ["Record", "record"], ["Media", "media"]].map(([label, key]) => (
-                    <button key={key} className="mt" onClick={() => setActiveTab(key)} style={{ opacity: activeTab === key ? 1 : 0.4 }}>
-                        <span style={{ fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,0.7)" }}>{label}</span>
+                {[["🏏", "Predict", "predict"], ["📅", "Matches", "matches"], ["🟤", "Pitch", "pitch"], ["🎯", "Record", "record"], ["📰", "Media", "media"]].map(([icon, label, key]) => (
+                    <button key={key} className="mt" onClick={() => setActiveTab(key)} style={{ opacity: activeTab === key ? 1 : 0.45 }}>
+                        <span style={{ fontSize: 18, lineHeight: 1 }}>{icon}</span>
+                        <span style={{ fontSize: 9, fontWeight: activeTab === key ? 700 : 500, color: activeTab === key ? "#fff" : "rgba(255,255,255,0.6)" }}>{label}</span>
                     </button>
                 ))}
-                <button className="mt" onClick={() => navigate("/live-odds")} style={{ opacity: 0.4 }}>
-                    <span style={{ fontSize: 10, fontWeight: 600, color: "#FBBF24" }}>Odds</span>
+                <button className="mt" onClick={() => navigate("/live-odds")} style={{ opacity: 0.75 }}>
+                    <span style={{ fontSize: 18, lineHeight: 1 }}>💰</span>
+                    <span style={{ fontSize: 9, fontWeight: 600, color: "#FBBF24" }}>Odds</span>
                 </button>
             </nav>
         </div>

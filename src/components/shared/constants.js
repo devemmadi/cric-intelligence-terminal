@@ -98,8 +98,9 @@ body { background: ${C.bg}; }
     /* View switcher row compact */
     .vs-row { padding: 6px 12px !important; gap: 4px !important; }
     .mob-intel { display: block !important; }
+    .mob-swipe { display: flex !important; }
 }
-.mn { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: ${C.navy}; border-top: 1px solid ${C.navyLight}; padding: 8px 0 18px; z-index: 200; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); }
-.mt { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 0; font-family: Inter, system-ui; }
+.mn { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: ${C.navy}; border-top: 1px solid ${C.navyLight}; padding: 6px 0 20px; z-index: 200; box-shadow: 0 -4px 20px rgba(0,0,0,0.3); }
+.mt { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px 2px; font-family: Inter, system-ui; min-height: 52px; }
 .mob-intel { display: none; }
 `;

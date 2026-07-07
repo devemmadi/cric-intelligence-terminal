@@ -205,6 +205,15 @@ Backend field consumed: `pred.pitchScoreValidated.{score, label, narrative}` (ad
 - Decision Zone sidebar generic → VERDICT + STRONGEST SIGNAL with live CRR/RRR/pressure specific numbers (FIXED May 2026)
 - Global keyframes: added redGlow + greenGlow to constants.js for border animations (May 2026)
 
+## Mobile UX — Bottom Nav + Swipe Gestures (Jul 7, 2026)
+Targeting UK and South Africa mobile users.
+
+- Mobile bottom nav (`.mn`): upgraded from text-only to emoji + label (🏏 Predict, 📅 Matches, 🟤 Pitch, 🎯 Record, 📰 Media, 💰 Odds)
+- Touch target height increased: `.mt` now `min-height: 52px` (was ~32px)
+- Swipe gestures in `PredictionsTab.jsx`: left/right swipe switches between Prediction → Live Engine → Scoreboard views (60px threshold)
+- Swipe indicator dots shown below view switcher on mobile (`.mob-swipe` class, `display:none` on desktop)
+- `VIEWS` array: `["prediction", "liveengine", "scoreboard"]` — order is fixed, swipe follows this order
+
 ## User Preferences
 - Telugu + English mixed communication is fine
 - Push to GitHub directly — no local testing required before deploy
