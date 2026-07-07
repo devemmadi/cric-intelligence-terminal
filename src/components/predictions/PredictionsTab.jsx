@@ -1064,6 +1064,29 @@ function HeroDecision({ pred, prob, isEnded }) {
     const [aiNarrative, setAiNarrative] = useState(null);
     const [narrativeLoading, setNarrativeLoading] = useState(false);
 
+    // Animated win probability counter
+    const [displayProb, setDisplayProb] = useState(prob);
+    const animFrameRef = useRef(null);
+    const [probFlash, setProbFlash] = useState(false);
+    useEffect(() => {
+        if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+        const start = displayProb;
+        const end = prob;
+        if (start === end) return;
+        setProbFlash(true);
+        setTimeout(() => setProbFlash(false), 600);
+        const duration = 900;
+        const t0 = performance.now();
+        const tick = (now) => {
+            const p = Math.min((now - t0) / duration, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            setDisplayProb(Math.round(start + (end - start) * eased));
+            if (p < 1) animFrameRef.current = requestAnimationFrame(tick);
+        };
+        animFrameRef.current = requestAnimationFrame(tick);
+        return () => { if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current); };
+    }, [prob]);
+
     // Countdown to next auto-refresh
     useEffect(() => {
         const t = setInterval(() => setCountdown(c => c <= 1 ? 30 : c - 1), 1000);
@@ -1852,29 +1875,6 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     // pred?.matchEnded comes from backend build_pred — most reliable signal
     const _st = selectedMatch?.rawStatus || pred?.matchStatus || "";
     const isEnded = pred?.matchEnded === true || selectedMatch?.status === "ENDED" || _st.toLowerCase().includes("won by") || _st.toLowerCase().includes(" beat ") || _st.toLowerCase().includes("match tied") || _st.toLowerCase().includes("no result");
-
-    // Animated win probability counter — smoothly counts between values
-    const [displayProb, setDisplayProb] = useState(prob);
-    const animFrameRef = useRef(null);
-    const [probFlash, setProbFlash] = useState(false);
-    useEffect(() => {
-        if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-        const start = displayProb;
-        const end = prob;
-        if (start === end) return;
-        setProbFlash(true);
-        setTimeout(() => setProbFlash(false), 600);
-        const duration = 900;
-        const t0 = performance.now();
-        const tick = (now) => {
-            const p = Math.min((now - t0) / duration, 1);
-            const eased = 1 - Math.pow(1 - p, 3);
-            setDisplayProb(Math.round(start + (end - start) * eased));
-            if (p < 1) animFrameRef.current = requestAnimationFrame(tick);
-        };
-        animFrameRef.current = requestAnimationFrame(tick);
-        return () => { if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current); };
-    }, [prob]);
 
     // Wicket detection — red flash + haptic vibration
     const prevWicketsRef = useRef(null);
