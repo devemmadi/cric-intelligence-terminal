@@ -48,6 +48,7 @@ export default function CricIntelligence() {
 
     const setActiveTab = (tab) => {
         setActiveTabState(tab);
+        window.scrollTo(0, 0);
         if (tab === "predict") {
             setSearchParams({}, { replace: true });
         } else {

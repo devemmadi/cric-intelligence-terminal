@@ -918,7 +918,7 @@ function ConditionBar({ pitchKey, detr, dew, humidity, temp, matchAvgRPO, venueH
 // ─── Empty state ──────────────────────────────────────────────────────────────
 function NoPitchData({ liveMatches, onMatchSelect }) {
     return (
-        <div style={{ minHeight: "100vh", background: "#0A0E1A", textAlign: "center", padding: "60px 20px" }}>
+        <div style={{ background: "#0A0E1A", textAlign: "center", padding: "60px 20px 40px" }}>
             <div style={{ fontSize: 40, marginBottom: 12 }}>🏟️</div>
             <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 6 }}>No match selected</div>
             <div style={{ fontSize: 13, color: "#475569", marginBottom: 20 }}>Select a live match to see pitch behaviour analysis</div>

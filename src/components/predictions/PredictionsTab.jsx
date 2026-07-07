@@ -1521,7 +1521,7 @@ function TrustAccuracyBar() {
 // ─── How it works 3 steps ─────────────────────────────────────────────────────
 function HowItWorksSteps() {
     const steps = [
-        { n: "1", icon: "🏏", title: "Pick a match", desc: "Select any live or upcoming IPL match from the sidebar" },
+        { n: "1", icon: "🏏", title: "Pick a match", desc: "Tap any live or upcoming match from the matches list" },
         { n: "2", icon: "🤖", title: "AI reads the game", desc: "Pitch, form, venue & live score — model updates every single ball" },
         { n: "3", icon: "💰", title: "See the edge", desc: "Win %, bet signal, score projection, momentum — all free, no sign-up" },
     ];

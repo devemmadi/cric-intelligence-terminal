@@ -205,6 +205,12 @@ Backend field consumed: `pred.pitchScoreValidated.{score, label, narrative}` (ad
 - Decision Zone sidebar generic → VERDICT + STRONGEST SIGNAL with live CRR/RRR/pressure specific numbers (FIXED May 2026)
 - Global keyframes: added redGlow + greenGlow to constants.js for border animations (May 2026)
 
+## Mobile Bug Fixes (Jul 7, 2026)
+- Tab switch now scrolls to top: `window.scrollTo(0,0)` added to `setActiveTab()` in CricIntelligence.jsx
+- "sidebar" text → "matches list": `HowItWorksSteps` step 1 desc updated (no sidebar on mobile)
+- Pitch empty state: `NoPitchData` `minHeight: 100vh` removed → `padding: "60px 20px 40px"` only
+- Mobile blank gap: `.mg { min-height: auto !important }` added to mobile media query in constants.js
+
 ## Live Match Animations — Addictive UX (Jul 7, 2026)
 New state in `PredictionsTab.jsx` (all inside `export default function PredictionsTab`):
 
