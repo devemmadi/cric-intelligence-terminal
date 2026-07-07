@@ -226,7 +226,7 @@ Big number displays use `displayProb` (animated) instead of raw `prob`.
 ## Mobile UX — Bottom Nav + Swipe Gestures (Jul 7, 2026)
 Targeting UK and South Africa mobile users.
 
-- Mobile bottom nav (`.mn`): upgraded from text-only to emoji + label (🏏 Predict, 📅 Matches, 🟤 Pitch, 🎯 Record, 📰 Media, 💰 Odds)
+- Mobile bottom nav (`.mn`): text-only labels (Predict, Matches, Pitch, Record, Media, Odds). Active tab has gold 3px top-border bar indicator. NO emoji icons — emoji looked like a second CI logo ("two logos" bug).
 - Touch target height increased: `.mt` now `min-height: 52px` (was ~32px)
 - Swipe gestures in `PredictionsTab.jsx`: left/right swipe switches between Prediction → Live Engine → Scoreboard views (60px threshold)
 - Swipe indicator dots shown below view switcher on mobile (`.mob-swipe` class, `display:none` on desktop)
