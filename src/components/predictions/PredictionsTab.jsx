@@ -2677,7 +2677,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
                             {/* MARKET VALUE + KELLY CRITERION */}
                             {(() => {
-                                const vbs = (pred.valueBets || []).filter(v => v.odds > 1.0 && !("draw" in (v.team||"").toLowerCase()));
+                                const vbs = (pred.valueBets || []).filter(v => v.odds > 1.0 && !(v.team||"").toLowerCase().includes("draw"));
 
                                 // Kelly Criterion: f* = (b×p − q) / b
                                 // b = odds−1, p = AI win prob, q = 1−p

@@ -192,7 +192,8 @@ Backend field consumed: `pred.pitchScoreValidated.{score, label, narrative}` (ad
 
 `src/index.js` has `<HelmetProvider>` wrapper (react-helmet-async installed). Canonical tag is set via `setCanonical()` DOM helper — no `<Helmet>` components needed (DOM manipulation is sufficient for SPA SEO).
 
-## Common Bugs Fixed
+## Common Bugs Fixed (most recent first)
+- `"draw" in string` TypeError in valueBets filter → replaced with `.includes("draw")` (PredictionsTab.jsx:2680) — crashed predictions for matches where team name was "england" etc.
 - Netlify "react-scripts: Permission denied" → node_modules in git (FIXED)
 - Old Railway URL in build → was `web-production-91f0.up.railway.app` (FIXED, now correct)
 - "Flat pitch" showing during thunderstorm + 3 wickets → livePitchRead + weather override (FIXED)
