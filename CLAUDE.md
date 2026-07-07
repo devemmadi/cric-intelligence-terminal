@@ -205,6 +205,18 @@ Backend field consumed: `pred.pitchScoreValidated.{score, label, narrative}` (ad
 - Decision Zone sidebar generic → VERDICT + STRONGEST SIGNAL with live CRR/RRR/pressure specific numbers (FIXED May 2026)
 - Global keyframes: added redGlow + greenGlow to constants.js for border animations (May 2026)
 
+## Live Match Animations — Addictive UX (Jul 7, 2026)
+New state in `PredictionsTab.jsx` (all inside `export default function PredictionsTab`):
+
+| State | Trigger | Effect |
+|---|---|---|
+| `displayProb` + `probFlash` | `prob` changes | Win% counts up/down via `requestAnimationFrame` (900ms easeOutCubic) + `probChange` scale pop |
+| `wicketMoment` | `pred.wickets` increases | Full-screen 🎳 WICKET! overlay (2.8s) + `navigator.vibrate([80,40,120,40,80])` on mobile |
+| `scorePulsing` | `pred.score` changes | Score row glows green briefly via `scorePop` animation (0.7s) |
+
+CSS keyframes added to `constants.js`: `wicketSlam`, `scorePop`, `probChange`, `wicketBg`.
+Big number displays use `displayProb` (animated) instead of raw `prob`.
+
 ## Mobile UX — Bottom Nav + Swipe Gestures (Jul 7, 2026)
 Targeting UK and South Africa mobile users.
 

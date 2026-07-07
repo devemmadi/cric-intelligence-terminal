@@ -1304,14 +1304,14 @@ Write like a Sky Sports commentator — punchy, specific, no generic phrases.`;
                     {/* T1 block */}
                     <div style={{ flex: 1, textAlign: "center" }}>
                         <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 4 }}>{t1}</div>
-                        <div style={{ fontSize: 52, fontWeight: 900, color: t1Color, letterSpacing: -2, lineHeight: 1 }}>{prob}<span style={{ fontSize: 22, letterSpacing: 0 }}>%</span></div>
+                        <div style={{ fontSize: 52, fontWeight: 900, color: t1Color, letterSpacing: -2, lineHeight: 1, animation: probFlash ? "probChange 0.6s ease-out" : "none" }}>{displayProb}<span style={{ fontSize: 22, letterSpacing: 0 }}>%</span></div>
                     </div>
                     {/* vs divider */}
                     <div style={{ width: 1, height: 56, background: "rgba(255,255,255,0.08)", flexShrink: 0 }} />
                     {/* T2 block */}
                     <div style={{ flex: 1, textAlign: "center" }}>
                         <div style={{ fontSize: 13, fontWeight: 700, color: "rgba(255,255,255,0.5)", letterSpacing: 1, marginBottom: 4 }}>{t2}</div>
-                        <div style={{ fontSize: 52, fontWeight: 900, color: t2Color, letterSpacing: -2, lineHeight: 1 }}>{Math.round((100 - prob) * 10) / 10}<span style={{ fontSize: 22, letterSpacing: 0 }}>%</span></div>
+                        <div style={{ fontSize: 52, fontWeight: 900, color: t2Color, letterSpacing: -2, lineHeight: 1, animation: probFlash ? "probChange 0.6s ease-out" : "none" }}>{100 - displayProb}<span style={{ fontSize: 22, letterSpacing: 0 }}>%</span></div>
                     </div>
                 </div>
 
@@ -1853,12 +1853,87 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     const _st = selectedMatch?.rawStatus || pred?.matchStatus || "";
     const isEnded = pred?.matchEnded === true || selectedMatch?.status === "ENDED" || _st.toLowerCase().includes("won by") || _st.toLowerCase().includes(" beat ") || _st.toLowerCase().includes("match tied") || _st.toLowerCase().includes("no result");
 
+    // Animated win probability counter — smoothly counts between values
+    const [displayProb, setDisplayProb] = useState(prob);
+    const animFrameRef = useRef(null);
+    const [probFlash, setProbFlash] = useState(false);
+    useEffect(() => {
+        if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+        const start = displayProb;
+        const end = prob;
+        if (start === end) return;
+        setProbFlash(true);
+        setTimeout(() => setProbFlash(false), 600);
+        const duration = 900;
+        const t0 = performance.now();
+        const tick = (now) => {
+            const p = Math.min((now - t0) / duration, 1);
+            const eased = 1 - Math.pow(1 - p, 3);
+            setDisplayProb(Math.round(start + (end - start) * eased));
+            if (p < 1) animFrameRef.current = requestAnimationFrame(tick);
+        };
+        animFrameRef.current = requestAnimationFrame(tick);
+        return () => { if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current); };
+    }, [prob]);
+
+    // Wicket detection — red flash + haptic vibration
+    const prevWicketsRef = useRef(null);
+    const [wicketMoment, setWicketMoment] = useState(null); // { name, over }
+    useEffect(() => {
+        const cur = pred?.wickets;
+        if (cur == null) return;
+        if (prevWicketsRef.current !== null && cur > prevWicketsRef.current) {
+            const batter = pred?.batters?.find(b => !b.isStriker)?.name || pred?.batters?.[0]?.name || "Wicket";
+            setWicketMoment({ name: batter, over: pred?.overs });
+            if (navigator.vibrate) navigator.vibrate([80, 40, 120, 40, 80]);
+            setTimeout(() => setWicketMoment(null), 2800);
+        }
+        prevWicketsRef.current = cur;
+    }, [pred?.wickets]);
+
+    // Score pulse — brief glow every ball
+    const prevScoreRef = useRef(null);
+    const [scorePulsing, setScorePulsing] = useState(false);
+    useEffect(() => {
+        const cur = pred?.score;
+        if (cur == null) return;
+        if (prevScoreRef.current !== null && cur !== prevScoreRef.current) {
+            setScorePulsing(true);
+            setTimeout(() => setScorePulsing(false), 700);
+        }
+        prevScoreRef.current = cur;
+    }, [pred?.score]);
+
     // Is any match currently live?
     const hasLive = liveMatches.some(m => m.status === "LIVE");
     const nextMatch = liveMatches.find(m => m.status === "UPCOMING");
 
     return (
-        <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px minmax(0,1fr) 240px", minHeight: "calc(100vh - 54px)", width: "100%" }}>
+        <div className="mg fade" style={{ display: "grid", gridTemplateColumns: "260px minmax(0,1fr) 240px", minHeight: "calc(100vh - 54px)", width: "100%", position: "relative" }}>
+
+            {/* WICKET OVERLAY — full-screen dramatic moment */}
+            {wicketMoment && (
+                <div style={{
+                    position: "fixed", inset: 0, zIndex: 9999, pointerEvents: "none",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    animation: "wicketBg 2.8s ease-in-out forwards",
+                }}>
+                    <div style={{
+                        background: "linear-gradient(135deg,#7f1d1d,#991b1b)",
+                        border: "2px solid rgba(239,68,68,0.6)",
+                        borderRadius: 24, padding: "28px 48px", textAlign: "center",
+                        boxShadow: "0 0 80px rgba(239,68,68,0.5), 0 20px 60px rgba(0,0,0,0.6)",
+                        animation: "wicketSlam 2.8s cubic-bezier(.22,.68,0,1.2) forwards",
+                    }}>
+                        <div style={{ fontSize: 48, lineHeight: 1 }}>🎳</div>
+                        <div style={{ fontSize: 32, fontWeight: 900, color: "#fff", letterSpacing: -1, marginTop: 8 }}>WICKET!</div>
+                        <div style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", marginTop: 4, fontWeight: 600 }}>
+                            Over {wicketMoment.over?.toFixed(1)}
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* LEFT SIDEBAR */}
             <MatchesSidebar
                 liveMatches={liveMatches}
@@ -2047,7 +2122,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     </div>
                                 </div>
                                 {pred?.displayScore && (
-                                    <div className="score-row" style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px" }}>
+                                    <div className="score-row" style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px", animation: scorePulsing ? "scorePop 0.7s ease-out" : "none" }}>
                                         <span style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", letterSpacing: 0.5 }}>
                                             {cleanTeam((pred.innings === 2 ? pred.team2 : pred.team1) || "")}
                                         </span>

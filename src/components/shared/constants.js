@@ -56,6 +56,10 @@ body { background: ${C.bg}; }
 @keyframes labelPulse { 0%,100%{box-shadow:0 0 12px currentColor,0 2px 8px rgba(0,0,0,0.2)} 50%{box-shadow:0 0 24px currentColor,0 4px 16px rgba(0,0,0,0.3)} }
 @keyframes redGlow { 0%,100%{box-shadow:0 0 0 2px rgba(239,68,68,0.35),0 4px 24px rgba(0,0,0,0.3)} 50%{box-shadow:0 0 0 4px rgba(239,68,68,0.6),0 8px 36px rgba(239,68,68,0.25)} }
 @keyframes greenGlow { 0%,100%{box-shadow:0 0 0 2px rgba(16,185,129,0.3),0 4px 24px rgba(0,0,0,0.3)} 50%{box-shadow:0 0 0 4px rgba(16,185,129,0.55),0 8px 36px rgba(16,185,129,0.2)} }
+@keyframes wicketSlam { 0%{opacity:0;transform:scale(0.6)} 15%{opacity:1;transform:scale(1.15)} 30%{transform:scale(0.95)} 45%{transform:scale(1.05)} 60%{transform:scale(1)} 85%{opacity:1} 100%{opacity:0} }
+@keyframes scorePop { 0%{background:rgba(16,185,129,0.0)} 20%{background:rgba(16,185,129,0.35)} 100%{background:rgba(16,185,129,0.0)} }
+@keyframes probChange { 0%{transform:scale(1)} 30%{transform:scale(1.12)} 60%{transform:scale(0.97)} 100%{transform:scale(1)} }
+@keyframes wicketBg { 0%{background:rgba(239,68,68,0)} 15%{background:rgba(239,68,68,0.18)} 85%{background:rgba(239,68,68,0.1)} 100%{background:rgba(239,68,68,0)} }
 .fade { animation: fadeUp .35s cubic-bezier(.22,.68,0,1.2) forwards; }
 .card { background: ${C.surface}; border: 1px solid ${C.border}; border-radius: 16px; transition: box-shadow .25s, transform .25s; position: relative; z-index: 1; }
 .card:hover { box-shadow: 0 8px 32px rgba(30,45,107,0.15); transform: translateY(-1px); z-index: 2; }
