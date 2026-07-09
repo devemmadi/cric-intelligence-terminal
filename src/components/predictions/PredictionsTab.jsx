@@ -53,8 +53,11 @@ function NextOverIntelligence({ pred }) {
     const last3Wkts   = pred.playerContext?.last3Wkts || 0;
 
     // ── Status line ─────────────────────────────────────────────────────────
+    const _overs = pred.overs || 0;
     let status = "", statusColor = C.amber, statusBg = "rgba(245,158,11,0.12)";
-    if (innings === 2 && rrr > 0) {
+    if (innings === 2 && _overs === 0) {
+        status = "Innings break"; statusColor = "#60A5FA"; statusBg = "rgba(96,165,250,0.12)";
+    } else if (innings === 2 && rrr > 0) {
         const gap = rrr - crr;
         if (gap > 3)        { status = "Chase slipping away"; statusColor = C.red; statusBg = "rgba(239,68,68,0.12)"; }
         else if (gap > 1)   { status = "Need to accelerate";  statusColor = C.amber; statusBg = "rgba(245,158,11,0.12)"; }
@@ -2255,7 +2258,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     const _delta = (_hist[_hist.length-1]?.prob||50) - (_hist[_hist.length-3]?.prob||50);
                                     if (Math.abs(_delta) >= 10) _alert = { text: `🚨 Momentum Shift — ${_delta > 0 ? _t1 : _t2} taking control`, color: "#F59E0B", bg: "rgba(245,158,11,0.12)" };
                                 }
-                                if (!_alert && pred.innings === 2 && _rrr > 0 && _rrr - _crr > 4) _alert = { text: `🚨 Chase Slipping Away — need ${_rrr.toFixed(1)}/ov, scoring ${_crr.toFixed(1)}`, color: "#EF4444", bg: "rgba(239,68,68,0.12)" };
+                                if (!_alert && pred.innings === 2 && _rrr > 0 && _rrr - _crr > 4 && (pred.overs || 0) > 0) _alert = { text: `🚨 Chase Slipping Away — need ${_rrr.toFixed(1)}/ov, scoring ${_crr.toFixed(1)}`, color: "#EF4444", bg: "rgba(239,68,68,0.12)" };
                                 if (!_alert && _nextOv && _nextOv.expectedRuns >= 13) _alert = { text: `⚡ Big Over Incoming — AI projects ${_nextOv.expectedRuns} runs next over`, color: "#10B981", bg: "rgba(16,185,129,0.12)" };
                                 if (!_alert && _lpr.behavior && _lpr.behavior.toLowerCase().includes("slow")) _alert = { text: "🔵 Pitch Slowing Down — scoring getting harder", color: "#60A5FA", bg: "rgba(96,165,250,0.12)" };
                                 if (!_alert) return null;

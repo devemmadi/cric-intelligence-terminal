@@ -195,6 +195,7 @@ Backend field consumed: `pred.pitchScoreValidated.{score, label, narrative}` (ad
 
 ## Common Bugs Fixed (most recent first)
 - Tab hidden → 0 matches shown → `visibilitychange` listener added to `useMatchData.js` so data fetches immediately when user switches to the tab (Jul 9, 2026)
+- "Chase Slipping Away" shown at innings break (overs=0) → added `overs > 0` guard in PredictionsTab.jsx (lines 57, 2258); shows "Innings break" instead (Jul 9, 2026)
 - `"draw" in string` TypeError in valueBets filter → replaced with `.includes("draw")` (PredictionsTab.jsx:2680) — crashed predictions for matches where team name was "england" etc.
 - Netlify "react-scripts: Permission denied" → node_modules in git (FIXED)
 - Old Railway URL in build → was `web-production-91f0.up.railway.app` (FIXED, now correct)
