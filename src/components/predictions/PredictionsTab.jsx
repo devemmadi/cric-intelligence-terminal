@@ -7,6 +7,7 @@ import LiveProbabilityGraph from "./LiveProbabilityGraph";
 import LiveEngine from "./LiveEngine";
 import ScoreboardTab from "./ScoreboardTab";
 import BatterMilestones from "./BatterMilestones";
+import BetwayBanner from "../BetwayBanner";
 
 // ─── Small sub-components (only used inside predictions) ──────────────────────
 
@@ -1772,6 +1773,9 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
                     <Spark data={pred.overHistory} />
                 </div>
             )}
+
+            {/* Betway affiliate card */}
+            <BetwayBanner style={{ marginTop: 16 }} />
         </aside>
     );
 }

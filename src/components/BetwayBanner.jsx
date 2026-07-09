@@ -1,85 +1,102 @@
 /* eslint-disable */
-import React, { useState } from "react";
-import { C } from "./shared/constants";
+import React from "react";
 
 const AFFILIATE_URL = "https://betway.com/bwp/bet10get40/en-gb/?s=sp53067";
 
-export default function BetwayBanner() {
-    const [dismissed, setDismissed] = useState(
-        () => !!localStorage.getItem("ci_betway_dismissed")
-    );
-
-    if (dismissed) return null;
-
+export default function BetwayBanner({ style = {} }) {
     return (
-        <div style={{
-            background: "linear-gradient(90deg, #003d1f 0%, #005a2d 50%, #003d1f 100%)",
-            borderBottom: "1px solid rgba(0,166,81,0.3)",
-            padding: "8px 16px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 12,
-            flexWrap: "wrap",
-        }}>
-            {/* Left: offer */}
-            <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
-                <span style={{
-                    background: "#00A651",
-                    borderRadius: 6,
-                    padding: "3px 8px",
-                    fontSize: 11,
-                    fontWeight: 900,
-                    color: "#fff",
-                    letterSpacing: "0.5px",
-                    whiteSpace: "nowrap",
-                }}>BETWAY</span>
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#fff", whiteSpace: "nowrap" }}>
-                    Bet £10 <span style={{ color: "#00e676" }}>Get £40</span> in Free Bets
-                </span>
-                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", whiteSpace: "nowrap" }}>
-                    New customers · 18+ · T&amp;Cs apply
-                </span>
+        <a
+            href={AFFILIATE_URL}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            style={{
+                display: "block",
+                background: "linear-gradient(160deg, #00622e 0%, #004d24 100%)",
+                border: "1px solid rgba(0,166,81,0.4)",
+                borderRadius: 12,
+                padding: "18px 16px 14px",
+                textDecoration: "none",
+                cursor: "pointer",
+                ...style,
+            }}
+        >
+            {/* Header chip */}
+            <div style={{
+                color: "#FFD700",
+                fontSize: 11,
+                fontWeight: 800,
+                letterSpacing: "1px",
+                textTransform: "uppercase",
+                marginBottom: 10,
+                fontFamily: "Inter, system-ui",
+            }}>
+                OPEN ACCOUNT OFFER
             </div>
 
-            {/* Right: CTA + close */}
-            <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
-                <a
-                    href={AFFILIATE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer sponsored"
-                    style={{
-                        background: "#00A651",
-                        color: "#fff",
-                        border: "none",
-                        borderRadius: 8,
-                        padding: "5px 14px",
-                        fontSize: 12,
-                        fontWeight: 700,
-                        cursor: "pointer",
-                        textDecoration: "none",
-                        fontFamily: "Inter, system-ui",
-                        whiteSpace: "nowrap",
-                    }}>
-                    Claim Offer →
-                </a>
-                <button
-                    onClick={() => {
-                        localStorage.setItem("ci_betway_dismissed", "1");
-                        setDismissed(true);
-                    }}
-                    style={{
-                        background: "none",
-                        border: "none",
-                        color: "rgba(255,255,255,0.35)",
-                        fontSize: 16,
-                        cursor: "pointer",
-                        padding: "2px 4px",
-                        lineHeight: 1,
-                        fontFamily: "Inter, system-ui",
-                    }}
-                    aria-label="Close">×</button>
+            {/* Main offer */}
+            <div style={{
+                color: "#fff",
+                fontSize: 20,
+                fontWeight: 800,
+                lineHeight: 1.25,
+                marginBottom: 12,
+                fontFamily: "Inter, system-ui",
+            }}>
+                Bet £10 &amp; Get £40<br />
+                <span style={{ color: "#5dde8a" }}>in Free Bets</span>
             </div>
-        </div>
+
+            {/* Sub-offer line */}
+            <div style={{
+                color: "rgba(255,255,255,0.75)",
+                fontSize: 12,
+                marginBottom: 14,
+                fontFamily: "Inter, system-ui",
+                lineHeight: 1.5,
+            }}>
+                for new customers at Betway.
+            </div>
+
+            {/* Terms */}
+            <div style={{
+                color: "rgba(255,255,255,0.45)",
+                fontSize: 10,
+                lineHeight: 1.5,
+                marginBottom: 14,
+                fontFamily: "Inter, system-ui",
+            }}>
+                Min deposit £10. Free Bets credited upon qualifying bet settlement.
+                Min odds 1.75. T&amp;Cs apply. Begambleaware.org
+            </div>
+
+            {/* Footer: GambleAware + 18+ */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{
+                    color: "rgba(255,255,255,0.5)",
+                    fontSize: 10,
+                    fontWeight: 600,
+                    fontFamily: "Inter, system-ui",
+                    letterSpacing: "0.3px",
+                }}>
+                    <span style={{ color: "#fff" }}>Gamble</span>
+                    <span style={{ color: "#f97316" }}>Aware</span>
+                    <span style={{ color: "rgba(255,255,255,0.5)" }}>®</span>
+                </span>
+                <span style={{
+                    border: "1.5px solid rgba(255,255,255,0.4)",
+                    borderRadius: "50%",
+                    width: 28,
+                    height: 28,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    color: "rgba(255,255,255,0.6)",
+                    fontFamily: "Inter, system-ui",
+                    flexShrink: 0,
+                }}>18+</span>
+            </div>
+        </a>
     );
 }
