@@ -2126,28 +2126,43 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                         <TeamLogo name={(selectedMatch?.t2 || pred?.team2 || "").toLowerCase()} size={40} imageId={selectedMatch?.t2ImageId || pred?.team2ImageId || 0} />
                                     </div>
                                 </div>
-                                {pred?.displayScore && (
-                                    <div className="score-row" style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px", animation: scorePulsing ? "scorePop 0.7s ease-out" : "none" }}>
-                                        <span style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", letterSpacing: 0.5 }}>
-                                            {cleanTeam((pred.innings === 2 ? pred.team2 : pred.team1) || "")}
-                                        </span>
-                                        <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>{pred.displayScore}</span>
-                                        <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
-                                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>Rate {pred.currentRunRate || ""}</span>
-                                        {pred.innings === 2 && pred.target > 0 && (
-                                            <>
-                                                <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
-                                                <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>Target <span style={{ color: "#fff", fontWeight: 700 }}>{pred.target}</span></span>
-                                            </>
-                                        )}
-                                        {pred.momentum !== undefined && pred.currentRunRate > 0 && (
-                                            <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: pred.momentum > 0.5 ? "rgba(0,200,150,0.25)" : pred.momentum < -0.5 ? "rgba(229,62,62,0.25)" : "rgba(255,255,255,0.1)", color: pred.momentum > 0.5 ? "#00D4AA" : pred.momentum < -0.5 ? "#FF6B6B" : "rgba(255,255,255,0.7)" }}>
-                                                {pred.momentum > 0 ? "+" : ""}{pred.momentum ? pred.momentum.toFixed(1) : "0"} vs avg
+                                {(pred?.displayScore || (pred?.innings === 2 && (pred?.overs || 0) === 0)) && (() => {
+                                    const _inn2Break = pred.innings === 2 && (pred.overs || 0) === 0;
+                                    const _t1Score = selectedMatch?.t1Score ?? pred?.t1Runs ?? (pred?.target != null ? pred.target - 1 : null);
+                                    const _t1Wkts  = selectedMatch?.t1Wkts ?? pred?.t1Wkts ?? "";
+                                    const _t1Overs = selectedMatch?.t1Overs ?? pred?.t1Overs ?? "";
+                                    const _inn2BreakScore = _t1Score != null ? `${_t1Score}/${_t1Wkts}${_t1Overs !== "" ? ` (${_t1Overs} ov)` : ""}` : null;
+                                    return (
+                                        <div className="score-row" style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.18)", borderRadius: 10, padding: "8px 18px", animation: scorePulsing ? "scorePop 0.7s ease-out" : "none" }}>
+                                            <span style={{ fontSize: 11, fontWeight: 700, color: "#C8961E", letterSpacing: 0.5 }}>
+                                                {cleanTeam((_inn2Break ? pred.team1 : (pred.innings === 2 ? pred.team2 : pred.team1)) || "")}
                                             </span>
-                                        )}
-                                        <button onClick={() => { const t = `${cleanTeam(pred.team1)} vs ${cleanTeam(pred.team2)} - AI: ${prob}% win probability. cricintelligence.com`; try { navigator.clipboard?.writeText(t).then(() => alert("Copied!")); } catch { } }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share</button>
-                                    </div>
-                                )}
+                                            <span style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>
+                                                {_inn2Break ? (_inn2BreakScore || pred.displayScore) : pred.displayScore}
+                                            </span>
+                                            {!_inn2Break && (
+                                                <>
+                                                    <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
+                                                    <span style={{ fontSize: 12, color: "rgba(255,255,255,0.6)" }}>Rate {pred.currentRunRate || ""}</span>
+                                                </>
+                                            )}
+                                            {pred.innings === 2 && pred.target > 0 && (
+                                                <>
+                                                    <div style={{ width: 1, height: 14, background: "rgba(255,255,255,0.2)" }} />
+                                                    <span style={{ fontSize: 11, color: "rgba(255,255,255,0.5)" }}>
+                                                        {_inn2Break ? "ENG to bat · Target" : "Target"} <span style={{ color: "#fff", fontWeight: 700 }}>{pred.target}</span>
+                                                    </span>
+                                                </>
+                                            )}
+                                            {!_inn2Break && pred.momentum !== undefined && pred.currentRunRate > 0 && (
+                                                <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: pred.momentum > 0.5 ? "rgba(0,200,150,0.25)" : pred.momentum < -0.5 ? "rgba(229,62,62,0.25)" : "rgba(255,255,255,0.1)", color: pred.momentum > 0.5 ? "#00D4AA" : pred.momentum < -0.5 ? "#FF6B6B" : "rgba(255,255,255,0.7)" }}>
+                                                    {pred.momentum > 0 ? "+" : ""}{pred.momentum ? pred.momentum.toFixed(1) : "0"} vs avg
+                                                </span>
+                                            )}
+                                            <button onClick={() => { const t = `${cleanTeam(pred.team1)} vs ${cleanTeam(pred.team2)} - AI: ${prob}% win probability. cricintelligence.com`; try { navigator.clipboard?.writeText(t).then(() => alert("Copied!")); } catch { } }} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 11, color: "#C8961E", fontWeight: 700 }}>Share</button>
+                                        </div>
+                                    );
+                                })()}
                                 {isPredLoading && !pred?.displayScore && (
                                     <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", letterSpacing: 1 }}>Loading prediction...</div>
                                 )}
