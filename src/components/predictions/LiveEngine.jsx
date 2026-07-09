@@ -86,6 +86,28 @@ export default function LiveEngine({ pred }) {
     // Match is live if: innings 2 started (target set) OR overs > 0
     const matchLive  = (pred?.target > 0) || (pred?.innings > 1) || overs > 0;
     const isUpcoming = !pred?.id || !matchLive;
+    const isInnBreak = pred?.innings === 2 && overs === 0;
+
+    // ── Innings break — team2 yet to bat ──
+    if (isInnBreak) return (
+        <div style={{ padding: 40, textAlign: "center" }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>☕</div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: C.text, marginBottom: 8 }}>
+                Innings Break
+            </div>
+            <div style={{ fontSize: 13, color: C.muted, lineHeight: 1.7, maxWidth: 280, margin: "0 auto" }}>
+                {pred?.team2 || "Team 2"} need {pred?.target || "—"} to win. Live Engine predictions load once the chase begins.
+            </div>
+            <div style={{
+                marginTop: 20, padding: "10px 16px",
+                background: "rgba(96,165,250,0.1)",
+                border: "1px solid rgba(96,165,250,0.2)",
+                borderRadius: 10, fontSize: 12, color: "#60A5FA",
+            }}>
+                ⚡ Auto-loads when {pred?.team2 || "the chase"} starts
+            </div>
+        </div>
+    );
 
     // ── Not started yet ──
     if (isUpcoming) return (
