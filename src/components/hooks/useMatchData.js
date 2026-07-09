@@ -215,11 +215,13 @@ export default function useMatchData() {
         } catch { setLiveStatus("mock"); }
     }, [fetchPred]);
 
-    // Matches list refreshes every 5s
+    // Matches list refreshes every 5s; also fetch immediately when tab becomes visible
     useEffect(() => {
         fetchMatches();
         const t = setInterval(fetchMatches, 5000);
-        return () => clearInterval(t);
+        const onVisible = () => { if (!document.hidden) fetchMatches(); };
+        document.addEventListener("visibilitychange", onVisible);
+        return () => { clearInterval(t); document.removeEventListener("visibilitychange", onVisible); };
     }, [fetchMatches]);
 
     // Prediction auto-refreshes every 20s for selected match
