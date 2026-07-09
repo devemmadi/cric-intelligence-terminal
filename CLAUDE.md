@@ -24,6 +24,7 @@ Never hardcode the Railway URL anywhere else — always import from constants.js
 ## File Structure
 ```
 src/components/
+├── BetwayBanner.jsx        ← Affiliate banner (Bet £10 Get £40, dismissible, localStorage)
 ├── shared/
 │   ├── constants.js        ← API_BASE, colors (C), IPL_TEAMS, helpers
 │   ├── TeamLogo.jsx

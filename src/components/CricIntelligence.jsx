@@ -13,6 +13,7 @@ import NotifyButton from "./shared/NotifyButton";
 import TrackRecord from "./TrackRecord";
 import ErrorBoundary from "./shared/ErrorBoundary";
 import AboutSection from "./AboutSection";
+import BetwayBanner from "./BetwayBanner";
 
 // Inject canonical tag dynamically so each page gets the right one
 function setCanonical(url) {
@@ -148,6 +149,9 @@ export default function CricIntelligence() {
                 </div>
             </nav>
 
+
+            {/* Betway affiliate banner */}
+            <BetwayBanner />
 
             {/* Add to Home Screen banner */}
             {showInstallBanner && (
