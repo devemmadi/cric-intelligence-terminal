@@ -1774,8 +1774,6 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
                 </div>
             )}
 
-            {/* Betway affiliate card */}
-            <BetwayBanner style={{ marginTop: 16 }} />
         </aside>
     );
 }
@@ -2336,6 +2334,11 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
                             {/* ── MINI TRUST BLOCK ── */}
                             <MiniTrustBlock />
+
+                            {/* ── BETWAY BANNER — mobile only ── */}
+                            <div className="mob-intel">
+                                <BetwayBanner style={{ marginTop: 4 }} />
+                            </div>
 
                             {/* ── FAIR ODDS (live matches only) ── */}
                             {!isEnded && pred.aiProbability !== undefined && (() => {
@@ -2899,6 +2902,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     <a href="/about" style={{ fontSize: 10, color: C.muted, fontWeight: 600, textDecoration: "none", marginRight: 8 }}>About</a>
                     <a href="mailto:emmadi.dev@gmail.com" style={{ fontSize: 10, color: C.muted, fontWeight: 600, textDecoration: "none" }}>Contact</a>
                 </div>
+
+                {/* Betway affiliate card — right sidebar */}
+                <BetwayBanner />
             </aside>
         </div>
     );
