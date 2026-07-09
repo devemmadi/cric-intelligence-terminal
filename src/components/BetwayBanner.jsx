@@ -11,8 +11,8 @@ export default function BetwayBanner({ style = {} }) {
             rel="noopener noreferrer sponsored"
             style={{
                 display: "block",
-                background: "linear-gradient(160deg, #00622e 0%, #004d24 100%)",
-                border: "1px solid rgba(0,166,81,0.4)",
+                background: "linear-gradient(160deg, #00281a 0%, #003d24 100%)",
+                border: "1px solid #00A651",
                 borderRadius: 12,
                 padding: "18px 16px 14px",
                 textDecoration: "none",
@@ -20,14 +20,29 @@ export default function BetwayBanner({ style = {} }) {
                 ...style,
             }}
         >
-            {/* Header chip */}
+            {/* Betway logo pill */}
+            <div style={{ marginBottom: 12 }}>
+                <span style={{
+                    background: "#00A651",
+                    color: "#fff",
+                    fontSize: 13,
+                    fontWeight: 900,
+                    letterSpacing: "1.5px",
+                    padding: "3px 10px",
+                    borderRadius: 4,
+                    fontFamily: "Inter, system-ui",
+                    textTransform: "uppercase",
+                }}>BETWAY</span>
+            </div>
+
+            {/* Header */}
             <div style={{
-                color: "#FFD700",
+                color: "#00A651",
                 fontSize: 11,
                 fontWeight: 800,
                 letterSpacing: "1px",
                 textTransform: "uppercase",
-                marginBottom: 10,
+                marginBottom: 8,
                 fontFamily: "Inter, system-ui",
             }}>
                 OPEN ACCOUNT OFFER
@@ -43,7 +58,7 @@ export default function BetwayBanner({ style = {} }) {
                 fontFamily: "Inter, system-ui",
             }}>
                 Bet £10 &amp; Get £40<br />
-                <span style={{ color: "#5dde8a" }}>in Free Bets</span>
+                <span style={{ color: "#00A651" }}>in Free Bets</span>
             </div>
 
             {/* Sub-offer line */}
@@ -59,7 +74,7 @@ export default function BetwayBanner({ style = {} }) {
 
             {/* Terms */}
             <div style={{
-                color: "rgba(255,255,255,0.45)",
+                color: "rgba(255,255,255,0.4)",
                 fontSize: 10,
                 lineHeight: 1.5,
                 marginBottom: 14,
@@ -72,7 +87,6 @@ export default function BetwayBanner({ style = {} }) {
             {/* Footer: GambleAware + 18+ */}
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <span style={{
-                    color: "rgba(255,255,255,0.5)",
                     fontSize: 10,
                     fontWeight: 600,
                     fontFamily: "Inter, system-ui",
@@ -80,10 +94,10 @@ export default function BetwayBanner({ style = {} }) {
                 }}>
                     <span style={{ color: "#fff" }}>Gamble</span>
                     <span style={{ color: "#f97316" }}>Aware</span>
-                    <span style={{ color: "rgba(255,255,255,0.5)" }}>®</span>
+                    <span style={{ color: "rgba(255,255,255,0.4)" }}>®</span>
                 </span>
                 <span style={{
-                    border: "1.5px solid rgba(255,255,255,0.4)",
+                    border: "1.5px solid #00A651",
                     borderRadius: "50%",
                     width: 28,
                     height: 28,
@@ -92,7 +106,7 @@ export default function BetwayBanner({ style = {} }) {
                     justifyContent: "center",
                     fontSize: 10,
                     fontWeight: 700,
-                    color: "rgba(255,255,255,0.6)",
+                    color: "#00A651",
                     fontFamily: "Inter, system-ui",
                     flexShrink: 0,
                 }}>18+</span>
