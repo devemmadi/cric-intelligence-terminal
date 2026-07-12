@@ -1632,7 +1632,7 @@ function NoMatchesScreen({ upcomingMatches }) {
             {/* ── Site intro hero — "what is this site" ── */}
             <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 16, padding: "20px 24px", marginBottom: 20, textAlign: "center" }}>
                 <div style={{ fontSize: 24, fontWeight: 900, color: "#fff", marginBottom: 6 }}>🏏 Free AI Cricket Win Probability</div>
-                <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.6, marginBottom: 14 }}>Updated every ball · No sign-up · 74%+ accurate · All T20s</div>
+                <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.6, marginBottom: 14 }}>Updated every ball · No sign-up · 66%+ in death overs · All T20s</div>
                 <div style={{ display: "flex", justifyContent: "center", gap: 8, flexWrap: "wrap" }}>
                     {["📊 Win % live", "🎯 Score projection", "⚡ Next-over range", "🌍 IPL · Internationals · BBL"].map(f => (
                         <span key={f} style={{ fontSize: 12, fontWeight: 600, color: C.text, background: "rgba(255,255,255,0.06)", border: `1px solid ${C.border}`, borderRadius: 20, padding: "4px 12px" }}>{f}</span>
@@ -1985,7 +1985,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                 {/* Compact trust strip + view switcher — shown when a match IS loaded */}
                 {(selectedMatch || pred) && (
                     <div className="vs-row" style={{ background: "rgba(255,255,255,0.03)", borderBottom: `1px solid ${C.border}`, padding: "6px 20px", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                        <span style={{ fontSize: 11, color: "#10B981", fontWeight: 700 }}>74%+ accurate</span>
+                        <span style={{ fontSize: 11, color: "#10B981", fontWeight: 700 }}>66%+ in death overs</span>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
                         <span style={{ fontSize: 11, color: C.muted }}>Vitality Blast 2026 tracked live</span>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
@@ -2185,7 +2185,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 {/* Show site intro while waiting */}
                                 <div style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "18px 20px", marginBottom: 16, textAlign: "center" }}>
                                     <div style={{ fontSize: 22, fontWeight: 900, color: "#fff", marginBottom: 6 }}>🏏 Free AI Cricket Win Probability</div>
-                                    <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.6 }}>Updated every ball · No sign-up needed · 74%+ accurate</div>
+                                    <div style={{ fontSize: 14, color: C.muted, lineHeight: 1.6 }}>Updated every ball · No sign-up needed · 66%+ in death overs</div>
                                     <div style={{ display: "flex", justifyContent: "center", gap: 20, marginTop: 14, flexWrap: "wrap" }}>
                                         {[["📊","Win % live"], ["🎯","Score projection"], ["⚡","Next-over range"], ["🌍","All T20s"]].map(([icon, label]) => (
                                             <div key={label} style={{ textAlign: "center" }}>
@@ -2268,7 +2268,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 const _t2 = cleanTeam(pred.team2);
                                 let _alert = null;
                                 if (_wktsLeft <= 2) _alert = { text: `🚨 Collapse Risk — only ${_wktsLeft} wicket${_wktsLeft === 1 ? "" : "s"} left`, color: "#EF4444", bg: "rgba(239,68,68,0.12)" };
-                                else if (_last3Wkts >= 2) _alert = { text: `🚨 Wicket Threat Rising — ${_last3Wkts} wickets in last 3 overs`, color: "#EF4444", bg: "rgba(239,68,68,0.12)" };
+                                else if (_last3Wkts >= 2 && (pred.overs || 0) > 3) _alert = { text: `🚨 Wicket Threat Rising — ${_last3Wkts} wickets in last 3 overs`, color: "#EF4444", bg: "rgba(239,68,68,0.12)" };
                                 else if (_hist.length >= 3) {
                                     const _delta = (_hist[_hist.length-1]?.prob||50) - (_hist[_hist.length-3]?.prob||50);
                                     if (Math.abs(_delta) >= 10) _alert = { text: `🚨 Momentum Shift — ${_delta > 0 ? _t1 : _t2} taking control`, color: "#F59E0B", bg: "rgba(245,158,11,0.12)" };

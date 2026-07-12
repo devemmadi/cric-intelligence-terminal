@@ -194,6 +194,8 @@ Backend field consumed: `pred.pitchScoreValidated.{score, label, narrative}` (ad
 `src/index.js` has `<HelmetProvider>` wrapper (react-helmet-async installed). Canonical tag is set via `setCanonical()` DOM helper — no `<Helmet>` components needed (DOM manipulation is sufficient for SPA SEO).
 
 ## Common Bugs Fixed (most recent first)
+- "Wicket Threat Rising" fired at start of inn2 using stale inn1 last3Wkts → added `&& (pred.overs||0) > 3` guard (PredictionsTab.jsx line 2271, Jul 12 2026)
+- "74%+ accurate" banner claim → changed to "66%+ in death overs" in 3 places (PredictionsTab.jsx lines 1635/1988/2188, Jul 12 2026) — matches verified accuracy page
 - LiveEngine shows "Over 1 POWERPLAY" during innings break → added `isInnBreak` guard in LiveEngine.jsx; shows "Innings Break ☕" screen when `innings=2 && overs=0` (Jul 9, 2026)
 - Innings break hero shows completed inn1 score: when `innings=2 && overs=0`, hero score row now shows batting team1's score (`selectedMatch.t1Score/t1Wkts/t1Overs`) + "ENG to bat · Target N" instead of wrong "ENG 0/0 (0.0 ov)" (Jul 9, 2026)
 - Tab hidden → 0 matches shown → `visibilitychange` listener added to `useMatchData.js` so data fetches immediately when user switches to the tab (Jul 9, 2026)
