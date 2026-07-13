@@ -1899,6 +1899,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     // Score pulse — brief glow every ball
     const prevScoreRef = useRef(null);
     const [scorePulsing, setScorePulsing] = useState(false);
+
+    // Sticky Betway bar — mobile only, dismissible
+    const [showStickyBar, setShowStickyBar] = useState(() => !localStorage.getItem("bw_dismissed"));
     useEffect(() => {
         const cur = pred?.score;
         if (cur == null) return;
@@ -2924,6 +2927,36 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                 </div>
 
             </aside>
+
+            {/* ── STICKY BETWAY BAR — mobile only, fixed bottom, dismissible ── */}
+            {showStickyBar && (
+                <div className="mob-only" style={{
+                    position: "fixed", bottom: 56, left: 0, right: 0, zIndex: 1200,
+                    background: "linear-gradient(90deg, #00281a 0%, #003d24 100%)",
+                    borderTop: "2px solid #00A651",
+                    display: "flex", alignItems: "center", gap: 10,
+                    padding: "10px 14px",
+                }}>
+                    <a
+                        href="https://betway.com/bwp/bet10get40/en-gb/?s=sp53067"
+                        target="_blank"
+                        rel="noopener noreferrer sponsored"
+                        style={{ flex: 1, textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}
+                    >
+                        <span style={{ background: "#00A651", color: "#fff", fontSize: 11, fontWeight: 900, padding: "3px 8px", borderRadius: 4, letterSpacing: 1, flexShrink: 0 }}>BETWAY</span>
+                        <div style={{ flex: 1 }}>
+                            <div style={{ fontSize: 13, fontWeight: 900, color: "#fff", lineHeight: 1.2 }}>Bet £10 &amp; Get <span style={{ color: "#00A651" }}>£40 Free Bets</span></div>
+                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.55)" }}>New customers · T&amp;Cs apply · 18+</div>
+                        </div>
+                        <div style={{ background: "#00A651", color: "#fff", fontSize: 11, fontWeight: 900, padding: "7px 14px", borderRadius: 8, flexShrink: 0, whiteSpace: "nowrap" }}>Claim →</div>
+                    </a>
+                    <button
+                        onClick={() => { localStorage.setItem("bw_dismissed", "1"); setShowStickyBar(false); }}
+                        style={{ background: "none", border: "none", color: "rgba(255,255,255,0.4)", fontSize: 18, cursor: "pointer", padding: "0 4px", flexShrink: 0, lineHeight: 1 }}
+                        aria-label="Dismiss"
+                    >×</button>
+                </div>
+            )}
         </div>
     );
 }
