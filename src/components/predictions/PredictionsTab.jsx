@@ -1517,7 +1517,7 @@ function TrustAccuracyBar() {
             .then(d => setStats(d))
             .catch(() => {});
     }, []);
-    const hitRate = stats?.hitRate ?? 80;
+    const hitRate = stats?.hitRate || 81;
     const total = stats?.totalResolved ?? 0;
     return (
         <div style={{ background: "rgba(0,184,148,0.07)", border: "1px solid rgba(0,184,148,0.22)", borderRadius: 14, padding: "16px 20px", marginBottom: 24, display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
@@ -1526,7 +1526,7 @@ function TrustAccuracyBar() {
                 <div>
                     <div style={{ fontSize: 20, fontWeight: 900, color: "#00B894", lineHeight: 1 }}>{hitRate}% accurate</div>
                     <div style={{ fontSize: 11, color: C.muted, marginTop: 3 }}>
-                        {total > 0 ? `${total} verified predictions this IPL season` : "Verified IPL 2026 predictions"}
+                        {total > 0 ? `${total} verified predictions` : "Verified T20 predictions"}
                     </div>
                 </div>
             </div>
@@ -1619,7 +1619,7 @@ function MockPredictionDemo() {
                     ))}
                 </div>
                 <div style={{ marginTop: 10, fontSize: 10, color: "rgba(255,255,255,0.2)", textAlign: "center" }}>
-                    This updates live every ball during any IPL match
+                    This updates live every ball during any T20 match
                 </div>
             </div>
         </div>

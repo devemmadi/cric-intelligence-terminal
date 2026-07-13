@@ -11,6 +11,7 @@ export const C = {
 
 export const IPL_TEAMS = ["RCB","RR","MI","CSK","KKR","DC","GT","SRH","LSG","PBKS"];
 export const PSL_TEAMS = ["KRK","QTG","RWP","ISL","PSZ","MUL"];
+export const HUNDRED_TEAMS = ["MI London","Sunrisers Leeds","Manchester Super Giants","London Spirit","Birmingham Phoenix","Welsh Fire","Southern Brave","Trent Rockets","Manchester Originals","Northern Superchargers","Oval Invincibles"];
 
 export function cleanTeam(name) {
     if (!name) return "";

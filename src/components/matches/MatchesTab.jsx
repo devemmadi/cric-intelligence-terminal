@@ -1,13 +1,18 @@
 /* eslint-disable */
 import React from "react";
-import { C, IPL_TEAMS, PSL_TEAMS } from "../shared/constants";
+import { C, IPL_TEAMS, PSL_TEAMS, HUNDRED_TEAMS } from "../shared/constants";
 import { MatchCard } from "../shared/MatchCard";
 
+const isHundred = (m) => HUNDRED_TEAMS.some(t => (m.t1||'').includes(t)||(m.t2||'').includes(t)) || (m.name||'').includes('Hundred');
+const isIPL = (m) => IPL_TEAMS.some(t => (m.t1||'')=== t||(m.t2||'')=== t);
+const isPSL = (m) => PSL_TEAMS.some(t => (m.t1||'')=== t||(m.t2||'')=== t);
+
 const SECTION_CONFIG = [
-    { key: "IPL", label: "🏏 IPL 2026", color: "#F59E0B", bg: "#FEF3C7", check: (m) => IPL_TEAMS.some(t => (m.t1||'')=== t||(m.t2||'')=== t) },
-    { key: "PSL", label: "🟢 PSL 2026", color: "#10B981", bg: "#D1FAE5", check: (m) => PSL_TEAMS.some(t => (m.t1||'')=== t||(m.t2||'')=== t) },
+    { key: "HUNDRED", label: "💯 The Hundred 2026", color: "#8B5CF6", bg: "#EDE9FE", check: isHundred },
+    { key: "IPL", label: "🏏 IPL 2026", color: "#F59E0B", bg: "#FEF3C7", check: isIPL },
+    { key: "PSL", label: "🟢 PSL 2026", color: "#10B981", bg: "#D1FAE5", check: isPSL },
     { key: "INT", label: "🌍 International", color: "#6366F1", bg: "#EEF2FF",
-      check: (m) => !IPL_TEAMS.some(t => (m.t1||'')=== t||(m.t2||'')=== t) && !PSL_TEAMS.some(t => (m.t1||'')=== t||(m.t2||'')=== t) },
+      check: (m) => !isHundred(m) && !isIPL(m) && !isPSL(m) },
 ];
 
 function SectionHeader({ label, color, bg, count }) {
