@@ -2307,6 +2307,11 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             {/* ── HERO DECISION (replaces old hero bar + prediction call banner) ── */}
                             {!isEnded && <HeroDecision pred={pred} prob={prob} isEnded={isEnded} />}
 
+                            {/* ── BETWAY BANNER — mobile only, right after main prediction ── */}
+                            <div className="mob-intel">
+                                <BetwayBanner style={{ marginBottom: 4 }} />
+                            </div>
+
                             {/* ── MOBILE VERDICT STRIP (right sidebar content on mobile) ── */}
                             {!isEnded && pred && pred.team1 && (() => {
                                 const _pressure = pred.pressureScore || 0;
@@ -2352,11 +2357,6 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
                             {/* ── MINI TRUST BLOCK ── */}
                             <MiniTrustBlock />
-
-                            {/* ── BETWAY BANNER — mobile only ── */}
-                            <div className="mob-intel">
-                                <BetwayBanner style={{ marginTop: 4 }} />
-                            </div>
 
                             {/* ── FAIR ODDS (live matches only) ── */}
                             {!isEnded && pred.aiProbability !== undefined && (() => {
@@ -2552,6 +2552,8 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
             {/* RIGHT SIDEBAR */}
             <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14, position: "sticky", top: 54, height: "calc(100vh - 54px)", overflowY: "auto", alignSelf: "start" }}>
+                {/* Betway affiliate card — top of sidebar for visibility */}
+                <BetwayBanner />
                 {pred && pred.team1 && (
                   <div style={{ borderRadius: 14, overflow: "hidden", border: `1px solid ${C.border}`, background: C.bg }}>
                     {/* Team probability mini-bar — hidden when ended */}
@@ -2921,8 +2923,6 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     <a href="mailto:emmadi.dev@gmail.com" style={{ fontSize: 10, color: C.muted, fontWeight: 600, textDecoration: "none" }}>Contact</a>
                 </div>
 
-                {/* Betway affiliate card — right sidebar */}
-                <BetwayBanner />
             </aside>
         </div>
     );

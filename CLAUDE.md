@@ -194,6 +194,7 @@ Backend field consumed: `pred.pitchScoreValidated.{score, label, narrative}` (ad
 `src/index.js` has `<HelmetProvider>` wrapper (react-helmet-async installed). Canonical tag is set via `setCanonical()` DOM helper — no `<Helmet>` components needed (DOM manipulation is sufficient for SPA SEO).
 
 ## Common Bugs Fixed (most recent first)
+- BetwayBanner moved to top positions for visibility (Jul 13 2026): mobile banner now renders right after HeroDecision (was after MiniTrustBlock, way below fold); desktop banner now first item in right sidebar (was last item, required full scroll). Both changes in PredictionsTab.jsx.
 - "Wicket Threat Rising" fired at start of inn2 using stale inn1 last3Wkts → added `&& (pred.overs||0) > 3` guard (PredictionsTab.jsx line 2271, Jul 12 2026)
 - "74%+ accurate" banner claim → changed to "66%+ in death overs" in 3 places (PredictionsTab.jsx lines 1635/1988/2188, Jul 12 2026) — matches verified accuracy page
 - LiveEngine shows "Over 1 POWERPLAY" during innings break → added `isInnBreak` guard in LiveEngine.jsx; shows "Innings Break ☕" screen when `innings=2 && overs=0` (Jul 9, 2026)
