@@ -2337,7 +2337,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             )}
 
                             {/* ── USER PREDICTION — "What's your call?" ── */}
-                            <UserPrediction pred={pred} isEnded={isEnded} matchId={pred?.id || selectedMatch?.id} />
+                            <UserPrediction pred={pred} prob={prob} isEnded={isEnded} rawStatus={_st} matchId={selectedMatch?.id || pred?.id} />
 
                             {/* ── AI CALLED IT — dramatic moment banner ── */}
                             <AiCalledIt pred={pred} prob={prob} />

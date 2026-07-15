@@ -25,8 +25,8 @@ export default function AiCalledIt({ pred, prob }) {
         }
 
         // 2. Wicket that was predicted: AI showed wicket risk HIGH last poll → wicket now fell
-        const confLevel = (pred.confidenceSignals || {}).confidenceLevel;
-        const wicketPct = pred.livePredictions?.wicket?.prob ?? 0;
+        // wicketProb is the top-level field from backend (per-over wicket %), not livePredictions
+        const wicketPct = pred.wicketProb ?? 0;
         if (prev.wickets !== null && curWkts > prev.wickets) {
             // Was wicket risk flagged in previous state?
             if (prev.wicketWarnedAt !== null && wicketPct > 55) {
