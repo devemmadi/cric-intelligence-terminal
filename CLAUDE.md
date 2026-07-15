@@ -193,6 +193,36 @@ Backend field consumed: `pred.pitchScoreValidated.{score, label, narrative}` (ad
 
 `src/index.js` has `<HelmetProvider>` wrapper (react-helmet-async installed). Canonical tag is set via `setCanonical()` DOM helper — no `<Helmet>` components needed (DOM manipulation is sufficient for SPA SEO).
 
+## Addiction / Retention Features (Jul 15, 2026)
+
+### UserPrediction.jsx — "What's Your Call?"
+New file: `src/components/predictions/UserPrediction.jsx`
+
+- Shows "WHO WINS THIS MATCH?" two-button UI before user picks
+- After pick: shows selected team + live win% for that team + delta since pick
+- After match ends: shows WIN/LOSS result + share button (Web Share API or clipboard fallback)
+- Shareable text: "I predicted [Team] to win — nailed it! 🎯 cricintelligence.com"
+- Tracks cumulative accuracy record in `localStorage("ci_pred_record")` `{wins, losses}`
+- Per-match pick stored in `localStorage("ci_pick_${matchId}")`
+- No login required — fully localStorage based
+- Rendered in `PredictionsTab.jsx` above HeroDecision in prediction view
+
+### AiCalledIt.jsx — "AI Called It" Banner
+New file: `src/components/predictions/AiCalledIt.jsx`
+
+- Fires when probability swings ≥ 22% between polls → "🔮 AI CALLED IT — [Team] swung momentum X%"
+- Fires when wicket falls after high wicket-risk signal (>55%) → "🔮 AI CALLED IT — predicted high wicket risk..."
+- Auto-dismisses after 5s, manual × close also available
+- Renders above HeroDecision, below UserPrediction
+
+### FOMO Push Notifications — Probability Swing Trigger
+Added in `PredictionsTab.jsx` (fomoRef useEffect):
+
+- Fires ServiceWorker `showNotification` when |prob change| ≥ 22% between polls
+- Rate-limited: max 1 notification per 2 minutes per match
+- Only fires when user already has push enabled (pushStatus === "on")
+- Message: "Match ALIVE — [Leading team] now at X% 🔥"
+
 ## Common Bugs Fixed (most recent first)
 - AdUnit.jsx added (Jul 13 2026): explicit AdSense ad unit component (`ca-pub-5447761777263695`, auto-format). Placed in right sidebar. Auto-ads alone fail in React SPAs; this component calls `adsbygoogle.push({})` in useEffect with a ref guard to prevent double-push.
 - SubscribeCard.jsx added (Jul 13 2026): push notification + email alert signup card. Full version (mobile, inside `mob-intel`) and compact version (desktop sidebar). Email submits to `POST /email-subscribe` backend endpoint. Push uses `usePushNotifications` hook. Placed after HeroDecision on mobile, after BetwayBanner in sidebar.

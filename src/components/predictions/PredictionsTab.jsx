@@ -7,6 +7,8 @@ import LiveProbabilityGraph from "./LiveProbabilityGraph";
 import LiveEngine from "./LiveEngine";
 import ScoreboardTab from "./ScoreboardTab";
 import BatterMilestones from "./BatterMilestones";
+import UserPrediction from "./UserPrediction";
+import AiCalledIt from "./AiCalledIt";
 import BetwayBanner from "../BetwayBanner";
 import AdUnit from "../shared/AdUnit";
 import SubscribeCard from "../shared/SubscribeCard";
@@ -1914,6 +1916,31 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
         prevScoreRef.current = cur;
     }, [pred?.score]);
 
+    // FOMO notification: fire when probability swings ≥ 22% between polls
+    const fomoRef = useRef({ prob: null, lastFired: 0 });
+    useEffect(() => {
+        if (prob == null || pushStatus !== "on") return;
+        const prev = fomoRef.current;
+        const now = Date.now();
+        if (prev.prob !== null && now - prev.lastFired > 120000) { // max 1 per 2 min
+            const delta = Math.abs(prob - prev.prob);
+            if (delta >= 22) {
+                const t1 = cleanTeam(pred?.team1 || "");
+                const t2 = cleanTeam(pred?.team2 || "");
+                const leading = prob >= 50 ? t1 : t2;
+                const body = `Match ALIVE — ${leading} now at ${prob >= 50 ? prob : 100 - prob}% 🔥`;
+                if ("serviceWorker" in navigator) {
+                    navigator.serviceWorker.ready.then(reg => {
+                        reg.showNotification("CricIntelligence", { body, icon: "/logo192.png", badge: "/logo192.png" });
+                    }).catch(() => {});
+                }
+                fomoRef.current = { prob, lastFired: now };
+                return;
+            }
+        }
+        fomoRef.current.prob = prob;
+    }, [prob]);
+
     // Is any match currently live?
     const hasLive = liveMatches.some(m => m.status === "LIVE");
     const nextMatch = liveMatches.find(m => m.status === "UPCOMING");
@@ -2308,6 +2335,12 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     })}
                                 </div>
                             )}
+
+                            {/* ── USER PREDICTION — "What's your call?" ── */}
+                            <UserPrediction pred={pred} isEnded={isEnded} matchId={pred?.id || selectedMatch?.id} />
+
+                            {/* ── AI CALLED IT — dramatic moment banner ── */}
+                            <AiCalledIt pred={pred} prob={prob} />
 
                             {/* ── HERO DECISION (replaces old hero bar + prediction call banner) ── */}
                             {!isEnded && <HeroDecision pred={pred} prob={prob} isEnded={isEnded} />}
