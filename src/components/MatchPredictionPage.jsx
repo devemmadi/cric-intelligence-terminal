@@ -5,16 +5,31 @@ import Logo from "./Logo";
 import RGFooter from "./RGFooter";
 
 const TEAMS = {
-    mi:   { name: "Mumbai Indians",           short: "MI",   color: "#004BA0", bg: "#001F5B", titles: 5, strength: "Batting depth & pace attack",     aiRating: 88 },
-    csk:  { name: "Chennai Super Kings",      short: "CSK",  color: "#F7A721", bg: "#7A4F00", titles: 5, strength: "Experience & death bowling",       aiRating: 86 },
-    rcb:  { name: "Royal Challengers Bengaluru", short: "RCB", color: "#EC1C24", bg: "#6B0000", titles: 0, strength: "Power hitting top order",        aiRating: 81 },
-    kkr:  { name: "Kolkata Knight Riders",    short: "KKR",  color: "#3A225D", bg: "#1A0A2E", titles: 3, strength: "Spin bowling & batting",            aiRating: 83 },
-    srh:  { name: "Sunrisers Hyderabad",      short: "SRH",  color: "#FF822A", bg: "#7A2B00", titles: 1, strength: "Aggressive batting & pace",        aiRating: 79 },
-    rr:   { name: "Rajasthan Royals",         short: "RR",   color: "#E91E8C", bg: "#6B0040", titles: 1, strength: "Balanced squad",                   aiRating: 77 },
-    dc:   { name: "Delhi Capitals",           short: "DC",   color: "#0078BC", bg: "#003558", titles: 0, strength: "Young talent & spin",              aiRating: 75 },
-    pbks: { name: "Punjab Kings",             short: "PBKS", color: "#ED1B24", bg: "#6B0000", titles: 0, strength: "Big hitting & pace bowling",       aiRating: 74 },
-    gt:   { name: "Gujarat Titans",           short: "GT",   color: "#1C4E9D", bg: "#0A1F4A", titles: 2, strength: "All-round balance",                aiRating: 80 },
-    lsg:  { name: "Lucknow Super Giants",     short: "LSG",  color: "#A0C8FF", bg: "#001F3F", titles: 0, strength: "Bowling attack",                   aiRating: 76 },
+    mi:   { name: "Mumbai Indians",           short: "MI",   color: "#004BA0", bg: "#001F5B", titles: 5, strength: "Batting depth & pace attack",     aiRating: 88, league: "IPL", competition: "IPL 2026" },
+    csk:  { name: "Chennai Super Kings",      short: "CSK",  color: "#F7A721", bg: "#7A4F00", titles: 5, strength: "Experience & death bowling",       aiRating: 86, league: "IPL", competition: "IPL 2026" },
+    rcb:  { name: "Royal Challengers Bengaluru", short: "RCB", color: "#EC1C24", bg: "#6B0000", titles: 0, strength: "Power hitting top order",        aiRating: 81, league: "IPL", competition: "IPL 2026" },
+    kkr:  { name: "Kolkata Knight Riders",    short: "KKR",  color: "#3A225D", bg: "#1A0A2E", titles: 3, strength: "Spin bowling & batting",            aiRating: 83, league: "IPL", competition: "IPL 2026" },
+    srh:  { name: "Sunrisers Hyderabad",      short: "SRH",  color: "#FF822A", bg: "#7A2B00", titles: 1, strength: "Aggressive batting & pace",        aiRating: 79, league: "IPL", competition: "IPL 2026" },
+    rr:   { name: "Rajasthan Royals",         short: "RR",   color: "#E91E8C", bg: "#6B0040", titles: 1, strength: "Balanced squad",                   aiRating: 77, league: "IPL", competition: "IPL 2026" },
+    dc:   { name: "Delhi Capitals",           short: "DC",   color: "#0078BC", bg: "#003558", titles: 0, strength: "Young talent & spin",              aiRating: 75, league: "IPL", competition: "IPL 2026" },
+    pbks: { name: "Punjab Kings",             short: "PBKS", color: "#ED1B24", bg: "#6B0000", titles: 0, strength: "Big hitting & pace bowling",       aiRating: 74, league: "IPL", competition: "IPL 2026" },
+    gt:   { name: "Gujarat Titans",           short: "GT",   color: "#1C4E9D", bg: "#0A1F4A", titles: 2, strength: "All-round balance",                aiRating: 80, league: "IPL", competition: "IPL 2026" },
+    lsg:  { name: "Lucknow Super Giants",     short: "LSG",  color: "#A0C8FF", bg: "#001F3F", titles: 0, strength: "Bowling attack",                   aiRating: 76, league: "IPL", competition: "IPL 2026" },
+
+    // Vitality Blast 2026 (English county T20)
+    ham:    { name: "Hampshire Hawks",             short: "HAM",    color: "#0F5FA6", bg: "#062A4D", titles: null, strength: "Balanced bowling attack & big-venue power hitting", aiRating: 78, league: "Vitality Blast", competition: "Vitality Blast 2026" },
+    ess:    { name: "Essex Eagles",                short: "ESS",    color: "#1E3A8A", bg: "#0D1B4D", titles: null, strength: "Strong seam bowling on English pitches",             aiRating: 77, league: "Vitality Blast", competition: "Vitality Blast 2026" },
+    yorks:  { name: "Yorkshire Vikings",           short: "YORKS",  color: "#00263A", bg: "#001019", titles: null, strength: "Home advantage at Headingley & top-order depth",     aiRating: 76, league: "Vitality Blast", competition: "Vitality Blast 2026" },
+    som:    { name: "Somerset",                    short: "SOM",    color: "#1A1A1A", bg: "#000000", titles: null, strength: "Explosive top order at Taunton",                      aiRating: 80, league: "Vitality Blast", competition: "Vitality Blast 2026" },
+    notts:  { name: "Notts Outlaws",               short: "NOTTS",  color: "#00552F", bg: "#00220F", titles: null, strength: "Proven Blast knockout experience & death bowling",   aiRating: 81, league: "Vitality Blast", competition: "Vitality Blast 2026" },
+    sur:    { name: "Surrey",                      short: "SUR",    color: "#4A2C2A", bg: "#241211", titles: null, strength: "Deep batting line-up at The Oval",                    aiRating: 82, league: "Vitality Blast", competition: "Vitality Blast 2026" },
+    nhnts:  { name: "Northamptonshire Steelbacks", short: "NHNTS",  color: "#7A0019", bg: "#37000B", titles: null, strength: "Consistent knockout-stage performers",               aiRating: 75, league: "Vitality Blast", competition: "Vitality Blast 2026" },
+    gloucs: { name: "Gloucestershire",             short: "GLOUCS", color: "#00274D", bg: "#001122", titles: null, strength: "Spin-friendly home conditions at Bristol",           aiRating: 74, league: "Vitality Blast", competition: "Vitality Blast 2026" },
+
+    // The Hundred 2026
+    "mi-london":               { name: "MI London",              short: "MI LDN",  color: "#004BA0", bg: "#001F5B", titles: null, strength: "Mumbai Indians franchise model — power hitting focus", aiRating: 79, league: "The Hundred", competition: "The Hundred 2026" },
+    "sunrisers-leeds":         { name: "Sunrisers Leeds",         short: "SUN LDS", color: "#FF822A", bg: "#7A2B00", titles: null, strength: "Aggressive top order, Headingley pace",                  aiRating: 78, league: "The Hundred", competition: "The Hundred 2026" },
+    "manchester-super-giants": { name: "Manchester Super Giants", short: "MAN SG",  color: "#0078BC", bg: "#003558", titles: null, strength: "Balanced squad with strong death bowling",              aiRating: 77, league: "The Hundred", competition: "The Hundred 2026" },
 };
 
 const H2H = {
@@ -47,9 +62,9 @@ function getH2H(t1key, t2key) {
 const NAVY = "#1E2D6B";
 const GOLD = "#C8961E";
 
-function MetaTags({ t1, t2, slug }) {
-    const title = `${t1.name} vs ${t2.name} Prediction IPL 2026 — AI Win Probability | CricIntelligence`;
-    const desc  = `AI-powered ${t1.short} vs ${t2.short} IPL 2026 prediction. Live win probability, over-by-over forecasts & head-to-head analysis. Free. Updated every ball.`;
+function MetaTags({ t1, t2, slug, competition }) {
+    const title = `${t1.name} vs ${t2.name} Prediction ${competition} — AI Win Probability | CricIntelligence`;
+    const desc  = `AI-powered ${t1.short} vs ${t2.short} ${competition} prediction. Live win probability, over-by-over forecasts & head-to-head analysis. Free. Updated every ball.`;
     React.useEffect(() => {
         document.title = title;
         const setMeta = (name, content, prop) => {
@@ -72,7 +87,7 @@ function MetaTags({ t1, t2, slug }) {
 export default function MatchPredictionPage() {
     const { matchup } = useParams();
     const navigate = useNavigate();
-    const parts = (matchup || "").toLowerCase().replace(/-ipl-2026$/, "").replace(/-ipl2026$/, "");
+    const parts = (matchup || "").toLowerCase().replace(/-ipl-2026$/, "").replace(/-ipl2026$/, "").replace(/-2026$/, "");
     const vsIdx = parts.indexOf("-vs-");
     const t1key = vsIdx > -1 ? parts.slice(0, vsIdx) : "";
     const t2key = vsIdx > -1 ? parts.slice(vsIdx + 4) : "";
@@ -93,25 +108,30 @@ export default function MatchPredictionPage() {
     const aiProb = Math.min(72, Math.max(38, Math.round(((t1.aiRating / (t1.aiRating + t2.aiRating)) * 100))));
 
     const slug = matchup || `${t1key}-vs-${t2key}`;
+    const league = t1.league || t2.league || "IPL";
+    const competition = t1.competition || t2.competition || "IPL 2026";
+    const startTimeNote = league === "IPL"
+        ? `Check our live matches section for confirmed dates and times. IPL 2026 matches typically start at 7:30 PM IST.`
+        : `Check our live matches section for confirmed dates and local kickoff times.`;
     const faqs = [
-        { q: `Who will win ${t1.short} vs ${t2.short} in IPL 2026?`, a: `Based on head-to-head records and our AI model, ${aiProb > 50 ? t1.name : t2.name} hold a slight edge. ${t1.short} have won ${t1wins} of ${total} meetings. For live win probability during the match, visit our live predictions page.` },
+        { q: `Who will win ${t1.short} vs ${t2.short} in ${competition}?`, a: `Based on head-to-head records and our AI model, ${aiProb > 50 ? t1.name : t2.name} hold a slight edge. ${t1.short} have won ${t1wins} of ${total} meetings. For live win probability during the match, visit our live predictions page.` },
         { q: `What is the head-to-head record of ${t1.short} vs ${t2.short}?`, a: `${t1.name} have won ${t1wins} matches while ${t2.name} have won ${t2wins} in ${total} total meetings. ${t1.short} hold a ${t1pct}% win rate in this fixture.` },
         { q: `How does CricIntelligence predict ${t1.short} vs ${t2.short}?`, a: `Our AI model considers pitch conditions, current innings data, player form, run rates, wicket patterns, and over-phase factors. Predictions update every ball during live matches.` },
-        { q: `When does the ${t1.short} vs ${t2.short} IPL 2026 match start?`, a: `Check our live matches section for confirmed dates and times. IPL 2026 matches typically start at 7:30 PM IST.` },
+        { q: `When does the ${t1.short} vs ${t2.short} ${competition} match start?`, a: startTimeNote },
     ];
 
     return (
         <div style={{ minHeight: "100vh", background: "#EEF2FF", fontFamily: "Inter, -apple-system, system-ui", color: "#0A0A0A" }}>
-            <MetaTags t1={t1} t2={t2} slug={slug} />
+            <MetaTags t1={t1} t2={t2} slug={slug} competition={competition} />
 
             {/* Schema JSON-LD */}
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
                 "@context": "https://schema.org",
                 "@type": "SportsEvent",
-                "name": `${t1.name} vs ${t2.name} IPL 2026`,
+                "name": `${t1.name} vs ${t2.name} ${competition}`,
                 "sport": "Cricket",
-                "description": `AI prediction for ${t1.short} vs ${t2.short} IPL 2026 match`,
-                "organizer": { "@type": "Organization", "name": "IPL" },
+                "description": `AI prediction for ${t1.short} vs ${t2.short} ${competition} match`,
+                "organizer": { "@type": "Organization", "name": league },
                 "competitor": [
                     { "@type": "SportsTeam", "name": t1.name },
                     { "@type": "SportsTeam", "name": t2.name }
@@ -129,9 +149,9 @@ export default function MatchPredictionPage() {
 
                 {/* Hero */}
                 <div style={{ background: `linear-gradient(135deg, ${NAVY} 0%, #253580 100%)`, borderRadius: 18, padding: "32px 28px", marginBottom: 28, color: "#fff" }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: GOLD, letterSpacing: 2, marginBottom: 12 }}>AI PREDICTION · IPL 2026</div>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: GOLD, letterSpacing: 2, marginBottom: 12 }}>AI PREDICTION · {competition}</div>
                     <h1 style={{ fontSize: "clamp(22px,4vw,34px)", fontWeight: 900, margin: "0 0 10px", lineHeight: 1.2 }}>
-                        {t1.name} vs {t2.name} — IPL 2026 Prediction
+                        {t1.name} vs {t2.name} — {competition} Prediction
                     </h1>
                     <p style={{ fontSize: 14, color: "rgba(255,255,255,0.65)", margin: "0 0 20px", lineHeight: 1.7, maxWidth: 540 }}>
                         AI-powered win probability for {t1.short} vs {t2.short}. Live over-by-over forecasts, pitch analysis & head-to-head data — updated every ball during the match.
@@ -198,7 +218,7 @@ export default function MatchPredictionPage() {
                                 <div style={{ width: 36, height: 36, borderRadius: "50%", background: team.color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 900, color: "#fff" }}>{team.short}</div>
                                 <div>
                                     <div style={{ fontSize: 14, fontWeight: 800, color: NAVY }}>{team.name}</div>
-                                    <div style={{ fontSize: 11, color: "#64748B" }}>{team.titles} IPL title{team.titles !== 1 ? "s" : ""}</div>
+                                    <div style={{ fontSize: 11, color: "#64748B" }}>{team.titles != null ? `${team.titles} ${team.league || "IPL"} title${team.titles !== 1 ? "s" : ""}` : team.league}</div>
                                 </div>
                             </div>
                             <div style={{ fontSize: 12, color: "#64748B", marginBottom: 10 }}>
