@@ -2524,6 +2524,11 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                                             <span style={{ fontSize: 13, color: "#CBD5E1" }}>runs expected</span>
                                                         </div>
                                                     )}
+                                                    {ov.runRange && (
+                                                        <div style={{ fontSize: 10, color: "rgba(255,255,255,0.45)", marginBottom: 6 }}>
+                                                            Likely: {ov.runRange} runs{ov.range90 ? ` · Safe range (rarely wrong): ${ov.range90}` : ""}
+                                                        </div>
+                                                    )}
                                                     <div style={{ height: 5, background: C.border, borderRadius: 3, marginBottom: 5 }}>
                                                         <div style={{ height: "100%", width: runFill + "%", background: "linear-gradient(90deg, #4A90E2, #00D4AA)", borderRadius: 3, transition: "width 0.4s" }} />
                                                     </div>
