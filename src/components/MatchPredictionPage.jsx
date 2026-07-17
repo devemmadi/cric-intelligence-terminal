@@ -45,6 +45,13 @@ const TEAMS = {
     "trent-rockets":           { name: "Trent Rockets",           short: "TRT RKT", color: "#8A1538", bg: "#3D0918", titles: null, strength: "High-scoring batting wicket at Trent Bridge",             aiRating: 76, league: "The Hundred", competition: "The Hundred 2026" },
     "london-spirit":           { name: "London Spirit",           short: "LON SPR", color: "#8E1B3C", bg: "#3D0B1A", titles: null, strength: "Pace-friendly conditions at Lord's",                     aiRating: 75, league: "The Hundred", competition: "The Hundred 2026" },
     "welsh-fire":              { name: "Welsh Fire",              short: "WEL FIR", color: "#C8102E", bg: "#5C0714", titles: null, strength: "Spin-friendly home conditions at Sophia Gardens",         aiRating: 74, league: "The Hundred", competition: "The Hundred 2026" },
+
+    // Lanka Premier League 2026 (starts Jul 17)
+    "jaffna-kings":     { name: "Jaffna Kings",     short: "JKS", color: "#002E5D", bg: "#00152B", titles: 2,    strength: "Defending champions — deep batting & experienced spin",  aiRating: 82, league: "LPL", competition: "Lanka Premier League 2026" },
+    "galle-gallants":   { name: "Galle Gallants",   short: "GAM", color: "#1B7A3D", bg: "#0A3518", titles: null, strength: "Aggressive top order, spin-friendly home conditions",     aiRating: 76, league: "LPL", competition: "Lanka Premier League 2026" },
+    "colombo-kaps":     { name: "Colombo Kaps",     short: "CLK", color: "#F2A900", bg: "#5C3F00", titles: null, strength: "Balanced squad with strong death bowling",                 aiRating: 75, league: "LPL", competition: "Lanka Premier League 2026" },
+    "kandy-royals":     { name: "Kandy Royals",     short: "KDR", color: "#6A1B9A", bg: "#2E0B44", titles: null, strength: "Pace attack suited to Pallekele conditions",              aiRating: 74, league: "LPL", competition: "Lanka Premier League 2026" },
+    "dambulla-sixers":  { name: "Dambulla Sixers",  short: "DBS", color: "#C8102E", bg: "#5C0714", titles: null, strength: "Power-hitting middle order",                               aiRating: 73, league: "LPL", competition: "Lanka Premier League 2026" },
 };
 
 const H2H = {
