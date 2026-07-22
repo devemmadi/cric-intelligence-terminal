@@ -48,10 +48,10 @@ const TEAMS = {
 
     // Lanka Premier League 2026 (starts Jul 17)
     "jaffna-kings":     { name: "Jaffna Kings",     short: "JKS", color: "#002E5D", bg: "#00152B", titles: 2,    strength: "Defending champions — deep batting & experienced spin",  aiRating: 82, league: "LPL", competition: "Lanka Premier League 2026" },
-    "galle-gallants":   { name: "Galle Gallants",   short: "GAM", color: "#1B7A3D", bg: "#0A3518", titles: null, strength: "Aggressive top order, spin-friendly home conditions",     aiRating: 76, league: "LPL", competition: "Lanka Premier League 2026" },
+    "galle-marvels":    { name: "Galle Marvels",    short: "GAG", color: "#1B7A3D", bg: "#0A3518", titles: null, strength: "Aggressive top order, spin-friendly home conditions",     aiRating: 76, league: "LPL", competition: "Lanka Premier League 2026" },
     "colombo-kaps":     { name: "Colombo Kaps",     short: "CLK", color: "#F2A900", bg: "#5C3F00", titles: null, strength: "Balanced squad with strong death bowling",                 aiRating: 75, league: "LPL", competition: "Lanka Premier League 2026" },
-    "kandy-royals":     { name: "Kandy Royals",     short: "KDR", color: "#6A1B9A", bg: "#2E0B44", titles: null, strength: "Pace attack suited to Pallekele conditions",              aiRating: 74, league: "LPL", competition: "Lanka Premier League 2026" },
-    "dambulla-sixers":  { name: "Dambulla Sixers",  short: "DBS", color: "#C8102E", bg: "#5C0714", titles: null, strength: "Power-hitting middle order",                               aiRating: 73, league: "LPL", competition: "Lanka Premier League 2026" },
+    "kandy-falcons":    { name: "Kandy Falcons",    short: "KFS", color: "#6A1B9A", bg: "#2E0B44", titles: 1,    strength: "Hasaranga-led attack, suited to Pallekele conditions",     aiRating: 79, league: "LPL", competition: "Lanka Premier League 2026" },
+    "dambulla-sixers":  { name: "Dambulla Sixers",  short: "DAS", color: "#C8102E", bg: "#5C0714", titles: null, strength: "Power-hitting middle order",                               aiRating: 73, league: "LPL", competition: "Lanka Premier League 2026" },
 };
 
 const H2H = {
