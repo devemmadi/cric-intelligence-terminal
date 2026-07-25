@@ -2992,14 +2992,16 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
             </aside>
 
             {/* ── STICKY AFFILIATE BAR — mobile only, fixed bottom, dismissible ──
-                 Follows the same partner the banners were assigned, so a visitor
-                 never sees two competing brands at once. See AffiliateBanner.jsx. */}
+                 Renders the primary partner, so a visitor never sees two competing
+                 brands at once. See AffiliateBanner.jsx.
+                 Do NOT set `display` inline on the bar below — an inline value beats
+                 the display:none in the .mob-only class and leaks it onto desktop. */}
             {showStickyBar && (
                 <div className="mob-only" style={{
                     position: "fixed", bottom: 56, left: 0, right: 0, zIndex: 1200,
                     background: stickyBrand.barBg,
                     borderTop: `2px solid ${stickyBrand.accent}`,
-                    display: "flex", alignItems: "center", gap: 10,
+                    alignItems: "center", gap: 10,
                     padding: "10px 14px",
                 }}>
                     <a

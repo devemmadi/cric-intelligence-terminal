@@ -79,11 +79,9 @@ export default function WilliamHillBanner({ style = {}, placement = "" }) {
                 marginBottom: 14,
                 fontFamily: "Inter, system-ui",
             }}>
-                Ends 31.12.26. 18+, new UK customers only, promo code R30. Deposit £10+, then
-                place a £10 single bet at odds 1/2+ on any sports market (excl. Virtuals).
-                £30 in Free Bets (3&times;£10) credited after settlement, expire in 7 days,
-                non-withdrawable, must be used in full. Some deposit methods excluded.
-                One per customer. Full T&amp;Cs apply. BeGambleAware.org
+                18+. New UK customers, code R30. Deposit £10+, bet £10 at odds 1/2+.
+                Free Bets expire in 7 days. Ends 31.12.26. Full T&amp;Cs apply.
+                BeGambleAware.org
             </div>
 
             {/* Footer: GambleAware + 18+ */}
