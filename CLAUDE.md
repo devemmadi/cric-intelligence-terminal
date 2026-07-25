@@ -293,24 +293,32 @@ placement)` instead.
 | `williamhill` | Income Access | affid 1745040, siteid 215184 (cricintelligence.com), adid 1439 |
 | `betway` | SuperPartners | affiliate id sp53067 |
 
-**Why one partner at a time:** the sidebar previously stacked `<WilliamHillBanner />`
+**Primary vs secondary.** `PRIMARY` in `AffiliateBanner.jsx` names the partner that
+owns the prominent slots — desktop sidebar card, mobile card and mobile sticky bar,
+all reading it through `useAffiliateBrand()`. Change that one constant and every
+prominent surface follows. Secondary partners get `<BetwayBanner compact />`, a
+single-line strip placed far down the page instead.
+
+Currently **William Hill is primary** (Jul 25 2026). Betway ran for two months and
+produced 14 clicks / 0 signups / $0.00, and William Hill pays 30% revenue share, so
+it gets the traffic. Betway stays live in the compact slot rather than being dropped,
+so there is still a comparison to read if William Hill also fails to convert.
+
+**Why not both at full size:** the sidebar previously stacked `<WilliamHillBanner />`
 directly above `<BetwayBanner />` while a third hardcoded Betway bar sat at the bottom
 on mobile. Three competing gambling brands on one screen reads as ad spam and costs
-more in trust than it gains in clicks. `AffiliateBanner` now assigns each visitor ONE
-partner (50/50, frozen in `localStorage("ci_aff_brand")`) and every surface —
-sidebar card, mobile card, sticky bottom bar — reads it via `useAffiliateBrand()`.
+more in trust than it gains in clicks.
 
-**The split is also the measurement.** As of Jul 25 2026 the SuperPartners account
-shows 14 visits / 0 signups / $0.00 — too little to guess which partner converts. An
-even, stable split plus a per-placement sub-tracker is what produces that answer.
-Attribution is read in the **partner's own reports**, not in any analytics call from
-this codebase:
+Attribution is read in the **partner's own reports** — nothing is logged from this
+codebase:
 
 | Placement | William Hill (`c=`) | Betway (`a=`) |
 |---|---|---|
-| Desktop sidebar | `c=sidebar` | `a=sidebar` |
-| Mobile card | `c=mobile` | `a=mobile` |
-| Mobile sticky bar | `c=stickybar` | `a=stickybar` |
+| Desktop sidebar (primary) | `c=sidebar` | — |
+| Mobile card (primary) | `c=mobile` | — |
+| Mobile sticky bar (primary) | `c=stickybar` | — |
+| Sidebar compact (secondary) | — | `a=sidebar-secondary` |
+| Mobile compact (secondary) | — | `a=mobile-secondary` |
 
 **Geo is deliberately NOT part of the choice** — both offers are UK (`en-gb`, £
 denominated), so there is currently nothing to route non-UK visitors to. If a non-UK

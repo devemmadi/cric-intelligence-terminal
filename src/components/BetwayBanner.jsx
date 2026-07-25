@@ -2,7 +2,60 @@
 import React from "react";
 import { affiliateHref } from "./shared/affiliates";
 
-export default function BetwayBanner({ style = {}, placement = "" }) {
+/*
+ * `compact` renders a single-line strip instead of the full card. Betway is the
+ * secondary partner (see AffiliateBanner.jsx) and sits low on the page, where a
+ * second full-size gambling card would just read as ad clutter next to the
+ * primary partner's.
+ */
+export default function BetwayBanner({ style = {}, placement = "", compact = false }) {
+    if (compact) {
+        return (
+            <a
+                href={affiliateHref("betway", placement)}
+                target="_blank"
+                rel="noopener noreferrer sponsored"
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 9,
+                    background: "rgba(0,166,81,0.06)",
+                    border: "1px solid rgba(0,166,81,0.35)",
+                    borderRadius: 9,
+                    padding: "9px 11px",
+                    textDecoration: "none",
+                    ...style,
+                }}
+            >
+                <span style={{
+                    background: "#00A651",
+                    color: "#fff",
+                    fontSize: 9,
+                    fontWeight: 900,
+                    letterSpacing: "1px",
+                    padding: "2px 6px",
+                    borderRadius: 3,
+                    fontFamily: "Inter, system-ui",
+                    flexShrink: 0,
+                }}>BETWAY</span>
+                <span style={{
+                    flex: 1,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    color: "rgba(255,255,255,0.82)",
+                    fontFamily: "Inter, system-ui",
+                    lineHeight: 1.3,
+                }}>
+                    Bet £10 &amp; Get £40 in Free Bets
+                    <span style={{ display: "block", fontSize: 9, fontWeight: 500, color: "rgba(255,255,255,0.4)" }}>
+                        New customers · 18+ · T&amp;Cs apply · BeGambleAware.org
+                    </span>
+                </span>
+                <span style={{ color: "#00A651", fontSize: 13, fontWeight: 900, flexShrink: 0 }}>→</span>
+            </a>
+        );
+    }
+
     return (
         <a
             href={affiliateHref("betway", placement)}

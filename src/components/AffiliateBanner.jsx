@@ -2,52 +2,38 @@
 import React from "react";
 import BetwayBanner from "./BetwayBanner";
 import WilliamHillBanner from "./WilliamHillBanner";
-import { AFFILIATES, AFFILIATE_NAMES } from "./shared/affiliates";
+import { AFFILIATES } from "./shared/affiliates";
 
 /*
- * Which betting partner a visitor sees, decided in one place.
+ * The primary betting partner — the one that gets the prominent slots.
  *
  * Stacking every partner banner on top of each other reads as ad spam and costs
- * more in trust than it gains in clicks, so a visitor is assigned ONE brand and
- * sees only that brand everywhere — sidebar card, mobile card and the sticky
- * bottom bar all read from `useAffiliateBrand()`.
+ * more in trust than it gains in clicks, so the prominent placements (sidebar
+ * card, mobile card, sticky bottom bar) all render ONE partner, read from here
+ * via `useAffiliateBrand()`. Secondary partners get a small slot lower down the
+ * page instead — see `BetwayBanner compact` in PredictionsTab.
  *
- * The assignment is a 50/50 split frozen in localStorage on first visit, so it
- * survives scrolling, tab switches and return visits. That split is also the
- * measurement: with 14 clicks and zero signups there is no basis yet for
- * guessing which partner converts, and an even, stable split plus the
- * per-placement sub-tracker on each link is what produces that answer. Read it
- * in the William Hill and SuperPartners reports — nothing is logged from here.
+ * Primary is William Hill as of Jul 25 2026: Betway ran for two months and
+ * produced 14 clicks and zero signups, and William Hill pays a better rate
+ * (30% revenue share), so it gets the traffic that actually converts. Betway
+ * stays live in the small slot rather than being dropped, so there is still a
+ * comparison to read if William Hill also fails to convert.
  *
- * Geo is deliberately not part of the choice: both offers are UK (`en-gb`, £
+ * To change which partner is prominent, change PRIMARY — every surface follows.
+ *
+ * Geo is deliberately not part of this: both offers are UK (`en-gb`, £
  * denominated), so there is currently nothing to route non-UK visitors to.
  */
 
-const KEY = "ci_aff_brand";
+const PRIMARY = "williamhill";
 
-function pickBrand() {
-    try {
-        const saved = localStorage.getItem(KEY);
-        if (AFFILIATE_NAMES.includes(saved)) return saved;
-        const chosen = AFFILIATE_NAMES[Math.floor(Math.random() * AFFILIATE_NAMES.length)];
-        localStorage.setItem(KEY, chosen);
-        return chosen;
-    } catch {
-        // Private mode / storage disabled — still show a banner, just unstable.
-        return AFFILIATE_NAMES[Math.floor(Math.random() * AFFILIATE_NAMES.length)];
-    }
-}
-
-/** The partner assigned to this visitor. Stable for the life of the component. */
+/** The partner that owns the prominent placements. */
 export function useAffiliateBrand() {
-    const [name] = React.useState(pickBrand);
-    return { name, ...AFFILIATES[name] };
+    return { name: PRIMARY, ...AFFILIATES[PRIMARY] };
 }
 
 export default function AffiliateBanner({ style = {}, placement = "" }) {
-    const { name } = useAffiliateBrand();
-
-    return name === "williamhill"
+    return PRIMARY === "williamhill"
         ? <WilliamHillBanner style={style} placement={placement} />
         : <BetwayBanner style={style} placement={placement} />;
 }

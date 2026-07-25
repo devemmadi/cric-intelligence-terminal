@@ -10,6 +10,7 @@ import BatterMilestones from "./BatterMilestones";
 import UserPrediction from "./UserPrediction";
 import AiCalledIt from "./AiCalledIt";
 import AffiliateBanner, { useAffiliateBrand } from "../AffiliateBanner";
+import BetwayBanner from "../BetwayBanner";
 import { affiliateHref } from "../shared/affiliates";
 import AdUnit from "../shared/AdUnit";
 import SubscribeCard from "../shared/SubscribeCard";
@@ -2401,6 +2402,12 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                 );
                             })()}
 
+                            {/* ── SECONDARY PARTNER — mobile, compact strip well below the
+                                 primary card so the two never sit together ── */}
+                            <div className="mob-intel" style={{ marginBottom: 14 }}>
+                                <BetwayBanner compact={true} placement="mobile-secondary" />
+                            </div>
+
                             {/* ── MINI TRUST BLOCK ── */}
                             <MiniTrustBlock />
 
@@ -2966,6 +2973,10 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         })()}
                     </div>
                 )}
+
+                {/* Secondary partner — compact strip, kept far from the primary
+                    card at the top so the sidebar doesn't read as stacked ads. */}
+                <BetwayBanner compact={true} placement="sidebar-secondary" />
 
                 <div style={{ textAlign: "center" }}>
                     <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.25)", letterSpacing: 1.5, marginBottom: 8 }}>LIVE CRICKET INTELLIGENCE ENGINE</div>
