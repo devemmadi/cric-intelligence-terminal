@@ -3000,7 +3000,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                         <span style={{ background: stickyBrand.accent, color: stickyBrand.accentText, fontSize: 11, fontWeight: 900, padding: "3px 8px", borderRadius: 4, letterSpacing: 1, flexShrink: 0 }}>{stickyBrand.label}</span>
                         <div style={{ flex: 1 }}>
                             <div style={{ fontSize: 13, fontWeight: 900, color: "#fff", lineHeight: 1.2 }}>{stickyBrand.offerLead}<span style={{ color: stickyBrand.accent }}>{stickyBrand.offerHighlight}</span></div>
-                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.55)" }}>New customers · T&amp;Cs apply · 18+</div>
+                            <div style={{ fontSize: 10, color: "rgba(255,255,255,0.55)" }}>{stickyBrand.barNote}</div>
                         </div>
                         <div style={{ background: stickyBrand.accent, color: stickyBrand.accentText, fontSize: 11, fontWeight: 900, padding: "7px 14px", borderRadius: 8, flexShrink: 0, whiteSpace: "nowrap" }}>Claim →</div>
                     </a>

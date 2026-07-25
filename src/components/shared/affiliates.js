@@ -25,6 +25,9 @@ export const AFFILIATES = {
         barBg: "linear-gradient(90deg, #001a3a 0%, #003066 100%)",
         offerLead: "Bet £10 & Get ",
         offerHighlight: "£30 Free Bets",
+        // The promo code is not optional — without R30 the customer gets nothing and
+        // the click earns nothing, so it has to appear on every surface.
+        barNote: "New UK customers · code R30 · T&Cs apply · 18+",
         // Generated in partners.williamhill.com → Marketing Tools → Get your ads,
         // against site profile 215184 (cricintelligence.com).
         // adid 1439 = Text_Link_WilliamHill_Sports_NewRegistrationPage.
@@ -38,6 +41,7 @@ export const AFFILIATES = {
         barBg: "linear-gradient(90deg, #00281a 0%, #003d24 100%)",
         offerLead: "Bet £10 & Get ",
         offerHighlight: "£40 Free Bets",
+        barNote: "New customers · T&Cs apply · 18+",
         // SuperPartners affiliate id sp53067.
         url: "https://betway.com/bwp/bet10get40/en-gb/?s=sp53067",
         track: (url, placement) => (placement ? `${url}&a=${encodeURIComponent(placement)}` : url),

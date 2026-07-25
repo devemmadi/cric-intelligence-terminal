@@ -68,7 +68,7 @@ export default function WilliamHillBanner({ style = {}, placement = "" }) {
                 fontFamily: "Inter, system-ui",
                 lineHeight: 1.5,
             }}>
-                for new customers at William Hill.
+                New UK customers — use promo code <strong style={{ color: "#FFB300" }}>R30</strong>.
             </div>
 
             {/* Terms */}
@@ -79,8 +79,11 @@ export default function WilliamHillBanner({ style = {}, placement = "" }) {
                 marginBottom: 14,
                 fontFamily: "Inter, system-ui",
             }}>
-                18+ only. Min deposit £10. Free Bets credited upon qualifying bet settlement.
-                Min odds 1/2. T&amp;Cs apply. BeGambleAware.org
+                Ends 31.12.26. 18+, new UK customers only, promo code R30. Deposit £10+, then
+                place a £10 single bet at odds 1/2+ on any sports market (excl. Virtuals).
+                £30 in Free Bets (3&times;£10) credited after settlement, expire in 7 days,
+                non-withdrawable, must be used in full. Some deposit methods excluded.
+                One per customer. Full T&amp;Cs apply. BeGambleAware.org
             </div>
 
             {/* Footer: GambleAware + 18+ */}
