@@ -9,7 +9,8 @@ import ScoreboardTab from "./ScoreboardTab";
 import BatterMilestones from "./BatterMilestones";
 import UserPrediction from "./UserPrediction";
 import AiCalledIt from "./AiCalledIt";
-import BetwayBanner from "../BetwayBanner";
+import AffiliateBanner, { useAffiliateBrand } from "../AffiliateBanner";
+import { affiliateHref } from "../shared/affiliates";
 import AdUnit from "../shared/AdUnit";
 import SubscribeCard from "../shared/SubscribeCard";
 
@@ -1904,8 +1905,10 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     const prevScoreRef = useRef(null);
     const [scorePulsing, setScorePulsing] = useState(false);
 
-    // Sticky Betway bar — mobile only, dismissible
+    // Sticky affiliate bar — mobile only, dismissible. Renders whichever partner
+    // this visitor was assigned so the bar can't contradict the banners.
     const [showStickyBar, setShowStickyBar] = useState(() => !localStorage.getItem("bw_dismissed"));
+    const stickyBrand = useAffiliateBrand();
     useEffect(() => {
         const cur = pred?.score;
         if (cur == null) return;
@@ -2345,9 +2348,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             {/* ── HERO DECISION (replaces old hero bar + prediction call banner) ── */}
                             {!isEnded && <HeroDecision pred={pred} prob={prob} isEnded={isEnded} />}
 
-                            {/* ── BETWAY BANNER — mobile only, right after main prediction ── */}
+                            {/* ── AFFILIATE BANNER — mobile only, right after main prediction ── */}
                             <div className="mob-intel">
-                                <BetwayBanner style={{ marginBottom: 4 }} />
+                                <AffiliateBanner style={{ marginBottom: 4 }} placement="mobile" />
                             </div>
 
                             {/* ── SUBSCRIBE CARD — mobile only, push + email alerts ── */}
@@ -2600,8 +2603,8 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
             {/* RIGHT SIDEBAR */}
             <aside className="sr" style={{ borderLeft: `1px solid ${C.border}`, padding: "18px 14px", background: C.surface, display: "flex", flexDirection: "column", gap: 14, position: "sticky", top: 54, height: "calc(100vh - 54px)", overflowY: "auto", alignSelf: "start" }}>
-                {/* Betway affiliate card — top of sidebar for visibility */}
-                <BetwayBanner />
+                {/* Affiliate card — one partner per visitor, see AffiliateBanner.jsx */}
+                <AffiliateBanner placement="sidebar" />
                 {/* Subscribe card — push + email alerts */}
                 <SubscribeCard compact={true} />
                 {/* AdSense unit */}
@@ -2977,27 +2980,29 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
             </aside>
 
-            {/* ── STICKY BETWAY BAR — mobile only, fixed bottom, dismissible ── */}
+            {/* ── STICKY AFFILIATE BAR — mobile only, fixed bottom, dismissible ──
+                 Follows the same partner the banners were assigned, so a visitor
+                 never sees two competing brands at once. See AffiliateBanner.jsx. */}
             {showStickyBar && (
                 <div className="mob-only" style={{
                     position: "fixed", bottom: 56, left: 0, right: 0, zIndex: 1200,
-                    background: "linear-gradient(90deg, #00281a 0%, #003d24 100%)",
-                    borderTop: "2px solid #00A651",
+                    background: stickyBrand.barBg,
+                    borderTop: `2px solid ${stickyBrand.accent}`,
                     display: "flex", alignItems: "center", gap: 10,
                     padding: "10px 14px",
                 }}>
                     <a
-                        href="https://betway.com/bwp/bet10get40/en-gb/?s=sp53067"
+                        href={affiliateHref(stickyBrand.name, "stickybar")}
                         target="_blank"
                         rel="noopener noreferrer sponsored"
                         style={{ flex: 1, textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}
                     >
-                        <span style={{ background: "#00A651", color: "#fff", fontSize: 11, fontWeight: 900, padding: "3px 8px", borderRadius: 4, letterSpacing: 1, flexShrink: 0 }}>BETWAY</span>
+                        <span style={{ background: stickyBrand.accent, color: stickyBrand.accentText, fontSize: 11, fontWeight: 900, padding: "3px 8px", borderRadius: 4, letterSpacing: 1, flexShrink: 0 }}>{stickyBrand.label}</span>
                         <div style={{ flex: 1 }}>
-                            <div style={{ fontSize: 13, fontWeight: 900, color: "#fff", lineHeight: 1.2 }}>Bet £10 &amp; Get <span style={{ color: "#00A651" }}>£40 Free Bets</span></div>
+                            <div style={{ fontSize: 13, fontWeight: 900, color: "#fff", lineHeight: 1.2 }}>{stickyBrand.offerLead}<span style={{ color: stickyBrand.accent }}>{stickyBrand.offerHighlight}</span></div>
                             <div style={{ fontSize: 10, color: "rgba(255,255,255,0.55)" }}>New customers · T&amp;Cs apply · 18+</div>
                         </div>
-                        <div style={{ background: "#00A651", color: "#fff", fontSize: 11, fontWeight: 900, padding: "7px 14px", borderRadius: 8, flexShrink: 0, whiteSpace: "nowrap" }}>Claim →</div>
+                        <div style={{ background: stickyBrand.accent, color: stickyBrand.accentText, fontSize: 11, fontWeight: 900, padding: "7px 14px", borderRadius: 8, flexShrink: 0, whiteSpace: "nowrap" }}>Claim →</div>
                     </a>
                     <button
                         onClick={() => { localStorage.setItem("bw_dismissed", "1"); setShowStickyBar(false); }}

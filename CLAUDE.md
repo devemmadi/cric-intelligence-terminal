@@ -24,8 +24,11 @@ Never hardcode the Railway URL anywhere else — always import from constants.js
 ## File Structure
 ```
 src/components/
-├── BetwayBanner.jsx        ← Affiliate banner (Bet £10 Get £40, dismissible, localStorage)
+├── AffiliateBanner.jsx     ← Picks ONE partner per visitor (Jul 25 2026)
+├── BetwayBanner.jsx        ← Betway affiliate banner (Bet £10 Get £40)
+├── WilliamHillBanner.jsx   ← William Hill affiliate banner (Bet £10 Get £30, Jul 22 2026)
 ├── shared/
+│   ├── affiliates.js       ← AFFILIATES config + affiliateHref() — ALL tracking links
 │   ├── constants.js        ← API_BASE, colors (C), IPL_TEAMS, helpers
 │   ├── TeamLogo.jsx
 │   └── MatchCard.jsx
@@ -227,6 +230,102 @@ Added in `PredictionsTab.jsx` (fomoRef useEffect):
 `PredictionsTab.jsx` ~line 2519 (inside the "Next N overs prediction" card, both the O/U-betting branch and the plain expected-runs branch): added a caption below the big expected-runs number showing `ov.runRange` (tight, ~70%-coverage estimate — unchanged, already existed) alongside the new `ov.range90` field (wider ~90%-coverage band) from the backend: "Likely: {runRange} runs · Safe range (rarely wrong): {range90}". Guarded with `{ov.runRange && (...)}` — renders nothing if the backend hasn't added the field yet (older cached responses), so this is safe to deploy independently of the backend rollout.
 
 Backend context: 90% coverage on the tight range alone would require widening it to near-uninformative width (~+/-7-10 runs on an 8-run over) — inherent per-over variance in T20, not a fixable model gap. `range90` gives users who want a rarely-wrong number a separate, honestly-labeled wider band instead of silently widening the primary estimate. See `cricintel-backend/CLAUDE.md` "Session 8" for the measurement.
+
+## video/ — Daily YouTube Short generator (Jul 24, 2026)
+Python toolkit (not part of the React build, not bundled, not deployed) that renders a
+vertical 1080x1920 promo video from live backend data into `drafts/`. Full docs in
+`video/README.md`.
+
+```bash
+python video/make_short.py            # auto-rotates format by day-of-year
+python video/make_short.py --voice    # + Windows SAPI voiceover
+```
+
+| File | Job |
+|---|---|
+| `video/brand.py` | Palette (mirrors `shared/constants.js` C.*), fonts, Pillow primitives |
+| `video/ci_data.py` | Only file that calls the backend — `/matches`, `/predict`, `/backtest-results`, `/match-record` |
+| `video/scenes.py` | Storyboards, one builder per content type |
+| `video/render.py` | Pillow frames piped to ffmpeg (imageio-ffmpeg binary), optional TTS mux |
+| `video/make_short.py` | CLI; writes `drafts/<date>-youtube-short.{mp4,md}` |
+
+**Voice:** `edge-tts` neural (default `en-IN-PrabhatNeural`, rate `+18%`), free and
+keyless, network call to Microsoft carrying only the narration line. Falls back to
+offline Windows SAPI, then to silent. `--voice-name` / `--voice-speed` override.
+
+**Motion:** `brand.motion_bg` (drifting orbs, composited with `ImageChops.add` — an
+opaque ellipse over the plate glow reads as a grey blotch), `brand.retention_bar`,
+`brand.kinetic` (word-by-word headlines), `brand.pop` / `shake` / `_flash`. Both the
+background and retention bar are drawn by `render._render_frames`, not by scenes.
+Pacing rule: no beat holds longer than ~3s. On the accuracy payoff frame all bars
+share one grow factor — a per-bar stagger let a late checkpoint read lower than an
+earlier one mid-animation, inverting the claim.
+
+**Four formats:** `predictions` (fixtures + animated win%), `record` (backtest accuracy
+by checkpoint), `stats` (pitch meter + model error facts), `recap` (completed results).
+`auto` = `day_of_year % 4`, falling through to whichever format has data.
+
+**Never uploads** — writes drafts only, matching the own-channel stance in
+`drafts/2026-07-23-youtube.md`.
+
+**Claim guards (deliberate — don't loosen without a reason):**
+- `record` labels its numbers "Backtest · 400 IPL matches" because `/match-record` is
+  still empty (backend only logs crystal-clear calls). `ci_data.fetch_live_record()`
+  already reads it; swap the label when it has rows.
+- Prediction headline follows `confidenceSignals.confidenceLevel` — HIGH "MODEL FAVOURS",
+  MEDIUM "MODEL LEANS", else "SLIGHT EDGE". The big % is coloured by confidence, not by
+  its own magnitude.
+- `probLowConfidence` renders an "early innings" caveat line on the card.
+- Pitch scene is skipped before the first ball — backend returns a neutral 5.0 /
+  "No data" placeholder that would read as a real signal.
+
+**If `shared/constants.js` colours change, change `video/brand.py` PALETTE in the same
+commit** — it is a copy, not an import.
+
+## Affiliate Slots — One Partner Per Visitor (Jul 25, 2026)
+
+`shared/affiliates.js` is the **single source of truth for every affiliate tracking
+link**. Never paste a tracking URL into a component — import `affiliateHref(name,
+placement)` instead.
+
+| Partner | Network | IDs |
+|---|---|---|
+| `williamhill` | Income Access | affid 1745040, siteid 215184 (cricintelligence.com), adid 1439 |
+| `betway` | SuperPartners | affiliate id sp53067 |
+
+**Why one partner at a time:** the sidebar previously stacked `<WilliamHillBanner />`
+directly above `<BetwayBanner />` while a third hardcoded Betway bar sat at the bottom
+on mobile. Three competing gambling brands on one screen reads as ad spam and costs
+more in trust than it gains in clicks. `AffiliateBanner` now assigns each visitor ONE
+partner (50/50, frozen in `localStorage("ci_aff_brand")`) and every surface —
+sidebar card, mobile card, sticky bottom bar — reads it via `useAffiliateBrand()`.
+
+**The split is also the measurement.** As of Jul 25 2026 the SuperPartners account
+shows 14 visits / 0 signups / $0.00 — too little to guess which partner converts. An
+even, stable split plus a per-placement sub-tracker is what produces that answer.
+Attribution is read in the **partner's own reports**, not in any analytics call from
+this codebase:
+
+| Placement | William Hill (`c=`) | Betway (`a=`) |
+|---|---|---|
+| Desktop sidebar | `c=sidebar` | `a=sidebar` |
+| Mobile card | `c=mobile` | `a=mobile` |
+| Mobile sticky bar | `c=stickybar` | `a=stickybar` |
+
+**Geo is deliberately NOT part of the choice** — both offers are UK (`en-gb`, £
+denominated), so there is currently nothing to route non-UK visitors to. If a non-UK
+brand is ever added, geo routing belongs in `pickBrand()` in `AffiliateBanner.jsx`.
+
+**Offer copy lives in `affiliates.js`** (`offerLead` / `offerHighlight`) so the full
+banner and the sticky bar can never drift apart. An overstated or stale offer claim is
+grounds for an affiliate account being pulled — if a partner changes their offer,
+change it here and in the matching banner component in the same commit.
+
+**1xBet is intentionally not wired up.** It lost its UK licence in 2020 and cannot be
+advertised to UK users; this site is UK-angled (UKGC references, £ offers, GamCare /
+GAMSTOP / national helpline in the age gate), so adding it would undercut the site's
+own credibility. Revisit only if traffic data shows the audience is overwhelmingly
+non-UK.
 
 ## Common Bugs Fixed (most recent first)
 - MatchPredictionPage.jsx TEAMS dict had zero Lanka Premier League 2026 teams (Jul 17 2026, LPL start day): added all 5 franchises (jaffna-kings, galle-gallants, colombo-kaps, kandy-royals, dambulla-sixers — confirmed via web search) plus a sitemap.xml entry for the opening fixture (Jaffna Kings vs Galle Gallants, SSC Colombo). Short codes for colombo-kaps/kandy-royals/dambulla-sixers are best-guess (CLK/KDR/DBS) since Cricbuzz's exact abbreviations weren't confirmed — cosmetic only, doesn't affect routing since these are hand-authored SEO slugs, not tied to the live /matches API team codes.

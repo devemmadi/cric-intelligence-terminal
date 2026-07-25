@@ -2,16 +2,16 @@
 import React from "react";
 import { affiliateHref } from "./shared/affiliates";
 
-export default function BetwayBanner({ style = {}, placement = "" }) {
+export default function WilliamHillBanner({ style = {}, placement = "" }) {
     return (
         <a
-            href={affiliateHref("betway", placement)}
+            href={affiliateHref("williamhill", placement)}
             target="_blank"
             rel="noopener noreferrer sponsored"
             style={{
                 display: "block",
-                background: "linear-gradient(160deg, #00281a 0%, #003d24 100%)",
-                border: "1px solid #00A651",
+                background: "linear-gradient(160deg, #001a3a 0%, #003066 100%)",
+                border: "1px solid #FFB300",
                 borderRadius: 12,
                 padding: "18px 16px 14px",
                 textDecoration: "none",
@@ -19,24 +19,24 @@ export default function BetwayBanner({ style = {}, placement = "" }) {
                 ...style,
             }}
         >
-            {/* Betway logo pill */}
+            {/* William Hill logo pill */}
             <div style={{ marginBottom: 12 }}>
                 <span style={{
-                    background: "#00A651",
-                    color: "#fff",
-                    fontSize: 13,
+                    background: "#FFB300",
+                    color: "#001a3a",
+                    fontSize: 11,
                     fontWeight: 900,
                     letterSpacing: "1.5px",
                     padding: "3px 10px",
                     borderRadius: 4,
                     fontFamily: "Inter, system-ui",
                     textTransform: "uppercase",
-                }}>BETWAY</span>
+                }}>WILLIAM HILL</span>
             </div>
 
             {/* Header */}
             <div style={{
-                color: "#00A651",
+                color: "#FFB300",
                 fontSize: 11,
                 fontWeight: 800,
                 letterSpacing: "1px",
@@ -44,7 +44,7 @@ export default function BetwayBanner({ style = {}, placement = "" }) {
                 marginBottom: 8,
                 fontFamily: "Inter, system-ui",
             }}>
-                OPEN ACCOUNT OFFER
+                WELCOME OFFER
             </div>
 
             {/* Main offer */}
@@ -56,8 +56,8 @@ export default function BetwayBanner({ style = {}, placement = "" }) {
                 marginBottom: 12,
                 fontFamily: "Inter, system-ui",
             }}>
-                Bet £10 &amp; Get £40<br />
-                <span style={{ color: "#00A651" }}>in Free Bets</span>
+                Bet £10 &amp; Get £30<br />
+                <span style={{ color: "#FFB300" }}>in Free Bets</span>
             </div>
 
             {/* Sub-offer line */}
@@ -68,7 +68,7 @@ export default function BetwayBanner({ style = {}, placement = "" }) {
                 fontFamily: "Inter, system-ui",
                 lineHeight: 1.5,
             }}>
-                for new customers at Betway.
+                for new customers at William Hill.
             </div>
 
             {/* Terms */}
@@ -79,8 +79,8 @@ export default function BetwayBanner({ style = {}, placement = "" }) {
                 marginBottom: 14,
                 fontFamily: "Inter, system-ui",
             }}>
-                Min deposit £10. Free Bets credited upon qualifying bet settlement.
-                Min odds 1.75. T&amp;Cs apply. Begambleaware.org
+                18+ only. Min deposit £10. Free Bets credited upon qualifying bet settlement.
+                Min odds 1/2. T&amp;Cs apply. BeGambleAware.org
             </div>
 
             {/* Footer: GambleAware + 18+ */}
@@ -91,12 +91,12 @@ export default function BetwayBanner({ style = {}, placement = "" }) {
                     fontFamily: "Inter, system-ui",
                     letterSpacing: "0.3px",
                 }}>
-                    <span style={{ color: "#fff" }}>Gamble</span>
+                    <span style={{ color: "#fff" }}>BeGamble</span>
                     <span style={{ color: "#f97316" }}>Aware</span>
                     <span style={{ color: "rgba(255,255,255,0.4)" }}>®</span>
                 </span>
                 <span style={{
-                    border: "1.5px solid #00A651",
+                    border: "1.5px solid #FFB300",
                     borderRadius: "50%",
                     width: 28,
                     height: 28,
@@ -105,7 +105,7 @@ export default function BetwayBanner({ style = {}, placement = "" }) {
                     justifyContent: "center",
                     fontSize: 10,
                     fontWeight: 700,
-                    color: "#00A651",
+                    color: "#FFB300",
                     fontFamily: "Inter, system-ui",
                     flexShrink: 0,
                 }}>18+</span>
