@@ -113,7 +113,7 @@ export default function CricketPredictionsUK() {
                         The model was trained on 1.7 million cricket matches — T20Is, ODIs, Tests, and domestic competitions — across 877 venues. For every live match, it processes current score, wickets in hand, required run rate, pitch deterioration, weather conditions, and live player statistics to compute a win probability accurate to within ±5%.
                     </p>
                     <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.85 }}>
-                        Our prediction accuracy of <strong>78%</strong> is publicly verified on the <a href="/record" style={{ color: NAVY, fontWeight: 700 }}>Track Record page</a> — every match we predicted, every result. We don't cherry-pick.
+                        Our prediction accuracy of <strong>78%</strong> is publicly verified on the <a href="/?tab=record" style={{ color: NAVY, fontWeight: 700 }}>Track Record page</a> — every match we predicted, every result. We don't cherry-pick.
                     </p>
                 </div>
 
@@ -127,6 +127,27 @@ export default function CricketPredictionsUK() {
                             <div style={{ fontSize: 13, color: "#64748B", lineHeight: 1.6 }}>{f.desc}</div>
                         </div>
                     ))}
+                </div>
+
+                {/* UK domestic T20 — The Hundred + Vitality Blast (added Jul 2026 for UK SEO) */}
+                <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, padding: "24px 28px", marginBottom: 24 }}>
+                    <h2 style={{ fontSize: 18, fontWeight: 800, color: NAVY, marginBottom: 14 }}>🏟️ UK Domestic T20 — The Hundred &amp; Vitality Blast</h2>
+                    <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.85, marginBottom: 12 }}>
+                        Most of the cricket a UK fan actually watches in high summer is domestic. The Hundred runs through late July and August across Lord's, the Oval, Edgbaston, Headingley, Old Trafford, Trent Bridge, the Utilita Bowl and Sophia Gardens, while the Vitality Blast fills county grounds from Taunton to Chester-le-Street before Finals Day at Edgbaston.
+                    </p>
+                    <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.85, marginBottom: 16 }}>
+                        Both are covered live here, ball by ball. The Hundred's 100-ball format compresses every phase — twenty fewer balls to recover from a poor start — so the model works from balls remaining and required rate rather than assuming a twenty-over shape. In the Blast, the difference between Taunton and Bristol is large enough that a venue average is close to useless, so the pitch read is inferred from the actual over-by-over run and wicket pattern in front of it.
+                    </p>
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        <a href="/predictions/the-hundred-2026"
+                           style={{ fontSize: 12, fontWeight: 700, color: NAVY, background: "#EEF2FF", border: "1px solid #C7D2FE", borderRadius: 20, padding: "5px 14px", textDecoration: "none" }}>
+                            The Hundred 2026 predictions →
+                        </a>
+                        <a href="/predictions/vitality-blast-2026"
+                           style={{ fontSize: 12, fontWeight: 700, color: NAVY, background: "#EEF2FF", border: "1px solid #C7D2FE", borderRadius: 20, padding: "5px 14px", textDecoration: "none" }}>
+                            Vitality Blast &amp; Finals Day →
+                        </a>
+                    </div>
                 </div>
 
                 {/* England cricket section — UK SEO */}

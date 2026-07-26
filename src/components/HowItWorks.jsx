@@ -135,7 +135,7 @@ export default function HowItWorks() {
                             <li><strong>New or rare venues</strong> — If a ground has fewer than 10 T20 matches in our database, we fall back to global averages, which are less precise.</li>
                             <li><strong>Toss and conditions</strong> — On certain pitches (particularly in India), the toss can swing probability significantly before a ball is bowled. Our model doesn't give the toss much weight, which occasionally means our pre-match reading is off.</li>
                         </ul>
-                        <p style={{ marginTop: 8 }}>We believe in showing our work — the full prediction history is on the <a href="/record" style={{ color: C.navy, fontWeight: 700 }}>Record tab</a>.</p>
+                        <p style={{ marginTop: 8 }}>We believe in showing our work — the full prediction history is on the <a href="/?tab=record" style={{ color: C.navy, fontWeight: 700 }}>Record tab</a>.</p>
                     </div>
                 </div>
 

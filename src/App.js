@@ -14,6 +14,8 @@ import AgeGate from './components/AgeGate';
 import IPL2026Predictions from './components/IPL2026Predictions';
 import CricketWinProbability from './components/CricketWinProbability';
 import T20Predictions from './components/T20Predictions';
+import TheHundred2026 from './components/TheHundred2026';
+import VitalityBlast2026 from './components/VitalityBlast2026';
 import MatchPredictionPage from './components/MatchPredictionPage';
 import AccuracyDashboard from './components/AccuracyDashboard';
 import LiveOdds from './components/LiveOdds';
@@ -35,6 +37,11 @@ function App() {
                     <Route path="/predictions/ipl-2026" element={<IPL2026Predictions />} />
                     <Route path="/predictions/cricket-win-probability" element={<CricketWinProbability />} />
                     <Route path="/predictions/t20-predictions" element={<T20Predictions />} />
+                    {/* Tournament hubs — these slugs were already in sitemap.xml but had no route,
+                        so they fell through to MatchPredictionPage and redirected home (dead SEO URLs). */}
+                    <Route path="/predictions/the-hundred-2026" element={<TheHundred2026 />} />
+                    <Route path="/predictions/vitality-blast-2026" element={<VitalityBlast2026 />} />
+                    <Route path="/predictions/vitality-blast-2026-quarter-finals" element={<VitalityBlast2026 />} />
                     <Route path="/predictions/international/:matchup" element={<InternationalPredictionPage />} />
                     <Route path="/cricket-predictions-uk" element={<CricketPredictionsUK />} />
                     <Route path="/accuracy" element={<AccuracyDashboard />} />

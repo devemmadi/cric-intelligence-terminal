@@ -4,8 +4,10 @@
     {
       "name": "cric-intelligence-terminal",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["start"],
-      "port": 3000
+      "runtimeArgs": [
+        "start"
+      ],
+      "autoPort": true
     }
   ]
 }

@@ -372,6 +372,25 @@ GAMSTOP / national helpline in the age gate), so adding it would undercut the si
 own credibility. Revisit only if traffic data shows the audience is overwhelmingly
 non-UK.
 
+## Tournament hub pages — TheHundred2026.jsx / VitalityBlast2026.jsx (Jul 26 2026)
+Two new UK-focused hub pages, plus routes in `App.js`:
+
+| Route | Component | Notes |
+|---|---|---|
+| `/predictions/the-hundred-2026` | `TheHundred2026.jsx` | 8 teams w/ home grounds, links to all 28 matchup pages, 100-ball format explainer, FAQPage schema |
+| `/predictions/vitality-blast-2026` | `VitalityBlast2026.jsx` | Finals Day section, all 18 counties split North/South, 6 derby matchup links, FAQPage schema |
+| `/predictions/vitality-blast-2026-quarter-finals` | `VitalityBlast2026.jsx` | Old sitemap slug, pointed at the same component so the indexed URL isn't dead |
+
+**Bug this fixed:** `/predictions/the-hundred-2026` and `/predictions/vitality-blast-2026-quarter-finals` were already in sitemap.xml but had **no route**, so they fell through to `/predictions/:matchup` → `MatchPredictionPage` → no `-vs-` in slug → `navigate("/")`. Both were dead URLs redirecting to home while being submitted to Google.
+
+Also: `CricketPredictionsUK.jsx` gained a "UK Domestic T20" section linking to both hubs, and the broken `href="/record"` link (no such route) was corrected to `/?tab=record` in `CricketPredictionsUK.jsx` and `HowItWorks.jsx`.
+
+`.claude/launch.json`: dropped the hardcoded `"port": 3000` and set `"autoPort": true` so a second session can start its own dev server instead of colliding.
+
+**Note on nested anchors:** the existing pages wrap `<Logo />` (which itself renders a react-router `Link`) in an `<a href="/">`, producing `<a>` inside `<a>` hydration warnings in the console. The two new hub pages render `<Logo />` bare. The older pages still have the nested pattern — not touched here.
+
+**Unverified marketing claims (flagged, NOT changed):** `CricketPredictionsUK.jsx` claims "1.7 million cricket matches", "877 venues", "±5%" and "78% accuracy … publicly verified", while the backend's own documented figures are ~7,900 T20 matches / 335 venues and `/match-record` currently returns zero resolved predictions. The new hub pages deliberately make no accuracy-percentage claim.
+
 ## SEO — The Hundred 2026 full matchup coverage (Jul 26 2026)
 Added sitemap entries for all 28 unique Hundred men's team pairings (21 new + 7 already present). This is legitimate rather than doorway-page spam because the 2026 format has **every team playing every other team once** (7 matches each) plus a regional-derby rematch = 32 group games, so each pairing is a real fixture at some point between Jul 21 and Aug 12. All 8 team slugs already existed in `MatchPredictionPage.jsx` `TEAMS`; verified two of the new URLs render (london-spirit-vs-welsh-fire, birmingham-phoenix-vs-southern-brave). Priority 0.88, changefreq daily. Motivation: user is UK-targeted and GA showed Organic Search sessions +240% w/w, so UK-tournament pages are the highest-leverage SEO surface.
 
