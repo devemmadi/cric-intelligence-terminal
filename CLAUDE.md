@@ -164,6 +164,43 @@ Milestone logic:
 
 Rendered in `PredictionsTab.jsx` after `LivePitchReadCard`, before sidebar.
 
+## PlayerMarkets.jsx — Player Runs Over/Under (Jul 25, 2026)
+New file: `src/components/predictions/PlayerMarkets.jsx`, rendered in `PredictionsTab.jsx`
+directly after `BatterMilestones`.
+
+Sportsbook-style Over/Under markets for each batter at the crease, laid out like a
+bookmaker's market list: `{name} · Runs · ({line}) · {n} Innings` above stacked
+Under/Over rows.
+
+**The number in each box is a model probability, not a price — and that is not a
+styling choice.** There is no real price available: `the-odds-api` returns
+`INVALID_MARKET` for `batter_runs` / `player_runs` on cricket (only `h2h` exists, and
+the key is currently `OUT_OF_USAGE_CREDITS`). Deriving a price from our own
+probability would put an invented, bettable-looking number on a page that links
+straight to real bookmakers. Do not "finish" this component by adding decimal odds
+unless a genuine player-props feed is wired up first.
+
+| Line shown | Backend field | Same event as |
+|---|---|---|
+| Over 19.5 | `playerAnalysis.batters[].prob20plus` | final score ≥ 20 |
+| Over 29.5 | `prob30plus` | ≥ 30 |
+| Over 49.5 | `prob50plus` | ≥ 50 |
+
+Lines the batter has already passed are dropped (settled, not a market). Under = 100 − Over.
+
+**Reads backend values only — never computes a fallback.** `BatterMilestones.jsx` has a
+local `computeProbs()` logistic fallback for when backend data is missing; that formula
+is unvalidated and now disagrees with the corrected backend. An unvalidated shadow
+model rendering inside a betting-shaped box is exactly what to avoid, so if
+`playerAnalysis` is absent this component renders nothing.
+
+**These probabilities are backtested** (backend commit Jul 25 2026, see
+`cricintel-backend/backtest_batter_milestone_holdout.py`): 326 matches / 15,000
+predictions on unseen 2025-26 data, bias +4.9 / +4.8 / +2.3 points on the 20+/30+/50+
+lines, ~30% Brier skill over base rate on each. Before that fix they ran 10-23 points
+high and `prob50plus` was *worse than quoting a constant*. If the backend milestone
+formula is touched again, re-run that backtest before shipping.
+
 ## PitchTab.jsx — Validated Pitch Score (Jun 19, 2026)
 New components added at top of `PitchTab.jsx`:
 

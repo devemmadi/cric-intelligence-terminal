@@ -7,6 +7,7 @@ import LiveProbabilityGraph from "./LiveProbabilityGraph";
 import LiveEngine from "./LiveEngine";
 import ScoreboardTab from "./ScoreboardTab";
 import BatterMilestones from "./BatterMilestones";
+import PlayerMarkets from "./PlayerMarkets";
 import UserPrediction from "./UserPrediction";
 import AiCalledIt from "./AiCalledIt";
 import AffiliateBanner, { useAffiliateBrand } from "../AffiliateBanner";
@@ -2601,6 +2602,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             {!pred.matchEnded && pred.batters?.length > 0 && (
                                 <BatterMilestones pred={pred} />
                             )}
+
+                            {/* Player runs Over/Under markets — model probability, not odds */}
+                            <PlayerMarkets pred={pred} />
 
 
                         </div>}
