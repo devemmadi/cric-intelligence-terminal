@@ -95,7 +95,7 @@ export default function InternationalPredictionPage() {
     const faqs = [
         { q: `Who will win ${t1.name} vs ${t2.name}?`, a: `Based on head-to-head records across all formats, ${t1.name} have won ${h2h.t1w} matches while ${t2.name} have won ${h2h.t2w}. Our AI model gives ${aiProb > 50 ? t1.name : t2.name} a slight edge based on current team rankings, recent form, and historical performance. Check our live predictions page during the match for a real-time win probability that updates every ball.` },
         { q: `What is the head-to-head record between ${t1.name} and ${t2.name}?`, a: `${t1.name} have won ${h2h.t1w} of ${total} matches against ${t2.name} (${t1pct}% win rate). ${t2.name} have won ${h2h.t2w} matches. This head-to-head record covers all formats of international cricket across multiple decades.` },
-        { q: `How does CricIntelligence predict ${t1.short} vs ${t2.short}?`, a: `Our AI model processes 20+ live inputs every 5 seconds: current score, wickets in hand, required run rate, run rate vs venue average, pitch deterioration, weather and dew factor, live batter strike rate, and bowler economy. The model was trained on 1.7 million cricket matches across 877 venues worldwide.` },
+        { q: `How does CricIntelligence predict ${t1.short} vs ${t2.short}?`, a: `Our AI model processes 20+ live inputs every 5 seconds: current score, wickets in hand, required run rate, run rate vs venue average, pitch deterioration, weather and dew factor, live batter strike rate, and bowler economy. The model was trained on a decade of ball-by-ball T20 data across 335 tracked venues.` },
         { q: `Where can I watch ${t1.name} vs ${t2.name} in the UK?`, a: `${t1.name} vs ${t2.name} matches are typically broadcast on Sky Sports Cricket in the UK. Some matches may be available on free-to-air TV. Check your TV guide for exact broadcast details.` },
         { q: `Can I bet on ${t1.short} vs ${t2.short} online?`, a: `Yes — cricket betting is fully legal in the UK through UKGC-licensed operators such as Bet365, Betway, Sky Bet, Paddy Power, and William Hill. CricIntelligence predictions are for informational purposes only and do not constitute betting advice. Always gamble responsibly. 18+ only. National Gambling Helpline: 0808 8020 133.` },
     ];
@@ -217,7 +217,7 @@ export default function InternationalPredictionPage() {
                 <h2 style={{ fontSize: 20, fontWeight: 800, color: NAVY, marginBottom: 14 }}>How Our AI Predicts {t1.short} vs {t2.short}</h2>
                 <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14, padding: "20px 24px", marginBottom: 24 }}>
                     <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.8, marginBottom: 14 }}>
-                        CricIntelligence uses a machine learning model trained on <strong>1.7 million cricket matches</strong> across 877 venues worldwide. For {t1.name} vs {t2.name}, the model processes these live inputs every 5 seconds:
+                        CricIntelligence uses a machine learning model trained on <strong>a decade of ball-by-ball T20 data</strong> across 335 tracked venues. For {t1.name} vs {t2.name}, the model processes these live inputs every 5 seconds:
                     </p>
                     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
                         {[

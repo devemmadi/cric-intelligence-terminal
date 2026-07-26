@@ -57,7 +57,7 @@ export default function CricketWinProbability() {
                     Cricket win probability is a real-time percentage estimate of how likely each team is to win a match at any given moment. Unlike a coin flip at the start, win probability changes ball by ball as the match situation evolves — runs scored, wickets taken, overs bowled, and conditions all shift the balance.
                 </p>
                 <p style={{ fontSize: 14, color: C.muted, lineHeight: 1.8, marginBottom: 32 }}>
-                    CricIntelligence uses a machine learning model trained on 1.7 million historical T20 and ODI matches to calculate this probability in real time. When a wicket falls, the probability shifts. When a boundary is hit, it shifts. When dew sets in at over 12, it shifts. Every event updates the live prediction.
+                    CricIntelligence uses a machine learning model trained on a decade of ball-by-ball T20 data (2017-2026) to calculate this probability in real time. When a wicket falls, the probability shifts. When a boundary is hit, it shifts. When dew sets in at over 12, it shifts. Every event updates the live prediction.
                 </p>
 
                 <h2 style={{ fontSize: 22, fontWeight: 800, color: C.navy, marginBottom: 8 }}>Factors That Drive Win Probability</h2>
@@ -87,7 +87,7 @@ export default function CricketWinProbability() {
 
                 <h2 style={{ fontSize: 22, fontWeight: 800, color: C.navy, marginBottom: 8 }}>How Accurate Is It?</h2>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14, marginBottom: 32 }}>
-                    {[["80.2%", "Overall accuracy", "Across all T20 matches in test set"],
+                    {[["81.5%", "Overall accuracy", "On 2,546 unseen matches from 2025-2026"],
                       ["82.3%", "Death overs accuracy", "Most accurate in final 5 overs"],
                       ["±3.9%", "Average error", "Mean absolute error on win probability"]
                     ].map(([v, l, sub]) => (

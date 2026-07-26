@@ -389,7 +389,17 @@ Also: `CricketPredictionsUK.jsx` gained a "UK Domestic T20" section linking to b
 
 **Note on nested anchors:** the existing pages wrap `<Logo />` (which itself renders a react-router `Link`) in an `<a href="/">`, producing `<a>` inside `<a>` hydration warnings in the console. The two new hub pages render `<Logo />` bare. The older pages still have the nested pattern — not touched here.
 
-**Unverified marketing claims (flagged, NOT changed):** `CricketPredictionsUK.jsx` claims "1.7 million cricket matches", "877 venues", "±5%" and "78% accuracy … publicly verified", while the backend's own documented figures are ~7,900 T20 matches / 335 venues and `/match-record` currently returns zero resolved predictions. The new hub pages deliberately make no accuracy-percentage claim.
+**Marketing claims corrected sitewide (Jul 26 2026).** Nine components carried figures nothing in the codebase could evidence. Replaced with what the backend can actually show:
+
+| Old claim | Replaced with | Evidence |
+|---|---|---|
+| "1.7 million cricket matches" | "a decade of ball-by-ball T20 data (2017-2026)" | Cricsheet T20 corpus; no 1.7M figure exists anywhere |
+| "877 venues" | "335 tracked venues" | `len(venue_stats.json)` in the backend repo = 335 |
+| "78% accuracy" / "80.2%" / "74%+ verified" | "81.5% on unseen 2025-2026 matches" | `backtest_comprehensive.py --holdout`, trained 2017-2024, tested on 2,546 unseen matches — re-verified Jul 2026, see backend CLAUDE.md |
+| "publicly verified on the Track Record page" | "logged on the Track Record page as they resolve" | `/match-record` currently returns 0 resolved rows, so nothing is publicly verified yet |
+| "accurate to within ±5%" | removed | no measurement behind it |
+
+Files touched: `CricketPredictionsUK.jsx`, `AboutUs.jsx`, `FAQ.jsx`, `CricketWinProbability.jsx`, `HowItWorks.jsx`, `InternationalPredictionPage.jsx`, `MediaTerminal.js`, `IPL2026Predictions.jsx`, `T20Predictions.jsx`, `MatchPredictionPage.jsx`. **Why it matters:** the site is gambling-adjacent and UK-facing, so unevidenced accuracy claims are an ASA/CAP exposure, not just a tidiness issue. Keep any future accuracy number tied to a named backtest script. Note `CricketWinProbability.jsx` still shows "82.3% death overs" and "±3.9% average error" alongside the corrected 81.5% — those two were left as-is and have not been traced to a backtest; worth verifying or removing next time this file is touched.
 
 ## SEO — The Hundred 2026 full matchup coverage (Jul 26 2026)
 Added sitemap entries for all 28 unique Hundred men's team pairings (21 new + 7 already present). This is legitimate rather than doorway-page spam because the 2026 format has **every team playing every other team once** (7 matches each) plus a regional-derby rematch = 32 group games, so each pairing is a real fixture at some point between Jul 21 and Aug 12. All 8 team slugs already existed in `MatchPredictionPage.jsx` `TEAMS`; verified two of the new URLs render (london-spirit-vs-welsh-fire, birmingham-phoenix-vs-southern-brave). Priority 0.88, changefreq daily. Motivation: user is UK-targeted and GA showed Organic Search sessions +240% w/w, so UK-tournament pages are the highest-leverage SEO surface.

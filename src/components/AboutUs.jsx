@@ -44,7 +44,7 @@ export default function AboutUs() {
     const faqs = [
         {
             q: "How accurate are CricIntelligence predictions?",
-            a: "Our model achieves approximately 78% accuracy across all formats — higher for T20 matches where the dataset is largest. Accuracy is measured as the percentage of matches where the team our model favoured at the halfway point went on to win. We publish our full track record on the Record tab so you can verify this yourself."
+            a: "Win probability is 81.5% accurate on a true holdout — the model was trained on 2017-2024 data only, then tested against 2,546 matches from 2025-2026 it had never seen. Accuracy is measured as the percentage of matches where the team the model favoured went on to win. Live predictions are logged on the Record tab as they resolve."
         },
         {
             q: "How often does the win probability update during a live match?",
@@ -118,11 +118,11 @@ export default function AboutUs() {
 
                 {/* How the model works */}
                 <Section title="How the AI Model Works">
-                    <p>Our prediction engine is a gradient-boosted machine learning model trained on over 1.7 million cricket matches across T20, ODI, and domestic formats. The model was built using scikit-learn and XGBoost, with a feature set of 20+ inputs that update in real time:</p>
+                    <p>Our prediction engine is a gradient-boosted machine learning model trained on a decade of ball-by-ball T20 data (2017-2026). The model was built using scikit-learn and XGBoost, with a feature set of 20+ inputs that update in real time:</p>
                     <ul style={{ paddingLeft: 20, lineHeight: 2, color: "#333", fontSize: 14 }}>
                         <li><strong>Current match state</strong> — runs, wickets, overs completed, current run rate, required run rate</li>
                         <li><strong>Phase of play</strong> — Powerplay (overs 1-6), Middle overs (7-15), Death overs (16-20)</li>
-                        <li><strong>Venue correction</strong> — every ground has a different average first-innings score. The model uses venue-specific historical averages from 7,500+ T20 matches across 877 venues, not a global average</li>
+                        <li><strong>Venue correction</strong> — every ground has a different average first-innings score. The model uses venue-specific historical averages from 7,500+ T20 matches across 335 tracked venues, not a global average</li>
                         <li><strong>Pitch type</strong> — flat/batting-friendly, seam-friendly, spin-friendly, or unknown; affects projected totals and wicket probability</li>
                         <li><strong>Weather and dew</strong> — dew factor increases after over 12 in high-humidity evening games, making it easier to bat in the second innings</li>
                         <li><strong>Live batter and bowler data</strong> — strike rate of the current partnership, economy rate and wicket rate of the bowling attack</li>
@@ -141,7 +141,7 @@ export default function AboutUs() {
 
                 {/* Track record */}
                 <Section title="Track Record and Transparency">
-                    <p>We publish our prediction history openly on the Record tab. Every match we predicted is logged with the teams, venue, our AI win probability at key moments, and the actual result. You can verify our 78% accuracy claim yourself — we have nothing to hide.</p>
+                    <p>We publish our prediction history openly on the Record tab. Every match we predicted is logged with the teams, venue, our AI win probability at key moments, and the actual result. You can verify our accuracy claim yourself — we have nothing to hide.</p>
                     <p>When our model is wrong, it is usually due to one of three things: a sudden rain interruption (DLS changes everything), an extraordinary individual performance that no model could anticipate, or a match involving a team with very little historical data (newer IPL franchises or minnow T20 sides).</p>
                 </Section>
 

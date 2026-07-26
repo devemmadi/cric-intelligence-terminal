@@ -55,7 +55,7 @@ export default function HowItWorks() {
         {
             num: "05",
             title: "The ML model produces a win probability",
-            body: "All 20+ features are fed into our XGBoost gradient-boosted classifier, trained on 1.7 million historical match records. For innings 1, the model projects a final total and calculates probability of that total being defended. For innings 2, it uses the ratio of current run rate to required run rate, weighted by wickets remaining, to estimate chase success probability. The output is clipped between 3% and 97% — we never show certainty, because cricket is never certain.",
+            body: "All 20+ features are fed into our XGBoost gradient-boosted classifier, trained on a decade of ball-by-ball T20 data (2017-2026). For innings 1, the model projects a final total and calculates probability of that total being defended. For innings 2, it uses the ratio of current run rate to required run rate, weighted by wickets remaining, to estimate chase success probability. The output is clipped between 3% and 97% — we never show certainty, because cricket is never certain.",
         },
         {
             num: "06",

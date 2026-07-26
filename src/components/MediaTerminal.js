@@ -48,7 +48,7 @@ const MediaTerminal = () => {
         <div style={{ marginTop: 32, padding: 24, background: '#0d1b2e', border: '1px solid #1e3a5f', borderRadius: 10 }}>
             <div style={{ color: '#C8961E', fontSize: 12, letterSpacing: 2, marginBottom: 16, fontFamily: 'monospace' }}>ABOUT US</div>
             <p style={{ color: '#8899aa', fontSize: 13, lineHeight: 1.8, margin: '0 0 16px' }}>
-                CricIntelligence is an AI-powered cricket prediction platform built on 1.7 million historical matches across 877 venues.
+                CricIntelligence is an AI-powered cricket prediction platform built on a decade of ball-by-ball T20 data across 335 tracked venues.
                 We provide live win probability, pitch analysis, weather impact, and over-by-over predictions for IPL and international cricket.
             </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', background: '#1a2940', borderRadius: 8, border: '1px solid #2a3f5f' }}>

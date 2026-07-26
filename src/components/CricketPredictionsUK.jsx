@@ -25,18 +25,18 @@ const UPCOMING = [
 ];
 
 const FEATURES = [
-    { icon: "🤖", title: "Machine learning model", desc: "Trained on 1.7 million cricket matches across 877 venues worldwide. Not opinion — pure data." },
+    { icon: "🤖", title: "Machine learning model", desc: "Trained on a decade of ball-by-ball T20 data across 335 tracked venues. Not opinion — pure data." },
     { icon: "⚡", title: "5-second live refresh", desc: "Win probability recalculates every 5 seconds during a live match. Watch it shift in real time." },
     { icon: "🏟️", title: "Venue-aware predictions", desc: "Lord's plays differently to The Oval. Our model uses venue-specific averages, not global stats." },
     { icon: "🌧️", title: "Weather & dew factor", desc: "Evening matches at Lord's often favour chasing due to dew. Our model accounts for this." },
     { icon: "📊", title: "Live probability graph", desc: "Full match probability history plotted over time — see exactly when and why the match turned." },
-    { icon: "🎯", title: "78% accuracy", desc: "Verified on our public Track Record page — every match, every prediction, every result." },
+    { icon: "🎯", title: "81.5% on unseen matches", desc: "Win-probability accuracy on a held-out backtest: trained on 2017-2024, tested on 2,546 matches from 2025-2026 the model had never seen." },
 ];
 
 export default function CricketPredictionsUK() {
     useEffect(() => {
         const title = "Cricket Predictions UK 2026 — Free AI Win Probability | CricIntelligence";
-        const desc  = "Free AI cricket predictions for UK fans. Live win probability for England matches, The Hundred, international T20s and ODIs. Updated every ball. 78% accuracy. Trusted by cricket fans across the UK.";
+        const desc  = "Free AI cricket predictions for UK fans. Live win probability for England matches, The Hundred, international T20s and ODIs. Updated every ball. 81.5% win-probability accuracy on a 2025-2026 holdout backtest.";
         document.title = title;
         setMeta("description", desc);
         setMeta("og:title", title, true);
@@ -72,7 +72,7 @@ export default function CricketPredictionsUK() {
                         Cricket Predictions UK — Live AI Win Probability
                     </h1>
                     <p style={{ fontSize: 15, color: "rgba(255,255,255,0.7)", margin: "0 0 22px", lineHeight: 1.75, maxWidth: 580 }}>
-                        Free AI-powered cricket predictions for UK and Australian fans. Live win probability for England matches, international T20s, ODIs and The Hundred — updating every 5 seconds during a match. Built on 1.7 million historical matches. 78% accuracy, publicly verified.
+                        Free AI-powered cricket predictions for UK and Australian fans. Live win probability for England matches, international T20s, ODIs and The Hundred — updating every 5 seconds during a match. Built on a decade of ball-by-ball T20 data. 81.5% win-probability accuracy on unseen 2025-2026 matches.
                     </p>
                     <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                         <a href="/" style={{ display: "inline-block", background: GOLD, color: NAVY, fontWeight: 800, fontSize: 14, padding: "12px 24px", borderRadius: 10, textDecoration: "none" }}>
@@ -110,10 +110,10 @@ export default function CricketPredictionsUK() {
                         CricIntelligence is a free cricket prediction platform built for serious cricket fans in the UK, Australia, and across the cricket world. Unlike sites that publish static predictions written by tipsters, CricIntelligence uses a live machine learning model that updates win probability every 5 seconds during a match.
                     </p>
                     <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.85, margin: "0 0 12px" }}>
-                        The model was trained on 1.7 million cricket matches — T20Is, ODIs, Tests, and domestic competitions — across 877 venues. For every live match, it processes current score, wickets in hand, required run rate, pitch deterioration, weather conditions, and live player statistics to compute a win probability accurate to within ±5%.
+                        The model was trained on a decade of ball-by-ball T20 data (2017-2026) across 335 tracked venues. For every live match, it processes current score, wickets in hand, required run rate, how the pitch is actually behaving over by over, weather conditions, and live player statistics to recompute the win probability.
                     </p>
                     <p style={{ fontSize: 14, color: "#334155", lineHeight: 1.85 }}>
-                        Our prediction accuracy of <strong>78%</strong> is publicly verified on the <a href="/?tab=record" style={{ color: NAVY, fontWeight: 700 }}>Track Record page</a> — every match we predicted, every result. We don't cherry-pick.
+                        Win-probability accuracy is <strong>81.5%</strong> on a true holdout — the model was trained on 2017-2024 data only and then tested against 2,546 matches from 2025-2026 it had never seen. Live predictions are logged on the <a href="/?tab=record" style={{ color: NAVY, fontWeight: 700 }}>Track Record page</a> as they resolve.
                     </p>
                 </div>
 

@@ -17,7 +17,7 @@ const IPL_TEAMS = [
 ];
 
 const FAQS = [
-    { q: "How accurate are CricIntelligence IPL 2026 predictions?", a: "Our AI model achieves 80.2% accuracy across 7,900+ T20 matches. For IPL specifically, the model accounts for pitch conditions at each venue, team composition, recent form, and over-by-over patterns to generate win probability." },
+    { q: "How accurate are CricIntelligence IPL 2026 predictions?", a: "Win probability is 81.5% accurate on a true holdout (trained 2017-2024, tested on 2,546 unseen 2025-2026 matches). For IPL specifically, the model accounts for pitch conditions at each venue, team composition, recent form, and over-by-over patterns to generate win probability." },
     { q: "Which team is most likely to win IPL 2026?", a: "Based on our AI model trained on squad strength, auction results, and historical IPL performance, Mumbai Indians and Chennai Super Kings lead with the highest win probability entering IPL 2026. Predictions update live during every match." },
     { q: "How does over-by-over prediction work?", a: "For each upcoming over, our model predicts an expected run range (e.g. 6-9 runs), wicket probability, and phase context (powerplay/middle/death). These update every ball using live match data from our backend." },
     { q: "Is CricIntelligence free to use?", a: "Yes — all live predictions and match analysis on CricIntelligence are completely free. You can view win probability, next over predictions, and scorecard data for any live IPL 2026 match at no cost." },
@@ -29,7 +29,7 @@ const FAQS = [
 export default function IPL2026Predictions() {
     useEffect(() => {
         const title = "IPL 2026 Predictions & Win Probability — AI Cricket Analysis | CricIntelligence";
-        const desc  = "Free AI-powered IPL 2026 predictions. Live win probability for every match, over-by-over forecasts, pitch analysis, and head-to-head data. Updated every ball. 80.2% accuracy.";
+        const desc  = "Free AI-powered IPL 2026 predictions. Live win probability for every match, over-by-over forecasts, pitch analysis, and head-to-head data. Updated every ball. 81.5% accuracy on a 2025-2026 holdout backtest.";
         const url   = "https://www.cricintelligence.com/predictions/ipl-2026";
         document.title = title;
         const sm = (name, content, prop) => {
@@ -62,7 +62,7 @@ export default function IPL2026Predictions() {
                         IPL 2026 Predictions &amp; Win Probability
                     </h1>
                     <p style={{ fontSize: 15, color: "rgba(255,255,255,0.7)", margin: "0 0 22px", lineHeight: 1.7, maxWidth: 540 }}>
-                        Live AI-powered predictions for every IPL 2026 match. Win probability, over-by-over forecasts, and pitch analysis — updated every ball. 80.2% accuracy. Built on 7,900+ T20 matches.
+                        Live AI-powered predictions for every IPL 2026 match. Win probability, over-by-over forecasts, and pitch analysis — updated every ball. 81.5% accuracy on a 2025-2026 holdout backtest.
                     </p>
                     <a href="/" style={{ display: "inline-block", background: C.gold, color: C.navy, fontWeight: 800, fontSize: 14, padding: "12px 24px", borderRadius: 10, textDecoration: "none" }}>
                         🏏 View Live Predictions
@@ -87,10 +87,10 @@ export default function IPL2026Predictions() {
                 <h2 style={{ fontSize: 22, fontWeight: 800, color: C.navy, marginBottom: 16 }}>How Our AI Predicts IPL 2026 Matches</h2>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 14, marginBottom: 36 }}>
                     {[
-                        ["🏟️", "Venue Intelligence", "877 venues tracked. Each pitch has its own scoring model — from Wankhede's bounce to Chepauk's spin."],
+                        ["🏟️", "Venue Intelligence", "335 venues tracked. Each pitch has its own scoring model — from Wankhede's bounce to Chepauk's spin."],
                         ["📊", "Real-Time Data", "Ball-by-ball data feeds into the model every 5 seconds during a live match. Predictions update instantly."],
                         ["🌦️", "Weather & Dew", "Evening matches in India are heavily affected by dew. Our model weights this for death-over accuracy."],
-                        ["🤖", "80.2% Accuracy", "XGBoost model trained on 7,900+ T20 matches. 25 features including player stats, venue par & phase data."],
+                        ["🤖", "81.5% on unseen matches", "XGBoost model, accuracy measured on a 2025-2026 holdout. 25 features including player stats, venue par & phase data."],
                     ].map(([icon, title, desc]) => (
                         <div key={title} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "20px 18px" }}>
                             <div style={{ fontSize: 26, marginBottom: 10 }}>{icon}</div>
@@ -141,7 +141,7 @@ export default function IPL2026Predictions() {
                         CricIntelligence calculates cricket win probability using an XGBoost model trained on 7,900+ T20 matches. Inputs include: runs scored, wickets lost, overs completed, target (2nd innings), venue run rate history, pitch condition, and current phase (powerplay / middle / death).
                     </p>
                     <p style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", lineHeight: 1.75 }}>
-                        A team chasing 180 at 90/2 after 10 overs is in a very different position to 90/5 — even though the score is identical. Win probability captures this nuance. Our model achieves 80.2% accuracy predicting the final winner from any point mid-match.
+                        A team chasing 180 at 90/2 after 10 overs is in a very different position to 90/5 — even though the score is identical. Win probability captures this nuance. Our model achieves 81.5% accuracy predicting the final winner on matches it had never seen.
                     </p>
                 </div>
 

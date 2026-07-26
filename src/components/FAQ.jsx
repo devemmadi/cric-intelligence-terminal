@@ -21,7 +21,7 @@ const SECTIONS = [
         items: [
             {
                 q: "How accurate are CricIntelligence predictions?",
-                a: "Our model achieves approximately 78% accuracy across all T20 formats, measured as the percentage of matches where the team our model favoured at the halfway point of the first innings went on to win. The full prediction history is published on our Record tab — every match, every prediction, every result. We don't cherry-pick."
+                a: "Win probability is 81.5% accurate on a true holdout — trained on 2017-2024 data only, then tested against 2,546 matches from 2025-2026 the model had never seen. Accuracy is the percentage of matches where the team the model favoured went on to win. Live predictions are logged on our Record tab as they resolve."
             },
             {
                 q: "How often does win probability update during a live match?",
@@ -113,7 +113,7 @@ const SECTIONS = [
             },
             {
                 q: "Can I use CricIntelligence predictions to bet?",
-                a: "Our terms of service prohibit using our predictions as the basis for placing bets. Cricket is unpredictable — even a model with 78% accuracy means 22% of outcomes are unexpected. Past model performance never guarantees future results. Please gamble responsibly. If gambling is causing harm, call the free helpline: 0808 8020 133."
+                a: "Our terms of service prohibit using our predictions as the basis for placing bets. Cricket is unpredictable — even a model that is right about 8 times in 10 means 2 in 10 outcomes are unexpected. Past model performance never guarantees future results. Please gamble responsibly. If gambling is causing harm, call the free helpline: 0808 8020 133."
             },
             {
                 q: "What responsible gambling resources do you recommend?",
