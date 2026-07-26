@@ -106,8 +106,14 @@ export default function useMatchData() {
     }, [fetchPred]);
 
     // ── MATCHES ONLY — runs on interval, never touches pred ──────────────────
-    const fetchMatches = useCallback(async () => {
-        if (document.hidden) return;
+    // `force` bypasses the hidden-tab skip — needed for the very first call on
+    // mount, since a page that loads in a background/unfocused tab would
+    // otherwise never fetch at all and gets stuck on "Loading matches..."
+    // forever (the 5s interval and visibilitychange listener both still
+    // respect document.hidden as before, so backgrounded tabs don't poll
+    // wastefully after that first load).
+    const fetchMatches = useCallback(async (force = false) => {
+        if (document.hidden && !force) return;
         try {
             const data = await fetch(`${API_BASE}/matches`).then(r => r.ok ? r.json() : null).catch(() => null);
             if (!data) return;
@@ -217,7 +223,7 @@ export default function useMatchData() {
 
     // Matches list refreshes every 5s; also fetch immediately when tab becomes visible
     useEffect(() => {
-        fetchMatches();
+        fetchMatches(true);
         const t = setInterval(fetchMatches, 5000);
         const onVisible = () => { if (!document.hidden) fetchMatches(); };
         document.addEventListener("visibilitychange", onVisible);

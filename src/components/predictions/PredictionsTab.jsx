@@ -1888,6 +1888,17 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     const _st = selectedMatch?.rawStatus || pred?.matchStatus || "";
     const isEnded = pred?.matchEnded === true || selectedMatch?.status === "ENDED" || _st.toLowerCase().includes("won by") || _st.toLowerCase().includes(" beat ") || _st.toLowerCase().includes("match tied") || _st.toLowerCase().includes("no result");
 
+    // `pred` updates asynchronously after `selectedMatch` changes (fetchPred is a
+    // network round-trip) — without this guard, switching matches shows the NEW
+    // match's header with the PREVIOUS match's score/team data until the fetch
+    // resolves (or forever, if it silently fails). Treat a team mismatch as "no
+    // prediction for this match yet" rather than rendering stale data.
+    const predMatchesSelection = !selectedMatch || !pred?.team1 || (() => {
+        const st1 = cleanTeam(selectedMatch?.t1), st2 = cleanTeam(selectedMatch?.t2);
+        const pt1 = cleanTeam(pred?.team1), pt2 = cleanTeam(pred?.team2);
+        return (st1 === pt1 && st2 === pt2) || (st1 === pt2 && st2 === pt1);
+    })();
+
     // Wicket detection — red flash + haptic vibration
     const prevWicketsRef = useRef(null);
     const [wicketMoment, setWicketMoment] = useState(null); // { name, over }
@@ -2163,7 +2174,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                         <TeamLogo name={(selectedMatch?.t2 || pred?.team2 || "").toLowerCase()} size={40} imageId={selectedMatch?.t2ImageId || pred?.team2ImageId || 0} />
                                     </div>
                                 </div>
-                                {(pred?.displayScore || (pred?.innings === 2 && (pred?.overs || 0) === 0)) && (() => {
+                                {predMatchesSelection && (pred?.displayScore || (pred?.innings === 2 && (pred?.overs || 0) === 0)) && (() => {
                                     const _inn2Break = pred.innings === 2 && (pred.overs || 0) === 0;
                                     const _t1Score = selectedMatch?.t1Score ?? pred?.t1Runs ?? (pred?.target != null ? pred.target - 1 : null);
                                     const _t1Wkts  = selectedMatch?.t1Wkts ?? pred?.t1Wkts ?? "";
@@ -2200,7 +2211,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                         </div>
                                     );
                                 })()}
-                                {isPredLoading && !pred?.displayScore && (
+                                {(!pred?.displayScore || !predMatchesSelection) && (
                                     <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", letterSpacing: 1 }}>Loading prediction...</div>
                                 )}
                             </div>

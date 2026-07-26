@@ -376,6 +376,30 @@ non-UK.
 Added sitemap entries for all 28 unique Hundred men's team pairings (21 new + 7 already present). This is legitimate rather than doorway-page spam because the 2026 format has **every team playing every other team once** (7 matches each) plus a regional-derby rematch = 32 group games, so each pairing is a real fixture at some point between Jul 21 and Aug 12. All 8 team slugs already existed in `MatchPredictionPage.jsx` `TEAMS`; verified two of the new URLs render (london-spirit-vs-welsh-fire, birmingham-phoenix-vs-southern-brave). Priority 0.88, changefreq daily. Motivation: user is UK-targeted and GA showed Organic Search sessions +240% w/w, so UK-tournament pages are the highest-leverage SEO surface.
 
 ## Common Bugs Fixed (most recent first)
+- Matches tab stuck forever on "Loading matches..." when the tab loads in the background/
+  unfocused (Jul 26 2026): `fetchMatches()` in `useMatchData.js` bailed via `if
+  (document.hidden) return` — including on the very first mount call. If the page loaded
+  hidden (background tab, or any embedding context where `document.hidden` starts true),
+  the initial fetch never fired, and since the 5s interval re-checks the same guard, it
+  never recovered without a genuine hidden→visible `visibilitychange` transition. This is
+  the root cause of the bug flagged-but-unfixed on 2026-07-22 ("matches tab rendering
+  bug"/"no backend fetch ever firing"). Fix: `fetchMatches` now takes a `force` param that
+  bypasses the hidden check; the mount effect calls `fetchMatches(true)` so the first load
+  always fetches regardless of tab visibility, while the interval and visibilitychange
+  listener still skip while genuinely backgrounded (no wasteful polling).
+- Score card showed the PREVIOUS match's team/score data under the NEW match's header
+  after switching matches (Jul 26 2026): in `PredictionsTab.jsx`, the header team names
+  render from `selectedMatch` (updates synchronously on click) but the score row
+  (score/rate/target/momentum) renders from `pred` (only updates once `fetchPred`'s
+  network round-trip resolves) — so there's a window, or an indefinite hang if the fetch
+  silently fails, where the two are out of sync and a genuinely different match's score
+  shows under the new header. Added `predMatchesSelection` (compares `cleanTeam`'d
+  `selectedMatch.t1/t2` against `pred.team1/team2`, either order) right after the `isEnded`
+  computation; the score-row block and the "Loading prediction..." fallback now both key
+  off it instead of rendering `pred` unconditionally. Note: other `pred`-driven widgets on
+  this page (AI Signal panel, "Who wins this match?", live-engine mood text) were NOT
+  covered by this fix and likely have the same staleness window — only the header/score
+  hero row was in scope for this fix.
 - LPL team names reverted to correct 2026 names (Jul 25 2026): a Jul 22 commit (e989d665) renamed `galle-gallants`→`galle-marvels` and `kandy-royals`→`kandy-falcons` based on a web search that turned out to describe the OLD names. Verified against the live `/matches` feed (team codes `GAG`, `KRL` — matching Gallants/Royals) plus a follow-up search: LPL 2026's actual five teams are Jaffna Kings, **Galle Gallants**, Colombo Kaps, **Kandy Royals**, Dambulla Sixers (Galle went Marvels→Gallants, Kandy went Falcons→Royals, Colombo Strikers→Kaps for 2026). Slugs/short codes restored to `galle-gallants`/GAG and `kandy-royals`/KRL, sitemap URL restored to `jaffna-kings-vs-galle-gallants-2026`. **Note:** the upstream Cricbuzz feed is itself inconsistent — status strings for the same `KRL` code appear as both "Kandy Royals won by 11 runs" and "Kandy Falcons won by 43 runs", so don't treat a single status string as authoritative for team naming.
 - MatchPredictionPage.jsx TEAMS dict had zero Lanka Premier League 2026 teams (Jul 17 2026, LPL start day): added all 5 franchises (jaffna-kings, galle-gallants, colombo-kaps, kandy-royals, dambulla-sixers — confirmed via web search) plus a sitemap.xml entry for the opening fixture (Jaffna Kings vs Galle Gallants, SSC Colombo). Short codes for colombo-kaps/kandy-royals/dambulla-sixers are best-guess (CLK/KDR/DBS) since Cricbuzz's exact abbreviations weren't confirmed — cosmetic only, doesn't affect routing since these are hand-authored SEO slugs, not tied to the live /matches API team codes.
 - MatchPredictionPage.jsx TEAMS dict still missing 10/18 Blast counties + 5/8 Hundred teams (Jul 17 2026): same redirect-to-home bug as Jul 16 fix below, just for the teams that fix didn't cover yet. Added worcs, sus, lancs, dur, derby, leic, kent, mdx, warks, glam (Vitality Blast) and birmingham-phoenix, southern-brave, trent-rockets, london-spirit, welsh-fire (Hundred 2026, confirmed via web search — Hundred rebrand + fixtures). Sitemap.xml got the 5 real opening-week Hundred fixtures (Jul 21-25, found via search: MI London vs Sunrisers Leeds, Southern Brave vs Welsh Fire, London Spirit vs Manchester Super Giants, Birmingham Phoenix vs Trent Rockets, Sunrisers Leeds vs Southern Brave, Welsh Fire vs MI London). No H2H entries added for the new teams — falls back to the existing generic 10-10 default in `getH2H()`, same as any other team pair without a recorded H2H.
