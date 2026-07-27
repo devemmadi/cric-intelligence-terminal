@@ -5,17 +5,148 @@
   "redirects": [
     {
       "source": "/(.*)",
-      "has": [{ "type": "host", "value": "cricintelligence.com" }],
+      "has": [
+        {
+          "type": "host",
+          "value": "cricintelligence.com"
+        }
+      ],
       "destination": "https://www.cricintelligence.com/$1",
       "permanent": true
     }
   ],
   "rewrites": [
-    { "source": "/predictions/ipl-2026", "destination": "/predictions/ipl-2026.html" },
-    { "source": "/predictions/t20-predictions", "destination": "/predictions/t20-predictions.html" },
-    { "source": "/predictions/the-hundred-2026", "destination": "/predictions/the-hundred-2026.html" },
-    { "source": "/predictions/vitality-blast-2026-quarter-finals", "destination": "/predictions/vitality-blast-2026-quarter-finals.html" },
-    { "source": "/predictions/mi-london-vs-sunrisers-leeds-2026", "destination": "/predictions/mi-london-vs-sunrisers-leeds-2026.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/predictions/ipl-2026",
+      "destination": "/predictions/ipl-2026.html"
+    },
+    {
+      "source": "/predictions/t20-predictions",
+      "destination": "/predictions/t20-predictions.html"
+    },
+    {
+      "source": "/predictions/the-hundred-2026",
+      "destination": "/predictions/the-hundred-2026.html"
+    },
+    {
+      "source": "/predictions/vitality-blast-2026-quarter-finals",
+      "destination": "/predictions/vitality-blast-2026-quarter-finals.html"
+    },
+    {
+      "source": "/predictions/mi-london-vs-sunrisers-leeds-2026",
+      "destination": "/predictions/mi-london-vs-sunrisers-leeds-2026.html"
+    },
+    {
+      "source": "/predictions/mi-london-vs-manchester-super-giants-2026",
+      "destination": "/predictions/mi-london-vs-manchester-super-giants-2026.html"
+    },
+    {
+      "source": "/predictions/mi-london-vs-birmingham-phoenix-2026",
+      "destination": "/predictions/mi-london-vs-birmingham-phoenix-2026.html"
+    },
+    {
+      "source": "/predictions/mi-london-vs-southern-brave-2026",
+      "destination": "/predictions/mi-london-vs-southern-brave-2026.html"
+    },
+    {
+      "source": "/predictions/mi-london-vs-trent-rockets-2026",
+      "destination": "/predictions/mi-london-vs-trent-rockets-2026.html"
+    },
+    {
+      "source": "/predictions/mi-london-vs-london-spirit-2026",
+      "destination": "/predictions/mi-london-vs-london-spirit-2026.html"
+    },
+    {
+      "source": "/predictions/mi-london-vs-welsh-fire-2026",
+      "destination": "/predictions/mi-london-vs-welsh-fire-2026.html"
+    },
+    {
+      "source": "/predictions/sunrisers-leeds-vs-manchester-super-giants-2026",
+      "destination": "/predictions/sunrisers-leeds-vs-manchester-super-giants-2026.html"
+    },
+    {
+      "source": "/predictions/sunrisers-leeds-vs-birmingham-phoenix-2026",
+      "destination": "/predictions/sunrisers-leeds-vs-birmingham-phoenix-2026.html"
+    },
+    {
+      "source": "/predictions/sunrisers-leeds-vs-southern-brave-2026",
+      "destination": "/predictions/sunrisers-leeds-vs-southern-brave-2026.html"
+    },
+    {
+      "source": "/predictions/sunrisers-leeds-vs-trent-rockets-2026",
+      "destination": "/predictions/sunrisers-leeds-vs-trent-rockets-2026.html"
+    },
+    {
+      "source": "/predictions/sunrisers-leeds-vs-london-spirit-2026",
+      "destination": "/predictions/sunrisers-leeds-vs-london-spirit-2026.html"
+    },
+    {
+      "source": "/predictions/sunrisers-leeds-vs-welsh-fire-2026",
+      "destination": "/predictions/sunrisers-leeds-vs-welsh-fire-2026.html"
+    },
+    {
+      "source": "/predictions/manchester-super-giants-vs-birmingham-phoenix-2026",
+      "destination": "/predictions/manchester-super-giants-vs-birmingham-phoenix-2026.html"
+    },
+    {
+      "source": "/predictions/manchester-super-giants-vs-southern-brave-2026",
+      "destination": "/predictions/manchester-super-giants-vs-southern-brave-2026.html"
+    },
+    {
+      "source": "/predictions/manchester-super-giants-vs-trent-rockets-2026",
+      "destination": "/predictions/manchester-super-giants-vs-trent-rockets-2026.html"
+    },
+    {
+      "source": "/predictions/manchester-super-giants-vs-london-spirit-2026",
+      "destination": "/predictions/manchester-super-giants-vs-london-spirit-2026.html"
+    },
+    {
+      "source": "/predictions/manchester-super-giants-vs-welsh-fire-2026",
+      "destination": "/predictions/manchester-super-giants-vs-welsh-fire-2026.html"
+    },
+    {
+      "source": "/predictions/birmingham-phoenix-vs-southern-brave-2026",
+      "destination": "/predictions/birmingham-phoenix-vs-southern-brave-2026.html"
+    },
+    {
+      "source": "/predictions/birmingham-phoenix-vs-trent-rockets-2026",
+      "destination": "/predictions/birmingham-phoenix-vs-trent-rockets-2026.html"
+    },
+    {
+      "source": "/predictions/birmingham-phoenix-vs-london-spirit-2026",
+      "destination": "/predictions/birmingham-phoenix-vs-london-spirit-2026.html"
+    },
+    {
+      "source": "/predictions/birmingham-phoenix-vs-welsh-fire-2026",
+      "destination": "/predictions/birmingham-phoenix-vs-welsh-fire-2026.html"
+    },
+    {
+      "source": "/predictions/southern-brave-vs-trent-rockets-2026",
+      "destination": "/predictions/southern-brave-vs-trent-rockets-2026.html"
+    },
+    {
+      "source": "/predictions/southern-brave-vs-london-spirit-2026",
+      "destination": "/predictions/southern-brave-vs-london-spirit-2026.html"
+    },
+    {
+      "source": "/predictions/southern-brave-vs-welsh-fire-2026",
+      "destination": "/predictions/southern-brave-vs-welsh-fire-2026.html"
+    },
+    {
+      "source": "/predictions/trent-rockets-vs-london-spirit-2026",
+      "destination": "/predictions/trent-rockets-vs-london-spirit-2026.html"
+    },
+    {
+      "source": "/predictions/trent-rockets-vs-welsh-fire-2026",
+      "destination": "/predictions/trent-rockets-vs-welsh-fire-2026.html"
+    },
+    {
+      "source": "/predictions/london-spirit-vs-welsh-fire-2026",
+      "destination": "/predictions/london-spirit-vs-welsh-fire-2026.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
