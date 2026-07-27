@@ -10,8 +10,8 @@ const OddsCalculator = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const title = "Cricket Odds Calculator — Find Value Bets Using AI Win Probability | CricIntelligence";
-    const desc  = "Free cricket odds calculator. Enter the AI win probability and bookmaker odds to instantly see your edge, implied probability, and expected value. Built for IPL 2026 betting analysis.";
+    const title = "Cricket Odds Calculator — Compare AI Win Probability With Bookmaker Odds | CricIntelligence";
+    const desc  = "Free cricket odds calculator. Enter our AI win probability and a bookmaker's odds to see the probability those odds imply and how the two compare. For analysis only — not betting advice, and no outcome is predictable. 18+, BeGambleAware.org.";
     const url   = "https://www.cricintelligence.com/odds";
     document.title = title;
     const sm = (name, content, prop) => {
@@ -119,13 +119,19 @@ const OddsCalculator = () => {
         {result && (
           <div style={{ padding: '24px', borderRadius: '12px', border: `2px solid ${result.isValue ? '#00c853' : '#ff3d00'}`, background: result.isValue ? 'rgba(0,200,83,0.08)' : 'rgba(255,61,0,0.08)', marginBottom: '24px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
-              <span style={{ fontSize: '32px' }}>{result.isValue ? '✅' : '❌'}</span>
+              {/* Reads as a comparison, not a tip. Operator affiliate terms prohibit
+                  material that suggests gambling is an easy way to make money, and a
+                  green tick over "VALUE BET FOUND!" next to a bookmaker link is exactly
+                  that read. The arithmetic below is unchanged — only the framing. */}
+              <span style={{ fontSize: '32px' }}>{result.isValue ? '↑' : '↓'}</span>
               <div>
                 <div style={{ color: result.isValue ? '#00c853' : '#ff3d00', fontSize: '20px', fontWeight: 'bold' }}>
-                  {result.isValue ? 'VALUE BET FOUND!' : 'NO VALUE'}
+                  {result.isValue ? 'Model is higher than the odds' : 'Model is lower than the odds'}
                 </div>
                 <div style={{ color: '#8899aa', fontSize: '12px' }}>
-                  {result.isValue ? 'AI probability > bookmaker implied odds' : 'Bookmaker odds are too short'}
+                  {result.isValue
+                    ? 'Our estimate exceeds the probability implied by these odds'
+                    : 'Our estimate is below the probability implied by these odds'}
                 </div>
               </div>
             </div>
@@ -144,8 +150,18 @@ const OddsCalculator = () => {
               </div>
             </div>
             <div style={{ marginTop: '16px', padding: '14px', background: '#0d1b2e', borderRadius: '8px', textAlign: 'center' }}>
-              <span style={{ color: '#8899aa', fontSize: '12px' }}>EXPECTED VALUE per £100 stake: </span>
+              <span style={{ color: '#8899aa', fontSize: '12px' }}>THEORETICAL VALUE per £100 staked: </span>
               <span style={{ color: result.isValue ? '#00c853' : '#ff3d00', fontSize: '18px', fontWeight: 'bold' }}>{result.ev > 0 ? '+' : ''}£{result.ev}</span>
+            </div>
+            {/* Required by the operator affiliate terms, and true regardless: a
+                positive number here is an estimate from a model that is wrong a
+                fifth of the time, not an indication of profit. */}
+            <div style={{ marginTop: '12px', color: '#5a7a9a', fontSize: '11px', lineHeight: 1.6, textAlign: 'center' }}>
+              This is a comparison of two probabilities, not betting advice. Our estimate can be
+              wrong, a positive figure does not mean you will win, and no cricket outcome is
+              predictable. Never stake money you cannot afford to lose. 18+ ·{' '}
+              <a href="https://www.begambleaware.org" target="_blank" rel="noopener noreferrer nofollow"
+                 style={{ color: '#8899aa' }}>BeGambleAware.org</a>
             </div>
           </div>
         )}
@@ -157,8 +173,8 @@ const OddsCalculator = () => {
             1. Go to <strong style={{ color: '#fff' }}>Predictions</strong> tab and note AI win probability<br/>
             2. Check the same match odds on {bookmaker}<br/>
             3. Enter both values above<br/>
-            4. <span style={{ color: '#00c853' }}>Green ✅</span> = AI sees more value than the bookmaker<br/>
-            5. <span style={{ color: '#ff3d00' }}>Red ❌</span> = Bookmaker odds are too short, no value
+            4. <span style={{ color: '#00c853' }}>Green ↑</span> = our estimate is above the probability those odds imply<br/>
+            5. <span style={{ color: '#ff3d00' }}>Red ↓</span> = our estimate is below it. Neither is a recommendation
           </div>
           <div style={{ marginTop: '14px', padding: '10px', background: '#0d1b2e', borderRadius: '6px' }}>
             <span style={{ color: '#ff9800', fontSize: '11px' }}>⚠️ 18+ | Please gamble responsibly | BeGambleAware.org</span>
