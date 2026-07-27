@@ -13,6 +13,9 @@
   "rewrites": [
     { "source": "/predictions/ipl-2026", "destination": "/predictions/ipl-2026.html" },
     { "source": "/predictions/t20-predictions", "destination": "/predictions/t20-predictions.html" },
+    { "source": "/predictions/the-hundred-2026", "destination": "/predictions/the-hundred-2026.html" },
+    { "source": "/predictions/vitality-blast-2026-quarter-finals", "destination": "/predictions/vitality-blast-2026-quarter-finals.html" },
+    { "source": "/predictions/mi-london-vs-sunrisers-leeds-2026", "destination": "/predictions/mi-london-vs-sunrisers-leeds-2026.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

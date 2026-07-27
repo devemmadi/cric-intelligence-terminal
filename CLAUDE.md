@@ -404,6 +404,13 @@ Files touched: `CricketPredictionsUK.jsx`, `AboutUs.jsx`, `FAQ.jsx`, `CricketWin
 ## SEO — The Hundred 2026 full matchup coverage (Jul 26 2026)
 Added sitemap entries for all 28 unique Hundred men's team pairings (21 new + 7 already present). This is legitimate rather than doorway-page spam because the 2026 format has **every team playing every other team once** (7 matches each) plus a regional-derby rematch = 32 group games, so each pairing is a real fixture at some point between Jul 21 and Aug 12. All 8 team slugs already existed in `MatchPredictionPage.jsx` `TEAMS`; verified two of the new URLs render (london-spirit-vs-welsh-fire, birmingham-phoenix-vs-southern-brave). Priority 0.88, changefreq daily. Motivation: user is UK-targeted and GA showed Organic Search sessions +240% w/w, so UK-tournament pages are the highest-leverage SEO surface.
 
+## ⚠️ SEO — this is a client-rendered SPA, so static HTML is the ONLY thing Google reliably sees
+`public/index.html` ships an empty `<div id="root"></div>`. Every one of the ~84 sitemap URLs serves that same shell with the same generic title until React boots, so per-route `<title>`/meta set in `useEffect` only exist after JS executes. The workaround in this repo is hand-written prerendered pages in `public/predictions/*.html`, wired up by **explicit rewrites in `vercel.json`** (Vercel checks the filesystem before rewrites, and the files are `.html` while the URLs are extensionless — so without a rewrite the catch-all `/(.*) → /index.html` swallows them).
+
+**Fixed Jul 27 2026:** three prerendered pages existed but had no rewrite, so Google was still being served the empty shell for them — `the-hundred-2026.html`, `vitality-blast-2026-quarter-finals.html`, `mi-london-vs-sunrisers-leeds-2026.html`. Added their rewrites. **Rule: adding a file to `public/predictions/` does nothing on its own — you must add the matching rewrite to `vercel.json`, and every rewrite destination must exist or the URL 404s.** Also corrected "877 venues" → "335 venues" in `ipl-2026.html` (matches `len(venue_stats.json)`); the static pages' "1.7 million ball-by-ball records" phrasing was left alone — that's deliveries, not matches, which is plausible, unlike the React components' old "1.7 million cricket matches".
+
+Note the React routes for these slugs (`TheHundred2026.jsx`, `VitalityBlast2026.jsx`) still exist and are what renders in local dev; in production the static file wins. Keep both in sync if the content changes materially.
+
 ## Common Bugs Fixed (most recent first)
 - Matches tab stuck forever on "Loading matches..." when the tab loads in the background/
   unfocused (Jul 26 2026): `fetchMatches()` in `useMatchData.js` bailed via `if
