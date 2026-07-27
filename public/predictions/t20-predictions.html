@@ -18,7 +18,7 @@
   "mainEntity":[
     {"@type":"Question","name":"What T20 leagues does CricIntelligence cover?","acceptedAnswer":{"@type":"Answer","text":"CricIntelligence covers IPL 2026, The Hundred, Big Bash League, T20 World Cup, T20 Blast and PSL. Live predictions activate automatically when matches start."}},
     {"@type":"Question","name":"How does T20 AI prediction work?","acceptedAnswer":{"@type":"Answer","text":"Our model analyses powerplay (overs 1-6), middle overs (7-15) and death overs (16-20) separately, updating win probability every ball based on run rate, wickets, pitch and weather conditions."}},
-    {"@type":"Question","name":"Are T20 predictions accurate?","acceptedAnswer":{"@type":"Answer","text":"CricIntelligence achieves 80.2% accuracy on T20 predictions, with death overs being 40% more predictable than powerplay due to specialist bowling patterns."}}
+    {"@type":"Question","name":"Are T20 predictions accurate?","acceptedAnswer":{"@type":"Answer","text":"CricIntelligence measures 81.5% accuracy on a true holdout — trained only on matches up to 2024, scored on 2025-26 matches it never saw. Predictions sharpen as an innings progresses: win probability is 79.2% accurate at over 6 and 82.2% by over 15, and next-over run ranges land 63.6% of the time in the powerplay against 73.2% at the death, because late-innings behaviour is more constrained by specialist bowling patterns."}}
   ]
 }
 </script>
@@ -91,7 +91,7 @@ footer p{font-size:11px;color:rgba(255,255,255,0.3);margin-top:8px}
   </div>
   <div class="phase">
     <div class="phase-header" style="background:#EF4444"><h3>💀 Death Overs — Overs 16-20</h3><p>Most predictable phase — highest model accuracy</p></div>
-    <div class="phase-body"><p>Death bowling data is rich enough that our model is 40% more accurate here than in the powerplay. Dew factor, wickets in hand, and required rate all peak in importance.</p><div class="phase-tip"><span style="color:#EF4444">→</span><span>5+ wickets in hand: 8+ RPO achievable</span></div><div class="phase-tip"><span style="color:#EF4444">→</span><span>Dew confirmed = batting team boosted</span></div></div>
+    <div class="phase-body"><p>Death bowling data is rich enough that our next-over range lands 73.2% of the time here, against 63.6% in the powerplay. Dew factor, wickets in hand, and required rate all peak in importance.</p><div class="phase-tip"><span style="color:#EF4444">→</span><span>5+ wickets in hand: 8+ RPO achievable</span></div><div class="phase-tip"><span style="color:#EF4444">→</span><span>Dew confirmed = batting team boosted</span></div></div>
   </div>
 
   <h2 style="margin-top:36px">T20 Leagues We Cover</h2>
@@ -107,7 +107,7 @@ footer p{font-size:11px;color:rgba(255,255,255,0.3);margin-top:8px}
   <div class="faq">
     <div class="faq-item"><div class="faq-q">Q: What T20 leagues does CricIntelligence cover?</div><div class="faq-a">CricIntelligence covers IPL 2026, The Hundred, Big Bash League, T20 World Cup 2026, T20 Blast and PSL. Live predictions activate automatically when any match starts.</div></div>
     <div class="faq-item"><div class="faq-q">Q: How does T20 AI prediction work?</div><div class="faq-a">Our model analyses powerplay (overs 1-6), middle overs (7-15) and death overs (16-20) separately, updating win probability every ball based on run rate, wickets, pitch conditions, player form and dew factor.</div></div>
-    <div class="faq-item"><div class="faq-q">Q: Which phase is most accurately predicted?</div><div class="faq-a">Death overs (16-20) are 40% more predictable than the powerplay. Specialist death bowlers follow known patterns, and wickets in hand + required rate converge to create a clearer picture in the final 5 overs.</div></div>
+    <div class="faq-item"><div class="faq-q">Q: Which phase is most accurately predicted?</div><div class="faq-a">Death overs (16-20). Our next-over run range lands 73.2% of the time there, against 63.6% in the powerplay, measured over 46,718 predictions. Specialist death bowlers follow known patterns, and wickets in hand + required rate converge to create a clearer picture in the final 5 overs.</div></div>
   </div>
 
   <div class="cta-box">

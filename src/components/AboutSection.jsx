@@ -22,7 +22,7 @@ export default function AboutSection() {
         {
             icon: "📈",
             title: "Verified Track Record",
-            desc: "85% win-direction accuracy across 21 tracked matches. Every prediction logged to Supabase with full transparency.",
+            desc: "81.5% win-probability accuracy on 2,546 matches from 2025-26 the model never saw in training. Every live prediction logged to Supabase with full transparency.",
         },
     ];
 

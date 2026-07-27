@@ -102,7 +102,7 @@ export default function AboutUs() {
 
                 {/* Stats */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 28 }}>
-                    {[["1.7M+", "Matches in training data"], ["877", "Venues tracked worldwide"], ["78%", "Prediction accuracy"]].map(([v, l]) => (
+                    {[["1.7M+", "Deliveries in training data"], ["877", "Venues tracked worldwide"], ["81.5%", "Accuracy on unseen matches"]].map(([v, l]) => (
                         <div key={l} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "22px 16px", textAlign: "center" }}>
                             <div style={{ fontSize: 28, fontWeight: 900, color: C.navy }}>{v}</div>
                             <div style={{ fontSize: 12, color: C.muted, marginTop: 5, lineHeight: 1.4 }}>{l}</div>
