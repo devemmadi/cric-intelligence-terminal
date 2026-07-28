@@ -268,6 +268,18 @@ export default function LiveOdds() {
 
     useEffect(() => {
         document.title = "Live Cricket Odds Comparison | CricIntelligence";
+        const desc = "Live cricket betting odds from UK bookmakers next to our AI win probability, "
+                   + "so you can see how the two compare. For analysis only — not betting advice. "
+                   + "18+, BeGambleAware.org.";
+        let d = document.querySelector("meta[name='description']");
+        if (!d) { d = document.createElement("meta"); d.setAttribute("name", "description"); document.head.appendChild(d); }
+        d.setAttribute("content", desc);
+        // Without this the page inherits the homepage canonical that ships in
+        // public/index.html, and Google folds /live-odds into "/" — it would never be
+        // indexed in its own right. Every other route component already sets one.
+        let el = document.querySelector("link[rel='canonical']");
+        if (!el) { el = document.createElement("link"); el.setAttribute("rel", "canonical"); document.head.appendChild(el); }
+        el.setAttribute("href", "https://www.cricintelligence.com/live-odds");
     }, []);
 
     const fetchOdds = useCallback(async () => {
