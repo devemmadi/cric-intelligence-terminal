@@ -70,23 +70,31 @@ export default function CricIntelligence() {
                     : "CricIntelligence — Free AI Cricket Predictions | Live Win Probability",
                 desc: "Live AI cricket win probability updated every ball. T20 & ODI predictions, score projections, batter milestones. Free, no sign-up."
             },
+            // Every tab below is the same document as the homepage — same HTML, only
+            // client-side state differs. Each used to name ITSELF as canonical, which
+            // asks Google to index five URLs whose markup is identical; it declines,
+            // and Search Console reports them as duplicates. Titles and descriptions
+            // stay per-tab because those are for people, but the canonical points at
+            // the one URL that actually exists as a document.
+            // If a tab should rank on its own, it needs a real static page under
+            // public/ with a rewrite in vercel.json, the way /predictions/* works.
             matches: {
-                url: "https://www.cricintelligence.com/?tab=matches",
+                url: "https://www.cricintelligence.com/",
                 title: "Live Cricket Matches — CricIntelligence",
                 desc: "All live cricket matches with AI win probability. T20, ODI and international cricket covered worldwide."
             },
             pitch: {
-                url: "https://www.cricintelligence.com/?tab=pitch",
+                url: "https://www.cricintelligence.com/",
                 title: "Live Pitch Analysis — CricIntelligence",
                 desc: "Real-time pitch score (0-10) validated on 12,951 T20 matches. r=0.689 correlation with innings total."
             },
             record: {
-                url: "https://www.cricintelligence.com/?tab=record",
+                url: "https://www.cricintelligence.com/",
                 title: "AI Prediction Track Record — CricIntelligence",
                 desc: "CricIntelligence accuracy: 81.5% on unseen 2025-26 matches. Proper holdout test, no data leakage."
             },
             media: {
-                url: "https://www.cricintelligence.com/?tab=media",
+                url: "https://www.cricintelligence.com/",
                 title: "Cricket AI in the Media — CricIntelligence",
                 desc: "CricIntelligence featured coverage and cricket AI analysis."
             },

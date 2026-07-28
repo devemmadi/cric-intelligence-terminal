@@ -120,7 +120,15 @@
       ]
     }
     </script>
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=2" />
+    <!-- Canonical must exist in the SERVED html, not only after React mounts. Every SPA
+     route without its own static file is this same document, so Search Console was
+     reporting "Duplicate without user-selected canonical" — Google fetched
+     /?tab=matches and friends, found byte-identical markup, and no canonical to tell
+     it which URL to keep. CricIntelligence.jsx overrides this per route once it
+     mounts; this is the value Google sees first, and for the homepage and all its
+     ?tab= variants it is already the right answer. -->
+<link rel="canonical" href="https://www.cricintelligence.com/" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=2" />
     <link rel="icon" type="image/png" sizes="192x192" href="/logo192.png?v=2" />
     <link rel="apple-touch-icon" sizes="192x192" href="/logo192.png?v=2" />
     <link rel="manifest" href="/manifest.json" />
