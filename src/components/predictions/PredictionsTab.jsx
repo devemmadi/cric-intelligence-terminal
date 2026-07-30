@@ -3013,7 +3013,8 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                  the display:none in the .mob-only class and leaks it onto desktop. */}
             {showStickyBar && (
                 <div className="mob-only" style={{
-                    position: "fixed", bottom: 56, left: 0, right: 0, zIndex: 1200,
+                    // Sit clear of the mobile nav rather than guessing at its height.
+                    position: "fixed", bottom: "calc(var(--mob-nav-h, 79px) + 6px)", left: 0, right: 0, zIndex: 1200,
                     background: stickyBrand.barBg,
                     borderTop: `2px solid ${stickyBrand.accent}`,
                     alignItems: "center", gap: 10,

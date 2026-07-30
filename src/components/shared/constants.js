@@ -48,7 +48,17 @@ export const GLOBAL_CSS = (C) => `
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { background: ${C.bg}; }
 ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-thumb { background: ${C.border}; border-radius: 4px; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+/* The 'to' frame deliberately does NOT declare a transform. Paired with
+   animation-fill-mode:forwards on .fade, declaring translateY(0) here left the
+   element with a permanent transform — and ANY transform on an ancestor makes it
+   the containing block for position:fixed descendants. .fade sits on the main
+   layout wrapper in PredictionsTab, so both fixed children were being positioned
+   against that wrapper instead of the viewport: on mobile the sticky affiliate
+   bar rendered ~3000px down the page over the content, and the full-screen
+   wicket overlay could not cover the screen. Omitting it here lets transform
+   settle back to none, which fixes every fixed-position child rather than the
+   two that exist today. Do not "tidy" translateY(0) back in. */
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1} }
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.4)} }
 @keyframes shimmer { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
@@ -107,6 +117,12 @@ body { background: ${C.bg}; }
     .mob-only { display: flex !important; }
     .mg { min-height: auto !important; }
 }
+/* Height of the mobile bottom nav below: 1px border + 6px top padding + 52px
+   button min-height + 20px bottom padding. Anything that has to sit clear of the
+   nav should offset by this, not by a copied number — the sticky affiliate bar
+   used a hardcoded 56px and overlapped the nav's top 23px, covering the tab
+   buttons. If .mn or .mt padding changes, change this with it. */
+:root { --mob-nav-h: 79px; }
 .mn { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: ${C.navy}; border-top: 1px solid ${C.navyLight}; padding: 6px 0 20px; z-index: 200; box-shadow: 0 -4px 20px rgba(0,0,0,0.3); }
 .mt { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px 2px; font-family: Inter, system-ui; min-height: 52px; }
 .mob-intel { display: none; }
