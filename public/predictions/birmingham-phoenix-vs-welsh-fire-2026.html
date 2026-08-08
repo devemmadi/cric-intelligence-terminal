@@ -44,38 +44,39 @@
   {
    "@type": "FAQPage",
    "mainEntity": [
-    {
-     "@type": "Question",
-     "name": "Who will win Birmingham Phoenix vs Welsh Fire?",
-     "acceptedAnswer": {
-      "@type": "Answer",
-      "text": "Before a ball is bowled our model has Birmingham Phoenix at roughly 50% based on squad ratings and home conditions \u2014 but that number is only a starting point. Once the match begins it is recalculated after every ball from the live score, wickets in hand, required rate and how the pitch is actually behaving."
-     }
-    },
-    {
-     "@type": "Question",
-     "name": "Where is Birmingham Phoenix vs Welsh Fire played?",
-     "acceptedAnswer": {
-      "@type": "Answer",
-      "text": "Birmingham Phoenix play their home matches at Edgbaston, Birmingham; Welsh Fire play at Sophia Gardens, Cardiff. Venue matters a great deal in the 100-ball format \u2014 the same total is worth very different things at Trent Bridge and at Sophia Gardens."
-     }
-    },
-    {
-     "@type": "Question",
-     "name": "How does CricIntelligence predict this match?",
-     "acceptedAnswer": {
-      "@type": "Answer",
-      "text": "The model reads the live match rather than relying on a pre-match opinion: current score, wickets remaining, required run rate, over-by-over pitch behaviour, plus current batter and bowler form. Win probability is 81.5% accurate on a true holdout \u2014 trained on 2017-2024 data only, then tested against 2,546 matches from 2025-2026 it had never seen."
-     }
-    },
-    {
-     "@type": "Question",
-     "name": "Is it free?",
-     "acceptedAnswer": {
-      "@type": "Answer",
-      "text": "Yes. Live win probability, score projections and next-phase run forecasts are free, with no sign-up."
-     }
-    }
+ {
+  "@type": "Question",
+  "name": "Who will win Birmingham Phoenix vs Welsh Fire?",
+  "acceptedAnswer": {
+   "@type": "Answer",
+   "text": "We do not publish a pre-match favourite, because we have nothing to base one on that you could check. Our model is a live model: it produces nothing useful until a ball is bowled, and then recalculates after every one from the score, wickets in hand, required rate and how the pitch is actually playing. What the ground record does say is that the toss matters more at Edgbaston, where sides batting first average 162.3 and chasing sides 145.5 across 6 recorded T20s — a 16.8-run gap, against 2.0 at Sophia Gardens."
+  }
+ },
+ {
+  "@type": "Question",
+  "name": "Is it harder to chase at Edgbaston or Sophia Gardens?",
+  "acceptedAnswer": {
+   "@type": "Answer",
+   "text": "Edgbaston, on this data. The gap between batting first and chasing there is 16.8 runs against 2.0 at Sophia Gardens. A chase at Edgbaston is at its worst through overs 17-20, scoring 6.042 an over and losing 2.833 wickets."
+  }
+ },
+ {
+  "@type": "Question",
+  "name": "Where is Birmingham Phoenix vs Welsh Fire played?",
+  "acceptedAnswer": {
+   "@type": "Answer",
+   "text": "Birmingham Phoenix play home matches at Edgbaston, Birmingham; Welsh Fire play at Sophia Gardens, Cardiff. Edgbaston scores at 7.696 an over and Sophia Gardens at 7.164. Both figures come from T20 fixtures at those grounds — 6 and 7 matches respectively — not from The Hundred, whose innings is 20 balls shorter."
+  }
+ },
+ {
+  "@type": "Question",
+  "name": "Is it free?",
+  "acceptedAnswer": {
+   "@type": "Answer",
+   "text": "Yes. Live win probability, score projections and next-phase run forecasts are free, with no sign-up."
+  }
+ }
+
    ]
   }
  ]
@@ -140,20 +141,32 @@ footer a{color:#C8961E}</style>
     <a class="btn" href="/">🏏 See Live BIR PHX vs WEL FIR Prediction →</a>
   </div>
 
-  <h2>BIR PHX vs WEL FIR — how the model reads this fixture</h2>
+  <h2>Chasing costs more at Edgbaston than at Sophia Gardens &mdash; 16.8 runs against 2.0</h2>
   <div class="card">
-    <p>A hundred balls instead of a hundred and twenty compresses every phase of the innings. There are twenty fewer balls
-       to recover from a poor start, so the cost of a slow powerplay is higher than it would be in a T20 and the
-       death-overs arithmetic arrives sooner.</p>
-    <p>That is why the number above is only a starting point. From the first ball, the model works from balls remaining
-       and required rate, and infers pitch behaviour from the actual over-by-over run and wicket pattern rather than
-       assuming a venue average. A chase that looks behind on paper at Sophia Gardens is often still very much alive.</p>
+    <p>Across the T20 cricket we hold ball-by-ball data for at these two grounds, sides batting first at
+       <strong>Edgbaston</strong> average <strong>162.3</strong> and sides chasing average
+       <strong>145.5</strong> &mdash; a <strong>16.8-run gap</strong>, a clear edge to batting first. At
+       <strong>Sophia Gardens</strong> the same gap is <strong>2.0</strong> runs
+       (144.3 batting first, 142.3 chasing), one of the few grounds where chasing costs a side almost nothing.</p>
+    <p>Edgbaston scores at <strong>7.696</strong> an over overall against
+       <strong>7.164</strong> at Sophia Gardens. The chase at Edgbaston is at its worst through
+       overs <strong>17-20</strong>, where it manages just <strong>6.042</strong> an over and loses
+       <strong>2.833</strong> wickets; a first innings there peaks at
+       <strong>9.083</strong> in overs 9-12.</p>
+    <p><strong>What that means for this fixture:</strong> the toss is worth more at Edgbaston than at
+       Sophia Gardens, and a chase there that loses an early wicket is in more trouble than the scoreboard
+       suggests. At Sophia Gardens a side batting second has more room to absorb one.</p>
+    <p style="color:#64748B;font-size:13px;margin-top:14px">Small samples &mdash; <strong>6 matches</strong> at
+       Edgbaston, <strong>7</strong> at Sophia Gardens &mdash; and drawn from T20 fixtures at
+       those grounds rather than from The Hundred, whose innings is 20 balls shorter. Read them as ground character,
+       not as a forecast. The live model does not use these averages at all: once a ball is bowled it works from the
+       actual over-by-over run and wicket pattern.</p>
   </div>
 
   <h2>Team analysis</h2>
   <div class="grid">
-<div class="tcard"><div class="nm">Birmingham Phoenix</div><div class="sub">Edgbaston, Birmingham</div><div class="st"><strong>Key strength:</strong> Big-hitting side with a loud home crowd</div></div>
-<div class="tcard"><div class="nm">Welsh Fire</div><div class="sub">Sophia Gardens, Cardiff</div><div class="st"><strong>Key strength:</strong> Spin-friendly home surface</div></div>
+<div class="tcard"><div class="nm">Birmingham Phoenix</div><div class="sub">Edgbaston, Birmingham &middot; 6 T20s on record</div><div class="st"><strong>Batting first:</strong> 162.3 avg &middot; <strong>Chasing:</strong> 145.5 avg<br/><strong>Scoring rate:</strong> 7.696 an over<br/><strong>Chase low point:</strong> overs 17-20 at 6.042 an over, 2.833 wickets</div></div>
+<div class="tcard"><div class="nm">Welsh Fire</div><div class="sub">Sophia Gardens, Cardiff &middot; 7 T20s on record</div><div class="st"><strong>Batting first:</strong> 144.3 avg &middot; <strong>Chasing:</strong> 142.3 avg<br/><strong>Scoring rate:</strong> 7.164 an over<br/><strong>Chase low point:</strong> overs 5-8 at 6.571 an over, 0.714 wickets</div></div>
   </div>
 
   <h2>How we predict</h2>
@@ -165,9 +178,9 @@ footer a{color:#C8961E}</style>
   </div>
 
   <h2>BIR PHX vs WEL FIR — FAQs</h2>
-<div class="faq"><div class="q">Who will win Birmingham Phoenix vs Welsh Fire?</div><div class="a">Before a ball is bowled our model has Birmingham Phoenix at roughly 50% based on squad ratings and home conditions — but that number is only a starting point. Once the match begins it is recalculated after every ball from the live score, wickets in hand, required rate and how the pitch is actually behaving.</div></div>
-<div class="faq"><div class="q">Where is Birmingham Phoenix vs Welsh Fire played?</div><div class="a">Birmingham Phoenix play their home matches at Edgbaston, Birmingham; Welsh Fire play at Sophia Gardens, Cardiff. Venue matters a great deal in the 100-ball format — the same total is worth very different things at Trent Bridge and at Sophia Gardens.</div></div>
-<div class="faq"><div class="q">How does CricIntelligence predict this match?</div><div class="a">The model reads the live match rather than relying on a pre-match opinion: current score, wickets remaining, required run rate, over-by-over pitch behaviour, plus current batter and bowler form. Win probability is 81.5% accurate on a true holdout — trained on 2017-2024 data only, then tested against 2,546 matches from 2025-2026 it had never seen.</div></div>
+<div class="faq"><div class="q">Who will win Birmingham Phoenix vs Welsh Fire?</div><div class="a">We do not publish a pre-match favourite, because we have nothing to base one on that you could check. Our model is a live model: it produces nothing useful until a ball is bowled, and then recalculates after every one from the score, wickets in hand, required rate and how the pitch is actually playing. What the ground record does say is that the toss matters more at Edgbaston, where sides batting first average 162.3 and chasing sides 145.5 across 6 recorded T20s — a 16.8-run gap, against 2.0 at Sophia Gardens.</div></div>
+<div class="faq"><div class="q">Is it harder to chase at Edgbaston or Sophia Gardens?</div><div class="a">Edgbaston, on this data. The gap between batting first and chasing there is 16.8 runs against 2.0 at Sophia Gardens. A chase at Edgbaston is at its worst through overs 17-20, scoring 6.042 an over and losing 2.833 wickets.</div></div>
+<div class="faq"><div class="q">Where is Birmingham Phoenix vs Welsh Fire played?</div><div class="a">Birmingham Phoenix play home matches at Edgbaston, Birmingham; Welsh Fire play at Sophia Gardens, Cardiff. Edgbaston scores at 7.696 an over and Sophia Gardens at 7.164. Both figures come from T20 fixtures at those grounds — 6 and 7 matches respectively — not from The Hundred, whose innings is 20 balls shorter.</div></div>
 <div class="faq"><div class="q">Is it free?</div><div class="a">Yes. Live win probability, score projections and next-phase run forecasts are free, with no sign-up.</div></div>
 
   <div class="links">
