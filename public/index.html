@@ -1,12 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1RS1HZTW86"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-1RS1HZTW86');
+        /* Decide whether to load Analytics at all, before the tag is fetched.
+           GA4 already drops known crawlers off the IAB list, but not headless
+           browsers or scrapers presenting a normal Chrome UA - which is what the
+           Phoenix and Flint Hill sessions in our reports look like, both being
+           datacenter regions rather than places people watch cricket from.
+
+           Kept deliberately narrow. Wrongly dropping a real visitor is worse
+           than counting a bot, so this only checks signals a genuine browser
+           does not produce: the WebDriver flag every automation tool sets, an
+           openly-declared headless or bot user agent, and prerender.
+
+           Visit /?internal=1 once on a device to stop counting yourself from
+           then on; /?internal=0 undoes it. Own visits were a real share of a
+           5-a-day number. */
+        (function () {
+            var w = window, n = navigator, skip = false, why = '';
+            try {
+                var q = location.search;
+                if (q.indexOf('internal=1') > -1) localStorage.setItem('ci_no_analytics', '1');
+                if (q.indexOf('internal=0') > -1) localStorage.removeItem('ci_no_analytics');
+                if (localStorage.getItem('ci_no_analytics')) { skip = true; why = 'internal'; }
+            } catch (e) { /* private mode - carry on */ }
+
+            if (!skip && n.webdriver === true) { skip = true; why = 'webdriver'; }
+            if (!skip && /HeadlessChrome|PhantomJS|Puppeteer|Playwright|Lighthouse|GTmetrix|bot|crawler|spider/i.test(n.userAgent)) {
+                skip = true; why = 'ua';
+            }
+            if (!skip && document.visibilityState === 'prerender') { skip = true; why = 'prerender'; }
+
+            w.dataLayer = w.dataLayer || [];
+            function gtag() { w.dataLayer.push(arguments); }
+            w.gtag = gtag;
+            if (skip) { w.__ciAnalyticsSkipped = why; return; }
+
+            var s = document.createElement('script');
+            s.async = true;
+            s.src = 'https://www.googletagmanager.com/gtag/js?id=G-1RS1HZTW86';
+            document.head.appendChild(s);
+            gtag('js', new Date());
+            gtag('config', 'G-1RS1HZTW86');
+        })();
     </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
