@@ -147,6 +147,46 @@
     {
       "source": "/(.*)",
       "destination": "/index.html"
+    },
+    {
+      "source": "/predictions/ipl-predictions",
+      "destination": "/predictions/ipl-predictions.html"
+    },
+    {
+      "source": "/predictions/big-bash-predictions",
+      "destination": "/predictions/big-bash-predictions.html"
+    },
+    {
+      "source": "/predictions/psl-predictions",
+      "destination": "/predictions/psl-predictions.html"
+    },
+    {
+      "source": "/predictions/cpl-predictions",
+      "destination": "/predictions/cpl-predictions.html"
+    },
+    {
+      "source": "/predictions/sa20-predictions",
+      "destination": "/predictions/sa20-predictions.html"
+    },
+    {
+      "source": "/predictions/ilt20-predictions",
+      "destination": "/predictions/ilt20-predictions.html"
+    },
+    {
+      "source": "/predictions/lpl-predictions",
+      "destination": "/predictions/lpl-predictions.html"
+    },
+    {
+      "source": "/predictions/bpl-predictions",
+      "destination": "/predictions/bpl-predictions.html"
+    },
+    {
+      "source": "/predictions/the-hundred-predictions",
+      "destination": "/predictions/the-hundred-predictions.html"
+    },
+    {
+      "source": "/predictions/vitality-blast-predictions",
+      "destination": "/predictions/vitality-blast-predictions.html"
     }
   ]
 }
