@@ -127,6 +127,77 @@ GROUNDS = {
 }
 
 
+# Country -> home grounds, for the international matchup pages. Same exact-key,
+# grouped-duplicate rules as GROUNDS above. Most reuse a league's venue list
+# because the same stadiums host both; New Zealand has no franchise league here
+# and is listed on its own.
+COUNTRIES = {
+    "england": [
+        ("Lord's, London", ["lord's"]),
+        ("The Oval, London", ["kennington oval"]),
+        ("Edgbaston, Birmingham", ["edgbaston"]),
+        ("Old Trafford, Manchester", ["old trafford"]),
+        ("Trent Bridge, Nottingham", ["trent bridge"]),
+        ("The Rose Bowl, Southampton", ["the rose bowl"]),
+        ("Sophia Gardens, Cardiff", ["sophia gardens"]),
+        ("County Ground, Bristol", ["county ground, bristol"]),
+    ],
+    "india": [
+        ("Wankhede Stadium, Mumbai", ["wankhede stadium"]),
+        ("Eden Gardens, Kolkata", ["eden gardens"]),
+        ("M Chinnaswamy Stadium, Bengaluru",
+         ["m chinnaswamy stadium", "m chinnaswamy stadium, bengaluru", "m.chinnaswamy stadium"]),
+        ("MA Chidambaram Stadium, Chennai",
+         ["ma chidambaram stadium, chepauk", "ma chidambaram stadium, chepauk, chennai",
+          "ma chidambaram stadium"]),
+        ("Rajiv Gandhi International Stadium, Hyderabad",
+         ["rajiv gandhi international stadium, uppal",
+          "rajiv gandhi international stadium, uppal, hyderabad",
+          "rajiv gandhi international stadium"]),
+        ("Arun Jaitley Stadium, Delhi", ["arun jaitley stadium"]),
+        ("Narendra Modi Stadium, Ahmedabad", ["narendra modi stadium"]),
+    ],
+    "australia": [
+        ("Melbourne Cricket Ground", ["melbourne cricket ground"]),
+        ("Sydney Cricket Ground", ["sydney cricket ground"]),
+        ("Adelaide Oval", ["adelaide oval"]),
+        ("The Gabba, Brisbane", ["brisbane cricket ground, woolloongabba"]),
+        ("Perth Stadium", ["perth stadium"]),
+        ("Bellerive Oval, Hobart", ["bellerive oval", "bellerive oval, hobart"]),
+    ],
+    "pakistan": [
+        ("Gaddafi Stadium, Lahore", ["gaddafi stadium"]),
+        ("National Stadium, Karachi", ["national stadium, karachi"]),
+        ("Rawalpindi Cricket Stadium", ["rawalpindi cricket stadium"]),
+        ("Multan Cricket Stadium", ["multan cricket stadium"]),
+    ],
+    "south-africa": [
+        ("Newlands, Cape Town", ["newlands"]),
+        ("The Wanderers, Johannesburg", ["the wanderers stadium"]),
+        ("Kingsmead, Durban", ["kingsmead"]),
+        ("SuperSport Park, Centurion", ["supersport park"]),
+        ("St George's Park, Gqeberha", ["st george's park"]),
+    ],
+    "new-zealand": [
+        ("Eden Park, Auckland", ["eden park", "eden park, auckland"]),
+        ("Seddon Park, Hamilton", ["seddon park"]),
+        ("Hagley Oval, Christchurch", ["hagley oval, christchurch"]),
+        ("Bay Oval, Mount Maunganui", ["bay oval", "bay oval, mount maunganui"]),
+        ("University Oval, Dunedin", ["university oval, dunedin"]),
+    ],
+    "west-indies": [
+        ("Queen's Park Oval, Trinidad", ["queen's park oval, port of spain"]),
+        ("Kensington Oval, Barbados", ["kensington oval, bridgetown"]),
+        ("Providence Stadium, Guyana", ["providence stadium"]),
+        ("Brian Lara Stadium, Tarouba", ["brian lara stadium, tarouba"]),
+        ("Warner Park, St Kitts", ["warner park, basseterre"]),
+        ("Daren Sammy Stadium, St Lucia",
+         ["daren sammy national cricket stadium, gros islet",
+          "daren sammy national cricket stadium, gros islet, st lucia"]),
+    ],
+}
+
+
 def _merge(venues, keys):
     """Weighted merge of several keys that are the same physical ground."""
     parts = [venues[k] for k in keys if k in venues]
@@ -144,11 +215,12 @@ def _merge(venues, keys):
     }
 
 
-def league(name, venues=None, warn=True):
-    """Ground records for one league, plus league-wide weighted aggregates."""
+def league(name, venues=None, warn=True, table=None):
+    """Ground records for one league (or country), plus weighted aggregates."""
     venues = venues if venues is not None else json.load(open(VENUE_JSON, encoding="utf-8"))
+    src = table if table is not None else GROUNDS
     rows = []
-    for display, keys in GROUNDS[name]:
+    for display, keys in src[name]:
         missing = [k for k in keys if k not in venues]
         if missing and warn:
             print(f"  WARN {name}: key(s) not in venue_stats: {missing}")

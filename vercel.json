@@ -187,6 +187,38 @@
     {
       "source": "/predictions/vitality-blast-predictions",
       "destination": "/predictions/vitality-blast-predictions.html"
+    },
+    {
+      "source": "/predictions/international/england-vs-australia",
+      "destination": "/predictions/international/england-vs-australia.html"
+    },
+    {
+      "source": "/predictions/international/england-vs-india",
+      "destination": "/predictions/international/england-vs-india.html"
+    },
+    {
+      "source": "/predictions/international/england-vs-new-zealand",
+      "destination": "/predictions/international/england-vs-new-zealand.html"
+    },
+    {
+      "source": "/predictions/international/england-vs-pakistan",
+      "destination": "/predictions/international/england-vs-pakistan.html"
+    },
+    {
+      "source": "/predictions/international/england-vs-south-africa",
+      "destination": "/predictions/international/england-vs-south-africa.html"
+    },
+    {
+      "source": "/predictions/international/england-vs-west-indies",
+      "destination": "/predictions/international/england-vs-west-indies.html"
+    },
+    {
+      "source": "/predictions/international/india-vs-pakistan",
+      "destination": "/predictions/international/india-vs-pakistan.html"
+    },
+    {
+      "source": "/predictions/international/australia-vs-india",
+      "destination": "/predictions/international/australia-vs-india.html"
     }
   ]
 }
