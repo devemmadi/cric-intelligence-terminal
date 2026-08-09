@@ -106,6 +106,13 @@
       ]
     }
     </script>
+    <!-- The WebSite block below deliberately has no SearchAction. One used to
+         declare a sitelinks searchbox at /?q={search_term_string}, but nothing
+         on the site reads a q parameter - there is no search. Google took the
+         template literally, crawled /?q={search_term_string} as a real page,
+         and filed it under "Duplicate without user-selected canonical" in
+         Search Console. Do not add it back unless search actually exists.
+         Note JSON has no comments - keep notes like this outside the tag. -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -113,15 +120,7 @@
       "name": "CricIntelligence",
       "alternateName": "cricintelligence",
       "url": "https://www.cricintelligence.com",
-      "description": "Free AI cricket predictions — live win probability, score projections, player form and partnership analysis for T20 and international cricket.",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://www.cricintelligence.com/?q={search_term_string}"
-        },
-        "query-input": "required name=search_term_string"
-      }
+      "description": "Free AI cricket predictions — live win probability, score projections, player form and partnership analysis for T20 and international cricket."
     }
     </script>
 <script type="application/ld+json">
