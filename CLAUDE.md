@@ -417,6 +417,14 @@ Note the React routes for these slugs (`TheHundred2026.jsx`, `VitalityBlast2026.
 - Content mirrors `MatchPredictionPage.jsx` (same rating-derived pre-match %, same clamp of 38-72) and reuses the site's evidenced figures — 81.5% holdout, 335 venues. Don't let the static and React copies drift on accuracy claims.
 - To extend to Blast/IPL matchups, add a team dict alongside `HUNDRED` and pass it to `page()`; the rest is competition-agnostic.
 
+## Telegram Channel CTA (Aug 9 2026)
+The site had **zero mention of the Telegram channel** (`https://t.me/CricIntelligence`) anywhere, despite the channel being actively promoted externally (hourly live-match posts). Real site traffic (organic search +240% w/w) had no way to discover or join it — the actual growth bottleneck, not posting frequency. Added a plain `📢 Join our Telegram for live updates` / `📢 Join us on Telegram` link (gold, `C.gold`) in three places:
+- `SubscribeCard.jsx` compact version (desktop sidebar, below the email form)
+- `SubscribeCard.jsx` full version (mobile, below the email form, its own divider)
+- `RGFooter.jsx` (site-wide footer, first item in the links row)
+
+All three link directly to `https://t.me/CricIntelligence`, `target="_blank"`. No tracking/UTM params attached (Telegram doesn't support query-string attribution the way the affiliate links do) — if channel-growth attribution is ever needed, that's the gap to fill.
+
 ## Common Bugs Fixed (most recent first)
 - Matches tab stuck forever on "Loading matches..." when the tab loads in the background/
   unfocused (Jul 26 2026): `fetchMatches()` in `useMatchData.js` bailed via `if

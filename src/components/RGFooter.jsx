@@ -15,6 +15,9 @@ export default function RGFooter() {
                 {/* Top row — links */}
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 14 }}>
                     <div style={{ display: "flex", gap: 20, flexWrap: "wrap", alignItems: "center" }}>
+                        <a href="https://t.me/CricIntelligence" target="_blank" rel="noopener noreferrer"
+                            style={{ fontSize: 12, color: "#C8961E", textDecoration: "none", fontWeight: 700, display: "flex", alignItems: "center", gap: 5 }}
+                        >📢 Join us on Telegram</a>
                         {[
                             ["/", "Home"],
                             ["/about", "About Us"],

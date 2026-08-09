@@ -61,6 +61,10 @@ export default function SubscribeCard({ compact = false }) {
                 ) : (
                     <div style={{ fontSize: 11, color: C.green, fontWeight: 700 }}>✓ You're on the list</div>
                 )}
+
+                <a href="https://t.me/CricIntelligence" target="_blank" rel="noopener noreferrer"
+                    style={{ fontSize: 11, color: C.gold, fontWeight: 700, textDecoration: "none", textAlign: "center" }}
+                >📢 Join our Telegram for live updates</a>
             </div>
         );
     }
@@ -108,6 +112,15 @@ export default function SubscribeCard({ compact = false }) {
             ) : (
                 <div style={{ fontSize: 13, color: C.green, fontWeight: 700 }}>✓ You're on the list — we'll email you before big matches</div>
             )}
+
+            <div style={{ display: "flex", alignItems: "center", gap: 8, margin: "12px 0 10px" }}>
+                <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
+                <span style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", fontWeight: 600 }}>or</span>
+                <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.08)" }} />
+            </div>
+            <a href="https://t.me/CricIntelligence" target="_blank" rel="noopener noreferrer"
+                style={{ display: "block", background: "rgba(200,150,30,0.1)", border: `1px solid ${C.gold}50`, borderRadius: 9, padding: "10px 12px", color: C.gold, fontSize: 13, fontWeight: 800, textDecoration: "none", textAlign: "center" }}
+            >📢 Join our Telegram for live updates</a>
         </div>
     );
 }
