@@ -17,13 +17,37 @@
            then on; /?internal=0 undoes it. Own visits were a real share of a
            5-a-day number. */
         (function () {
-            var w = window, n = navigator, skip = false, why = '';
+            var w = window, n = navigator, skip = false, why = '', toast = '';
             try {
                 var q = location.search;
-                if (q.indexOf('internal=1') > -1) localStorage.setItem('ci_no_analytics', '1');
-                if (q.indexOf('internal=0') > -1) localStorage.removeItem('ci_no_analytics');
+                // Toggling is invisible otherwise, so it is impossible to tell whether
+                // it worked. Confirm on screen when the switch is actually used.
+                if (q.indexOf('internal=1') > -1) {
+                    localStorage.setItem('ci_no_analytics', '1');
+                    toast = 'This device is no longer counted in Analytics.';
+                }
+                if (q.indexOf('internal=0') > -1) {
+                    localStorage.removeItem('ci_no_analytics');
+                    toast = 'This device is counted in Analytics again.';
+                }
                 if (localStorage.getItem('ci_no_analytics')) { skip = true; why = 'internal'; }
             } catch (e) { /* private mode - carry on */ }
+
+            if (toast) {
+                document.addEventListener('DOMContentLoaded', function () {
+                    var d = document.createElement('div');
+                    d.textContent = toast;
+                    d.setAttribute('style', 'position:fixed;left:50%;top:16px;transform:translateX(-50%);' +
+                        'z-index:2147483647;background:#10B981;color:#04231a;font:600 13px/1.4 Inter,system-ui,sans-serif;' +
+                        'padding:11px 18px;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,.35);max-width:88vw;' +
+                        'text-align:center;cursor:pointer');
+                    d.title = 'Tap to dismiss';
+                    d.onclick = function () { d.remove(); };
+                    document.body.appendChild(d);
+                    // Long enough to actually read on a phone; tap clears it sooner.
+                    setTimeout(function () { d.remove(); }, 15000);
+                });
+            }
 
             if (!skip && n.webdriver === true) { skip = true; why = 'webdriver'; }
             if (!skip && /HeadlessChrome|PhantomJS|Puppeteer|Playwright|Lighthouse|GTmetrix|bot|crawler|spider/i.test(n.userAgent)) {
