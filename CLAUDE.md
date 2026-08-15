@@ -35,6 +35,9 @@ src/components/
 ├── hooks/
 │   └── useMatchData.js     ← ALL API logic (fetchMatches + fetchPred)
 ├── predictions/
+│   ├── MatchupCard.jsx     ← Batter vs current bowler head-to-head (Aug 15 2026)
+│   ├── FeedbackPrompt.jsx  ← Asks what looked wrong, after 4 min (Aug 15 2026)
+│   ├── PlayerMarkets.jsx   ← Player runs Over/Under (Jul 25 2026)
 │   ├── PredictionsTab.jsx  ← Main prediction UI (2000+ lines)
 │   ├── LiveEngine.jsx      ← Next 3 overs live prediction panel
 │   └── ScoreboardTab.jsx   ← Full batting/bowling scorecard (polls /match/<id>/scoreboard every 12s)
@@ -163,6 +166,74 @@ Milestone logic:
 - Only renders when `!pred.matchEnded && pred.batters?.length > 0`
 
 Rendered in `PredictionsTab.jsx` after `LivePitchReadCard`, before sidebar.
+
+## MatchupCard.jsx — Batter vs Bowler Head-to-Head (Aug 15, 2026)
+New file: `src/components/predictions/MatchupCard.jsx`, rendered in `PredictionsTab.jsx`
+just before `PlayerMarkets`.
+
+Reads `pred.matchups` (added to the backend the same day). MATCHUP_DB has held 64,968
+of these records since the model was built and only the model ever read them —
+"Kohli has faced Ashwin 157 balls for 181, out once" needs no explaining the way a
+probability does.
+
+A **record, not a forecast**: balls, runs, dismissals, strike rate, with the ball count
+shown so a reader can weigh a thin sample. Colour keys off strike rate only —
+dismissals are too sparse in these samples to read as good or bad. The backend drops
+pairs under 6 balls, so the card renders nothing rather than something misleading.
+
+**`useMatchData.js` merge gotcha:** `merged` starts from the `/match/<id>` response and
+copies only *explicitly named* fields across from `/predict`. A field added to
+`/predict` alone is silently dropped and looks like a broken component. `matchups` is
+named there for that reason. **Add any new prediction field to that list.**
+
+## FeedbackPrompt.jsx — "What looked wrong?" (Aug 15, 2026)
+New file: `src/components/predictions/FeedbackPrompt.jsx`, rendered in `PredictionsTab.jsx`
+next to the sticky bar. POSTs to `/feedback`.
+
+The question is deliberately **not** "was this accurate?" — nobody can judge a
+probability from one match (a 68% call is meant to be wrong a third of the time), so a
+viewer scoring one result is scoring noise. It asks whether the number matched what
+they were watching, and on "no", *when* it looked wrong. That names a defect; a star
+rating never would.
+
+- Waits **4 minutes** (`MIN_WATCH_MS`) so it asks people who used the thing
+- Once per match per browser (`ci_fb_<matchId>` in localStorage), answered or dismissed
+- POST is fire-and-forget — a failed request must never interrupt someone watching
+- **`?feedback=now`** shows it immediately and ignores the once-per-match record
+
+## Analytics bot + internal-traffic filter (Aug 15, 2026)
+In `public/index.html`, above the gtag snippet. The tag is now loaded **conditionally**.
+
+GA4 drops known crawlers off the IAB list but not headless browsers or scrapers
+presenting an ordinary Chrome UA — the Phoenix and Prineville sessions in the reports
+are datacenter regions, not places people watch cricket. The check is deliberately
+narrow (wrongly dropping a real visitor is worse than counting a bot): only
+`navigator.webdriver`, an openly declared headless/bot UA, and prerendered tabs.
+**No fingerprinting** — nothing on screen size or plugins, which real browsers trip.
+
+**`/?internal=1`** stops counting that device (stored in localStorage, so unlike GA's
+IP-based filter it survives mobile data); **`/?internal=0`** undoes it. Both show a
+15-second on-screen confirmation — without it there was no way to tell it had worked.
+
+## Static league + international pages (Jul 29, 2026)
+Generated, not hand-written — `scripts/gen_league_pages.py` and
+`scripts/gen_international_pages.py`, both fed by `scripts/league_data.py`.
+
+10 evergreen league pages (`/predictions/<slug>-predictions`) and 8 international
+matchups (`/predictions/international/<a>-vs-<b>`), each built from that competition's
+real ground records so no two read alike. **URLs carry no year** — fixture pages go
+stale when a competition ends; league pages earn traffic every season.
+
+**Two data traps `league_data.py` exists to prevent** (both found before publishing):
+- Fuzzy venue matching is wrong. "oval" pulls in Botswana, Entebbe and Kuala Lumpur;
+  "national stadium" merges Karachi, Hyderabad and Mirpur. **Every venue is an exact key.**
+- One ground appears under several keys — "m chinnaswamy stadium",
+  "m chinnaswamy stadium, bengaluru", "m.chinnaswamy stadium" are one venue with 111
+  matches, not three. Keys are grouped per ground and averaged weighted by match count.
+
+A first pass without these reported IPL at 844 matches across 25 venues; correct is
+**569 across 10**. Re-run the generators after editing `venue_stats.json`, and check new
+keywords both ways — must-match and must-not-match (Ranji, Vijay Hazare, ECA European Cup).
 
 ## PlayerMarkets.jsx — Player Runs Over/Under (Jul 25, 2026)
 New file: `src/components/predictions/PlayerMarkets.jsx`, rendered in `PredictionsTab.jsx`
