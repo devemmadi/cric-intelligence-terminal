@@ -8,6 +8,7 @@ import LiveEngine from "./LiveEngine";
 import ScoreboardTab from "./ScoreboardTab";
 import BatterMilestones from "./BatterMilestones";
 import PlayerMarkets from "./PlayerMarkets";
+import FeedbackPrompt from "./FeedbackPrompt";
 import UserPrediction from "./UserPrediction";
 import AiCalledIt from "./AiCalledIt";
 import AffiliateBanner, { useAffiliateBrand } from "../AffiliateBanner";
@@ -3005,6 +3006,9 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                 </div>
 
             </aside>
+
+            {/* ── FEEDBACK PROMPT — appears after a few minutes' watching, once per match ── */}
+            {!isEnded && <FeedbackPrompt pred={pred} matchId={selectedMatch?.id || pred?.id} />}
 
             {/* ── STICKY AFFILIATE BAR — mobile only, fixed bottom, dismissible ──
                  Renders the primary partner, so a visitor never sees two competing
