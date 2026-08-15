@@ -9,6 +9,7 @@ import ScoreboardTab from "./ScoreboardTab";
 import BatterMilestones from "./BatterMilestones";
 import PlayerMarkets from "./PlayerMarkets";
 import FeedbackPrompt from "./FeedbackPrompt";
+import MatchupCard from "./MatchupCard";
 import UserPrediction from "./UserPrediction";
 import AiCalledIt from "./AiCalledIt";
 import AffiliateBanner, { useAffiliateBrand } from "../AffiliateBanner";
@@ -2616,6 +2617,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             )}
 
                             {/* Player runs Over/Under markets — model probability, not odds */}
+                            <MatchupCard pred={pred} />
                             <PlayerMarkets pred={pred} />
 
 

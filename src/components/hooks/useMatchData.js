@@ -49,6 +49,13 @@ export default function useMatchData() {
                 if (predData && predData.team1) {
                     merged.aiProbability = predData.aiProbability ?? scorecardData.aiProbability;
                     merged.nextOvers = (predData.nextOvers?.length > 0) ? predData.nextOvers : (scorecardData.nextOvers?.length > 0 ? scorecardData.nextOvers : []);
+                    // merged starts from scorecardData, so anything not named here is
+                    // whatever /match/<id> returned. Both endpoints go through
+                    // build_pred today so matchups arrives either way, but listing it
+                    // makes the dependency explicit: a field added to /predict alone
+                    // would otherwise be silently dropped here and look like a broken
+                    // feature rather than a merge omission.
+                    merged.matchups = (predData.matchups?.length > 0) ? predData.matchups : (scorecardData.matchups || []);
                     merged.overHistory = (predData.overHistory?.length > 0) ? predData.overHistory : (scorecardData.overHistory || []);
                     merged.pitchCondition = predData.pitchCondition ?? scorecardData.pitchCondition;
                     merged.weatherImpact = predData.weatherImpact ?? scorecardData.weatherImpact;
