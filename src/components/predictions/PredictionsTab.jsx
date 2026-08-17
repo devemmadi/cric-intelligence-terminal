@@ -12,7 +12,7 @@ import FeedbackPrompt from "./FeedbackPrompt";
 import MatchupCard from "./MatchupCard";
 import UserPrediction from "./UserPrediction";
 import AiCalledIt from "./AiCalledIt";
-import AffiliateBanner, { useAffiliateBrand } from "../AffiliateBanner";
+import AffiliateBanner, { useAffiliateBrand, isUkVisitor } from "../AffiliateBanner";
 import BetwayBanner from "../BetwayBanner";
 import { affiliateHref } from "../shared/affiliates";
 import AdUnit from "../shared/AdUnit";
@@ -1924,6 +1924,10 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
     // this visitor was assigned so the bar can't contradict the banners.
     const [showStickyBar, setShowStickyBar] = useState(() => !localStorage.getItem("bw_dismissed"));
     const stickyBrand = useAffiliateBrand();
+    // Both offers are UK-only and reject everyone else at signup, so every
+    // affiliate surface hides outside the UK. AffiliateBanner gates itself;
+    // these three are rendered directly and need the same check.
+    const showAffiliates = isUkVisitor();
     useEffect(() => {
         const cur = pred?.score;
         if (cur == null) return;
@@ -2419,7 +2423,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             {/* ── SECONDARY PARTNER — mobile, compact strip well below the
                                  primary card so the two never sit together ── */}
                             <div className="mob-intel" style={{ marginBottom: 14 }}>
-                                <BetwayBanner compact={true} placement="mobile-secondary" />
+                                {showAffiliates && <BetwayBanner compact={true} placement="mobile-secondary" />}
                             </div>
 
                             {/* ── MINI TRUST BLOCK ── */}
@@ -2994,7 +2998,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
 
                 {/* Secondary partner — compact strip, kept far from the primary
                     card at the top so the sidebar doesn't read as stacked ads. */}
-                <BetwayBanner compact={true} placement="sidebar-secondary" />
+                {showAffiliates && <BetwayBanner compact={true} placement="sidebar-secondary" />}
 
                 <div style={{ textAlign: "center" }}>
                     <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255,255,255,0.25)", letterSpacing: 1.5, marginBottom: 8 }}>LIVE CRICKET INTELLIGENCE ENGINE</div>
@@ -3017,7 +3021,7 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                  brands at once. See AffiliateBanner.jsx.
                  Do NOT set `display` inline on the bar below — an inline value beats
                  the display:none in the .mob-only class and leaks it onto desktop. */}
-            {showStickyBar && (
+            {showStickyBar && showAffiliates && (
                 <div className="mob-only" style={{
                     // Sit clear of the mobile nav rather than guessing at its height.
                     position: "fixed", bottom: "calc(var(--mob-nav-h, 79px) + 6px)", left: 0, right: 0, zIndex: 1200,

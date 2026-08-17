@@ -20,12 +20,44 @@ import { AFFILIATES } from "./shared/affiliates";
  * comparison to read if William Hill also fails to convert.
  *
  * To change which partner is prominent, change PRIMARY — every surface follows.
- *
- * Geo is deliberately not part of this: both offers are UK (`en-gb`, £
- * denominated), so there is currently nothing to route non-UK visitors to.
  */
 
 const PRIMARY = "williamhill";
+
+/*
+ * Both offers are UK-only: "new UK customers", £ denominated, and William Hill
+ * verifies identity against UK records. A visitor outside the UK who clicks gets
+ * as far as "Unable to create an account" — confirmed by walking it through.
+ * Those clicks cannot convert, so showing the banner to them costs trust and
+ * returns nothing.
+ *
+ * It also matters for the Play Store wrapper: Google scrutinises gambling
+ * affiliate links, and geo-restricting them is what the large cricket apps
+ * already do. Not showing them outside the UK removes most of that risk.
+ *
+ * Detection is the browser's own timezone — no API call, no IP lookup, nothing
+ * that leaves the device and nothing to consent to. It is approximate: a UK user
+ * on a VPN sees nothing, someone abroad with their clock on London time sees the
+ * banner. Both are acceptable; over-showing a UK-only offer is the failure worth
+ * avoiding, and this errs toward showing less.
+ *
+ * ?geo=uk forces it on for testing, ?geo=off forces it off.
+ */
+const UK_ZONES = ["Europe/London", "Europe/Belfast", "GB", "GB-Eire"];
+
+export function isUkVisitor() {
+    try {
+        const q = typeof window !== "undefined" ? window.location.search : "";
+        if (q.indexOf("geo=uk") > -1) return true;
+        if (q.indexOf("geo=off") > -1) return false;
+        const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+        if (UK_ZONES.indexOf(tz) > -1) return true;
+        // Fallback for browsers that report no timezone at all.
+        return /^en-GB$/i.test((navigator.language || ""));
+    } catch (e) {
+        return false;   // can't tell -> don't show a UK-only offer
+    }
+}
 
 /** The partner that owns the prominent placements. */
 export function useAffiliateBrand() {
@@ -33,6 +65,7 @@ export function useAffiliateBrand() {
 }
 
 export default function AffiliateBanner({ style = {}, placement = "" }) {
+    if (!isUkVisitor()) return null;
     return PRIMARY === "williamhill"
         ? <WilliamHillBanner style={style} placement={placement} />
         : <BetwayBanner style={style} placement={placement} />;
