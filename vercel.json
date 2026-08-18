@@ -145,10 +145,6 @@
       "destination": "/predictions/london-spirit-vs-welsh-fire-2026.html"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    },
-    {
       "source": "/predictions/ipl-predictions",
       "destination": "/predictions/ipl-predictions.html"
     },
@@ -219,6 +215,14 @@
     {
       "source": "/predictions/international/australia-vs-india",
       "destination": "/predictions/international/australia-vs-india.html"
+    },
+    {
+      "source": "/.well-known/assetlinks.json",
+      "destination": "/.well-known/assetlinks.json"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
