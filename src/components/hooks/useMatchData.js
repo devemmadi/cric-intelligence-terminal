@@ -20,6 +20,10 @@ export default function useMatchData() {
         try { return !localStorage.getItem("ci_matches_cache"); } catch { return true; }
     });
     const [isPredLoading, setIsPredLoading] = useState(false);
+    // Cricbuzz quota state. Surfaced so the UI can say live updates are paused:
+    // the backend keeps serving the last known matches, which otherwise look live
+    // and simply never change — worse for a visitor than showing nothing.
+    const [dataStale, setDataStale] = useState(false);
 
     const selectedMatchRef = useRef(null);
     // Incremented every time a pred fetch starts — used to discard stale responses
@@ -126,6 +130,11 @@ export default function useMatchData() {
             if (!data) return;
             const list = Array.isArray(data) ? data : data.matches || data.data || [];
             const quotaExhausted = !Array.isArray(data) && data?.quotaExhausted;
+            // Set regardless of whether the list is empty. When quota runs out
+            // mid-match the backend keeps returning that match with isLive true,
+            // so the old empty-list-only check never fired and a frozen scoreline
+            // was presented as live.
+            setDataStale(!!quotaExhausted);
             if (!list.length) {
                 if (quotaExhausted) {
                     // Mark any live matches as ENDED so the sidebar doesn't freeze
@@ -250,5 +259,5 @@ export default function useMatchData() {
         return () => clearInterval(t);
     }, [selectedMatch?.id, fetchPred]);
 
-    return { liveMatches, selectedMatch, selectMatch, pred, liveStatus, isFirstLoad, isPredLoading };
+    return { liveMatches, selectedMatch, selectMatch, pred, liveStatus, isFirstLoad, isPredLoading, dataStale };
 }

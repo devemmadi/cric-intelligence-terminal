@@ -56,7 +56,7 @@ export default function CricIntelligence() {
         }
     };
 
-    const { liveMatches, selectedMatch, selectMatch, pred, liveStatus, isFirstLoad, isPredLoading } = useMatchData();
+    const { liveMatches, selectedMatch, selectMatch, pred, liveStatus, isFirstLoad, isPredLoading, dataStale } = useMatchData();
 
     useEffect(() => { const t = setInterval(() => setLiveTime(new Date()), 1000); return () => clearInterval(t); }, []);
 
@@ -156,6 +156,23 @@ export default function CricIntelligence() {
                 </div>
             </nav>
 
+            {/* Live feed paused. Said plainly rather than left to be discovered:
+                when the Cricbuzz quota runs out the backend keeps serving the last
+                known matches, so a frozen scoreline otherwise reads as live and
+                simply never moves — which looks like a broken prediction rather
+                than a paused feed. Everything else on the site still works. */}
+            {dataStale && (
+                <div style={{
+                    background: "rgba(245,158,11,0.12)",
+                    borderBottom: `1px solid ${C.amber}55`,
+                    color: C.amber, fontSize: 12, lineHeight: 1.5,
+                    padding: "9px 16px", textAlign: "center",
+                }}>
+                    <strong>Live scores are paused</strong> — our data feed has hit its monthly
+                    limit and resets shortly. Scores below may be out of date. Ground records and
+                    accuracy pages are unaffected.
+                </div>
+            )}
 
             {/* Add to Home Screen banner */}
             {showInstallBanner && (

@@ -496,6 +496,23 @@ The site had **zero mention of the Telegram channel** (`https://t.me/CricIntelli
 
 All three link directly to `https://t.me/CricIntelligence`, `target="_blank"`. No tracking/UTM params attached (Telegram doesn't support query-string attribution the way the affiliate links do) — if channel-growth attribution is ever needed, that's the gap to fill.
 
+## Quota-paused banner — dataStale (Aug 19 2026)
+`useMatchData.js` returns `dataStale`; `CricIntelligence.jsx` renders an amber strip
+under the nav when it is true.
+
+The backend sets `quotaExhausted` on `/matches` when the Cricbuzz monthly allowance
+runs out, and **keeps serving the last known matches** rather than an empty list. The
+hook only acted on that flag inside `if (!list.length)`, so when quota ran out
+*mid-match* — which is exactly what happened on Aug 19, one live match still in the
+payload — nothing fired at all: a frozen scoreline kept rendering as live and simply
+never moved. For a visitor that reads as a broken prediction, which is worse than an
+empty site, so `setDataStale` now runs on every response regardless of list length.
+The existing empty-list handling (mark matches ENDED, clear cached pred) is unchanged.
+
+The banner says the feed is paused and resets shortly, and points out that ground
+records and accuracy pages are unaffected — those pages are static and genuinely still
+work, so they are the safe thing to promote during a quota gap.
+
 ## Common Bugs Fixed (most recent first)
 - Matches tab stuck forever on "Loading matches..." when the tab loads in the background/
   unfocused (Jul 26 2026): `fetchMatches()` in `useMatchData.js` bailed via `if
