@@ -205,6 +205,7 @@ export default function AccuracyDashboard() {
     const overall = wp.overall_accuracy || 0;
     const ipl_acc = wp.ipl_accuracy || 0;
     const byChk   = wp.by_checkpoint || {};
+    const calib   = wp.calibration || [];
     const recent  = data?.recent_matches || [];
 
     const navStyle = {
@@ -365,6 +366,64 @@ export default function AccuracyDashboard() {
 
                             <IndustryComparison ourAccuracy={overall} />
                         </div>
+
+                        {/* Calibration. This is the section that answers "the headline is
+                            just a marketing number" - a hit-rate can be inflated by only ever
+                            backing the obvious favourite, but a calibration curve cannot.
+                            The data was already in /backtest-results and simply was not shown. */}
+                        {calib.length > 0 && (
+                            <div style={{
+                                background: C.card, border: `1px solid ${C.border}`,
+                                borderRadius: 12, padding: 24, marginBottom: 32,
+                            }}>
+                                <h3 style={{ color: C.text, fontSize: 16, fontWeight: 700, margin: "0 0 4px" }}>
+                                    Does &ldquo;70%&rdquo; Actually Mean 70%?
+                                </h3>
+                                <p style={{ color: C.muted, fontSize: 12, marginBottom: 18, lineHeight: 1.6 }}>
+                                    A hit-rate can be inflated by only ever backing the obvious favourite.
+                                    This cannot. Every prediction is grouped by what the model said, then
+                                    checked against how often those situations actually ended in a win.
+                                    Closer to the diagonal is better.
+                                </p>
+                                <div style={{ overflowX: "auto" }}>
+                                    <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 340 }}>
+                                        <thead>
+                                            <tr>
+                                                {["Model said", "Predictions", "Actually won", "Gap"].map((h, i) => (
+                                                    <th key={h} style={{
+                                                        textAlign: i === 0 ? "left" : "right",
+                                                        color: C.muted, fontWeight: 600, fontSize: 11,
+                                                        letterSpacing: 0.5, textTransform: "uppercase",
+                                                        padding: "0 8px 10px", borderBottom: `1px solid ${C.border}`,
+                                                    }}>{h}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {calib.map((r) => {
+                                                const mid = (r.lo + r.hi) / 2;
+                                                const gap = Math.abs(r.actual_win_rate - mid);
+                                                return (
+                                                    <tr key={r.bucket}>
+                                                        <td style={{ padding: "9px 8px", color: C.text, fontWeight: 600, borderBottom: `1px solid ${C.border}` }}>{r.bucket}</td>
+                                                        <td style={{ padding: "9px 8px", color: C.muted, textAlign: "right", borderBottom: `1px solid ${C.border}` }}>{r.n.toLocaleString()}</td>
+                                                        <td style={{ padding: "9px 8px", color: C.text, fontWeight: 700, textAlign: "right", borderBottom: `1px solid ${C.border}` }}>{r.actual_win_rate}%</td>
+                                                        <td style={{ padding: "9px 8px", textAlign: "right", borderBottom: `1px solid ${C.border}`, color: gap <= 5 ? C.green : C.amber, fontWeight: 600 }}>
+                                                            {gap.toFixed(1)}
+                                                        </td>
+                                                    </tr>
+                                                );
+                                            })}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {wp.calibration_note && (
+                                    <p style={{ color: C.muted, fontSize: 11, marginTop: 14, lineHeight: 1.6 }}>
+                                        {wp.calibration_note}
+                                    </p>
+                                )}
+                            </div>
+                        )}
 
                         {/* Score prediction */}
                         {sp.mae && (

@@ -533,6 +533,28 @@ should be the first thing a stranded visitor sees.
 link to a page that does not exist 404s — worse than the empty state it replaces.
 Re-check with a HEAD request per URL after editing.
 
+## Accuracy page now shows the calibration table (Aug 22 2026)
+`AccuracyDashboard.jsx` reads `win_probability.calibration` from `/backtest-results`
+and renders it after `IndustryComparison`.
+
+**Why:** a Google AI review said the 81.5% was "just a marketing number". Half fair —
+the figure is a real true-holdout measurement, but the page showed only the number and
+never the evidence, so a sceptic had nothing to check.
+
+**The calibration table is the part that cannot be faked.** A hit-rate can be inflated
+by only ever backing the obvious favourite; a calibration curve cannot. Grouped by what
+the model said, then compared with what actually happened, across 19,340 predictions:
+3.8% / 15.3% / 25.4% / 34.5% / 43.9% / 50.4% / 62.1% / 72.5% / 81.1% / 96.1% — monotonic,
+worst gap 4.6 points. The data had been in the endpoint since Aug 15 and simply was not
+rendered.
+
+**Still unanswered, and it is the sharper criticism:** live win probability adds little
+when the scoreboard already makes the answer obvious. Value only exists where a viewer's
+read is uncertain or wrong — early innings (over 6 is 79.2%), close games, and moments
+where the model disagrees with the obvious read. Presenting the number identically at
+every stage invites exactly this complaint. Not addressed yet; it is a product change,
+not a model change.
+
 ## Common Bugs Fixed (most recent first)
 - Matches tab stuck forever on "Loading matches..." when the tab loads in the background/
   unfocused (Jul 26 2026): `fetchMatches()` in `useMatchData.js` bailed via `if
