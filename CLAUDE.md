@@ -555,6 +555,51 @@ where the model disagrees with the obvious read. Presenting the number identical
 every stage invites exactly this complaint. Not addressed yet; it is a product change,
 not a model change.
 
+## ContrarianCall.jsx — shows the number only when it contradicts the scoreboard (Aug 22 2026)
+New file: `src/components/predictions/ContrarianCall.jsx`, rendered in `PredictionsTab.jsx`
+immediately above `HeroDecision`.
+
+**Why:** a Google AI review made the sharpest criticism the site has had — live win
+probability mostly tells you what you can already see. A side needing 20 off 30 with
+eight wickets is obviously winning; printing "89%" beside that is decoration, and a
+reader is right to say so. The number only earns attention when the viewer's own read
+would be **wrong**.
+
+So this card renders **only** when the model and the plain scoreboard read disagree by
+15+ points, and is silent otherwise. It is meant to be rare.
+
+**`plainRead()` is a model of a VIEWER, not of cricket.** It is a crude proxy for what
+someone concludes from "are they ahead of the rate" and "how many wickets are left". It
+is never backtested and **its value is never displayed** — only the direction of the gap
+is. Putting that percentage on screen would create an unvalidated second model competing
+with the real one, which is exactly what `PlayerMarkets.jsx` refuses to do. Do not.
+
+**Second innings only**, and only from over 4. A chase has an explicit target, so "what
+the scoreboard plainly says" is a real shared thing; in the first innings there is no
+target and nothing to disagree with.
+
+Verified against eight hand-built states: obvious win (gap 6) and obvious loss (gap 3)
+stay silent, ordinary close game (gap 3) stays silent, while "ahead on rate but 8 down"
+(gap -15) and "behind on rate but all wickets intact" (gap +20) both fire. Innings 1,
+over 2, and ended matches are all correctly suppressed.
+
+**If it starts appearing every over, raise `MIN_GAP`.** A card that always shows teaches
+viewers to ignore it, which defeats the entire purpose.
+
+## Non-UK visitors now see an ad unit where the bookmaker banner would be (Aug 22 2026)
+`PredictionsTab.jsx` mobile slot: `showAffiliates ? <AffiliateBanner/> : <AdUnit/>`.
+
+`isUkVisitor()` already hid the bookmaker banners outside the UK, which left mobile
+visitors from India and Bangladesh — a growing share of real traffic — seeing nothing at
+all in that slot. The desktop sidebar has carried an `AdUnit` all along; mobile had none.
+
+**The geo gate is a legal requirement, not just a conversion tweak.** India's Promotion
+and Regulation of Online Gaming Act 2025 bans advertising real-money gaming outright,
+with penalties up to 2 years' imprisonment and a ₹50 lakh fine, and a regulator (OGAI)
+was created in May 2026 to enforce it. Gambling is illegal in Bangladesh. **Never remove
+the geo gate, and do not add a bookmaker aimed at those markets** — AdSense is the
+monetisation that is both legal and available there.
+
 ## Common Bugs Fixed (most recent first)
 - Matches tab stuck forever on "Loading matches..." when the tab loads in the background/
   unfocused (Jul 26 2026): `fetchMatches()` in `useMatchData.js` bailed via `if

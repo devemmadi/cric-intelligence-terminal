@@ -16,6 +16,7 @@ import AffiliateBanner, { useAffiliateBrand, isUkVisitor } from "../AffiliateBan
 import BetwayBanner from "../BetwayBanner";
 import { affiliateHref } from "../shared/affiliates";
 import AdUnit from "../shared/AdUnit";
+import ContrarianCall from "./ContrarianCall";
 import SubscribeCard from "../shared/SubscribeCard";
 
 // ─── Small sub-components (only used inside predictions) ──────────────────────
@@ -2423,11 +2424,26 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             <AiCalledIt pred={pred} prob={prob} />
 
                             {/* ── HERO DECISION (replaces old hero bar + prediction call banner) ── */}
+                            {/* Renders only when the model contradicts the plain scoreboard
+                                read - i.e. the rare moments the number is worth looking at.
+                                Silent otherwise. See ContrarianCall.jsx. */}
+                            {!isEnded && <ContrarianCall pred={pred} prob={prob} />}
+
                             {!isEnded && <HeroDecision pred={pred} prob={prob} isEnded={isEnded} />}
 
-                            {/* ── AFFILIATE BANNER — mobile only, right after main prediction ── */}
+                            {/* AFFILIATE BANNER - mobile only, right after main prediction.
+                                Outside the UK AffiliateBanner renders nothing, and the
+                                bookmakers on it are UK-licensed and would reject those
+                                signups anyway. India, which is a large share of the traffic,
+                                also bans advertising real-money gaming outright under the
+                                Online Gaming Act 2025 - so this must stay geo-gated, not
+                                just for conversion but for legal reasons.
+                                An ad unit fills the slot instead; the desktop sidebar has
+                                carried one all along, mobile had nothing. */}
                             <div className="mob-intel">
-                                <AffiliateBanner style={{ marginBottom: 4 }} placement="mobile" />
+                                {showAffiliates
+                                    ? <AffiliateBanner style={{ marginBottom: 4 }} placement="mobile" />
+                                    : <AdUnit style={{ marginBottom: 4, borderRadius: 8 }} />}
                             </div>
 
                             {/* ── SUBSCRIBE CARD — mobile only, push + email alerts ── */}
