@@ -1633,6 +1633,60 @@ function MockPredictionDemo() {
     );
 }
 
+// Ground records for the competitions we cover. These pages are prerendered from
+// venue_stats.json and need no live feed at all, which is exactly why they are
+// listed here: this screen renders when there is nothing live, including when the
+// Cricbuzz quota is spent. A visitor who arrives then used to get a demo and no
+// route to anything real, and reported the site as broken (Aug 21-22 2026).
+const EVERGREEN_LEAGUES = [
+    ["IPL", "/predictions/ipl-predictions"],
+    ["The Hundred", "/predictions/the-hundred-predictions"],
+    ["Vitality Blast", "/predictions/vitality-blast-predictions"],
+    ["Big Bash", "/predictions/big-bash-predictions"],
+    ["PSL", "/predictions/psl-predictions"],
+    ["CPL", "/predictions/cpl-predictions"],
+    ["SA20", "/predictions/sa20-predictions"],
+    ["LPL", "/predictions/lpl-predictions"],
+    ["ILT20", "/predictions/ilt20-predictions"],
+    ["BPL", "/predictions/bpl-predictions"],
+];
+
+const EVERGREEN_INTL = [
+    ["India vs Pakistan", "/predictions/international/india-vs-pakistan"],
+    ["England vs India", "/predictions/international/england-vs-india"],
+    ["Australia vs India", "/predictions/international/australia-vs-india"],
+    ["England vs Australia", "/predictions/international/england-vs-australia"],
+];
+
+function EvergreenLinks() {
+    const chip = {
+        fontSize: 13, fontWeight: 700, color: C.text, textDecoration: "none",
+        background: C.surface, border: `1px solid ${C.border}`, borderRadius: 10,
+        padding: "9px 14px", display: "inline-block",
+    };
+    return (
+        <div style={{ marginBottom: 22 }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: C.accent, letterSpacing: 1, marginBottom: 6 }}>
+                BROWSE WHILE NOTHING IS LIVE
+            </div>
+            <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.6, marginBottom: 12 }}>
+                Ground records, par scores and chase history for every competition we cover &mdash;
+                built from 335 tracked venues, available any time.
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+                {EVERGREEN_LEAGUES.map(([label, href]) => (
+                    <a key={href} href={href} style={chip}>{label}</a>
+                ))}
+            </div>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {EVERGREEN_INTL.map(([label, href]) => (
+                    <a key={href} href={href} style={{ ...chip, fontWeight: 600, fontSize: 12 }}>{label}</a>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 function NoMatchesScreen({ upcomingMatches }) {
     const scheduleMatches = upcomingMatches && upcomingMatches.length > 0 ? upcomingMatches : [];
     return (
@@ -1648,6 +1702,10 @@ function NoMatchesScreen({ upcomingMatches }) {
                     ))}
                 </div>
             </div>
+
+            {/* Real, working pages first — the demo below is only a mockup, and a
+                visitor who arrived because nothing is live needs somewhere to go. */}
+            <EvergreenLinks />
 
             {/* ── Live prediction demo ── */}
             <MockPredictionDemo />

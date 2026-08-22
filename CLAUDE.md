@@ -513,6 +513,26 @@ The banner says the feed is paused and resets shortly, and points out that groun
 records and accuracy pages are unaffected — those pages are static and genuinely still
 work, so they are the safe thing to promote during a quota gap.
 
+## Empty state now links to the evergreen pages (Aug 22 2026)
+`EvergreenLinks` in `PredictionsTab.jsx`, rendered inside `NoMatchesScreen` above
+`MockPredictionDemo`. 10 league pages + 4 international matchups, all verified 200.
+
+**Why:** a real visitor emailed twice saying the site "isn't working" (Aug 21 21:47,
+Aug 22 08:46). It was up — `/` 200, backend 200 — but the Cricbuzz quota ran out at
+04:35 on Aug 22, so `/matches` returned an empty list and the homepage fell through to
+`NoMatchesScreen`, which showed an intro, a **mock** prediction demo and nothing a
+visitor could actually click. Reading "no match live right now" next to a fake demo is
+indistinguishable from a broken site.
+
+The prerendered `/predictions/*` pages need no live feed at all — they are built from
+`venue_stats.json` — so they are exactly what should be offered when the feed is down.
+They go **above** the demo deliberately: the demo is a mockup, and the real pages
+should be the first thing a stranded visitor sees.
+
+**Keep the two lists in sync with `public/predictions/`.** They are hardcoded, and a
+link to a page that does not exist 404s — worse than the empty state it replaces.
+Re-check with a HEAD request per URL after editing.
+
 ## Common Bugs Fixed (most recent first)
 - Matches tab stuck forever on "Loading matches..." when the tab loads in the background/
   unfocused (Jul 26 2026): `fetchMatches()` in `useMatchData.js` bailed via `if
