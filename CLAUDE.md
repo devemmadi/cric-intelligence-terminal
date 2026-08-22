@@ -600,6 +600,35 @@ was created in May 2026 to enforce it. Gambling is illegal in Bangladesh. **Neve
 the geo gate, and do not add a bookmaker aimed at those markets** — AdSense is the
 monetisation that is both legal and available there.
 
+## ReportProblem.jsx — an always-available way to complain (Aug 22 2026)
+New file: `src/components/shared/ReportProblem.jsx`, rendered by `RGFooter.jsx`, so it
+is on **every page** of the site.
+
+**The gap it closes.** `FeedbackPrompt.jsx` only appears once a match is selected, is
+still live, and the visitor has stayed four minutes. That is the narrowest possible
+window and it misses the moments people actually want to complain.
+
+Proof, from the same week: a visitor emailed twice. First that the site "isn't working"
+— the Cricbuzz feed had run out, so there were **no matches at all** and the prompt could
+never have rendered. Then that the live score was two overs behind, which turned out to
+be a real defect that had been shipping for a month. He only reached us because he went
+hunting for the address on the About page. Almost nobody does that; they just leave.
+
+**Design choices, deliberate:**
+- **One free-text box, no star rating.** A rating tells you nothing you can act on;
+  "score stuck two overs behind" names a defect. Same reasoning as `FeedbackPrompt`.
+- **No email field.** Asking for one costs more reports than the replies are worth.
+- **Fire-and-forget POST**, and it thanks the visitor even if the request fails — showing
+  an error to someone already annoyed loses the report and the person.
+- Posts to the existing `/feedback` with `source: "footer"`, so footer reports can be told
+  apart from in-match ones in the log.
+
+**Verified against production:** a footer-shaped body with no match context returns
+`{"ok": true}` / 200, and a malformed rating still returns 400. One test entry labelled
+"TEST from footer … verification only" exists in the feedback log from that check.
+
+**Read the reports:** `GET /feedback/recent` on the backend, admin token required.
+
 ## Common Bugs Fixed (most recent first)
 - Matches tab stuck forever on "Loading matches..." when the tab loads in the background/
   unfocused (Jul 26 2026): `fetchMatches()` in `useMatchData.js` bailed via `if

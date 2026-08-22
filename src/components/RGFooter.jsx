@@ -1,6 +1,7 @@
 /* eslint-disable */
 import React from "react";
 import { Link } from "react-router-dom";
+import ReportProblem from "./shared/ReportProblem";
 
 export default function RGFooter() {
     return (
@@ -38,6 +39,11 @@ export default function RGFooter() {
                         © {new Date().getFullYear()} CricIntelligence
                     </div>
                 </div>
+
+                {/* Always reachable, including on the pages that render when the data
+                    feed is down - which is exactly when someone wants to complain and
+                    when FeedbackPrompt cannot appear. See ReportProblem.jsx. */}
+                <ReportProblem />
 
                 {/* RG bar */}
                 <div style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, padding: "12px 16px", display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
