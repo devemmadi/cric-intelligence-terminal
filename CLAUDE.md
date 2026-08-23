@@ -669,6 +669,43 @@ React app, so the shell-content problem there needs a different approach — con
 `#root` that React replaces on mount. Not attempted here because all routes serve
 `index.html`, so that content would leak onto every route as duplicate.
 
+## /about, /privacy and /terms existed but were never served (Aug 23 2026)
+Three finished static pages sat in `public/` with **no rewrite in `vercel.json`**, so the
+catch-all sent those URLs to the React shell. **1,756 words of committed content reached
+nobody** — not a visitor, not a crawler:
+
+| File | Words | Was served? |
+|---|---|---|
+| `public/privacy.html` | 728 | no |
+| `public/about.html` | 549 | no |
+| `public/terms.html` | 479 | no |
+
+This is the exact failure this file already warns about — *"adding a file to `public/` does
+nothing on its own"* — which hit three prediction pages in July and was never checked
+site-wide. **A generator now exists to find it: the orphan scan compares every `.html`
+under `public/` against the rewrite destinations.** Run it after adding any static page.
+
+`design-preview.html` and `promo-rcb-dc.html` are deliberately left unrouted — an internal
+mockup and a one-off promo asset, neither meant to be public.
+
+**`about.html` carried a stale accuracy claim and was corrected before routing.** It said
+**80.2%** — one of the unevidenced figures this file records as corrected sitewide in July.
+It was missed then precisely *because* nothing served it, so nobody read it. Also fixed in
+the same pass:
+
+| Was | Now | Why |
+|---|---|---|
+| 80.2% "Model accuracy" | **81.5% "Accuracy on unseen matches"** | The true-holdout figure the backend publishes |
+| 750K+ "T20 records trained" | **335 "Venues tracked"** | Unverified, and disagreed with the "1.7 million ball-by-ball records" used on the prediction pages. 335 is `len(venue_stats.json)` |
+| 30s "Live refresh rate" | **12s** | Matches the actual prediction poll in `useMatchData.js` |
+
+**Publishing an unevidenced accuracy number on a gambling-adjacent, UK-facing site is an
+ASA/CAP exposure, not a tidiness issue.** Check any static page for stale claims *before*
+routing it — routing is what makes the claim public.
+
+`/privacy` and `/terms` are `noindex, follow` and are correctly absent from `sitemap.xml`;
+a policy needs to be readable, not ranked. `/about` is indexable and already listed.
+
 ## Common Bugs Fixed (most recent first)
 - Matches tab stuck forever on "Loading matches..." when the tab loads in the background/
   unfocused (Jul 26 2026): `fetchMatches()` in `useMatchData.js` bailed via `if
