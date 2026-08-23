@@ -629,6 +629,46 @@ hunting for the address on the About page. Almost nobody does that; they just le
 
 **Read the reports:** `GET /feedback/recent` on the backend, admin token required.
 
+## Prerendered content pages — /accuracy, /how-it-works, /faq (Aug 23 2026)
+`scripts/gen_content_pages.py` (new) writes `public/accuracy.html`,
+`public/how-it-works.html`, `public/faq.html` and patches `vercel.json`.
+
+**Why:** AdSense refused the site with two reasons — *"Google-served ads on screens
+without publisher-content"* and *"Low value content"* (Sites page, last checked May 21
+2026). Both describe the same thing: 17 React routes serve the same **375-word shell**,
+because content only exists after JavaScript runs. That is also why they do not rank,
+which is the actual traffic bottleneck — measured at 116 users / 2,495 views in 28 days.
+
+Served word counts, same measurement (tags and script stripped):
+
+| | words |
+|---|---|
+| `public/index.html` shell | 375 |
+| an existing `predictions/*` page | 814 |
+| new `/accuracy` | **576** |
+| new `/how-it-works` | **678** |
+| new `/faq` | **527** |
+
+**Accuracy figures are fetched from `/backtest-results` at generation time, never typed.**
+If the holdout is re-run and the number moves, regenerating updates the prose. Hardcoding
+"81.5%" into HTML is exactly how the July marketing copy ended up claiming things the
+backend had stopped saying. The generator **refuses to run** if the endpoint reports under
+100 predictions — the same guard that stopped the 0.0% incident.
+
+**Nothing in the React app changed.** These are standalone HTML files with no bundle and
+no AdSense script, exactly like the 50 pages already under `public/predictions/`. The
+React routes still exist, so in-app navigation is unaffected; the static file wins only
+for a direct load or a crawler. **Both versions must stay in sync** — the React
+`/accuracy` renders the same calibration table (added the same week).
+
+`/accuracy` was missing from `sitemap.xml` entirely and is now listed at priority 0.8 —
+it is the strongest evidence page on the site.
+
+**Still unfixed, deliberately:** the homepage. It is the live dashboard and must stay the
+React app, so the shell-content problem there needs a different approach — content inside
+`#root` that React replaces on mount. Not attempted here because all routes serve
+`index.html`, so that content would leak onto every route as duplicate.
+
 ## Common Bugs Fixed (most recent first)
 - Matches tab stuck forever on "Loading matches..." when the tab loads in the background/
   unfocused (Jul 26 2026): `fetchMatches()` in `useMatchData.js` bailed via `if

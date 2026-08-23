@@ -221,6 +221,18 @@
       "destination": "/.well-known/assetlinks.json"
     },
     {
+      "source": "/accuracy",
+      "destination": "/accuracy.html"
+    },
+    {
+      "source": "/how-it-works",
+      "destination": "/how-it-works.html"
+    },
+    {
+      "source": "/faq",
+      "destination": "/faq.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
