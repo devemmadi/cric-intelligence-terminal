@@ -706,6 +706,31 @@ routing it — routing is what makes the claim public.
 `/privacy` and `/terms` are `noindex, follow` and are correctly absent from `sitemap.xml`;
 a policy needs to be readable, not ranked. `/about` is indexable and already listed.
 
+## video/make_ad.py — a 5-second vertical ad (Aug 25 2026)
+`python video/make_ad.py` -> `drafts/<date>-ad-5s.mp4`, 1080x1920, exactly 5.00s.
+
+**Not a `scenes.py` short.** That file builds the house format — studio plate, presenter,
+lower third — which is right for a 40-second explainer and far too much furniture for
+five seconds: the set would still be drawing as the ad ended. This is deliberately bare
+and constantly moving: big type, one number, one URL, `motion_bg` on every frame because
+a still frame is where a thumb starts scrolling.
+
+Three beats: hook (a win probability swinging, 1.6s) -> proof (the holdout figure counting
+up with its sample size, 1.8s) -> payoff (wordmark, URL, FREE / NO SIGN-UP / LIVE, 1.6s).
+
+**The claim is fetched from `/backtest-results` at render time and the script refuses to
+render without it.** An ad is the worst place for a stale number — it outlives the render,
+gets reposted, and cannot be corrected once it is on someone else's feed.
+
+**That guard immediately earned itself.** The first render came back **59.4% over 3,101
+predictions**, not 81.5% — the Aug 24 weekly retrain had overwritten the published
+accuracy the day before and nobody had noticed. The ad was stopped, the backend fixed
+(see the backend CLAUDE.md entry for Aug 25), and re-rendered at the correct figure. A
+typed number would have shipped the wrong claim.
+
+`--voice` adds narration but stretches past 5s to fit the speech; leave it off for a
+strict five-second slot.
+
 ## Common Bugs Fixed (most recent first)
 - Matches tab stuck forever on "Loading matches..." when the tab loads in the background/
   unfocused (Jul 26 2026): `fetchMatches()` in `useMatchData.js` bailed via `if
