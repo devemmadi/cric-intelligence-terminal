@@ -1,0 +1,188 @@
+# API outreach — email drafts (2026-08-26)
+
+NOT SENT. Send from your own account. Strategy and prospect ranking are in
+`2026-08-26-api-gtm-prospects.md`.
+
+**Before sending email 1 or 2:** read the upstream Cricbuzz API licence terms. Both
+propose redistribution at volume, and a partner deal that turns out to breach the data
+licence is worse than no deal.
+
+**Rules applied to every draft below**
+- No mention of betting, odds, tipping or gambling. Not once.
+- The methodology leads; the accuracy number follows it. Reversed, it reads as a tipster.
+- Short. Every one of these is under 180 words — a first cold email that scrolls does not
+  get read.
+- One ask, and the ask is small: a reply, not a meeting.
+- `/v1/accuracy` is linked in every mail, because "go and check the claim yourself" is the
+  only thing in this pitch that competitors cannot say.
+
+---
+
+## 1 — Roanuz (contact@roanuz.com) — highest leverage
+
+**Subject:** Win probability as an add-on to the Roanuz cricket API
+
+> Hi,
+>
+> I run CricIntelligence — a live cricket win-probability model, currently served through
+> our own site and a small API.
+>
+> You already deliver the live feed that most cricket fantasy apps are built on. What
+> those apps don't have is a probability layer, and building one is a training-data
+> problem rather than an engineering one — which is why almost none of them do.
+>
+> I'd like to explore offering it through you, under your brand, as an add-on to your
+> existing cricket product. You keep the customer relationship and a revenue share; I
+> maintain the model.
+>
+> The model is trained on T20 matches up to 2024 and tested on 2,546 matches from 2025–26
+> that were held out of training entirely — 19,340 predictions, 81.5% correct. The full
+> methodology is public and unauthenticated, so you can verify it before replying:
+> https://cricintel-backend-production.up.railway.app/v1/accuracy
+>
+> Worth a conversation?
+>
+> [name]
+> https://www.cricintelligence.com/api
+
+---
+
+## 2 — Sportmonks (contact form on sportmonks.com)
+
+**Subject:** Cricket win probability — partner or list alongside your API?
+
+> Hi,
+>
+> Your cricket API covers 140+ leagues and your customers are developers, which is exactly
+> who I built for.
+>
+> I run a live cricket win-probability model — one call returns a calibrated probability
+> for both sides mid-match, with a confidence band and the match state it came from. It
+> complements a data feed rather than competing with one: you supply what happened, this
+> supplies what it means for the result.
+>
+> Two options I'd be glad to discuss: offering it as an add-on module to your cricket
+> customers, or a straightforward mutual referral.
+>
+> Trained on T20 up to 2024, tested on 2,546 matches from 2025–26 held out of training.
+> 19,340 predictions scored, 81.5% correct. Methodology and full breakdown, no key needed:
+> https://cricintel-backend-production.up.railway.app/v1/accuracy
+>
+> Happy to send a trial key so your team can point it at a live match this week.
+>
+> [name]
+> https://www.cricintelligence.com/api
+
+---
+
+## 3 — Score apps (CREX, Cricket LineX, CricRocket, Cricbites)
+
+Send individually. Replace the bracketed line — a generic mail to four competitors reads
+as a mailshot, and they will each be able to tell.
+
+**Subject:** A win-probability bar for [App name]
+
+> Hi,
+>
+> I use [App name] — [one specific true sentence: what you actually like, or the exact
+> screen this would sit on. Delete this mail rather than sending it without this line.]
+>
+> One thing it doesn't show is a live win probability. It's the number that keeps someone
+> watching between balls, and it's the hardest feature to add because it needs a trained
+> model rather than a feed.
+>
+> I've built one and expose it as a single HTTP call — probability for both sides,
+> confidence band, updated ball by ball. Trained on T20 up to 2024 and tested on 2,546
+> matches from 2025–26 kept out of training: 19,340 predictions, 81.5% correct. Full
+> methodology, open, no key required:
+> https://cricintel-backend-production.up.railway.app/v1/accuracy
+>
+> Free trial key, no card, if you want to try it against a live match:
+> https://www.cricintelligence.com/api
+>
+> [name]
+
+---
+
+## 4 — Free-to-play fantasy operators (India, post-PROGA)
+
+Do not mention the regulation directly — they have lived it and do not need it explained
+back to them by a stranger. The mail should simply be about engagement, which is now
+their only lever.
+
+**Subject:** Keeping free-to-play users in the app between balls
+
+> Hi,
+>
+> Free-to-play cricket contests live or die on whether people stay in the app during a
+> match. A live win-probability bar is one of the few features that reliably does that —
+> it changes every over, so there's always a reason to look again.
+>
+> I run the model behind cricintelligence.com and offer it as a single HTTP call. Trained
+> on T20 up to 2024, tested on 2,546 matches from 2025–26 that were never in training:
+> 19,340 predictions, 81.5% correct. The whole breakdown is public so you can check it
+> before talking to me:
+> https://cricintel-backend-production.up.railway.app/v1/accuracy
+>
+> Free trial key, no card required. If it doesn't lift session length in a week, that's
+> your answer and it costs you nothing to find out.
+>
+> https://www.cricintelligence.com/api
+>
+> [name]
+
+---
+
+## 5 — Regional streaming (YuppTV, Willow TV, Premier Sports, FanCode)
+
+Hold this one until at least one paying customer exists — the first question will be who
+else uses it, and "nobody yet" ends the conversation.
+
+**Subject:** Live win-probability overlay for cricket coverage
+
+> Hi,
+>
+> Tier-one broadcasters put a live win-probability bar on cricket coverage. It comes from
+> enterprise analytics contracts that only make sense at tier-one budgets.
+>
+> I supply the same graphic from a single HTTP call, priced for coverage that isn't
+> tier-one. One call every few seconds per match; your graphics team owns the look.
+>
+> Trained on T20 up to 2024, tested on 2,546 matches from 2025–26 held out of training —
+> 19,340 predictions, 81.5% correct, methodology published in full:
+> https://cricintel-backend-production.up.railway.app/v1/accuracy
+>
+> Happy to run it live alongside a match you're already covering, at no cost, so your team
+> can judge it on air-worthiness rather than on my description of it.
+>
+> [name]
+> https://www.cricintelligence.com/api
+
+---
+
+## Follow-up (once, after 6 working days, then stop)
+
+Two unanswered mails is a no. A third is why people mark senders as spam.
+
+> Hi — following up once on the below in case it landed at a bad moment.
+>
+> If win probability isn't on your roadmap, just say so and I won't chase it. If it is but
+> not this quarter, I'll check back after the season.
+>
+> [name]
+
+---
+
+## Handling the four questions that will come back
+
+- **"How do I know 81.5% is real?"** — The test matches were held out of training
+  entirely, and `/v1/accuracy` publishes the sample size, the per-checkpoint breakdown and
+  the command that reproduces it. Offer them a trial key and a live match. Do not argue
+  the number; hand them the means to check it.
+- **"What's your uptime?"** — Answer honestly: no formal SLA today, and say what the
+  actual setup is. Offer a month-to-month term instead of a guarantee. An invented SLA is
+  the fastest way to lose a customer who then holds you to it.
+- **"We already use Opta / Sportradar."** — Then they are not the buyer, and pushing costs
+  the relationship. Ask who in their network is priced out of that contract.
+- **"Can we get ODI/Test?"** — Not covered by the holdout. Say so. Offer to measure it if
+  they would actually buy it — that is a real signal about what to build next.
