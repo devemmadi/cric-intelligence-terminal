@@ -1,10 +1,23 @@
-# RapidAPI listing pack — copy/paste ready (2026-08-26)
+# RapidAPI listing pack — mostly DONE (2026-08-26)
 
-Everything below is written to be pasted straight into the RapidAPI provider forms.
-**Two things here cannot be automated and are yours to do:** creating the RapidAPI
-account, and connecting a payout method. Both need credentials, so they stay with you.
+**The listing now exists.** It was created in the user's own RapidAPI account
+(provider 11607415) and is **private**, which is RapidAPI's default. Nothing is public.
 
-Everything else — the spec, the copy, the plan limits — is finished and below.
+Already done in the account:
+- API created: *CricIntelligence Cricket Win Probability*, category Sports
+- Short and long description, website and terms-of-use links
+- `openapi_v1.yaml` imported — base URL and all five endpoints came through, grouped as
+  Predictions / Discovery / Account / Proof
+- Public plans configured (see the table below for what actually went in)
+
+**Two things remain, and the first blocks the second:**
+
+1. **Mint the proxy key and paste it as a header.** Needs `ADMIN_TOKEN`, which only the
+   user has. Until this is done every subscriber's call returns `missing_api_key`, so the
+   listing must not go public first.
+2. **Make it public.** One toggle, once step 1 is verified.
+
+The copy below is what was actually used, kept for reference and for re-editing.
 
 ---
 
@@ -130,15 +143,26 @@ a training set first.
 Converted to monthly, because RapidAPI meters per month. Same daily shape as the site:
 2,000/day ≈ 60,000/month, 20,000/day ≈ 600,000/month.
 
-| RapidAPI tier | Price | Monthly quota | Overage | Site equivalent |
-|---|---|---|---|---|
-| **Basic** | Free | 500 / month | Hard stop | Trial |
-| **Pro** | $39 | 60,000 / month | $0.001 / call | Starter (£29) |
-| **Ultra** | $189 | 600,000 / month | $0.0005 / call | Pro (£149) |
-| **Mega** | Custom | Unmetered | — | Enterprise |
+**As actually configured:**
 
-**Rate limit on every tier:** 60 requests/minute. Generous for a live match (one call
-every few seconds per match) and enough to stop a scraper.
+| RapidAPI tier | Price | Monthly quota | Limit type | Site equivalent |
+|---|---|---|---|---|
+| **Basic** | Free | 500 / month | Hard | Trial |
+| **Pro** ⭐ | $39 | 60,000 / month | Hard | Starter (£29) |
+| **Ultra** | $189 | 600,000 / month | Hard | Pro (£149) |
+| **Mega** | disabled | — | — | Enterprise (talk to us) |
+
+**Rate limit:** 60 requests/minute on Pro and Ultra. Generous for a live match (one call
+every few seconds per match) and enough to stop a scraper. Pro carries the
+"Recommended" badge, matching the highlighted tier on the site.
+
+**Deviation from the original plan, deliberate:** hard limits everywhere instead of
+per-call overage. A first customer who gets an unexpected bill is a first customer lost,
+and an overage tier also removes our own ceiling on upstream API cost. Revisit once
+somebody actually hits a quota.
+
+**Order matters when editing:** RapidAPI caps a plan's quota by its price, so a $0 plan
+refuses a 600,000 quota. Set the price first, then the quota.
 
 Notes on the numbers:
 - Prices are USD because RapidAPI bills in USD. $39/$189 are the GBP tiers converted with
@@ -163,10 +187,8 @@ Notes on the numbers:
 
 ## What is still not automatable
 
-Worth being straight about, since the rest of this is done:
-
-1. **Creating the RapidAPI account** — needs credentials.
+1. **Minting the proxy key** — needs `ADMIN_TOKEN`. Blocks going public.
 2. **Connecting a payout method** — needs bank details.
 3. **Replying to subscribers** who ask questions on the listing.
 
-Everything else is finished: the spec, the copy, the plan limits and the code behind them.
+Everything else is done and in the account.
