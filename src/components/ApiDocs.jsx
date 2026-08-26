@@ -58,13 +58,13 @@ const PLANS = [
         cta: "Start free",
     },
     {
-        id: "starter", name: "Starter", price: "£99", per: "/month",
+        id: "starter", name: "Starter", price: "£29", per: "/month",
         calls: "2,000 calls / day",
-        features: ["Every endpoint", "Email support", "99.5% uptime target"],
+        features: ["Every endpoint", "Email support", "Cancel any time"],
         cta: "Request access", highlight: true,
     },
     {
-        id: "pro", name: "Pro", price: "£399", per: "/month",
+        id: "pro", name: "Pro", price: "£149", per: "/month",
         calls: "20,000 calls / day",
         features: ["Every endpoint", "Priority support", "Schema change notice", "Backfill on request"],
         cta: "Request access",

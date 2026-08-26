@@ -833,9 +833,14 @@ gambling signal is a reason for their procurement to refuse.
   must be a full page load for the gate to re-evaluate.
 - The request form POSTs to `/v1/request-access` (email, company, plan,
   use case). Leads land in Supabase `api_leads`, with a JSONL file fallback.
-- Pricing on the page: Trial free (100/day), Starter £99/mo (2,000/day),
-  Pro £399/mo (20,000/day), Enterprise custom. These must stay in step with
-  `PLANS` in the backend's `api_commercial.py`.
+- Pricing on the page: Trial free (100/day), Starter £29/mo (2,000/day),
+  Pro £149/mo (20,000/day), Enterprise custom. Call limits must stay in step
+  with `PLANS` in the backend's `api_commercial.py`.
+  Cut from £99/£399 on Aug 26, 2026 before any customer existed: Sportmonks
+  starts at EUR 29 and Goalserve at $125, and both sell a full multi-league data
+  feed where this sells one derived number with no track record behind it. The
+  first customer is worth more as a reference than as revenue. No uptime promise
+  is listed on any tier — there is no SLA to back one (single Railway instance).
 
 
 ## User Preferences
