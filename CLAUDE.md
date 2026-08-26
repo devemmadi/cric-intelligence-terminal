@@ -843,6 +843,24 @@ gambling signal is a reason for their procurement to refuse.
   is listed on any tier — there is no SLA to back one (single Railway instance).
 
 
+## Static pages shadow their React routes (found Aug 26, 2026)
+`public/` holds real HTML files — `accuracy.html`, `about.html`, `faq.html`,
+`how-it-works.html`, `privacy.html`, `terms.html` — and Vercel serves those
+instead of the SPA. So `/accuracy` is **not** `AccuracyDashboard.jsx`; that
+component is dead in production, as are the other five routes' components.
+
+Two consequences worth knowing before losing a session to either:
+- Editing one of those components changes nothing on the live site. Edit the
+  HTML file, or delete the file so the route falls back to the SPA.
+- Those pages never mount `AgeGate` at all, because the gate lives inside the
+  React tree. They have bypassed it since they were created — not a regression,
+  and not something the `UNGATED_PATHS` list above controls.
+
+`/api` has no static counterpart and nothing in `vercel.json` rewrites it, so it
+is genuinely served by React. Verified live: fresh visitor, no age flag, `/api`
+renders and `/` still shows the gate.
+
+
 ## User Preferences
 - Telugu + English mixed communication is fine
 - Push to GitHub directly — no local testing required before deploy
