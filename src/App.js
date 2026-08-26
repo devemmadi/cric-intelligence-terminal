@@ -19,6 +19,7 @@ import VitalityBlast2026 from './components/VitalityBlast2026';
 import MatchPredictionPage from './components/MatchPredictionPage';
 import AccuracyDashboard from './components/AccuracyDashboard';
 import LiveOdds from './components/LiveOdds';
+import ApiDocs from './components/ApiDocs';
 import './App.css';
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
                     <Route path="/cricket-predictions-uk" element={<CricketPredictionsUK />} />
                     <Route path="/accuracy" element={<AccuracyDashboard />} />
                     <Route path="/live-odds" element={<LiveOdds />} />
+                    <Route path="/api" element={<ApiDocs />} />
                     <Route path="/predictions/:matchup" element={<MatchPredictionPage />} />
                     <Route path="*" element={<CricIntelligence />} />
                 </Routes>

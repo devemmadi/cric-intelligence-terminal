@@ -3,11 +3,21 @@ import React, { useState, useEffect } from "react";
 
 const STORAGE_KEY = "ci_age_verified";
 
+/* Routes that sell the data feed to businesses rather than showing predictions
+   or odds to consumers. They carry no affiliate surface and no betting content,
+   so the 18+ interstitial protects nobody there — it just costs us the lead,
+   and it tells a procurement team the product is gambling. Keep this list to
+   B2B pages only; anything showing a prediction or an odds link stays gated. */
+const UNGATED_PATHS = ["/api"];
+
 export default function AgeGate({ children }) {
     const [verified, setVerified] = useState(() => {
         try { return !!localStorage.getItem(STORAGE_KEY); } catch { return false; }
     });
     const [declining, setDeclining] = useState(false);
+
+    const path = (typeof window !== "undefined" ? window.location.pathname : "").replace(/\/+$/, "") || "/";
+    if (UNGATED_PATHS.includes(path)) return children;
 
     if (verified) return children;
 

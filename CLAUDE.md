@@ -814,6 +814,30 @@ Targeting UK and South Africa mobile users.
 - Swipe indicator dots shown below view switcher on mobile (`.mob-swipe` class, `display:none` on desktop)
 - `VIEWS` array: `["prediction", "liveengine", "scoreboard"]` — order is fixed, swipe follows this order
 
+## Commercial API page — /api (Aug 26, 2026)
+`ApiDocs.jsx` (new, self-contained) is the sales surface for the backend's paid
+`/v1` API. It is a B2B page: no odds, no affiliate banner, no betting language,
+because the buyer is a media/streaming/fantasy engineering team and every
+gambling signal is a reason for their procurement to refuse.
+
+- Route: `/api` in `App.js`. Sitemap entry added (`public/sitemap.xml`).
+- **Exempt from the age gate.** `AgeGate.jsx` now has an `UNGATED_PATHS` list
+  containing only `/api`. An 18+ interstitial protects nobody on a data-feed
+  docs page and costs the lead. Anything that shows a prediction or an odds
+  link stays gated — do not add consumer routes to that list.
+- The accuracy band is fetched live from `GET /v1/accuracy` and falls back to
+  the published 81.5% / 2,546 / 19,340 figures if the backend is unreachable,
+  so the number on the page is the number the backtest produced.
+- All in-page links are plain `<a href>` rather than router `Link`s: AgeGate
+  reads `window.location.pathname` once above the Router, so leaving `/api`
+  must be a full page load for the gate to re-evaluate.
+- The request form POSTs to `/v1/request-access` (email, company, plan,
+  use case). Leads land in Supabase `api_leads`, with a JSONL file fallback.
+- Pricing on the page: Trial free (100/day), Starter £99/mo (2,000/day),
+  Pro £399/mo (20,000/day), Enterprise custom. These must stay in step with
+  `PLANS` in the backend's `api_commercial.py`.
+
+
 ## User Preferences
 - Telugu + English mixed communication is fine
 - Push to GitHub directly — no local testing required before deploy
