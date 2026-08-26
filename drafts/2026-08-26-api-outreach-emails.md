@@ -7,6 +7,21 @@ NOT SENT. Send from your own account. Strategy and prospect ranking are in
 propose redistribution at volume, and a partner deal that turns out to breach the data
 licence is worse than no deal.
 
+## What changed since these were written
+
+**The API is now listed publicly on RapidAPI**, which makes every one of these
+mails stronger without changing their argument:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+"Reply and I'll send you a key" asks a stranger to trust you and then wait.
+"Subscribe to the free tier and call it in a minute" asks them to try it. The
+second one converts a curious engineer without either of you sending another
+email — which matters most here, because the follow-up is the part that needs a
+human and there is only one of you.
+
+Every draft below now ends with that link. Keep it: it is the only thing in the
+mail the reader can act on immediately.
+
 **Rules applied to every draft below**
 - No mention of betting, odds, tipping or gambling. Not once.
 - The methodology leads; the accuracy number follows it. Reversed, it reads as a tipster.
@@ -40,6 +55,10 @@ licence is worse than no deal.
 > methodology is public and unauthenticated, so you can verify it before replying:
 > https://cricintel-backend-production.up.railway.app/v1/accuracy
 >
+> It is live and self-serve on RapidAPI if your team would rather look than
+> talk — free tier, instant key:
+> https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+>
 > Worth a conversation?
 >
 > [name]
@@ -68,7 +87,9 @@ licence is worse than no deal.
 > 19,340 predictions scored, 81.5% correct. Methodology and full breakdown, no key needed:
 > https://cricintel-backend-production.up.railway.app/v1/accuracy
 >
-> Happy to send a trial key so your team can point it at a live match this week.
+> No need to wait on me to try it — it is live on RapidAPI with a free tier and
+> an instant key:
+> https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
 >
 > [name]
 > https://www.cricintelligence.com/api
@@ -97,8 +118,8 @@ as a mailshot, and they will each be able to tell.
 > methodology, open, no key required:
 > https://cricintel-backend-production.up.railway.app/v1/accuracy
 >
-> Free trial key, no card, if you want to try it against a live match:
-> https://www.cricintelligence.com/api
+> Free tier, instant key, no card, if you want to point it at a live match:
+> https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
 >
 > [name]
 
@@ -124,10 +145,9 @@ their only lever.
 > before talking to me:
 > https://cricintel-backend-production.up.railway.app/v1/accuracy
 >
-> Free trial key, no card required. If it doesn't lift session length in a week, that's
-> your answer and it costs you nothing to find out.
->
-> https://www.cricintelligence.com/api
+> Free tier, no card. If it doesn't lift session length in a week, that's your
+> answer and it costs you nothing to find out:
+> https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
 >
 > [name]
 
@@ -153,7 +173,9 @@ else uses it, and "nobody yet" ends the conversation.
 > https://cricintel-backend-production.up.railway.app/v1/accuracy
 >
 > Happy to run it live alongside a match you're already covering, at no cost, so your team
-> can judge it on air-worthiness rather than on my description of it.
+> can judge it on air-worthiness rather than on my description of it. It is also
+> on RapidAPI if they would rather just try it:
+> https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
 >
 > [name]
 > https://www.cricintelligence.com/api

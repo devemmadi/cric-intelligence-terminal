@@ -21,6 +21,8 @@ const C = {
     code: "#0D1525",
 };
 
+const RAPIDAPI_URL = "https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability";
+
 function setMeta(name, content, prop) {
     let el = document.querySelector(prop ? `meta[property="${name}"]` : `meta[name="${name}"]`);
     if (!el) {
@@ -211,12 +213,20 @@ export default function ApiDocs() {
                         with the confidence band, the match state it was derived from, and the model version that produced it.
                     </p>
                     <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                        {/* RapidAPI first: it is self-serve. A developer who wants to try
+                            this today can subscribe to the free tier and make a call in a
+                            minute, with no email exchange and nobody to wait for. The form
+                            below is for buyers who want to talk to a person. */}
+                        <a href={RAPIDAPI_URL} target="_blank" rel="noopener noreferrer"
+                            style={{ padding: "14px 26px", background: C.gold, color: "#0D1B3E", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 800, textDecoration: "none" }}>
+                            Start free on RapidAPI →
+                        </a>
                         <button onClick={() => choosePlan("trial")}
-                            style={{ padding: "14px 26px", background: C.gold, color: "#0D1B3E", border: "none", borderRadius: 10, fontSize: 15, fontWeight: 800, cursor: "pointer" }}>
-                            Get a free key
+                            style={{ padding: "14px 26px", background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 10, fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+                            Request a key
                         </button>
                         <a href="#quickstart"
-                            style={{ padding: "14px 26px", background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 10, fontSize: 15, fontWeight: 700, textDecoration: "none" }}>
+                            style={{ padding: "14px 26px", background: "transparent", color: "rgba(255,255,255,0.75)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 10, fontSize: 15, fontWeight: 700, textDecoration: "none" }}>
                             Read the docs
                         </a>
                     </div>
@@ -310,7 +320,14 @@ export default function ApiDocs() {
             {/* Pricing */}
             <div id="pricing" className="api-wrap" style={{ padding: "56px 20px 0" }}>
                 <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8 }}>Pricing</h2>
-                <p style={{ color: C.muted, fontSize: 15, marginBottom: 28 }}>Priced per day of calls, not per match. Cancel any time.</p>
+                <p style={{ color: C.muted, fontSize: 15, marginBottom: 28, lineHeight: 1.7 }}>
+                    Priced per day of calls, not per match. Cancel any time.<br />
+                    Want to start without talking to anyone?{" "}
+                    <a href={RAPIDAPI_URL} target="_blank" rel="noopener noreferrer"
+                        style={{ color: C.navy, fontWeight: 600 }}>
+                        Subscribe on RapidAPI
+                    </a>{" "}— free tier, instant key, billing handled there.
+                </p>
                 <div className="api-grid api-cols-4">
                     {PLANS.map(p => (
                         <div key={p.id} className="api-card" style={{
@@ -388,6 +405,9 @@ export default function ApiDocs() {
             <div style={{ borderTop: `1px solid ${C.border}`, padding: "28px 0", textAlign: "center" }}>
                 <div style={{ fontSize: 13, color: C.muted }}>
                     <a href="/" style={{ color: C.navy, textDecoration: "none", fontWeight: 600 }}>CricIntelligence</a>
+                    {"  ·  "}
+                    <a href={RAPIDAPI_URL} target="_blank" rel="noopener noreferrer"
+                        style={{ color: C.muted, textDecoration: "none" }}>Also on RapidAPI</a>
                     {"  ·  "}
                     <a href="/how-it-works" style={{ color: C.muted, textDecoration: "none" }}>How the model works</a>
                     {"  ·  "}
