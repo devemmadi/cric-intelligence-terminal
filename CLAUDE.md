@@ -831,6 +831,11 @@ gambling signal is a reason for their procurement to refuse.
 - All in-page links are plain `<a href>` rather than router `Link`s: AgeGate
   reads `window.location.pathname` once above the Router, so leaving `/api`
   must be a full page load for the gate to re-evaluate.
+- The page states plainly that this is a prediction API, not a score feed, and
+  the sample response carries no runs/wickets/overs. That is not a design
+  choice about brevity — the backend genuinely no longer returns them, because
+  the live feed comes from an unlicensed third-party RapidAPI listing. See the
+  backend CLAUDE.md. Keep the copy and the sample in step with the real payload.
 - The request form POSTs to `/v1/request-access` (email, company, plan,
   use case). Leads land in Supabase `api_leads`, with a JSONL file fallback.
 - Pricing on the page: Trial free (100/day), Starter £29/mo (2,000/day),

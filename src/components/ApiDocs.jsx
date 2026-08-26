@@ -38,7 +38,7 @@ const ENDPOINTS = [
     },
     {
         method: "GET", path: "/v1/predict/{match_id}",
-        desc: "Live win probability for both sides, confidence band, match state, pressure and momentum.",
+        desc: "Live win probability for both sides, confidence band, uncertainty intervals, pressure and momentum.",
     },
     {
         method: "GET", path: "/v1/accuracy",
@@ -82,12 +82,7 @@ const SAMPLE_RESPONSE = `{
   "generated_at": "2026-08-26T14:22:07Z",
   "teams": { "home": "India", "away": "Australia" },
   "venue": "Wankhede Stadium",
-  "state": {
-    "innings": 2, "runs": 138, "wickets": 4, "overs": 15.2,
-    "target": 187, "runs_needed": 49,
-    "current_run_rate": 9.0, "required_run_rate": 10.5,
-    "phase": "death"
-  },
+  "context": { "innings": 2, "phase": "death" },
   "win_probability": {
     "home": 0.6740, "away": 0.3260,
     "favoured": "India",
@@ -256,8 +251,13 @@ export default function ApiDocs() {
             {/* Quickstart */}
             <div id="quickstart" className="api-wrap" style={{ padding: "64px 20px 0" }}>
                 <h2 style={{ fontSize: 28, fontWeight: 800, marginBottom: 8 }}>Quickstart</h2>
-                <p style={{ color: C.muted, fontSize: 15, lineHeight: 1.7, marginBottom: 28, maxWidth: 620 }}>
+                <p style={{ color: C.muted, fontSize: 15, lineHeight: 1.7, marginBottom: 12, maxWidth: 620 }}>
                     Authenticate with an <code>X-API-Key</code> header. Everything is JSON over HTTPS — no SDK to install.
+                </p>
+                <p style={{ color: C.muted, fontSize: 15, lineHeight: 1.7, marginBottom: 28, maxWidth: 620 }}>
+                    <strong style={{ color: C.text }}>This is a prediction API, not a score feed.</strong>{" "}
+                    It returns no live runs, wickets, overs or run rates — pair it with whatever match data
+                    you already run. What you get here is the number that feed cannot give you.
                 </p>
                 <div className="api-grid api-cols-2">
                     <div>
