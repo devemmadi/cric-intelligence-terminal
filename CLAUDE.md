@@ -836,6 +836,12 @@ gambling signal is a reason for their procurement to refuse.
   choice about brevity — the backend genuinely no longer returns them, because
   the live feed comes from an unlicensed third-party RapidAPI listing. See the
   backend CLAUDE.md. Keep the copy and the sample in step with the real payload.
+- **Listed publicly on RapidAPI since Aug 26, 2026.** `RAPIDAPI_URL` at the top
+  of the file is the single place that link lives; it appears in the hero (as
+  the primary call to action), the pricing note and the footer. RapidAPI leads
+  because it is self-serve — a developer can subscribe to the free tier and make
+  a call in a minute, where "Request a key" makes them wait on a human. The
+  contact form stays for buyers who want to talk to a person.
 - The request form POSTs to `/v1/request-access` (email, company, plan,
   use case). Leads land in Supabase `api_leads`, with a JSONL file fallback.
 - Pricing on the page: Trial free (100/day), Starter £29/mo (2,000/day),
