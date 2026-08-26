@@ -182,6 +182,97 @@ else uses it, and "nobody yet" ends the conversation.
 
 ---
 
+## Sent log
+
+| Prospect | Address | Status |
+|---|---|---|
+| Roanuz | contact@roanuz.com | **sent** Aug 26 |
+| Sportmonks | sales@entitysport.com is NOT this one — **sales@sportmonks.com** | **sent** Aug 26, auto-ack ticket #108620 |
+| CREX | support@crex.com | ready |
+| Just Cricket (was Cricket LineX) | support.justcricket@gmail.com | ready |
+| Goalserve | support@goalserve.com | ready — draft 6 below |
+| cricketdata.org | contact@cricketdata.org | ready — reuse draft 6 |
+| Entity Sport | sales@entitysport.com | **last**, see caveat in draft 7 |
+| Dream11 / MPL / My11Circle | — | **dropped**, see below |
+| Streaming (draft 5) | — | hold until one paying customer |
+
+**Addresses were read off the live pages, not off search snippets.** CREX and Just
+Cricket came from their Play Store listings; Sportmonks' came from its own contact page,
+where the two real addresses are `sales@` and `support@` — a search result claiming
+`hello@sportmonks.com` was wrong.
+
+**Draft 4 (free-to-play fantasy) is dropped, not pending.** The only reachable addresses
+for Dream11 and the rest are consumer support inboxes (`helpdesk@dream11.com`). A
+partnership mail into a support queue is read by an agent whose job is to close tickets.
+The reasoning behind the draft still holds; there is simply no door to knock on. If a
+named contact ever turns up, the draft is still there.
+
+**CricRocket has no published developer email** — the Play Store listing hides it behind a
+control this session could not open. Worth another try; the app is by Absolute Sports.
+
+---
+
+## 6 — Goalserve (support@goalserve.com)
+
+Same channel logic as Roanuz, different framing. Goalserve is multi-sport and twenty
+years old, so "you power most cricket fantasy apps" would be wrong and they would know it.
+
+**Subject:** Cricket win probability — an add-on to your cricket feed?
+
+> Hi,
+>
+> I run CricIntelligence — a live cricket win-probability model for T20.
+>
+> You've supplied cricket data feeds for two decades, and your customers build livescore
+> and fantasy products on them. What almost none of those products have is a
+> win-probability layer, because adding one is a training-data problem rather than an
+> engineering one.
+>
+> I'd like to explore offering it alongside your cricket feed, under your brand, as an
+> add-on. You keep the customer relationship and a revenue share; I maintain the model. It
+> complements your feed rather than competing with it — you supply what happened, this
+> supplies what it means for the result.
+>
+> The model is trained on T20 matches up to 2024 and tested on 2,546 matches from 2025–26
+> that were held out of training entirely — 19,340 predictions, 81.5% correct. The full
+> methodology is public and unauthenticated, so you can check it before replying:
+> https://cricintel-backend-production.up.railway.app/v1/accuracy
+>
+> It is also live and self-serve on RapidAPI if your team would rather look than talk —
+> free tier, instant key:
+> https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+>
+> Worth a conversation?
+>
+> [name]
+
+**cricketdata.org** takes the same mail with one change: their customers are small
+independent developers, not established data buyers, so swap the opening paragraph for
+"your customers are independent developers building cricket apps".
+
+---
+
+## 7 — Entity Sport (sales@entitysport.com) — send LAST
+
+**Check before sending.** They already publish a "Cricket Prediction API". Reading their
+page: it answers *questions* — "India to win match?", "Kohli to hit 7 or more fours?",
+300+ per match — rather than serving one continuous, moving probability. **They publish no
+accuracy figure and no methodology at all.**
+
+That makes them adjacent rather than identical, and arguably a partner: a measured
+probability is what a question like "India to win match?" needs behind it. But they may
+equally read this as competitive, which is why it goes last — after the replies from
+prospects with nothing to defend.
+
+Lead on the difference, not the similarity:
+
+> Your prediction API answers questions about a match. This is the measured probability
+> those questions rest on — trained on T20 up to 2024, tested on 2,546 matches held out of
+> training, 19,340 predictions, 81.5% correct, with the methodology and calibration table
+> published openly.
+
+---
+
 ## Follow-up (once, after 6 working days, then stop)
 
 Two unanswered mails is a no. A third is why people mark senders as spam.
