@@ -629,6 +629,52 @@ hunting for the address on the About page. Almost nobody does that; they just le
 
 **Read the reports:** `GET /feedback/recent` on the backend, admin token required.
 
+## Google: "Crawled - currently not indexed", 5 pages (Sep 6 2026)
+Search Console reported 5 affected pages and a **validation failure** on 5 Sep, against a
+re-check requested 28 Jul. Cause was the one this file already documents: those URLs
+served the **375-word React shell**.
+
+**Found by comparing sitemap.xml against the vercel.json rewrite table** rather than by
+reading Search Console — 6 of 40 sitemap URLs had no static file behind them:
+
+| URL | Now |
+|---|---|
+| `/cricket-predictions-uk` | prerendered, **722 words** |
+| `/predictions/cricket-win-probability` | prerendered, **680 words** |
+| `/predictions/vitality-blast-2026` | prerendered, **535 words** |
+| `/odds` | **removed from sitemap** — see below |
+| `/api` | **removed from sitemap** — see below |
+| `/` | left alone: the homepage is the live dashboard and must stay React |
+
+Built through the existing `scripts/gen_content_pages.py`, so accuracy figures are still
+fetched from `/backtest-results` at generation time and the run still refuses under 100
+predictions.
+
+**Two routes were deliberately NOT prerendered, and this is the trap to remember.** A
+static file **shadows its React route completely** — Vercel serves the file and the app
+never mounts. `OddsCalculator` is a working converter (5 pieces of state, 6 inputs) and
+`ApiDocs` carries the lead form that POSTs to `/v1/request-access` plus the RapidAPI call
+to action. Prerendering those would have traded a working tool and a live lead form for
+an index entry. Both page builders (`page_odds`, `page_api`) are written and kept in the
+generator but not wired into `PAGES`; use them only if those routes ever become plain
+content. **Since they cannot be indexed without breaking them, they were removed from
+sitemap.xml** — advertising an unindexable URL guarantees a permanent "crawled, not
+indexed".
+
+**A drafted claim was wrong and the data caught it.** The first version of the Blast page
+asserted from memory that *"Chelmsford and Hove reward batting, 200 is gettable"*. The
+recorded data says Hove is the **lowest**-scoring ground in the set at 125.3 first-innings
+average; Bristol is the highest at 187.7. New `ground_table()` in the generator pulls the
+real per-ground records through `scripts/league_data.py` — the same source the league
+pages use — so both the Blast and UK pages now print a measured 10-ground table and a
+62-run spread instead of a remembered one. **Same lesson as the accuracy figure: fetch it,
+do not type it.** That also took the Blast page from 383 words (barely above the shell) to
+535.
+
+**Verified:** catch-all `/(.*)` still last in vercel.json, 61 rewrites, every destination
+exists, no duplicate sources, orphan scan clean apart from the two deliberately unrouted
+internal files, and only `/` still serves the shell.
+
 ## Prerendered content pages — /accuracy, /how-it-works, /faq (Aug 23 2026)
 `scripts/gen_content_pages.py` (new) writes `public/accuracy.html`,
 `public/how-it-works.html`, `public/faq.html` and patches `vercel.json`.

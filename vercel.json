@@ -245,6 +245,18 @@
       "destination": "/terms.html"
     },
     {
+      "source": "/cricket-predictions-uk",
+      "destination": "/cricket-predictions-uk.html"
+    },
+    {
+      "source": "/predictions/cricket-win-probability",
+      "destination": "/predictions/cricket-win-probability.html"
+    },
+    {
+      "source": "/predictions/vitality-blast-2026",
+      "destination": "/predictions/vitality-blast-2026.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

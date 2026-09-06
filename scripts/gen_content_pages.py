@@ -34,6 +34,9 @@ import os
 import sys
 import urllib.request
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import league_data  # ground records, the same source the league pages use
+
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(BASE, "public")
 VERCEL = os.path.join(BASE, "vercel.json")
@@ -423,10 +426,532 @@ def page_faq(a):
     return h + foot()
 
 
+
+
+def ground_table(league_name):
+    """Real per-ground scoring records, or None. Never a typed-in claim.
+
+    Written after a first draft of the Blast page asserted from memory that Hove
+    "rewards batting". The data says the opposite - it is the LOWEST scoring
+    ground in the set at 125.3. Same lesson as the accuracy figure: fetch it.
+    """
+    try:
+        d = league_data.league(league_name, warn=False)
+    except Exception:
+        return None
+    if not d or not d.get("rows"):
+        return None
+    rows = sorted(d["rows"], key=lambda r: -r["first"])
+    body = "".join(
+        "<tr><td>%s</td><td class=\"n\">%s</td><td class=\"n\">%s</td>"
+        "<td class=\"n\">%s</td><td class=\"n\">%s</td></tr>"
+        % (r["name"], r["n"], r["first"], r["second"], r.get("rpo", "-"))
+        for r in rows)
+    d["html"] = (
+        '<div class="scroll"><table>'
+        '<tr><th>Ground</th><th class="n">Matches</th><th class="n">1st inns avg</th>'
+        '<th class="n">2nd inns avg</th><th class="n">Runs per over</th></tr>'
+        + body + "</table></div>")
+    return d
+
+
+def _chk(a, key):
+    """One checkpoint accuracy, or None. Never invent a number if it is absent."""
+    v = (a.get("checkpoints") or {}).get(key)
+    try:
+        return round(float(v), 1)
+    except (TypeError, ValueError):
+        return None
+
+
+def page_uk(a):
+    """UK cricket. The site is UK-angled and this is its broadest UK entry point."""
+    g = ground_table("vitality-blast")
+    if g:
+        _uk_grounds = (
+            "<p>Across %d Blast grounds and %d matches of recorded data, the first-innings "
+            "average runs from <strong>%s at %s</strong> down to <strong>%s at %s</strong> "
+            "&mdash; a spread of %.0f runs between two grounds in the same competition. "
+            "That is more than a whole powerplay, and it is why a single national par "
+            "score reads a good total as a bad one at one ground and the reverse at "
+            "another.</p>" % (
+                g["grounds"], g["matches"],
+                g["highest"]["name"], g["highest"]["first"],
+                min(g["rows"], key=lambda r: r["first"])["name"],
+                min(r["first"] for r in g["rows"]),
+                g["highest"]["first"] - min(r["first"] for r in g["rows"])))
+    else:
+        _uk_grounds = ""
+    faq = [
+        ("Are the UK cricket predictions free?",
+         "Yes. There is no sign-up, no subscription and nothing sold."),
+        ("Which UK competitions are covered?",
+         "The Vitality Blast, both Hundred competitions and England's home T20 "
+         "internationals, alongside T20 leagues worldwide."),
+        ("Is this betting advice?",
+         "No. We publish a live win probability and the measured record behind it. "
+         "There are no tips and no selections."),
+    ]
+    return head(
+        "UK Cricket Predictions — Live Win Probability | CricIntelligence",
+        "Live win probability for the Vitality Blast, The Hundred and England T20 "
+        f"internationals, from a model measured at {a['overall']}% on matches it had "
+        "never seen. Free, no sign-up.",
+        "/cricket-predictions-uk", faq) + f"""
+<h1>UK cricket predictions</h1>
+<p class="lede">A live win probability for every ball of a UK T20 match, from a model
+tested on {a['predictions']:,} predictions across {a['matches']:,} matches it had never
+seen during training.</p>
+
+<h2>What this actually is</h2>
+<p>Most cricket &ldquo;prediction&rdquo; sites publish a tip: a team name, sometimes a
+price, and no way to check whether the last hundred tips were any good. This is a
+different thing. It publishes one number &mdash; the probability that a side wins from
+the exact position on the field right now &mdash; and it publishes the record of how
+that number has performed.</p>
+<p>The number updates as the match does. A wicket in the seventeenth over of a tight
+chase moves it a long way; a dot ball in the fourth barely moves it at all. That is not
+a design flourish, it is what the historical data says those events are worth.</p>
+
+<h2>The competitions</h2>
+<h3>Vitality Blast</h3>
+<p>All eighteen first-class counties, North and South groups, through to Finals Day at
+Edgbaston. The Blast is the hardest UK competition to read from the scoreboard alone:
+grounds vary enormously, and the gap between the highest and lowest scoring of them
+is wider than in any other T20 competition. The model carries a scoring record for
+each ground rather than one national average.</p>
+<h3>The Hundred</h3>
+<p>Both the men's and women's competitions. The 100-ball format is not simply a shorter
+T20 &mdash; five-ball overs and ten-ball spells change how a chase is paced, and the
+site handles the ball-count arithmetic separately rather than pretending it is a
+20-over game.</p>
+<h3>England T20 internationals</h3>
+<p>Home fixtures at Edgbaston, the Ageas Bowl, Old Trafford, Trent Bridge, the Kia Oval
+and Lord's, plus England away.</p>
+
+<h2>Why UK grounds need their own numbers</h2>
+{_uk_grounds}
+<p>A par score is a local fact. Across {a['matches']:,} matches of test data, the gap
+between the highest and lowest scoring grounds in the same competition is routinely
+thirty runs an innings &mdash; more than a whole powerplay. A model that treats 165 as
+&ldquo;average&rdquo; everywhere will read a good total as a bad one at one ground and
+the reverse at another. Ground records for 335 tracked venues sit behind every
+prediction.</p>
+
+<h2>How good is it, honestly</h2>
+<p>{a['overall']}% of the time, the side the model favoured went on to win &mdash;
+measured on 2025-26 matches held out of training entirely, not on the data it learned
+from. Broken down by how far into an innings the reading was taken:</p>
+<div class="scroll"><table>
+<tr><th>Reading taken at</th><th class="n">Accuracy</th></tr>
+{checkpoint_rows(a['checkpoints'])}
+</table></div>
+<p>Direction accuracy is the easy half. The harder question is calibration: when the
+model says 70%, does that happen roughly 70% of the time? That table is published in
+full on the <a href="/accuracy">accuracy page</a>, and it is the one a sceptic should
+read, because a hit-rate can be inflated by only ever backing the obvious favourite and
+a calibration curve cannot.</p>
+
+<h2>What it will not tell you</h2>
+<p>It has no ball-tracking data &mdash; no speed, no swing, no spin measurement. Those
+are not available at this scale and we would rather say so than imply a depth of
+information that is not there. It works from delivery outcomes: runs, wickets, who is
+at the crease, who is bowling, and what the ground has historically done.</p>
+<p>It also says very little before a ball is bowled. A confident-looking pre-match
+number would be decoration.</p>
+
+<h2>Start here</h2>
+<p><a href="/">Live predictions</a> &middot;
+<a href="/predictions/vitality-blast-2026">Vitality Blast</a> &middot;
+<a href="/predictions/the-hundred-2026">The Hundred</a> &middot;
+<a href="/accuracy">The accuracy record</a> &middot;
+<a href="/how-it-works">How the model works</a></p>
+""" + foot()
+
+
+def page_win_probability(a):
+    """The concept page. Ranks for the term and explains how to read the number."""
+    faq = [
+        ("What is cricket win probability?",
+         "The chance a side wins from the current match position, expressed as a "
+         "percentage, updated after every ball."),
+        ("How is it calculated?",
+         "A gradient-boosted model trained on a decade of ball-by-ball T20 records, "
+         "blended with live match signals and a Bayesian update over each over."),
+        ("Is a 70% prediction wrong if that team loses?",
+         "No. A 70% call is meant to be wrong about three times in ten. What matters "
+         "is whether that happens close to three times in ten across many matches, "
+         "which is what the calibration table measures."),
+    ]
+    cal = a.get("calibration") or []
+    return head(
+        "Cricket Win Probability — How It Works and How Accurate It Is",
+        "What cricket win probability means, how it is calculated ball by ball, and "
+        f"the measured record: {a['overall']}% across {a['predictions']:,} predictions "
+        "on unseen matches.",
+        "/predictions/cricket-win-probability", faq) + f"""
+<h1>Cricket win probability</h1>
+<p class="lede">One number: the chance a side wins from where the match stands right
+now. Here is what goes into it, how to read it, and what it has actually scored.</p>
+
+<h2>The definition</h2>
+<p>Win probability is not a rating of how well a team has played. It is a forecast from
+the current position, and it holds no memory of how that position was reached. A side
+that collapsed to 40 for 5 and recovered to 130 for 5 is read exactly the same as a
+side that reached 130 for 5 serenely, because from here the two are the same
+problem.</p>
+
+<h2>What goes into it</h2>
+<ul>
+<li><strong>Match state</strong> &mdash; runs, wickets, overs, target, and the required
+rate against the current rate.</li>
+<li><strong>Who is at the crease</strong> &mdash; a set batter on 40 from 22 is a
+different proposition to a new batter facing his first ball, and the model prices that
+difference rather than counting wickets alone.</li>
+<li><strong>Who is bowling</strong> &mdash; the bowler's own record and how much of his
+allocation remains.</li>
+<li><strong>The ground</strong> &mdash; scoring records for 335 tracked venues, so that
+&ldquo;par&rdquo; is a local number rather than a national average.</li>
+<li><strong>Recent overs</strong> &mdash; the last three overs are weighted more heavily
+than the innings average, because momentum in a T20 chase is real and short-lived.</li>
+</ul>
+<p>Those feed a gradient-boosted model trained on roughly a decade of ball-by-ball T20
+records, which is then updated over by over: each over is treated as evidence for or
+against the reading the model already held, so a single expensive over shifts the
+number without overturning it.</p>
+
+<h2>How to read it</h2>
+<h3>A high number is not a promise</h3>
+<p>85% means that in a hundred matches from positions like this one, about fifteen are
+lost. T20 is a format where fifteen in a hundred happens often enough to watch for.</p>
+<h3>Early readings are worth less</h3>
+<p>At over 6 the model scores {_chk(a, 'ov6') or 'about 79'}%; by over 15 it is
+{_chk(a, 'ov15') or 'about 82'}%. It knows less early because there is less to know,
+and it says so rather than presenting every reading with equal confidence.</p>
+<h3>Movement is information</h3>
+<p>A number that barely moves through a 20-run over would be wrong more often, not
+less. What the model avoids is reacting to noise &mdash; each over is weighed against
+what was expected at that stage.</p>
+
+<h2>Is it any good? The two tests</h2>
+<h3>Test one: direction</h3>
+<p><strong>{a['overall']}%</strong> of the time the favoured side went on to win, across
+{a['predictions']:,} predictions on {a['matches']:,} matches from 2025-26 that were held
+out of training entirely.</p>
+<div class="scroll"><table>
+<tr><th>Reading taken at</th><th class="n">Accuracy</th></tr>
+{checkpoint_rows(a['checkpoints'])}
+</table></div>
+<h3>Test two: calibration</h3>
+<p>This is the harder test and the one that matters. Group every prediction by what the
+model said, then check what actually happened in each group. A model that only ever
+backs the obvious favourite can post a strong hit-rate; it cannot post a straight
+calibration line.</p>
+<div class="scroll"><table>
+<tr><th>Model said</th><th class="n">Predictions</th><th class="n">Actually won</th></tr>
+{calibration_rows(cal)}
+</table></div>
+<p>Full method and the reproduction command are on the
+<a href="/accuracy">accuracy page</a>.</p>
+
+<h2>What it is not</h2>
+<p>It is not a tip, a price, or advice. It carries no ball-tracking data &mdash; speed,
+swing and spin measurements are not available to us at this scale, and the model works
+from delivery outcomes only. And it says little before the first ball, because from
+nothing there is little to forecast.</p>
+<p><a href="/">See it live</a> &middot; <a href="/how-it-works">How it works</a>
+&middot; <a href="/faq">FAQ</a></p>
+""" + foot()
+
+
+def page_blast(a):
+    """Vitality Blast hub. Was in the sitemap serving an empty shell."""
+    g = ground_table("vitality-blast")
+    if g:
+        lo = min(g["rows"], key=lambda r: r["first"])
+        _blast_grounds = (
+            "<p>The Blast is played across more distinct venues than any other T20 "
+            "competition, and they do not behave alike. Here is what %d of them have "
+            "actually produced across %d recorded matches, highest-scoring first.</p>"
+            "%s"
+            "<p>The spread is the point. <strong>%s</strong> averages %s in the first "
+            "innings; <strong>%s</strong> averages %s. That is a %.0f-run gap between "
+            "two grounds in the same competition, so a chase that is comfortably ahead "
+            "of par at one is well behind it at the other.</p>"
+            "<p>The second column worth reading is the gap between first and second "
+            "innings averages. At <strong>%s</strong> it is %s runs &mdash; the widest "
+            "here, and a real toss advantage. At <strong>%s</strong> it is only %s, "
+            "which is a ground where batting first buys almost nothing.</p>"
+            "<p>Every prediction is anchored to that ground's own record rather than a "
+            "competition average &mdash; 335 tracked venues in total.</p>" % (
+                g["grounds"], g["matches"], g["html"],
+                g["highest"]["name"], g["highest"]["first"],
+                lo["name"], lo["first"], g["highest"]["first"] - lo["first"],
+                g["hardest"]["name"], g["hardest"]["gap"],
+                g["easiest"]["name"], g["easiest"]["gap"]))
+    else:
+        _blast_grounds = ""
+    north = ["Derbyshire", "Durham", "Lancashire", "Leicestershire", "Northamptonshire",
+             "Nottinghamshire", "Warwickshire", "Worcestershire", "Yorkshire"]
+    south = ["Essex", "Glamorgan", "Gloucestershire", "Hampshire", "Kent", "Middlesex",
+             "Somerset", "Surrey", "Sussex"]
+    faq = [
+        ("How many teams are in the Vitality Blast?",
+         "Eighteen first-class counties, split into North and South groups of nine."),
+        ("How does a county reach Finals Day?",
+         "The top four in each group reach the quarter-finals; the four winners meet at "
+         "Edgbaston on Finals Day, two semi-finals and a final in one day."),
+        ("Are Blast predictions free?",
+         "Yes, with no sign-up. Live win probability for every Blast match."),
+    ]
+    return head(
+        "Vitality Blast 2026 Predictions — Live Win Probability",
+        "Live win probability for every Vitality Blast match, all 18 counties, with "
+        "ground-by-ground scoring records. Free, no sign-up.",
+        "/predictions/vitality-blast-2026", faq) + f"""
+<h1>Vitality Blast 2026</h1>
+<p class="lede">Live win probability for every Blast match, from the group stage to
+Finals Day at Edgbaston, with a scoring record for each county ground behind every
+reading.</p>
+
+<h2>The competition</h2>
+<p>Eighteen first-class counties in two groups of nine. Each county plays fourteen group
+matches; the top four in each group reach the quarter-finals, and the four winners meet
+at <strong>Edgbaston on Finals Day</strong> &mdash; two semi-finals and a final inside a
+single day, which is the most compressed schedule in English cricket and the reason
+Finals Day form so rarely follows group form.</p>
+
+<h2>The eighteen counties</h2>
+<div class="scroll"><table>
+<tr><th>North Group</th><th>South Group</th></tr>
+{"".join("<tr><td>%s</td><td>%s</td></tr>" % (n, s) for n, s in zip(north, south))}
+</table></div>
+
+<h2>Why grounds decide Blast matches</h2>
+{_blast_grounds}
+
+<h2>What the model does during a match</h2>
+<ul>
+<li>Updates a win probability after every ball, for both sides.</li>
+<li>Projects the next few overs, with a range rather than a single number, because a
+single number for one over of T20 is false precision.</li>
+<li>Reads the pitch from how the ball is actually behaving in this match, not from a
+label attached to the ground in advance.</li>
+</ul>
+
+<h2>The record</h2>
+<p><strong>{a['overall']}%</strong> across {a['predictions']:,} predictions on
+{a['matches']:,} matches the model never saw in training, with the full calibration
+table published on the <a href="/accuracy">accuracy page</a>. Early readings are worth
+less than late ones and the table says so.</p>
+
+<h2>Elsewhere on the site</h2>
+<p><a href="/">Live predictions</a> &middot;
+<a href="/predictions/the-hundred-2026">The Hundred 2026</a> &middot;
+<a href="/cricket-predictions-uk">UK cricket predictions</a> &middot;
+<a href="/predictions/cricket-win-probability">How win probability works</a></p>
+""" + foot()
+
+
+def page_odds(a):
+    """Odds formats explained. Educational reference, deliberately not tips."""
+    faq = [
+        ("How do I convert decimal odds to a probability?",
+         "Divide 1 by the decimal odds. 2.50 becomes 1 / 2.50 = 0.40, or 40%."),
+        ("What is the overround?",
+         "The amount by which a bookmaker's implied probabilities add up to more than "
+         "100%. That excess is the margin built into the prices."),
+        ("Does CricIntelligence give betting tips?",
+         "No. This page explains how odds formats convert. We publish a model "
+         "probability and its measured record, and sell nothing."),
+    ]
+    return head(
+        "Cricket Odds Explained — Decimal, Fractional and Implied Probability",
+        "How decimal, fractional and American odds convert to an implied probability, "
+        "what the overround is, and how to compare a price with a model probability.",
+        "/odds", faq) + f"""
+<h1>Odds, and what they actually say</h1>
+<p class="lede">Every odds format is the same statement written three ways: a
+probability, plus a margin. Here is how to read each one, and how to compare a price
+with a model's number.</p>
+
+<h2>The three formats</h2>
+<div class="scroll"><table>
+<tr><th>Implied probability</th><th class="n">Decimal</th><th class="n">Fractional</th><th class="n">American</th></tr>
+<tr><td>90%</td><td class="n">1.11</td><td class="n">1/9</td><td class="n">-900</td></tr>
+<tr><td>75%</td><td class="n">1.33</td><td class="n">1/3</td><td class="n">-300</td></tr>
+<tr><td>60%</td><td class="n">1.67</td><td class="n">4/6</td><td class="n">-150</td></tr>
+<tr><td>50%</td><td class="n">2.00</td><td class="n">1/1</td><td class="n">+100</td></tr>
+<tr><td>40%</td><td class="n">2.50</td><td class="n">6/4</td><td class="n">+150</td></tr>
+<tr><td>25%</td><td class="n">4.00</td><td class="n">3/1</td><td class="n">+300</td></tr>
+<tr><td>10%</td><td class="n">10.00</td><td class="n">9/1</td><td class="n">+900</td></tr>
+</table></div>
+
+<h3>Decimal</h3>
+<p>The total return per unit staked, stake included. To get the implied probability,
+divide one by it: <strong>1 / 2.50 = 0.40</strong>, or 40%. This is the format that
+converts most easily, which is why it is the one to think in.</p>
+
+<h3>Fractional</h3>
+<p>Profit relative to stake, so 6/4 returns six profit for every four risked. The
+implied probability is the denominator over the sum of both numbers:
+<strong>4 / (6 + 4) = 0.40</strong>. Same 40%.</p>
+
+<h3>American</h3>
+<p>A positive number is the profit on a 100 stake; a negative number is the stake needed
+to profit 100. For +150, the probability is <strong>100 / (150 + 100) = 0.40</strong>.
+For -150 it is <strong>150 / (150 + 100) = 0.60</strong>.</p>
+
+<h2>The overround, and why the numbers never add to 100</h2>
+<p>Convert both sides of a two-way market and add them up. In a fair market the total is
+100%. In a real one it is more &mdash; commonly 102% to 108% in cricket. That excess is
+the <strong>overround</strong>, the margin built into the prices.</p>
+<p>It matters because it means a price is <em>not</em> a probability. A price implying
+55% in a market with a 6% overround is closer to 52% once the margin is taken out. Any
+comparison between a price and a model probability that skips this step is comparing
+two different quantities.</p>
+
+<h2>Comparing a price with a model number</h2>
+<p>A model probability and a market price answer different questions. The model answers
+&ldquo;what does the historical data say happens from this position?&rdquo; A price
+answers that too, but with a margin added and with money moving it &mdash; a large,
+confident stake shifts a price without anything on the field having changed.</p>
+<p>Which is to say: a gap between the two is not automatically an error in the price. It
+is a difference of opinion, and the honest way to judge whose opinion is better is a
+record. Ours is published in full on the <a href="/accuracy">accuracy page</a> &mdash;
+{a['overall']}% across {a['predictions']:,} predictions on unseen matches, with the
+calibration table alongside it.</p>
+
+<h2>What we do not do</h2>
+<p>We do not publish tips, we do not sell selections, and we do not tell anyone what to
+back. This page is a reference for reading odds formats; the site publishes a live
+probability and the measured record behind it. Nothing here is advice.</p>
+<p><a href="/predictions/cricket-win-probability">How win probability works</a>
+&middot; <a href="/accuracy">The accuracy record</a> &middot;
+<a href="/">Live predictions</a></p>
+""" + foot()
+
+
+def page_api(a):
+    """The paid API. B2B page - deliberately no odds, no gambling language."""
+    faq = [
+        ("What does the API return?",
+         "A live win probability, confidence signals and derived indices for a match, "
+         "plus the model's published accuracy. It is a prediction API, not a score "
+         "feed."),
+        ("Is there a free tier?",
+         "Yes. A trial plan allows 100 calls a day, and the accuracy endpoint needs no "
+         "key at all so the claim can be checked before paying for it."),
+        ("How accurate is it?",
+         f"{a['overall']}% across {a['predictions']:,} predictions on {a['matches']:,} "
+         "matches held out of training, with the calibration table published."),
+    ]
+    return head(
+        "Cricket Win Probability API — CricIntelligence",
+        "A live cricket win-probability API with a published accuracy record: "
+        f"{a['overall']}% on unseen matches. Free trial tier, REST, JSON.",
+        "/api", faq) + f"""
+<h1>Cricket win probability API</h1>
+<p class="lede">One REST endpoint, one number, and a published record behind it. Built
+for broadcasters, streaming platforms and fantasy products that want a live probability
+without building the model.</p>
+
+<h2>What it is, and what it is not</h2>
+<p>This is a <strong>prediction</strong> API. It returns the model's output: a live win
+probability, its confidence signals, and the derived indices built from a decade of
+public ball-by-ball history.</p>
+<p>It is <strong>not</strong> a score feed. It deliberately returns no live runs,
+wickets, overs, target or run rates. Reselling somebody else's live scoreboard is a
+different act from selling a model's own output, and this API is confined to the
+second. Only innings and phase are included as context, because a probability cannot be
+interpreted without knowing roughly when it was taken.</p>
+
+<h2>Endpoints</h2>
+<div class="scroll"><table>
+<tr><th>Endpoint</th><th>Key</th><th>Returns</th></tr>
+<tr><td><code>GET /v1/accuracy</code></td><td>none</td><td>The published holdout record</td></tr>
+<tr><td><code>GET /v1/plans</code></td><td>none</td><td>Plans and call limits</td></tr>
+<tr><td><code>GET /v1/matches</code></td><td>required</td><td>Matches currently covered</td></tr>
+<tr><td><code>GET /v1/predict/&lt;id&gt;</code></td><td>required</td><td>Win probability and confidence</td></tr>
+<tr><td><code>GET /v1/usage</code></td><td>required</td><td>Your calls against your quota</td></tr>
+</table></div>
+<p><code>/v1/accuracy</code> needs no key on purpose: a prospect has to be able to check
+the {a['overall']}% claim before paying for it.</p>
+
+<h2>Authentication</h2>
+<p>Pass your key as <code>X-API-Key</code>, or as <code>Authorization: Bearer</code>.
+Remaining quota comes back on every response in <code>X-RateLimit-Limit</code> and
+<code>X-RateLimit-Used</code>. Errors use stable slugs &mdash;
+<code>missing_api_key</code>, <code>invalid_api_key</code>,
+<code>quota_exceeded</code>, <code>match_not_found</code>,
+<code>upstream_unavailable</code> &mdash; so integrations can branch on them rather than
+parsing prose. Upstream failure is a 503, never a 500.</p>
+
+<h2>The contract</h2>
+<p>The payload is a deliberately small, documented subset, not the model's internal
+structure. That internal shape changes whenever the model changes; a paying integrator
+must not break when it does. Fields are added, not repurposed.</p>
+
+<h2>The record</h2>
+<p><strong>{a['overall']}%</strong> across {a['predictions']:,} predictions on
+{a['matches']:,} matches from 2025-26 that were held out of training entirely &mdash;
+trained on data up to 2024, scored on matches the model had never seen.</p>
+<div class="scroll"><table>
+<tr><th>Reading taken at</th><th class="n">Accuracy</th></tr>
+{checkpoint_rows(a['checkpoints'])}
+</table></div>
+<p>The calibration table &mdash; what actually happened at each probability the model
+quoted &mdash; is published in full on the <a href="/accuracy">accuracy page</a>. It is
+the number a technical buyer should read, because direction accuracy can be inflated by
+always backing the favourite and calibration cannot.</p>
+
+<h2>Honest limitations</h2>
+<ul>
+<li><strong>No ball-tracking.</strong> No speed, swing or spin measurement &mdash; not
+available at this scale. The model works from delivery outcomes.</li>
+<li><strong>No uptime guarantee.</strong> There is no SLA on any tier, because there is
+no infrastructure behind one yet. We would rather say that than sell a promise.</li>
+<li><strong>T20 only.</strong> The model is trained and validated on T20; it is not
+served for ODI or Test cricket.</li>
+</ul>
+
+<h2>Getting a key</h2>
+<p>Plans and a request form are on the <a href="/api">API page</a> in the app, which
+also carries the interactive documentation. The trial tier is free and needs no card.</p>
+<p><a href="/accuracy">Accuracy record</a> &middot;
+<a href="/how-it-works">How the model works</a> &middot;
+<a href="/">Live predictions</a></p>
+""" + foot()
+
+# Every entry here MUST also get a rewrite in vercel.json - patch_vercel() does
+# that - or the catch-all sends the URL to the empty React shell and the file is
+# never served. Three finished pages sat unrouted in public/ for weeks in August
+# for exactly that reason.
+#
+# The five below were added 6 Sep 2026. Google Search Console reported
+# "Crawled - currently not indexed" with a validation failure, and comparing the
+# sitemap against the rewrite table found six URLs still serving the 375-word
+# shell. These are five of them. The sixth is "/" - the homepage is the live
+# dashboard and must stay React, so it needs a different approach and is
+# deliberately not here.
 PAGES = [
     ("/accuracy", "accuracy.html", page_accuracy),
     ("/how-it-works", "how-it-works.html", page_how_it_works),
     ("/faq", "faq.html", page_faq),
+    ("/cricket-predictions-uk", "cricket-predictions-uk.html", page_uk),
+    ("/predictions/cricket-win-probability",
+     "predictions/cricket-win-probability.html", page_win_probability),
+    ("/predictions/vitality-blast-2026",
+     "predictions/vitality-blast-2026.html", page_blast),
+    # NOT /odds and NOT /api, deliberately. A static file SHADOWS its React route
+    # entirely - Vercel serves the file and the app never mounts - and both of
+    # those routes are interactive: OddsCalculator is a working converter (5
+    # pieces of state, 6 inputs) and ApiDocs carries the lead form that POSTs to
+    # /v1/request-access plus the RapidAPI call to action. Prerendering them would
+    # trade a working tool and a live lead form for an index entry. page_odds()
+    # and page_api() below are kept and tested; wire them in only if those routes
+    # are ever rebuilt as plain content, or if the content is merged into the
+    # React components instead.
 ]
 
 
