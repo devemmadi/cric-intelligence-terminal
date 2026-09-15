@@ -19,6 +19,17 @@ export default function RGFooter() {
                         <a href="https://t.me/CricIntelligence" target="_blank" rel="noopener noreferrer"
                             style={{ fontSize: 12, color: "#C8961E", textDecoration: "none", fontWeight: 700, display: "flex", alignItems: "center", gap: 5 }}
                         >📢 Join us on Telegram</a>
+                        {/* Plain <a>, NOT a router Link. /venues is a prerendered
+                            static page with no React route behind it, so a Link
+                            would client-side route to nothing. 48 ground pages
+                            went live on 15 Sep 2026 with no inbound link from
+                            the app at all, which is how Google decides a page is
+                            not worth crawling. */}
+                        <a href="/venues"
+                            style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", textDecoration: "none" }}
+                            onMouseOver={e => e.target.style.color = "#C8961E"}
+                            onMouseOut={e => e.target.style.color = "rgba(255,255,255,0.5)"}
+                        >Ground Records</a>
                         {[
                             ["/", "Home"],
                             ["/about", "About Us"],
