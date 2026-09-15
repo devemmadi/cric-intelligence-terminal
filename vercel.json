@@ -257,6 +257,202 @@
       "destination": "/predictions/vitality-blast-2026.html"
     },
     {
+      "source": "/venues/dubai-international-cricket-stadium",
+      "destination": "/venues/dubai-international-cricket-stadium.html"
+    },
+    {
+      "source": "/venues/sharjah-cricket-stadium",
+      "destination": "/venues/sharjah-cricket-stadium.html"
+    },
+    {
+      "source": "/venues/melbourne-cricket-ground",
+      "destination": "/venues/melbourne-cricket-ground.html"
+    },
+    {
+      "source": "/venues/adelaide-oval",
+      "destination": "/venues/adelaide-oval.html"
+    },
+    {
+      "source": "/venues/sydney-cricket-ground",
+      "destination": "/venues/sydney-cricket-ground.html"
+    },
+    {
+      "source": "/venues/gaddafi-stadium-lahore",
+      "destination": "/venues/gaddafi-stadium-lahore.html"
+    },
+    {
+      "source": "/venues/wankhede-stadium-mumbai",
+      "destination": "/venues/wankhede-stadium-mumbai.html"
+    },
+    {
+      "source": "/venues/national-stadium-karachi",
+      "destination": "/venues/national-stadium-karachi.html"
+    },
+    {
+      "source": "/venues/perth-stadium",
+      "destination": "/venues/perth-stadium.html"
+    },
+    {
+      "source": "/venues/providence-stadium-guyana",
+      "destination": "/venues/providence-stadium-guyana.html"
+    },
+    {
+      "source": "/venues/rawalpindi-cricket-stadium",
+      "destination": "/venues/rawalpindi-cricket-stadium.html"
+    },
+    {
+      "source": "/venues/sydney-showground-stadium",
+      "destination": "/venues/sydney-showground-stadium.html"
+    },
+    {
+      "source": "/venues/bellerive-oval-hobart",
+      "destination": "/venues/bellerive-oval-hobart.html"
+    },
+    {
+      "source": "/venues/eden-gardens-kolkata",
+      "destination": "/venues/eden-gardens-kolkata.html"
+    },
+    {
+      "source": "/venues/brian-lara-stadium-tarouba",
+      "destination": "/venues/brian-lara-stadium-tarouba.html"
+    },
+    {
+      "source": "/venues/shere-bangla-national-stadium-mirpur",
+      "destination": "/venues/shere-bangla-national-stadium-mirpur.html"
+    },
+    {
+      "source": "/venues/arun-jaitley-stadium-delhi",
+      "destination": "/venues/arun-jaitley-stadium-delhi.html"
+    },
+    {
+      "source": "/venues/sheikh-zayed-stadium-abu-dhabi",
+      "destination": "/venues/sheikh-zayed-stadium-abu-dhabi.html"
+    },
+    {
+      "source": "/venues/docklands-stadium-melbourne",
+      "destination": "/venues/docklands-stadium-melbourne.html"
+    },
+    {
+      "source": "/venues/sylhet-international-cricket-stadium",
+      "destination": "/venues/sylhet-international-cricket-stadium.html"
+    },
+    {
+      "source": "/venues/rangiri-dambulla-international-stadium",
+      "destination": "/venues/rangiri-dambulla-international-stadium.html"
+    },
+    {
+      "source": "/venues/m-chinnaswamy-stadium-bengaluru",
+      "destination": "/venues/m-chinnaswamy-stadium-bengaluru.html"
+    },
+    {
+      "source": "/venues",
+      "destination": "/venues.html"
+    },
+    {
+      "source": "/venues/ma-chidambaram-stadium-chennai",
+      "destination": "/venues/ma-chidambaram-stadium-chennai.html"
+    },
+    {
+      "source": "/venues/rajiv-gandhi-international-stadium-hyderabad",
+      "destination": "/venues/rajiv-gandhi-international-stadium-hyderabad.html"
+    },
+    {
+      "source": "/venues/daren-sammy-stadium-st-lucia",
+      "destination": "/venues/daren-sammy-stadium-st-lucia.html"
+    },
+    {
+      "source": "/venues/r-premadasa-stadium-colombo",
+      "destination": "/venues/r-premadasa-stadium-colombo.html"
+    },
+    {
+      "source": "/venues/queen-s-park-oval-trinidad",
+      "destination": "/venues/queen-s-park-oval-trinidad.html"
+    },
+    {
+      "source": "/venues/sawai-mansingh-stadium-jaipur",
+      "destination": "/venues/sawai-mansingh-stadium-jaipur.html"
+    },
+    {
+      "source": "/venues/kensington-oval-barbados",
+      "destination": "/venues/kensington-oval-barbados.html"
+    },
+    {
+      "source": "/venues/the-gabba-brisbane",
+      "destination": "/venues/the-gabba-brisbane.html"
+    },
+    {
+      "source": "/venues/warner-park-st-kitts",
+      "destination": "/venues/warner-park-st-kitts.html"
+    },
+    {
+      "source": "/venues/pallekele-international-stadium",
+      "destination": "/venues/pallekele-international-stadium.html"
+    },
+    {
+      "source": "/venues/kingsmead-durban",
+      "destination": "/venues/kingsmead-durban.html"
+    },
+    {
+      "source": "/venues/manuka-oval-canberra",
+      "destination": "/venues/manuka-oval-canberra.html"
+    },
+    {
+      "source": "/venues/newlands-cape-town",
+      "destination": "/venues/newlands-cape-town.html"
+    },
+    {
+      "source": "/venues/ekana-cricket-stadium-lucknow",
+      "destination": "/venues/ekana-cricket-stadium-lucknow.html"
+    },
+    {
+      "source": "/venues/carrara-oval-gold-coast",
+      "destination": "/venues/carrara-oval-gold-coast.html"
+    },
+    {
+      "source": "/venues/supersport-park-centurion",
+      "destination": "/venues/supersport-park-centurion.html"
+    },
+    {
+      "source": "/venues/multan-cricket-stadium",
+      "destination": "/venues/multan-cricket-stadium.html"
+    },
+    {
+      "source": "/venues/the-oval-london",
+      "destination": "/venues/the-oval-london.html"
+    },
+    {
+      "source": "/venues/zahur-ahmed-chowdhury-stadium-chattogram",
+      "destination": "/venues/zahur-ahmed-chowdhury-stadium-chattogram.html"
+    },
+    {
+      "source": "/venues/galle-international-stadium",
+      "destination": "/venues/galle-international-stadium.html"
+    },
+    {
+      "source": "/venues/trent-bridge-nottingham",
+      "destination": "/venues/trent-bridge-nottingham.html"
+    },
+    {
+      "source": "/venues/old-trafford-manchester",
+      "destination": "/venues/old-trafford-manchester.html"
+    },
+    {
+      "source": "/venues/pca-is-bindra-stadium-mohali",
+      "destination": "/venues/pca-is-bindra-stadium-mohali.html"
+    },
+    {
+      "source": "/venues/st-george-s-park-gqeberha",
+      "destination": "/venues/st-george-s-park-gqeberha.html"
+    },
+    {
+      "source": "/venues/lord-s-london",
+      "destination": "/venues/lord-s-london.html"
+    },
+    {
+      "source": "/venues/the-rose-bowl-southampton",
+      "destination": "/venues/the-rose-bowl-southampton.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

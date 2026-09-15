@@ -629,6 +629,56 @@ hunting for the address on the About page. Almost nobody does that; they just le
 
 **Read the reports:** `GET /feedback/recent` on the backend, admin token required.
 
+## Ground pages — /venues (Sep 15 2026)
+`scripts/gen_venue_pages.py` (new) writes `public/venues/<slug>.html` for **48 grounds**
+plus an index at `/venues`, and patches `vercel.json` and `sitemap.xml`.
+
+**Why this and not more model work.** Counting the backend session log: of 84 logged
+sessions, **56% were model or accuracy work and 1% was about getting anyone to use the
+site**. The model is not the problem — 81.5% true holdout with a published calibration
+table, which is more than CricViz publishes for WinViz (checked: their WinViz and
+data-science pages carry no accuracy figure at all, and their stated inputs are the same
+as ours). The problem is that nobody searches for "win probability". People do search a
+ground by name before a match, and we hold that data for 335 venues and had never
+published a word of it.
+
+**Two selection mistakes were made and corrected before publishing:**
+
+| First attempt | Why it was wrong | Now |
+|---|---|---|
+| 120 pages, any venue with 20+ matches | Match count does not track searchability — Terdthai Cricket Ground, Bangkok has 96 matches and no searches; Edgbaston has 22 and plenty. It published a page for a **German club ground** — the doorway pattern, and the worst thing to ship on a site already refused by AdSense for "low value content" | **48 pages**, sourced from `league_data.GROUNDS` |
+| Keyed straight off `venue_stats.json` | The same ground appears under several keys — "Wankhede Stadium" (80) and "Wankhede Stadium, Mumbai" (64) are one venue. It would have published two pages for one ground with different numbers on each | `league_data._merge()` groups every alias under one display name |
+
+`league_data.GROUNDS` already solved both — it is hand-curated per league and exists
+precisely because fuzzy venue matching is wrong (see the note above about "oval" matching
+Botswana). Every one of the 48 is a real venue in a competition this site covers.
+
+**What makes a page worth publishing rather than a template with a name swapped in:**
+every number is computed from that ground's own record — phase-by-phase run rates and
+wickets for both innings, a **running par score** (what the total reads after each phase,
+built from measured phase rates rather than dividing a final average into equal pieces),
+a recent-versus-all-time comparison, and an over-to-over volatility read. 535-573 words
+served against the 375-word React shell.
+
+**An earlier draft was 389 words** — barely above the shell, which is not worth
+publishing at any count. The par-score, recent-form and volatility sections were added
+for that reason, not for padding.
+
+Accuracy figures are fetched from `/backtest-results` at generation time and the run
+refuses under 100 predictions, same guard as `gen_content_pages.py`.
+
+**Purely additive:** no React component changed, no existing file rewritten.
+
+**When re-running after changing the threshold, clean up first.** A `--min 20` run wrote
+120 pages and 121 rewrites; switching to the curated set left **98 rewrites and 98
+sitemap URLs pointing at deleted files**, which would have been 98 live 404s. The
+generator does not prune. Delete `public/venues/`, re-run, then drop any rewrite whose
+destination no longer exists and any `/venues/*` sitemap URL with no file behind it.
+
+**Verified:** 110 rewrites, catch-all `/(.*)` still last, zero missing destinations, 89
+sitemap URLs with zero dead venue entries, orphan scan clean apart from the two
+deliberately unrouted internal files.
+
 ## Google: "Crawled - currently not indexed", 5 pages (Sep 6 2026)
 Search Console reported 5 affected pages and a **validation failure** on 5 Sep, against a
 re-check requested 28 Jul. Cause was the one this file already documents: those URLs
