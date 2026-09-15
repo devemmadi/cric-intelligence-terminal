@@ -1,0 +1,239 @@
+========================================================================
+EMAIL 1  
+========================================================================
+TO:      support@goalserve.com
+SUBJECT: Cricket win probability - an add-on to your cricket feed?
+
+Hi,
+
+I run CricIntelligence - a live cricket win-probability model for T20.
+
+You have supplied cricket data feeds for two decades, and your customers build
+livescore and fantasy products on them. What almost none of those products have
+is a win-probability layer, because adding one is a training-data problem rather
+than an engineering one.
+
+I would like to explore offering it alongside your cricket feed, under your
+brand, as an add-on. You keep the customer relationship and a revenue share; I
+maintain the model. It complements your feed rather than competing with it - you
+supply what happened, this supplies what it means for the result.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The methodology and the calibration table are public and need no key,
+so you can check it before replying:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+It is also live and self-serve on RapidAPI if your team would rather look than
+talk - free tier, instant key, no card:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth a conversation?
+
+Emmadi
+cricintelligence.com/api
+
+-- note: Draft 6, unchanged. Multi-sport and twenty years old, so no flattery about powering fantasy apps - they would know it was wrong.
+
+========================================================================
+EMAIL 2  
+========================================================================
+TO:      contact@cricketdata.org
+SUBJECT: Cricket win probability - an add-on to your cricket API?
+
+Hi,
+
+I run CricIntelligence - a live cricket win-probability model for T20.
+
+Your customers are independent developers building cricket apps. What almost
+none of those apps have is a win-probability layer, because adding one is a
+training-data problem rather than an engineering one.
+
+I would like to explore offering it alongside your cricket feed, under your
+brand, as an add-on. You keep the customer relationship and a revenue share; I
+maintain the model. It complements your feed rather than competing with it - you
+supply what happened, this supplies what it means for the result.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The methodology and the calibration table are public and need no key,
+so you can check it before replying:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+It is also live and self-serve on RapidAPI if your team would rather look than
+talk - free tier, instant key, no card:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth a conversation?
+
+Emmadi
+cricintelligence.com/api
+
+-- note: Draft 6 with the opening swapped, exactly as the draft file instructs.
+
+========================================================================
+EMAIL 3  
+========================================================================
+TO:      sales@entitysport.com
+SUBJECT: The measured probability behind a cricket prediction API
+
+Hi,
+
+I run CricIntelligence - a live cricket win-probability model for T20.
+
+Your prediction API answers questions about a match - will India win, will Kohli
+hit seven or more fours. This is the measured probability those questions rest on:
+one continuous number that moves ball by ball, rather than a set of answers.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The methodology and the calibration table are public and need no key,
+so you can check it before replying:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+That is the difference I would want to talk about. A question like "India to win
+match?" needs a probability behind it, and ours is the only one in cricket with a
+published calibration table - CricViz does not publish one, and nor does anyone
+else I can find.
+
+It is also live and self-serve on RapidAPI if your team would rather look than
+talk - free tier, instant key, no card:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth a conversation, or is this too close to what you already do?
+
+Emmadi
+cricintelligence.com/api
+
+-- note: Draft 7. The file says send this one LAST - they publish a competing prediction API (but no accuracy figure). Send it after the others have had a chance to reply.
+
+========================================================================
+EMAIL 4    *** PERSONALISE BEFORE SENDING ***
+========================================================================
+TO:      support@crex.com
+SUBJECT: A win-probability bar for CREX
+
+Hi,
+
+I use CREX - [REPLACE THIS with one specific true sentence: what you
+actually like about it, or the exact screen this would sit on. The draft says
+delete this mail rather than send it without this line, and that is right - a
+generic mail to four competing apps reads as a mailshot and they can each tell.]
+
+One thing it does not show is a live win probability. It is the number that keeps
+someone watching between balls, and it is the hardest feature to add because it
+needs a trained model rather than a feed.
+
+I have built one and expose it as a single HTTP call - probability for both
+sides, confidence band, updated ball by ball.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The methodology and the calibration table are public and need no key,
+so you can check it before replying:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+It is also live and self-serve on RapidAPI if your team would rather look than
+talk - free tier, instant key, no card:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+
+Emmadi
+cricintelligence.com/api
+
+-- note: Draft 3. MUST be personalised before sending - see the bracketed line.
+
+========================================================================
+EMAIL 5    *** PERSONALISE BEFORE SENDING ***
+========================================================================
+TO:      support.justcricket@gmail.com
+SUBJECT: A win-probability bar for Just Cricket
+
+Hi,
+
+I use Just Cricket - [REPLACE THIS with one specific true sentence: what you
+actually like about it, or the exact screen this would sit on. The draft says
+delete this mail rather than send it without this line, and that is right - a
+generic mail to four competing apps reads as a mailshot and they can each tell.]
+
+One thing it does not show is a live win probability. It is the number that keeps
+someone watching between balls, and it is the hardest feature to add because it
+needs a trained model rather than a feed.
+
+I have built one and expose it as a single HTTP call - probability for both
+sides, confidence band, updated ball by ball.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The methodology and the calibration table are public and need no key,
+so you can check it before replying:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+It is also live and self-serve on RapidAPI if your team would rather look than
+talk - free tier, instant key, no card:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+
+Emmadi
+cricintelligence.com/api
+
+-- note: Draft 3. MUST be personalised before sending - see the bracketed line.
+
+========================================================================
+EMAIL 6  
+========================================================================
+TO:      sales@sportmonks.com
+SUBJECT: Re: win probability as an add-on (ticket #108620)
+
+Hi,
+
+I wrote on 26 August about offering a cricket win-probability layer as an add-on
+to your API. It came back as support ticket #108620, so I suspect it was routed to
+the support queue rather than to whoever handles partnerships.
+
+Could you forward it on? The short version: a live T20 win probability, published
+accuracy and calibration table, meant to sit on top of a feed like yours rather
+than replace it. No scores in the payload at all, by design.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The methodology and the calibration table are public and need no key,
+so you can check it before replying:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+If win probability is not on the roadmap, just say so and I will not chase it.
+
+
+Emmadi
+cricintelligence.com/api
+
+-- note: The Aug 26 send auto-acked with a TICKET NUMBER, which means it landed in support, not sales. This asks for a routing, which is a much easier yes than a meeting.
+
+========================================================================
+EMAIL 7  
+========================================================================
+TO:      contact@roanuz.com
+SUBJECT: Re: win probability as an add-on to the Roanuz cricket API
+
+Hi,
+
+Following up once on the below, in case it landed at a bad moment.
+
+Short version: a live T20 win-probability model, offered as an add-on under your
+brand alongside your cricket API. Published accuracy and calibration table, which
+as far as I can tell nobody else in cricket publishes - CricViz included.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The methodology and the calibration table are public and need no key,
+so you can check it before replying:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+If win probability is not on your roadmap, just say so and I will not chase it. If
+it is but not this quarter, I will check back after the season.
+
+
+Emmadi
+cricintelligence.com/api
+
+-- note: The draft file's own rule: follow up ONCE, then stop. Two unanswered mails is a no; a third is how senders get marked as spam. This is the one.

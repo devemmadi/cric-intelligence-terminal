@@ -629,6 +629,46 @@ hunting for the address on the About page. Almost nobody does that; they just le
 
 **Read the reports:** `GET /feedback/recent` on the backend, admin token required.
 
+## B2B prospect list and outreach, automated (Sep 15 2026)
+Two scripts, because the bottleneck was never the writing.
+
+**`scripts/build_prospects.py`** holds 60 companies across five tiers and fetches each
+one's home/contact/about pages to harvest a real contact address. **25 of 60 resolved**;
+the rest need a contact form, which is often read faster than a cold mail anyway.
+
+**`scripts/make_outreach_links.py`** renders the finished drafts as `mailto:` links with
+recipient, subject and body pre-filled, into `drafts/b2b-send-these.html`. Nothing is
+sent from it - a person opens the link and presses Send. Keep it that way.
+
+**Why 60 and not the 100 that was asked for.** Cricket is a small industry. Padding a
+list to a round number is the same mistake as the 120 ground pages that included a German
+club ground: it makes the work look bigger and perform worse.
+
+**The harvester's first pass put junk in the list** - `sweetalert2@11.js` (a library
+reference), `user@domain.com` and `cricket.fan@email.com` (placeholder copy), and a raw
+Cloudways hostname. All four would have gone into a mail merge unnoticed. The filter now
+rejects file extensions, placeholder domains, hosting hostnames, role addresses nobody
+reads (`noreply`, `abuse`, `postmaster`) and any domain starting with a digit.
+
+**Finding that matters: Roanuz's published address is `sales@cricketapi.com`.** The
+26 Aug mail went to `contact@roanuz.com`, which does not appear anywhere on their site.
+That may be the whole reason there was no reply. Re-send to the harvested address.
+
+**Also worth knowing:** `cricbites.com` returns Togwe's addresses, so it is either
+Togwe-owned or redirects - do not treat those two as separate prospects.
+
+**Excluded on purpose, do not add back:** Cricbuzz and AllCric (they already ship win
+probability), Sportradar and Stats Perform (they already sell it), and anything
+India-facing and gambling (PROGA 2025 bans that advertising).
+
+**Send 5-8 a day, not 60 in one session.** A burst of near-identical mail from a personal
+Gmail is how an account gets flagged, and that account holds the site, Railway, RapidAPI
+and AdSense.
+
+**State as of today:** 1 API key (our own RapidAPI proxy), 0 calls, 0 leads since the
+listing went live on 26 Aug. Two mails were sent that day and five more were written and
+never sent. That is not a failed channel, it is an untested one.
+
 ## /venues is a ranking, and a chase-difficulty ranking was computed and discarded (Sep 15 2026)
 `index_page()` in `gen_venue_pages.py` now publishes **"Highest and lowest scoring T20
 grounds"** — 834 words, all 48 ranked by first-innings average, plus an
