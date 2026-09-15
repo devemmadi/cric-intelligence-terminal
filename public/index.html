@@ -202,6 +202,41 @@
         <p style="color:#64748B">AI-powered live cricket win probability for T20 and international cricket. Please enable JavaScript to use the live predictions tool.</p>
         <p><a href="/predictions/t20-predictions" style="color:#1E2D6B">T20 Predictions</a> · <a href="/predictions/live-cricket" style="color:#1E2D6B">Live Cricket</a></p>
     </div>
+    <!-- WHY THERE IS A LINK LIST IN HERE
+         Search Console on 15 Sep 2026: 29 URLs "Discovered - currently not
+         indexed" and 5 "Crawled - currently not indexed", against 4 actually in
+         the index out of 89 in the sitemap.
+
+         Google fetches the raw HTML first and renders JavaScript later, on a
+         queue it gives low-authority domains very little of. The raw homepage
+         carried exactly TWO internal links - the two above. React adds eight
+         more once it mounts (/venues, /faq, /how-it-works and the rest), but a
+         crawler that never gets round to rendering never sees them, so every
+         other page hung off the sitemap alone. A sitemap gets a URL discovered;
+         links are what get it crawled.
+
+         These are the same destinations the rendered footer already links to,
+         so this is not cloaking - it is the same site graph, available before
+         the JavaScript runs. It sits inside <noscript>, so nobody using the site
+         ever sees it and nothing about the app changes.
+
+         If a link here stops matching the rendered footer, fix this list. A
+         noscript block that advertises pages the site no longer has is worse
+         than no block at all. -->
+    <nav aria-label="Site sections">
+        <a href="/">Live predictions</a>
+        <a href="/venues">T20 ground records</a>
+        <a href="/predictions/ipl-2026">IPL 2026 predictions</a>
+        <a href="/predictions/t20-predictions">T20 predictions</a>
+        <a href="/predictions/cricket-win-probability">How win probability works</a>
+        <a href="/how-it-works">How the model works</a>
+        <a href="/accuracy">Measured accuracy</a>
+        <a href="/faq">FAQ</a>
+        <a href="/cricket-predictions-uk">UK cricket predictions</a>
+        <a href="/about">About</a>
+        <a href="/privacy">Privacy</a>
+        <a href="/terms">Terms</a>
+    </nav>
 </noscript>
     <div id="root"></div>
 

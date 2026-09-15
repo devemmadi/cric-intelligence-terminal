@@ -709,9 +709,107 @@ India-facing and gambling (PROGA 2025 bans that advertising).
 Gmail is how an account gets flagged, and that account holds the site, Railway, RapidAPI
 and AdSense.
 
-**State as of today:** 1 API key (our own RapidAPI proxy), 0 calls, 0 leads since the
+**State before 15 Sep:** 1 API key (our own RapidAPI proxy), 0 calls, 0 leads since the
 listing went live on 26 Aug. Two mails were sent that day and five more were written and
 never sent. That is not a failed channel, it is an untested one.
+
+## Outreach actually sent, and what came back (Sep 15 2026)
+**31 contacts in one day**, against the "5-8 a day" pacing advice above - the user
+overrode it deliberately ("anni ippude cheddam"). Wave 1: 17 emails (2 bounced -
+`feedback@cricinfo.com` blocked, `info@cricketnmore.com` no such address), 3 web forms,
+2 direct. Wave 2: The Odds API, Deltatre, Better Collective, SBO, OLBG, Stats Insider,
+Free Super Tips, Cricket Australia, Cricket Ireland. Full log with addresses and angles:
+`drafts/2026-09-15-b2b-outreach.md`.
+
+**Two replies. Roanuz engaged** (eight technical questions, answered in
+`drafts/roanuz-reply.txt`, awaiting their accuracy figure). **SportsDataIO declined.**
+
+**Wave 2 quotes the recipient's own competition number, not the headline.** Cricket
+Australia's mail leads with **76.3% on the BBL** - below our 81.5% headline - because
+they would find it the moment they tested it, and finding it themselves reads as a
+concealed number rather than a modest one. Same principle as the Roanuz reply.
+
+**Cricket Ireland was offered it free.** A visible live deployment is worth more than a
+licence fee we do not have yet. That is a deliberate trade, not a discount to be
+generalised to bigger prospects.
+
+**Every wave-2 email was composed as a pre-filled Gmail compose URL with zero typing**
+(`?view=cm&fs=1&tf=1&to=..&su=..&body=..`), screenshotted, and the user pressed Send.
+Earlier in the day, typing into Gmail directly caused two mails to send instead of
+saving as drafts, one of them a duplicate. Do not type into Gmail. Build the URL.
+
+## The prospect list is exhausted at ~43, and that is the finding (Sep 15 2026)
+All 60 rows of `drafts/b2b-prospects.md` were worked to a conclusion in one day: ~43
+organisations contacted, 4 bounced (`feedback@cricinfo.com`, `info@cricketnmore.com`,
+`sports@sky.com` and `feedback@cricrocket.com` - the last is a Google Group closed to
+outside posting, and CricRocket publishes no other address), and the rest have **no reachable contact route** - Dream11's helpdesk
+is app-only, the fantasy operators render no address and no form, CricketNext is down,
+and Just Cricket and Cricket LineX both run on EntitySport infrastructure so they were
+already reached at source. Sixer.io is age-gated (a gambling product, excluded by our own
+rule) and Willow TV is Cricbuzz-owned (they already ship win probability).
+
+**Do not "expand the list to 100".** Cricket is a small industry; the reachable set is
+about 43. Padding it means inventing prospects - the same mistake as the 120 ground pages
+that included a German club ground.
+
+**Three harvest passes, and the third is the one that works.** `harvest_pass2.py` guesses
+twelve more URL paths than pass 1 and found 4 addresses. `harvest_pass3.py` stops guessing
+and follows the site's OWN links - it found FanCode's address on `/about/tnc`, a path no
+guess list contains. Anything still missing after that is JS-rendered and needs a real
+browser: Crictoday, Fantasy Khiladi, Sport Preferred, T Sports and Grand11 were all found
+by opening the page and scanning for `mailto:`.
+
+**Each email quotes the recipient's own competition number** - 83.5% BPL to T Sports,
+82.4% PSL to Tapmad, 76.3% BBL to Cricket Australia - whether it flatters us or not.
+
+**The one blocked route worth unblocking: SuperSport.** Its "Unsolicited Proposals" form
+is a genuine commercial door into MultiChoice, but it requires a PDF deck upload, two
+phone numbers and a physical address.
+
+## The one-pager PDF builds itself from the live endpoint (Sep 15 2026)
+`scripts/make_onepager.py` writes `drafts/cricintelligence-onepager.pdf` - one A4 page,
+reportlab, no external binaries. It exists because proposal forms of the SuperSport shape
+will not submit without a PDF, and that was the only thing blocking the route.
+
+**It fetches `/v1/accuracy` at build time and refuses to write the file if the endpoint is
+unreachable.** Hardcoding the numbers would have been three lines shorter and wrong: every
+email we send points at that endpoint, so a typed copy in the PDF would disagree with it
+the first time the model is retrained, and being caught on that destroys the only thing we
+actually sell. Stale numbers in a document whose whole point is checkable numbers are
+worse than no document.
+
+The per-competition table is the deliberate exception, marked as such on the page: it
+comes from `backtest_comprehensive.py` because the endpoint does not break the holdout
+down by competition. It is included precisely because it is the unflattering cut.
+
+The form still needs a phone number and a physical address, which are the user's to enter.
+
+## Wave 4: the two segments the cricket list missed (Sep 15 2026)
+`scripts/build_prospects_wave4.py` adds 31 prospects the original 60 under-covered - UK/EU
+betting affiliates and odds comparison, **broadcast-graphics vendors**, and European odds
+data platforms. 11 resolved to an address, **7 usable**; the rest returned investor
+-relations or data-protection-officer addresses, which are the wrong function to mail and
+should not be used just because the harvester found them.
+
+**Broadcast graphics is the segment worth remembering.** Vizrt, Singular, Chyron, Ross do
+not own a model - they own the surface a model is drawn on, and one integration reaches
+every rights-holder they already serve. Same leverage argument as a data provider.
+Singular was mailed; Vizrt's contact page returns obfuscated junk (`3@y.eq`) and needs
+another route.
+
+**The mandatory line in any betting-adjacent email:** *"I am not claiming an edge over
+closing prices. Calibration is the claim; beating a market is not."* Everyone in that
+industry has heard the edge claim and stopped believing it; declining to make it is what
+makes the rest of the email readable.
+
+**Total 15 Sep 2026: 53 organisations, 4 bounces, 4 replies.** Both decliners
+(SportsDataIO, Highlightly) turned out to have their own prediction layer - with Roanuz
+that is three independent confirmations that **the feature is not the differentiator, the
+published audit is.** Any future copy that says "nobody offers win probability" is wrong.
+
+**Next action is to wait.** Cold email replies land in 2-5 days. One follow-up after
+Sep 22, once, then stop - two unanswered mails is a no and a third is how a sender gets
+marked as spam.
 
 ## /venues is a ranking, and a chase-difficulty ranking was computed and discarded (Sep 15 2026)
 `index_page()` in `gen_venue_pages.py` now publishes **"Highest and lowest scoring T20
@@ -1086,6 +1184,55 @@ Two consequences worth knowing before losing a session to either:
 is genuinely served by React. Verified live: fresh visitor, no age flag, `/api`
 renders and `/` still shows the gate.
 
+
+## Why nobody arrives: 4 pages indexed out of 89 (measured Sep 15, 2026)
+After a year at roughly four visitors a day, this was finally measured rather
+than guessed at. `site:cricintelligence.com` on Google returns **"About 4
+results"**. Bing and DuckDuckGo return **zero**. The sitemap lists 89 URLs.
+
+Search Console's "Why pages aren't indexed", same day:
+
+| Reason | Pages |
+|---|---|
+| Discovered - currently not indexed | **29** |
+| Alternate page with proper canonical tag | 8 | 
+| Crawled - currently not indexed | 5 |
+| Duplicate without user-selected canonical | 4 |
+
+**The site is not technically broken, and that was checked before concluding
+anything.** All 89 sitemap URLs return 200, the median page carries 557 words,
+none is under 300, every one has an H1, a distinct title and a self-referencing
+canonical. Content and markup are not the problem.
+
+**"Discovered - currently not indexed" on 29 URLs is the finding.** Google knows
+those URLs exist, from the sitemap, and has chosen not to spend crawl on them.
+That is what Google does with a domain that nothing links to. No amount of
+further on-page work moves it; **inbound links from sites Google already trusts
+do**, which is why the 15 Sep outreach to Wisden, The Cricketer, Crictoday and
+Cricket Web offered the numbers for a piece with no strings attached.
+
+**Do not respond to this by publishing more templated pages.** 49 venue pages
+went live the same day. Adding more thin, template-generated pages to a site
+Google already declines to crawl makes the ratio worse, not better. Get the
+existing 89 indexed first.
+
+## The raw homepage had two internal links (fixed Sep 15, 2026)
+Google fetches raw HTML first and renders JavaScript later, on a queue it gives
+low-authority domains very little of. The served homepage carried exactly **two**
+internal links; React adds eight more once it mounts (`/venues`, `/faq`,
+`/how-it-works`, `/predictions/ipl-2026`, …), but a crawler that never gets round
+to rendering never sees them. Every other page hung off the sitemap alone - and a
+sitemap gets a URL *discovered*, while links are what get it *crawled*. That is
+exactly the bucket 29 URLs were sitting in.
+
+The `<noscript>` block in `public/index.html` now carries a `<nav>` linking the
+main sections. Chosen over a visible footer deliberately: nobody using the site
+sees it, so nothing about the app changes. It is not cloaking - the destinations
+are the same ones the rendered footer already links to, just available before the
+JavaScript runs.
+
+**If the rendered footer changes, change this list too.** A noscript block
+advertising pages the site no longer has is worse than no block.
 
 ## User Preferences
 - Telugu + English mixed communication is fine
