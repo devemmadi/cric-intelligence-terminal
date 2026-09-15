@@ -1,0 +1,177 @@
+TO: ashiey.joe@roanuz.com
+SUBJECT: Re: Win probability as an add-on to the Roanuz cricket API
+
+Hi Ashiey,
+
+Thanks - and the fact that you already have a win-probability capability changes my
+pitch, so let me correct something first.
+
+My email said no cricket data provider sells a prediction layer. For Roanuz that was
+wrong, and I should have checked rather than assumed. Apologies.
+
+That also makes your first question the only one that matters, and I cannot answer it
+honestly without knowing what yours scores. If you can share your accuracy and
+calibration on a held-out sample, we will know inside ten minutes whether this is worth
+either of our time. If we do not beat it, I will say so and stop.
+
+What I can do is put my own numbers on the table in full, including the parts that do
+not flatter me.
+
+--------------------------------------------------------------------
+2. ACCURACY AND CALIBRATION
+--------------------------------------------------------------------
+Trained on T20 up to 2024. Tested on 2,546 matches from 2025-26 that were held out of
+training entirely: 19,340 predictions, 81.5% correct.
+
+Direction accuracy is the weak test, so here is calibration - what actually happened at
+each probability we quoted:
+
+   predicted     n        actual
+   0-10%      4,529        3.8%
+   10-20%     1,564       15.3%
+   20-30%     1,188       25.4%
+   30-40%     1,074       34.5%
+   40-50%     1,175       43.9%
+   50-60%     1,122       50.4%
+   60-70%     1,350       62.1%
+   70-80%     1,568       72.5%
+   80-90%     1,708       81.1%
+   90-100%    4,062       96.1%
+
+Monotonic, worst bucket off by 4.6 points. Live at
+https://cricintel-backend-production.up.railway.app/v1/accuracy - no key needed.
+
+--------------------------------------------------------------------
+3. BY COMPETITION - AND THIS IS THE PART YOU SHOULD READ FIRST
+--------------------------------------------------------------------
+We had never measured this. Your email prompted it, I ran it this afternoon, and the
+result is worse than our headline:
+
+   The Hundred (Men)             91.2%   (n=261)
+   International League T20      84.2%   (n=530)
+   Bangladesh Premier League     83.5%   (n=588)
+   Pakistan Super League         82.4%   (n=595)
+   SA20                          82.4%   (n=460)
+   Caribbean Premier League      81.2%   (n=255)
+   Vitality Blast (Men)          77.7%   (n=1,425)
+   Indian Premier League         77.2%   (n=1,120)
+   Big Bash League               76.3%   (n=524)
+   ICC Men's T20 World Cup       75.1%   (n=386)
+   Major League Cricket          74.5%   (n=251)
+   Women's Premier League        70.5%   (n=342)
+
+Aggregated over the eighteen competitions a paying customer actually cares about:
+**79.4% across 8,958 predictions**, not 81.5%. Men's major leagues alone: 80.2%.
+
+The 81.5% headline is pulled up by associate and qualifier cricket, where matches are
+more lopsided and easier to call. On IPL - the competition most of your customers will
+test first - it is 77.2%.
+
+I would rather you hear that from me than compute it yourself after signing something.
+
+By match stage, all competitions:
+   after over 6    79.2%   (n=5,036)
+   after over 10   82.1%   (n=4,926)
+   after over 12   82.6%   (n=4,820)
+   after over 15   82.2%   (n=4,558)
+
+--------------------------------------------------------------------
+4. FREQUENCY AND LATENCY
+--------------------------------------------------------------------
+The model is stateless and recomputes on every request - effectively per ball, if you
+call it per ball.
+
+End-to-end today, measured just now: 1.9-2.5s per call. That is honest and it is not
+good. It is a single Railway instance with no CDN and an upstream fetch inside the
+request; the model itself is a small fraction of it. If you feed us the ball state
+directly, the upstream fetch disappears and that number drops a long way. I am not going
+to quote you a figure for that until I have measured it.
+
+Related and relevant to you: on our current third-party feed we measure upstream
+staleness at p50 133s for the live miniscore. That is the feed, not us - and it is one
+of the reasons your ball-by-ball data is more interesting to me than a revenue share.
+
+--------------------------------------------------------------------
+5. INPUTS THE MODEL REQUIRES
+--------------------------------------------------------------------
+Must have, in rough order of how much the model degrades without them:
+  - ball-by-ball during play (not post-match)
+  - per-over runs and wickets
+  - live striker strike rate and current bowler economy
+  - innings, runs, wickets, overs
+  - fall of wickets
+
+Should have: toss winner and decision, venue name, number of overs (for reduced-over
+games), partnership runs and balls.
+
+Does not need: ball-tracking. No speed, swing or spin. We work from delivery outcomes
+only, and I would rather say that than imply a depth of data we do not have.
+
+--------------------------------------------------------------------
+6. DOCUMENTATION AND SAMPLE RESPONSE
+--------------------------------------------------------------------
+Docs: https://www.cricintelligence.com/api
+
+Real response from a live match, just now:
+
+{
+  "match_id": "169403",
+  "generated_at": "2026-09-15T14:06:46Z",
+  "teams": {"home": "RDD", "away": "ECR"},
+  "venue": "The Village, Dublin",
+  "format": "t20",
+  "context": {"innings": 1, "phase": "MIDDLE OVERS"},
+  "win_probability": {
+    "home": 0.461, "away": 0.539,
+    "favoured": "ECR",
+    "confidence": "TOO_CLOSE",
+    "interval": {"bayesian": {"low": 28.8, "high": 63.4}}
+  },
+  "pressure_index": 45.0,
+  "momentum": 0.91,
+  "pitch": {"label": "FLAT / BATTING", "condition": "FRESH"},
+  "model": {"version": "v10-ML", "holdout_accuracy": 0.815}
+}
+
+Note there are no runs, wickets or overs in it. That is deliberate - we do not
+redistribute anyone's scoreboard, which is also why a partnership with a licensed
+provider is the shape that makes sense.
+
+--------------------------------------------------------------------
+7. CAN IT CONSUME ROANUZ BALL-BY-BALL DATA
+--------------------------------------------------------------------
+Yes, and this is bounded work rather than a rewrite. All upstream fetching goes through
+a single function - one choke point, fifteen call sites, four endpoint families (match
+list, live miniscore, scorecard, match info). We keep a written spec of exactly what a
+replacement provider must supply, which is section 5 above.
+
+The work is in normalising your JSON onto the shapes the model already expects, not in
+the model. I would estimate days, not weeks, and I would want to validate against a
+holdout on your data before either of us published a number for it.
+
+--------------------------------------------------------------------
+8. COMMERCIAL
+--------------------------------------------------------------------
+I am flexible, and honestly the data access matters to me as much as the money.
+
+Proposal: you resell it under your brand as an add-on to your Cricket API. You keep the
+customer relationship, pricing and billing; we split the add-on revenue, and I would
+open at 30/70 in your favour. In exchange I would want ball-by-ball access for the
+competitions we both cover, which lets me drop the third-party feed and the 133-second
+staleness with it.
+
+If you would rather not do revenue share, a flat wholesale licence works too.
+
+--------------------------------------------------------------------
+WHAT I AM NOT CLAIMING
+--------------------------------------------------------------------
+No SLA. It runs on a single Railway instance today and I will not promise uptime I
+cannot back. No ODI or Test - the model is trained and validated on T20 only. No
+customers yet; you would be the first, which is worth being explicit about.
+
+The fastest way to settle this is a head-to-head: pick a set of completed matches, we
+both score them, and compare calibration. I will send a key today if that is useful.
+
+Regards,
+Emmadi
+cricintelligence.com/api

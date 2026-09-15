@@ -1,0 +1,618 @@
+READY TO SEND - no placeholders, nothing to fill in.
+
+Paste each one exactly as written. Every line is sendable.
+
+PACE: 5-8 a day. A burst of near-identical mail from a personal Gmail is how
+an account gets flagged, and that account holds the site, Railway, RapidAPI
+and AdSense.
+
+Already contacted 15 Sep, do NOT mail again: Goalserve, EntitySport,
+Sportmonks, Roanuz, CREX, cricketdata.org.
+
+========================================================================
+
+========================================================================
+1.  Highlightly   (tier 1)
+========================================================================
+TO:      support@highlightly.net
+SUBJECT: Cricket win probability - an add-on to your cricket data?
+
+Hi,
+
+I run CricIntelligence - a live cricket win-probability model for T20.
+
+Some cricket data providers now offer a win-probability figure. What is
+very hard to find is one a customer can audit - published accuracy, a
+published calibration table, and an open endpoint to check both against.
+
+I would like to explore offering it alongside your feed, under your brand.
+You keep the customer relationship and a revenue share; I maintain the model.
+It complements your data rather than competing with it - you supply what
+happened, this supplies what it means for the result. Our API returns no
+scores at all, by design.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+CricViz, who supply most of the broadcast market, publish no accuracy
+figure anywhere. Nor, as far as I can find, does anyone else. Ours is
+public and needs no key - that is the gap I am pointing at.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth a conversation?
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+2.  Togwe   (tier 1)
+========================================================================
+TO:      hello@togwe.com
+SUBJECT: Cricket win probability - an add-on to your cricket data?
+
+Hi,
+
+I run CricIntelligence - a live cricket win-probability model for T20.
+
+Some cricket data providers now offer a win-probability figure. What is
+very hard to find is one a customer can audit - published accuracy, a
+published calibration table, and an open endpoint to check both against.
+
+I would like to explore offering it alongside your feed, under your brand.
+You keep the customer relationship and a revenue share; I maintain the model.
+It complements your data rather than competing with it - you supply what
+happened, this supplies what it means for the result. Our API returns no
+scores at all, by design.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+CricViz, who supply most of the broadcast market, publish no accuracy
+figure anywhere. Nor, as far as I can find, does anyone else. Ours is
+public and needs no key - that is the gap I am pointing at.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth a conversation?
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+3.  SportsMechanics   (tier 1)
+========================================================================
+TO:      info@sportsmechanics.in
+SUBJECT: Cricket win probability - an add-on to your cricket data?
+
+Hi,
+
+I run CricIntelligence - a live cricket win-probability model for T20.
+
+Some cricket data providers now offer a win-probability figure. What is
+very hard to find is one a customer can audit - published accuracy, a
+published calibration table, and an open endpoint to check both against.
+
+I would like to explore offering it alongside your feed, under your brand.
+You keep the customer relationship and a revenue share; I maintain the model.
+It complements your data rather than competing with it - you supply what
+happened, this supplies what it means for the result. Our API returns no
+scores at all, by design.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+CricViz, who supply most of the broadcast market, publish no accuracy
+figure anywhere. Nor, as far as I can find, does anyone else. Ours is
+public and needs no key - that is the gap I am pointing at.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth a conversation?
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+4.  Cricbites   (tier 2)
+========================================================================
+TO:      hello@togwe.com
+SUBJECT: A live win-probability number for Cricbites
+
+Hi,
+
+Cricbites shows the score. What it does not show is what the score means - whether a
+side chasing 84 off 60 with six wickets down is genuinely ahead or quietly
+losing.
+
+That is a live win probability, and it is the hardest thing on a cricket page
+to add, because it needs a trained model rather than a feed. I have built one
+and expose it as a single HTTP call: probability for both sides, a confidence
+band, updated ball by ball. It returns no scores of its own, so it sits on top
+of whatever data you already use.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+I am not asking you to take the number on trust - the link above is the point.
+Nobody else in cricket publishes one, CricViz included.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+5.  CricTracker   (tier 2)
+========================================================================
+TO:      contact@crictracker.com
+SUBJECT: A live win-probability number for CricTracker
+
+Hi,
+
+CricTracker shows the score. What it does not show is what the score means - whether a
+side chasing 84 off 60 with six wickets down is genuinely ahead or quietly
+losing.
+
+That is a live win probability, and it is the hardest thing on a cricket page
+to add, because it needs a trained model rather than a feed. I have built one
+and expose it as a single HTTP call: probability for both sides, a confidence
+band, updated ball by ball. It returns no scores of its own, so it sits on top
+of whatever data you already use.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+I am not asking you to take the number on trust - the link above is the point.
+Nobody else in cricket publishes one, CricViz included.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+6.  Cricketnmore   (tier 2)
+========================================================================
+TO:      info@cricketnmore.com
+SUBJECT: A live win-probability number for Cricketnmore
+
+Hi,
+
+Cricketnmore shows the score. What it does not show is what the score means - whether a
+side chasing 84 off 60 with six wickets down is genuinely ahead or quietly
+losing.
+
+That is a live win probability, and it is the hardest thing on a cricket page
+to add, because it needs a trained model rather than a feed. I have built one
+and expose it as a single HTTP call: probability for both sides, a confidence
+band, updated ball by ball. It returns no scores of its own, so it sits on top
+of whatever data you already use.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+I am not asking you to take the number on trust - the link above is the point.
+Nobody else in cricket publishes one, CricViz included.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+7.  Sportskeeda   (tier 2)
+========================================================================
+TO:      business@sportskeeda.com
+SUBJECT: A live win-probability number for Sportskeeda
+
+Hi,
+
+Sportskeeda shows the score. What it does not show is what the score means - whether a
+side chasing 84 off 60 with six wickets down is genuinely ahead or quietly
+losing.
+
+That is a live win probability, and it is the hardest thing on a cricket page
+to add, because it needs a trained model rather than a feed. I have built one
+and expose it as a single HTTP call: probability for both sides, a confidence
+band, updated ball by ball. It returns no scores of its own, so it sits on top
+of whatever data you already use.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+I am not asking you to take the number on trust - the link above is the point.
+Nobody else in cricket publishes one, CricViz included.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+8.  Gully Crix   (tier 2)
+========================================================================
+TO:      hello@gullycrix.com
+SUBJECT: A live win-probability number for Gully Crix
+
+Hi,
+
+Gully Crix shows the score. What it does not show is what the score means - whether a
+side chasing 84 off 60 with six wickets down is genuinely ahead or quietly
+losing.
+
+That is a live win probability, and it is the hardest thing on a cricket page
+to add, because it needs a trained model rather than a feed. I have built one
+and expose it as a single HTTP call: probability for both sides, a confidence
+band, updated ball by ball. It returns no scores of its own, so it sits on top
+of whatever data you already use.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+I am not asking you to take the number on trust - the link above is the point.
+Nobody else in cricket publishes one, CricViz included.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+9.  CricPulse   (tier 2)
+========================================================================
+TO:      jathanscreatives@gmail.com
+SUBJECT: A live win-probability number for CricPulse
+
+Hi,
+
+CricPulse shows the score. What it does not show is what the score means - whether a
+side chasing 84 off 60 with six wickets down is genuinely ahead or quietly
+losing.
+
+That is a live win probability, and it is the hardest thing on a cricket page
+to add, because it needs a trained model rather than a feed. I have built one
+and expose it as a single HTTP call: probability for both sides, a confidence
+band, updated ball by ball. It returns no scores of its own, so it sits on top
+of whatever data you already use.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+I am not asking you to take the number on trust - the link above is the point.
+Nobody else in cricket publishes one, CricViz included.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+10.  Real11   (tier 3)
+========================================================================
+TO:      support@real11.com
+SUBJECT: Keeping users on the screen between balls
+
+Hi,
+
+Since the paid-contest rules changed, the hard part is not acquisition - it is
+keeping someone in the app through an over where nothing happens.
+
+A live win probability is the cheapest thing that does that. It moves on every
+ball, it gives people something to argue with, and it needs no entry fee and no
+prize. I run CricIntelligence and expose ours as a single HTTP call:
+probability for both sides, confidence band, updated ball by ball.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+It returns no scores, so it sits alongside whatever feed you already pay for
+rather than replacing it.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth twenty minutes?
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+11.  Gamezy   (tier 3)
+========================================================================
+TO:      support@gamezy.com
+SUBJECT: Keeping users on the screen between balls
+
+Hi,
+
+Since the paid-contest rules changed, the hard part is not acquisition - it is
+keeping someone in the app through an over where nothing happens.
+
+A live win probability is the cheapest thing that does that. It moves on every
+ball, it gives people something to argue with, and it needs no entry fee and no
+prize. I run CricIntelligence and expose ours as a single HTTP call:
+probability for both sides, confidence band, updated ball by ball.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+It returns no scores, so it sits alongside whatever feed you already pay for
+rather than replacing it.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth twenty minutes?
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+12.  MyFinal11   (tier 3)
+========================================================================
+TO:      enquiry@myfinal11.in
+SUBJECT: Keeping users on the screen between balls
+
+Hi,
+
+Since the paid-contest rules changed, the hard part is not acquisition - it is
+keeping someone in the app through an over where nothing happens.
+
+A live win probability is the cheapest thing that does that. It moves on every
+ball, it gives people something to argue with, and it needs no entry fee and no
+prize. I run CricIntelligence and expose ours as a single HTTP call:
+probability for both sides, confidence band, updated ball by ball.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+It returns no scores, so it sits alongside whatever feed you already pay for
+rather than replacing it.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth twenty minutes?
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+13.  Willow TV   (tier 4)
+========================================================================
+TO:      cs@willow.tv
+SUBJECT: A live win-probability overlay for cricket coverage
+
+Hi,
+
+I run CricIntelligence - a live cricket win-probability model for T20.
+
+A moving probability bar is standard in cricket broadcast now, and the reason
+smaller rights-holders go without is that it needs a trained model rather than
+a data feed. Ours is a single HTTP call and returns no scores, so it drops on
+top of the graphics and data you already have.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+Unusually, that record is public. CricViz supplies most of the broadcast market
+and publishes no accuracy figure at all, so nobody can check theirs.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth a conversation?
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+14.  Rabbitholebd   (tier 4)
+========================================================================
+TO:      support@rabbitholebd.com
+SUBJECT: A live win-probability overlay for cricket coverage
+
+Hi,
+
+I run CricIntelligence - a live cricket win-probability model for T20.
+
+A moving probability bar is standard in cricket broadcast now, and the reason
+smaller rights-holders go without is that it needs a trained model rather than
+a data feed. Ours is a single HTTP call and returns no scores, so it drops on
+top of the graphics and data you already have.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+Unusually, that record is public. CricViz supplies most of the broadcast market
+and publishes no accuracy figure at all, so nobody can check theirs.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth a conversation?
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+15.  Sky Sports Cricket   (tier 4)
+========================================================================
+TO:      skysportsfeedback@sky.uk
+SUBJECT: A live win-probability overlay for cricket coverage
+
+Hi,
+
+I run CricIntelligence - a live cricket win-probability model for T20.
+
+A moving probability bar is standard in cricket broadcast now, and the reason
+smaller rights-holders go without is that it needs a trained model rather than
+a data feed. Ours is a single HTTP call and returns no scores, so it drops on
+top of the graphics and data you already have.
+
+The model is trained on T20 up to 2024 and tested on 2,546 matches from
+2025-26 that were held out of training entirely - 19,340 predictions, 81.5%
+correct. The calibration table is public and needs no key, so you can check
+it rather than take my word for it:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+Unusually, that record is public. CricViz supplies most of the broadcast market
+and publishes no accuracy figure at all, so nobody can check theirs.
+
+Free tier, instant key, no card, if you would rather look than talk:
+https://rapidapi.com/emmadidev/api/cricintelligence-cricket-win-probability
+
+Worth a conversation?
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+16.  The Cricket Monthly   (tier 5)
+========================================================================
+TO:      feedback@cricinfo.com
+SUBJECT: A cricket win-probability model with its workings published
+
+Hi,
+
+I run CricIntelligence. We publish a live T20 win probability and - unusually
+for cricket - the full record behind it, free and without a key:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+81.5% across 19,340 predictions on 2,546 matches the model never saw during
+training, with the calibration table showing what actually happened at each
+probability we quoted. CricViz, who supply most of the broadcast market, do not
+publish an accuracy figure anywhere.
+
+I am not selling you anything. If any of it is useful for a piece, the numbers
+are open and I am happy to pull specific cuts - per ground, per phase, per
+competition - for anything you are writing.
+
+We also publish scoring records for 48 grounds, built from ball-by-ball data
+rather than opinion: https://www.cricintelligence.com/venues
+
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+17.  Wisden   (tier 5)
+========================================================================
+TO:      sales@wisden.com
+SUBJECT: A cricket win-probability model with its workings published
+
+Hi,
+
+I run CricIntelligence. We publish a live T20 win probability and - unusually
+for cricket - the full record behind it, free and without a key:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+81.5% across 19,340 predictions on 2,546 matches the model never saw during
+training, with the calibration table showing what actually happened at each
+probability we quoted. CricViz, who supply most of the broadcast market, do not
+publish an accuracy figure anywhere.
+
+I am not selling you anything. If any of it is useful for a piece, the numbers
+are open and I am happy to pull specific cuts - per ground, per phase, per
+competition - for anything you are writing.
+
+We also publish scoring records for 48 grounds, built from ball-by-ball data
+rather than opinion: https://www.cricintelligence.com/venues
+
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+18.  Cricket Web   (tier 5)
+========================================================================
+TO:      info@cricketweb.net
+SUBJECT: A cricket win-probability model with its workings published
+
+Hi,
+
+I run CricIntelligence. We publish a live T20 win probability and - unusually
+for cricket - the full record behind it, free and without a key:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+81.5% across 19,340 predictions on 2,546 matches the model never saw during
+training, with the calibration table showing what actually happened at each
+probability we quoted. CricViz, who supply most of the broadcast market, do not
+publish an accuracy figure anywhere.
+
+I am not selling you anything. If any of it is useful for a piece, the numbers
+are open and I am happy to pull specific cuts - per ground, per phase, per
+competition - for anything you are writing.
+
+We also publish scoring records for 48 grounds, built from ball-by-ball data
+rather than opinion: https://www.cricintelligence.com/venues
+
+Emmadi
+cricintelligence.com/api
+
+========================================================================
+19.  White Ball Analytics   (tier 5)
+========================================================================
+TO:      joe.harris@whiteballanalytics.com
+SUBJECT: A cricket win-probability model with its workings published
+
+Hi,
+
+I run CricIntelligence. We publish a live T20 win probability and - unusually
+for cricket - the full record behind it, free and without a key:
+https://cricintel-backend-production.up.railway.app/v1/accuracy
+
+81.5% across 19,340 predictions on 2,546 matches the model never saw during
+training, with the calibration table showing what actually happened at each
+probability we quoted. CricViz, who supply most of the broadcast market, do not
+publish an accuracy figure anywhere.
+
+I am not selling you anything. If any of it is useful for a piece, the numbers
+are open and I am happy to pull specific cuts - per ground, per phase, per
+competition - for anything you are writing.
+
+We also publish scoring records for 48 grounds, built from ball-by-ball data
+rather than opinion: https://www.cricintelligence.com/venues
+
+Emmadi
+cricintelligence.com/api

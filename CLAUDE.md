@@ -629,6 +629,50 @@ hunting for the address on the About page. Almost nobody does that; they just le
 
 **Read the reports:** `GET /feedback/recent` on the backend, admin token required.
 
+## First B2B reply, and a claim it disproved (Sep 15 2026)
+**Roanuz replied within the hour** - the first real response the paid API has ever had,
+after three weeks of a live RapidAPI listing with 0 keys and 0 calls. A named engineer,
+eight specific technical questions.
+
+**It disproved a line that was in roughly twenty emails.** The outreach said *"none of
+the cricket data providers sell a prediction layer"*. Roanuz's first sentence was that
+they already have a win-probability capability. That was an assumption presented as a
+fact, and it made the pitch weaker as well as wrong. The copy in `make_all_emails.py`
+now says what is actually defensible and is a better pitch anyway:
+
+> Some cricket data providers now offer a win-probability figure. What is very hard to
+> find is one a customer can audit - published accuracy, a published calibration table,
+> and an open endpoint to check both against.
+
+**The reply also forced a measurement nobody had ever run.** They asked for accuracy by
+tournament. We had only ever measured by checkpoint. `backtest_comprehensive.py` now
+groups by `info.event.name` from Cricsheet - the data was always there and nobody had
+grouped by it. The result is worse than the headline and everyone should know it:
+
+| | accuracy | n |
+|---|---|---|
+| Headline, all competitions | **81.5%** | 19,340 |
+| The 18 competitions a customer cares about | **79.4%** | 8,958 |
+| Men's major leagues only | **80.2%** | 7,045 |
+| **Indian Premier League** | **77.2%** | 1,120 |
+| Big Bash League | 76.3% | 524 |
+| Major League Cricket | 74.5% | 251 |
+| The Hundred (Men) | 91.2% | 261 |
+
+**The 81.5% is pulled up by associate and qualifier cricket**, where matches are more
+lopsided and easier to call. On the leagues a paying customer tests first it is 77-80%.
+The public figure is not wrong - it is the true holdout over everything - but quoting it
+to a buyer who will then test on IPL is setting up a bad conversation. The reply to
+Roanuz leads with the 77.2%.
+
+**Competitions under 40 predictions are dropped from the table, not shown small.** A
+12-prediction league printed beside a 3,000-prediction one invites exactly the
+misreading this file already records twice.
+
+**Also measured for that reply, and worth keeping:** end-to-end `/v1/predict` latency is
+**1.9-2.5s**, which is poor - a single Railway instance, no CDN, and an upstream fetch
+inside the request. The model is a small fraction of it.
+
 ## B2B prospect list and outreach, automated (Sep 15 2026)
 Two scripts, because the bottleneck was never the writing.
 
