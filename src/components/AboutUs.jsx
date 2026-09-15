@@ -102,7 +102,7 @@ export default function AboutUs() {
 
                 {/* Stats */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14, marginBottom: 28 }}>
-                    {[["1.7M+", "Deliveries in training data"], ["877", "Venues tracked worldwide"], ["81.5%", "Accuracy on unseen matches"]].map(([v, l]) => (
+                    {[["1.7M+", "Deliveries in training data"], ["335", "Venues tracked worldwide"], ["81.5%", "Accuracy on unseen matches"]].map(([v, l]) => (
                         <div key={l} style={{ background: C.surface, border: `1px solid ${C.border}`, borderRadius: 14, padding: "22px 16px", textAlign: "center" }}>
                             <div style={{ fontSize: 28, fontWeight: 900, color: C.navy }}>{v}</div>
                             <div style={{ fontSize: 12, color: C.muted, marginTop: 5, lineHeight: 1.4 }}>{l}</div>
@@ -136,7 +136,7 @@ export default function AboutUs() {
                 <Section title="Why Venue Matters">
                     <p>One of the biggest weaknesses in simple cricket prediction models is using a global average — treating every ground the same. CricIntelligence is venue-aware. Here is why that matters:</p>
                     <p>M. Chinnaswamy Stadium in Bengaluru averages around 172 runs in IPL first innings — a high-scoring venue with short boundaries and flat pitches. MA Chidambaram Stadium in Chennai (Chepauk) averages around 155 — slower, spin-friendly surface. A score of 160/4 at Chinnaswamy is below par (batting team is behind). The same 160/4 at Chepauk is above par (batting team is ahead). A model that treats both the same will give a wrong probability.</p>
-                    <p>Our model loads venue statistics at startup from a dataset covering 877 grounds worldwide. For every live match, it fetches the specific ground's average first-innings score and run rate and uses those to calibrate the prediction.</p>
+                    <p>Our model loads venue statistics at startup from a dataset covering 335 grounds worldwide. For every live match, it fetches the specific ground's average first-innings score and run rate and uses those to calibrate the prediction.</p>
                 </Section>
 
                 {/* Track record */}

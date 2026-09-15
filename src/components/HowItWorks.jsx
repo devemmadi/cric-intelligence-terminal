@@ -45,7 +45,7 @@ export default function HowItWorks() {
         {
             num: "03",
             title: "Venue averages are loaded",
-            body: "Every ground has a different average first-innings score. Our venue database covers 877 grounds and 7,500+ T20 matches. Before running the model, we look up the specific ground and retrieve its average first-innings score, average run rate by phase, and historical chasing success rate. This corrects the model for high-scoring venues like M. Chinnaswamy (avg ~172) vs low-scoring venues like MA Chidambaram / Chepauk (avg ~155).",
+            body: "Every ground has a different average first-innings score. Our venue database covers 335 grounds and 7,500+ T20 matches. Before running the model, we look up the specific ground and retrieve its average first-innings score, average run rate by phase, and historical chasing success rate. This corrects the model for high-scoring venues like M. Chinnaswamy (avg ~172) vs low-scoring venues like MA Chidambaram / Chepauk (avg ~155).",
         },
         {
             num: "04",
@@ -65,7 +65,7 @@ export default function HowItWorks() {
     ];
 
     const features = [
-        { icon: "🏟️", title: "Venue-aware model", desc: "Different average score and run rate for each of 877 grounds worldwide — not a one-size-fits-all global average." },
+        { icon: "🏟️", title: "Venue-aware model", desc: "Different average score and run rate for each of 335 grounds worldwide — not a one-size-fits-all global average." },
         { icon: "⚡", title: "5-second refresh", desc: "Win probability recalculates after every set of deliveries. You see the shift the moment something happens." },
         { icon: "🏏", title: "Live player data", desc: "Current batter strike rate, bowler economy, partnership runs and balls — all factored into the live prediction." },
         { icon: "🌧️", title: "Weather and dew", desc: "Humidity and temperature feed a dew factor model that adjusts second-innings probability in evening matches." },

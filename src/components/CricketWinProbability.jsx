@@ -6,7 +6,7 @@ import RGFooter from "./RGFooter";
 const C = { navy: "#1E2D6B", gold: "#C8961E", bg: "#EEF2FF", surface: "#fff", border: "#E2E8F0", muted: "#64748B", text: "#0A0A0A", green: "#00B894", red: "#EF4444" };
 
 const FACTORS = [
-    { icon: "🏟️", title: "Venue & Pitch", weight: "18%", desc: "Wankhede produces higher scores than Eden Gardens. Our model has separate scoring curves for all 877 tracked venues worldwide." },
+    { icon: "🏟️", title: "Venue & Pitch", weight: "18%", desc: "Wankhede produces higher scores than Eden Gardens. Our model has separate scoring curves for all 335 tracked venues worldwide." },
     { icon: "🌦️", title: "Weather & Dew", weight: "12%", desc: "Dew in evening T20s dramatically affects grip and swing. The model detects dew conditions and adjusts bowling effectiveness predictions." },
     { icon: "📈", title: "Current Run Rate", weight: "22%", desc: "The most powerful signal. A team at 120/2 after 15 overs is in a very different position than 80/5. RR vs required RR delta drives the model." },
     { icon: "🎯", title: "Wickets in Hand", weight: "20%", desc: "Batting depth matters enormously in T20. 8 wickets at the halfway point gives massive latitude; 2 wickets creates pressure on every ball." },

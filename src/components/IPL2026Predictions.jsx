@@ -138,7 +138,7 @@ export default function IPL2026Predictions() {
                         Win probability in cricket is a percentage — the likelihood that a team wins the match from the current game state. At 0 overs, both teams start at 50%. As runs are scored, wickets fall, and overs reduce, the probability shifts ball by ball.
                     </p>
                     <p style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", lineHeight: 1.75, marginBottom: 12 }}>
-                        CricIntelligence calculates cricket win probability using an XGBoost model trained on 7,900+ T20 matches. Inputs include: runs scored, wickets lost, overs completed, target (2nd innings), venue run rate history, pitch condition, and current phase (powerplay / middle / death).
+                        CricIntelligence calculates cricket win probability using an XGBoost model trained on 7,500+ T20 matches. Inputs include: runs scored, wickets lost, overs completed, target (2nd innings), venue run rate history, pitch condition, and current phase (powerplay / middle / death).
                     </p>
                     <p style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", lineHeight: 1.75 }}>
                         A team chasing 180 at 90/2 after 10 overs is in a very different position to 90/5 — even though the score is identical. Win probability captures this nuance. Our model achieves 81.5% accuracy predicting the final winner on matches it had never seen.
