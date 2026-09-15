@@ -472,18 +472,7 @@ we do not sell tips. 18+.</p>
        total)
 
 
-def index_page(venues, a):
-    rows = "".join(
-        '<tr><td><a href="/venues/%s">%s</a></td><td class="n">%d</td>'
-        '<td class="n">%.0f</td><td class="n">%.0f</td><td class="n">%.2f</td></tr>'
-        % (v["slug"], v.get("name") or v["key"], v["match_count"],
-           v.get("avg_first_innings") or 0, v.get("avg_second_innings") or 0,
-           v.get("overall_avg_rpo") or 0)
-        for v in sorted(venues, key=lambda x: -(x.get("avg_first_innings") or 0)))
-    title = "T20 Ground Records — Pitch Reports for %d Cricket Venues" % len(venues)
-    desc = ("Scoring records for %d T20 cricket grounds: average first and second "
-            "innings, run rates and phase-by-phase breakdowns." % len(venues))
-    return """<!DOCTYPE html>
+HTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
 %s
@@ -493,18 +482,29 @@ def index_page(venues, a):
 <meta name="description" content="%s"/>
 <link rel="canonical" href="%s/venues"/>
 <meta name="robots" content="index, follow"/>
+<meta property="og:title" content="%s"/>
+<meta property="og:description" content="%s"/>
+<meta property="og:url" content="%s/venues"/>
 <style>
-:root{--bg:#080D16;--card:#111827;--line:#1F2937;--text:#E2E8F0;--muted:#94A3B8;--gold:#C8961E}
-body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 Inter,-apple-system,system-ui,sans-serif}
-.wrap{max-width:860px;margin:0 auto;padding:28px 20px 64px}
-a{color:var(--gold)}h1{font-size:28px;margin:18px 0 10px}
-.lede{color:var(--muted)}
+:root{background:#080D16}
+body{margin:0;background:#080D16;color:#E2E8F0;font:16px/1.7 Inter,-apple-system,system-ui,sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:28px 20px 64px}
+a{color:#C8961E}h1{font-size:30px;line-height:1.25;margin:18px 0 10px}
+h2{font-size:20px;margin:34px 0 10px;color:#fff}
+.lede{color:#94A3B8;font-size:17px}
+.mut{color:#94A3B8}
 table{width:100%%;border-collapse:collapse;margin:16px 0;font-size:14px}
-th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left}
-th{color:var(--muted);font-size:12px;text-transform:uppercase}
+th,td{padding:8px 10px;border-bottom:1px solid #1F2937;text-align:left}
+th{color:#94A3B8;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
 td.n,th.n{text-align:right}
-nav.top{display:flex;gap:16px;font-size:13px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.stat{background:#111827;border:1px solid #1F2937;border-radius:12px;padding:12px 16px;flex:1;min-width:150px}
+.stat b{display:block;font-size:24px;color:#fff;line-height:1.2}
+.stat span{font-size:12px;color:#94A3B8;text-transform:uppercase}
+nav.top{display:flex;gap:16px;font-size:13px;padding-bottom:14px;border-bottom:1px solid #1F2937}
 nav.top a{text-decoration:none}
+footer{margin-top:44px;padding-top:18px;border-top:1px solid #1F2937;font-size:13px;color:#94A3B8}
+footer a{margin-right:14px}
 .scroll{overflow-x:auto}
 </style>
 </head>
@@ -512,21 +512,122 @@ nav.top a{text-decoration:none}
 <div class="wrap">
 <nav class="top"><a href="/">Live predictions</a><a href="/accuracy">Accuracy</a>
 <a href="/how-it-works">How it works</a><a href="/faq">FAQ</a></nav>
-<h1>T20 ground records</h1>
-<p class="lede">Scoring records for %d cricket grounds, each with at least %d recorded
-T20 matches behind it. Sorted by average first-innings score &mdash; highest first.</p>
+
+<h1>Highest and lowest scoring T20 grounds</h1>
+<p class="lede">%d grounds ranked by what a first innings actually averages there,
+measured from ball-by-ball records rather than described from memory.</p>
+
+<div class="stats">
+<div class="stat"><b>%.0f</b><span>%s</span></div>
+<div class="stat"><b>%.0f</b><span>%s</span></div>
+<div class="stat"><b>%.0f runs</b><span>Spread between them</span></div>
+</div>
+
+<p>That is a <strong>%.0f-run gap</strong> between the highest and lowest scoring
+grounds in this set &mdash; more than a whole powerplay. It is why &ldquo;a good
+total&rdquo; is a question with no general answer, and why reading a chase against a
+single national par score gets it wrong at both ends.</p>
+
+<h2>Why first innings, and not a chase-success ranking</h2>
+<p>The obvious ranking to publish would be &ldquo;hardest grounds to chase at&rdquo;. We
+computed it and threw it away. Every ground in the set appears to punish chasing, which
+is not a fact about pitches: <strong>a successful chase stops the moment the target is
+passed</strong>, so the only chases that reach the death overs are the ones already
+going badly. Any ranking built on that measures the format, not the ground.</p>
+<p>A first innings plays its full twenty overs. Its average is clean, comparable across
+grounds, and is the number actually worth knowing before a match.</p>
+
+<h2>All %d grounds</h2>
 <div class="scroll"><table>
-<tr><th>Ground</th><th class="n">Matches</th><th class="n">1st inns</th>
-<th class="n">Chasing</th><th class="n">Runs/over</th></tr>
+<tr><th class="n">#</th><th>Ground</th><th class="n">Matches</th>
+<th class="n">1st inns</th><th class="n">2nd inns</th><th class="n">Runs/over</th></tr>
 %s
 </table></div>
-<p>These records feed the live win probability on this site, measured at <strong>%s%%</strong>
-on matches it had never seen &mdash; see the <a href="/accuracy">accuracy page</a>.</p>
-<p><a href="/">Live predictions</a></p>
+
+<h2>Which grounds accelerate, and which stay flat</h2>
+<p>A ground&rsquo;s average hides its shape. Some climb steeply from the powerplay to
+the death; others score at nearly the same rate throughout, which changes what a
+required rate means at every stage. Top five and bottom five, first innings:</p>
+<div class="scroll"><table>
+<tr><th>Ground</th><th class="n">Powerplay</th><th class="n">Death</th><th class="n">Change</th></tr>
+%s
+</table></div>
+
+<h2>Where these come from</h2>
+<p>Ball-by-ball records for every T20 played at each ground in the dataset. The same
+records feed the live win probability on this site, measured at <strong>%s%%</strong>
+across %s predictions on %s matches it had never seen during training &mdash; method and
+calibration table on the <a href="/accuracy">accuracy page</a>. No ball-tracking is
+used; these are delivery outcomes only.</p>
+
+<footer>
+<a href="/">Home</a><a href="/accuracy">Accuracy</a><a href="/how-it-works">How it works</a>
+<a href="/faq">FAQ</a><a href="/about">About</a>
+<p>CricIntelligence publishes live cricket win probability. It is not betting advice and
+we do not sell tips. 18+.</p>
+</footer>
 </div>
 </body>
 </html>
-""" % (MARKER, title, desc, SITE, len(venues), MIN_MATCHES, rows, a["overall"])
+"""
+
+
+def index_page(venues, a):
+    """A ranking, not a directory.
+
+    WHY FIRST-INNINGS AVERAGE AND NOT "HARDEST TO CHASE"
+    ---------------------------------------------------
+    A chase-difficulty ranking was computed first and thrown away. Every single
+    ground showed batting-first scoring more at the death, which is not a fact
+    about pitches - a successful chase STOPS the moment the target is passed, so
+    the only chases reaching the death overs are the ones already going badly.
+    Both the death-over gap and the raw first-versus-second innings gap are
+    contaminated by that, and this repo has already published two claims built on
+    numbers nobody checked that hard.
+
+    A first innings plays its full twenty overs. Its average is clean, comparable
+    across grounds, and is the number a viewer actually wants before a match.
+    """
+    vs = sorted(venues, key=lambda v: -(v.get("avg_first_innings") or 0))
+    hi, lo = vs[0], vs[-1]
+    spread = (hi.get("avg_first_innings") or 0) - (lo.get("avg_first_innings") or 0)
+
+    acc = []
+    for v in vs:
+        p_, d_ = seg(v, "inn1", "1-4"), seg(v, "inn1", "17-20")
+        if p_ and d_:
+            acc.append((d_ - p_, v))
+    acc.sort(key=lambda x: -x[0])
+
+    rows = "".join(
+        '<tr><td class="n mut">%d</td><td><a href="/venues/%s">%s</a></td>'
+        '<td class="n">%d</td><td class="n"><b>%.0f</b></td>'
+        '<td class="n">%.0f</td><td class="n">%.2f</td></tr>'
+        % (i + 1, v["slug"], v.get("name"), v["match_count"],
+           v.get("avg_first_innings") or 0, v.get("avg_second_innings") or 0,
+           v.get("overall_avg_rpo") or 0)
+        for i, v in enumerate(vs))
+
+    acc_rows = "".join(
+        '<tr><td>%s</td><td class="n">%.2f</td><td class="n">%.2f</td>'
+        '<td class="n">%+.2f</td></tr>'
+        % (v.get("name"), seg(v, "inn1", "1-4"), seg(v, "inn1", "17-20"), d)
+        for d, v in (acc[:5] + acc[-5:]))
+
+    title = ("Highest and Lowest Scoring T20 Cricket Grounds - %d Venues Ranked"
+             % len(vs))
+    desc = ("%d T20 grounds ranked by first-innings average, from %s at %.0f down "
+            "to %s at %.0f. Measured from ball-by-ball records, not opinion."
+            % (len(vs), hi.get("name"), hi.get("avg_first_innings") or 0,
+               lo.get("name"), lo.get("avg_first_innings") or 0))
+
+    return HTML % (MARKER, title, desc, SITE, title, desc, SITE,
+                   len(vs),
+                   hi.get("avg_first_innings") or 0, hi.get("name"),
+                   lo.get("avg_first_innings") or 0, lo.get("name"),
+                   spread, spread, len(vs), rows, acc_rows,
+                   a["overall"], "{:,}".format(a["preds"]),
+                   "{:,}".format(a["matches"]))
 
 
 # ── writing ───────────────────────────────────────────────────────────────────

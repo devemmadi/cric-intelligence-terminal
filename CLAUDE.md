@@ -629,6 +629,41 @@ hunting for the address on the About page. Almost nobody does that; they just le
 
 **Read the reports:** `GET /feedback/recent` on the backend, admin token required.
 
+## /venues is a ranking, and a chase-difficulty ranking was computed and discarded (Sep 15 2026)
+`index_page()` in `gen_venue_pages.py` now publishes **"Highest and lowest scoring T20
+grounds"** — 834 words, all 48 ranked by first-innings average, plus an
+accelerate-versus-flat table. It replaced a plain directory.
+
+**The ranking NOT published, and why it matters.** The obvious post is "hardest grounds
+to chase at". It was computed first: every single one of the 48 showed batting first
+scoring more at the death, spread 5.37 down to 1.59 runs an over. That is not a fact
+about pitches — **a successful chase stops the moment the target is passed**, so the only
+chases that reach the death overs are the ones already going badly. The raw
+first-versus-second innings gap is contaminated the same way. `venue_stats.json` holds no
+match results, so a true chase-success rate cannot be computed from it at all.
+
+A first innings plays its full twenty overs, so its average is clean and comparable. That
+is the ranking that shipped, and the page says on its face why the other one is absent.
+
+**This is the third time this project has had to make this call** (0.0% accuracy page,
+59.4% accuracy page, "Hove rewards batting"). The pattern is always a number that looks
+publishable until someone asks what generated it.
+
+**Findings worth keeping:** Rawalpindi 179.1 is the highest first-innings average in the
+set, Galle 108.1 the lowest — a **71-run spread**. Wankhede accelerates most from
+powerplay to death (+3.68 rpo); Old Trafford is flat (**−0.11**), scoring at the same
+rate all innings.
+
+**Footer link added** (`RGFooter.jsx`): the 48 pages had **no inbound link from the app
+at all**, which is how Google decides a page is not worth crawling. It is a plain
+`<a href>`, **not a router `Link`** — `/venues` is a static page with no React route, so
+a `Link` would client-side route to nothing. Verified with a full `react-scripts build`:
+compiles, main bundle +25 B, all 48 pages copied into `build/`.
+
+**Escaping trap:** the index HTML is a `%`-formatted template, so `width:100%` in the CSS
+must be written `100%%` or generation dies with `unsupported format character ';'`. It
+failed loudly and kept the previous file rather than writing a broken one.
+
 ## Ground pages — /venues (Sep 15 2026)
 `scripts/gen_venue_pages.py` (new) writes `public/venues/<slug>.html` for **48 grounds**
 plus an index at `/venues`, and patches `vercel.json` and `sitemap.xml`.
