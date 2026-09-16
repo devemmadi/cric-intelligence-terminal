@@ -234,9 +234,16 @@
         <a href="/faq">FAQ</a>
         <a href="/cricket-predictions-uk">UK cricket predictions</a>
         <a href="/about">About</a>
-        <a href="/privacy">Privacy</a>
-        <a href="/terms">Terms</a>
     </nav>
+    <!-- /privacy and /terms are NOT listed here on purpose, and were removed on
+         16 Sep 2026 a few hours after being added. Both serve `noindex, follow`
+         deliberately - legal pages do not need search ranking - so linking them
+         from the crawl nav pointed Google at pages we had already told it to
+         ignore, on a site whose whole problem is that it gets too little crawl.
+         Search Console reported "Excluded by 'noindex' tag" as a NEW reason
+         within hours, which is the one useful thing it proved: the nav works,
+         and Google follows what is in it. Send it somewhere worth going.
+         Users reach the legal pages from the rendered footer as before. -->
 </noscript>
     <div id="root"></div>
 

@@ -1167,6 +1167,29 @@ gambling signal is a reason for their procurement to refuse.
   is listed on any tier — there is no SLA to back one (single Railway instance).
 
 
+## Do not put noindexed pages in the crawl nav (Sep 16, 2026)
+The `<noscript>` nav added to `public/index.html` that morning listed `/privacy`
+and `/terms`. Both serve **`noindex, follow`** on purpose — legal pages do not
+need search ranking — so it pointed Google at pages we had already told it to
+ignore, on a site whose entire problem is that it gets too little crawl. Removed
+the same day.
+
+**Search Console reported "Excluded by 'noindex' tag" as a NEW reason within
+hours**, and that is the one genuinely useful thing it proved: the noscript nav
+works, and Google follows what is in it. Nothing on the site was broken — all 90
+sitemap URLs were re-scanned and **none** carries a noindex. The only noindexed
+pages are the two legal ones and 15 finished match pages, none of which are in
+the sitemap.
+
+**Two validations "failed" the same evening, and that was the expected result.**
+`Alternate page with proper canonical tag` and `Crawled - currently not indexed`
+were both submitted for validation before anything had changed that would fix
+them. The first is not a defect at all — those pages are duplicates that are
+correctly canonicalised. The second cannot pass in a day: crawl and index
+decisions move over weeks, and the nav landed that morning. **Requesting
+validation does not make Google index anything**; it only re-checks. Do not
+re-submit either until there is a real change to validate.
+
 ## /singular — the partner-facing overlay page (Sep 16, 2026)
 `public/singular.html`, routed by a `vercel.json` rewrite, served at
 **cricintelligence.com/singular**. Built for Singular.live after they offered to
