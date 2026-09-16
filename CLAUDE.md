@@ -1167,6 +1167,28 @@ gambling signal is a reason for their procurement to refuse.
   is listed on any tier — there is no SLA to back one (single Railway instance).
 
 
+## Every page had a trailing-slash twin serving the homepage (Sep 16, 2026)
+Each entry in `vercel.json`'s 111 rewrites matches the slash-less path exactly,
+so `/venues/`, `/faq/`, `/accuracy/`, `/how-it-works/` and every other `/path/`
+fell through to the catch-all and served the React shell: **HTTP 200, completely
+different content, and a canonical pointing at the homepage**. That is a
+duplicate of the homepage at as many URLs as the site has pages, and it is what
+Search Console reports as *Duplicate without user-selected canonical*.
+
+Fixed with `"trailingSlash": false`, which makes Vercel 308 the slash form to the
+real one — one URL per page, decided by the server. The alternative, a second
+rewrite per path, doubles a 111-entry list and drifts the first time somebody
+adds a page. Nothing links to the slash form: the sitemap, the noscript nav and
+the app all use the slash-less URLs.
+
+**`vercel.json` is validated against a strict schema and unknown top-level keys
+fail the BUILD, not just the rule.** The first attempt carried the rationale
+above as a `"_comment_trailingSlash"` key and took production deployment down
+with a Configuration error. JSON has no comments; put the reasoning here instead.
+The commit that fixes it asserts the whole top-level key set against the allowed
+list, so the next person adding a key finds out locally rather than from a failed
+deploy.
+
 ## Do not put noindexed pages in the crawl nav (Sep 16, 2026)
 The `<noscript>` nav added to `public/index.html` that morning listed `/privacy`
 and `/terms`. Both serve **`noindex, follow`** on purpose — legal pages do not
