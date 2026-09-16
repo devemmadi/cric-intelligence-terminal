@@ -60,27 +60,29 @@
   .brand {
     display: flex; align-items: center; justify-content: space-between;
     gap: 14px; flex-wrap: wrap;
-    border-bottom: 1px solid var(--line); padding-bottom: 16px;
+    background: #0D1B3E;
+    border: 1px solid #1B2C5C;
+    border-radius: 12px;
+    padding: 13px 16px;
   }
-  .mark { display: flex; align-items: center; gap: 11px; text-decoration: none; }
-  .mark .glyph {
-    width: 38px; height: 38px; flex: 0 0 38px;
-    border-radius: 9px; background: var(--navy);
-    border: 1px solid #2A3C85;
-    display: grid; place-items: center;
-    font-family: var(--display); font-weight: 700; font-size: 19px;
-    color: var(--gold); letter-spacing: .04em;
-  }
-  .mark .words { line-height: 1.05; }
+  /* The site's own mark, reproduced exactly from src/components/Logo.jsx -
+     same SVG, same Georgia serif, same weights and letter-spacing. It is the
+     first thing a prospective partner sees, so it has to be the real one rather
+     than something close. */
+  .mark { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+  .mark svg { flex: 0 0 auto; display: block; }
+  .mark .words { display: flex; flex-direction: column; gap: 2px; }
   .mark .words b {
-    display: block; font-size: 15px; font-weight: 800;
-    letter-spacing: .13em; color: var(--gold); text-transform: uppercase;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 800; font-size: 17px; color: var(--white);
+    letter-spacing: 2.6px; line-height: 1;
   }
   .mark .words span {
-    display: block; font-size: 10.5px; letter-spacing: .26em;
-    color: var(--muted); text-transform: uppercase;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400; font-size: 11.5px; color: var(--gold);
+    letter-spacing: 4.5px; line-height: 1;
   }
-  .brand .home-link { font-size: 14px; color: var(--muted); text-decoration: none; }
+  .brand .home-link { font-size: 14px; color: #B9C4DA; text-decoration: none; }
   .brand .home-link:hover { color: var(--gold); }
 
   h1 {
@@ -187,9 +189,18 @@
 <div class="page">
 
   <div class="brand">
-    <a class="mark" href="https://www.cricintelligence.com">
-      <span class="glyph">CI</span>
-      <span class="words"><b>CricIntelligence</b><span>Cricket win probability</span></span>
+    <a class="mark" href="https://www.cricintelligence.com" aria-label="CricIntelligence home">
+      <svg width="40" height="40" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+        <rect width="100" height="100" fill="#0D1B3E" rx="8"/>
+        <rect width="100" height="4" fill="#C8961E"/>
+        <rect y="96" width="100" height="4" fill="#C8961E"/>
+        <path d="M 62,18 A 32,32 0 1,0 62,82" fill="none" stroke="#C8961E" stroke-width="8" stroke-linecap="round"/>
+        <line x1="34" y1="30" x2="34" y2="70" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+        <line x1="44" y1="28" x2="44" y2="72" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+        <line x1="54" y1="30" x2="54" y2="70" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+        <line x1="31" y1="28" x2="57" y2="28" stroke="#C8961E" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <span class="words"><b>CRIC</b><span>INTELLIGENCE</span></span>
     </a>
     <a class="home-link" href="https://www.cricintelligence.com/api">cricintelligence.com/api &rarr;</a>
   </div>
