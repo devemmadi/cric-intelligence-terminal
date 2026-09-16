@@ -1,4 +1,6 @@
 {
+  "_comment_trailingSlash": "Vercel 308-redirects /foo/ to /foo. Added 16 Sep 2026: every rewrite below matches the slash-less form exactly, so /venues/ and /faq/ fell through to the catch-all and served the React shell - a 200, different content, and a canonical pointing at the homepage. That is a duplicate of the homepage at as many URLs as the site has pages, and it is what Search Console reports as 'Duplicate without user-selected canonical'. One URL per page, decided by the server, is better than adding a second rewrite for every path and better than relying on a canonical tag to clean up after it.",
+  "trailingSlash": false,
   "buildCommand": "node node_modules/react-scripts/bin/react-scripts.js build",
   "outputDirectory": "build",
   "framework": "create-react-app",
