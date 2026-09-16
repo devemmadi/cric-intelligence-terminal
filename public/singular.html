@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A live cricket win-probability overlay for Singular.live. One HTTP call, published accuracy, no scores in the payload.">
+<link rel="canonical" href="https://www.cricintelligence.com/singular">
+<meta name="robots" content="index, follow">
+<link rel="icon" href="/favicon.ico">
+<title>Win Probability Overlay</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap">
+<style>
+  /* Palette taken from cricintelligence.com's own static pages (public/venues.html)
+     so this reads as ours rather than as a generic demo - same ground, same gold,
+     same muted grey, same panel and rule colours, same Inter.
+
+     The one place that deviates is the overlay itself, which uses a condensed
+     face: broadcast graphics are set condensed because they have to survive being
+     shrunk into a corner of a video frame. That contrast is the point - the page
+     is our site, the panel inside it is a TV graphic. */
+  :root {
+    --bg:     #080D16;   /* cricintelligence.com ground */
+    --panel:  #111827;
+    --panel2: #0E1522;
+    --line:   #1F2937;
+    --text:   #E2E8F0;
+    --white:  #FFFFFF;
+    --muted:  #94A3B8;
+    --gold:   #C8961E;   /* the site's link/accent gold */
+    --navy:   #1E2D6B;   /* brand navy, from the site's theme-color */
+    --home:   #4C8DFF;
+    --away:   #FF7A45;
+    --tally:  #22C55E;   /* semantic: on air */
+    --warn:   #F87171;
+    --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+    --body: Inter, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding-block: 26px 56px;
+    padding-left: 18px;
+    padding-right: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  /* ── site identity ──────────────────────────────────────────────────────── */
+  .brand {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; flex-wrap: wrap;
+    border-bottom: 1px solid var(--line); padding-bottom: 16px;
+  }
+  .mark { display: flex; align-items: center; gap: 11px; text-decoration: none; }
+  .mark .glyph {
+    width: 38px; height: 38px; flex: 0 0 38px;
+    border-radius: 9px; background: var(--navy);
+    border: 1px solid #2A3C85;
+    display: grid; place-items: center;
+    font-family: var(--display); font-weight: 700; font-size: 19px;
+    color: var(--gold); letter-spacing: .04em;
+  }
+  .mark .words { line-height: 1.05; }
+  .mark .words b {
+    display: block; font-size: 15px; font-weight: 800;
+    letter-spacing: .13em; color: var(--gold); text-transform: uppercase;
+  }
+  .mark .words span {
+    display: block; font-size: 10.5px; letter-spacing: .26em;
+    color: var(--muted); text-transform: uppercase;
+  }
+  .brand .home-link { font-size: 14px; color: var(--muted); text-decoration: none; }
+  .brand .home-link:hover { color: var(--gold); }
+
+  h1 {
+    font-size: clamp(27px, 5.4vw, 36px);
+    font-weight: 800; line-height: 1.16; letter-spacing: -.015em;
+    margin: 0; text-wrap: balance; color: var(--white);
+  }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--gold); margin: 0 0 8px; font-weight: 600;
+  }
+  .lede { color: var(--muted); margin: 12px 0 0; max-width: 62ch; font-size: 17px; }
+
+  /* ── program output ─────────────────────────────────────────────────────── */
+  .monitor { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--panel); }
+  .monitor-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px; background: var(--panel2);
+    border-bottom: 1px solid var(--line);
+    font-family: var(--display); font-size: 13px;
+    letter-spacing: .13em; text-transform: uppercase; color: var(--muted);
+  }
+  .tally { width: 8px; height: 8px; border-radius: 99px; background: var(--tally); box-shadow: 0 0 0 3px rgba(34,197,94,.16); }
+  .tally.sample { background: var(--gold); box-shadow: 0 0 0 3px rgba(200,150,30,.16); }
+  .monitor-bar .right { margin-left: auto; font-size: 12px; letter-spacing: .1em; }
+  .stage { background: radial-gradient(120% 90% at 50% 0%, #182234 0%, #0D141F 62%, #0A1018 100%); padding: 34px 22px 28px; }
+
+  /* the overlay - the thing a Singular composition reproduces */
+  .ovl {
+    max-width: 560px; margin: 0 auto;
+    background: rgba(8,13,22,.84);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 8px; padding: 16px 18px 14px;
+  }
+  .ovl-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+  .side { min-width: 0; }
+  .side.r { text-align: right; }
+  .tname {
+    font-family: var(--display); font-size: 19px; font-weight: 600;
+    letter-spacing: .07em; text-transform: uppercase; color: var(--white);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .tprob { font-family: var(--display); font-size: 40px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .tprob.h { color: var(--home); }
+  .tprob.a { color: var(--away); }
+  .bar { height: 9px; border-radius: 99px; overflow: hidden; background: var(--away); margin: 13px 0 9px; }
+  .bar > i { display: block; height: 100%; background: var(--home); transition: width .7s cubic-bezier(.4,0,.2,1); }
+  .ovl-meta {
+    display: flex; justify-content: space-between; gap: 12px;
+    font-family: var(--display); font-size: 12.5px;
+    letter-spacing: .13em; text-transform: uppercase; color: var(--muted);
+  }
+  .ovl-meta .conf.low { color: var(--gold); }
+
+  /* ── controls ───────────────────────────────────────────────────────────── */
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 12px; padding: 16px;
+  }
+  .field { flex: 1 1 190px; min-width: 0; }
+  label {
+    display: block; font-size: 11.5px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 6px; font-weight: 600;
+  }
+  input {
+    width: 100%; background: var(--bg); border: 1px solid var(--line);
+    color: var(--text); border-radius: 8px; padding: 10px 12px;
+    font: 15px/1.4 var(--body);
+  }
+  input:focus-visible, button:focus-visible, a:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  button {
+    flex: 0 0 auto; background: var(--gold); color: var(--bg); border: 0;
+    border-radius: 8px; padding: 11px 20px; cursor: pointer;
+    font-family: var(--body); font-size: 14px; font-weight: 700;
+    letter-spacing: .04em;
+  }
+  button.stop { background: var(--panel2); color: var(--text); border: 1px solid var(--line); }
+  .status { flex: 1 1 100%; font-size: 13.5px; color: var(--muted); min-height: 20px; margin: 0; }
+  .status.bad { color: var(--warn); }
+
+  /* ── notes ──────────────────────────────────────────────────────────────── */
+  .notes { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .note { border-top: 2px solid var(--line); padding-top: 12px; }
+  .note.lead { border-top-color: var(--gold); }
+  .note h3 { font-size: 15px; font-weight: 700; margin: 0 0 4px; color: var(--white); }
+  .note p { margin: 0; font-size: 14.5px; color: var(--muted); line-height: 1.6; }
+
+  a { color: var(--gold); }
+  code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px;
+    background: var(--panel2); border: 1px solid var(--line);
+    border-radius: 5px; padding: 1px 6px;
+  }
+  footer {
+    color: var(--muted); font-size: 13.5px;
+    border-top: 1px solid var(--line); padding-top: 18px;
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="brand">
+    <a class="mark" href="https://www.cricintelligence.com">
+      <span class="glyph">CI</span>
+      <span class="words"><b>CricIntelligence</b><span>Cricket win probability</span></span>
+    </a>
+    <a class="home-link" href="https://www.cricintelligence.com/api">cricintelligence.com/api &rarr;</a>
+  </div>
+
+  <header>
+    <p class="eyebrow">Overlay for Singular.live</p>
+    <h1>Win probability, with the accuracy published</h1>
+    <p class="lede">
+      One HTTP call, polled every ten seconds, bound to the widgets of a Singular
+      composition. It returns a derived number and nothing else &mdash; no runs,
+      wickets, overs or odds &mdash; so it sits on top of whatever match feed a
+      production already runs.
+    </p>
+  </header>
+
+  <section class="monitor" aria-label="Program output preview">
+    <div class="monitor-bar">
+      <span class="tally sample" id="tally"></span>
+      <span id="tallyLabel">Sample &mdash; not live</span>
+      <span class="right" id="cadence">Poll 10s</span>
+    </div>
+    <div class="stage">
+      <div class="ovl">
+        <div class="ovl-row">
+          <div class="side">
+            <div class="tname" id="homeTeam">England</div>
+            <div class="tprob h" id="homeProb">61.8%</div>
+          </div>
+          <div class="side r">
+            <div class="tname" id="awayTeam">Sri Lanka</div>
+            <div class="tprob a" id="awayProb">38.2%</div>
+          </div>
+        </div>
+        <div class="bar"><i id="homeBar" style="width:61.8%"></i></div>
+        <div class="ovl-meta">
+          <span class="conf" id="confidence">Medium</span>
+          <span id="venue">The Rose Bowl, Southampton</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="controls">
+    <div class="field">
+      <label for="mid">Match ID</label>
+      <input id="mid" inputmode="numeric" placeholder="169403">
+    </div>
+    <div class="field">
+      <label for="key">API key</label>
+      <input id="key" type="password" placeholder="ci_live_&hellip;" autocomplete="off">
+    </div>
+    <button id="go" type="button">Go live</button>
+    <button id="halt" type="button" class="stop" hidden>Stop</button>
+    <p class="status" id="status">
+      The figures above are a worked example. Enter a live match ID and a key to
+      drive the overlay from the real endpoint.
+    </p>
+  </section>
+
+  <section class="notes">
+    <div class="note lead">
+      <h3>Checkable, not claimed</h3>
+      <p>
+        81.5% across 19,340 predictions on 2,546 matches held out of training,
+        with the ten-bucket calibration table beside it &mdash; and the
+        unflattering cuts in the same response: 79.4% across the 18 major
+        competitions, 77.2% on the IPL.
+        <a href="https://cricintel-backend-production.up.railway.app/v1/accuracy">Open <code>/v1/accuracy</code></a>,
+        no key needed.
+      </p>
+    </div>
+    <div class="note">
+      <h3>Load is per output</h3>
+      <p>
+        Singular opens one request per output URL, not per viewer. A three-output
+        production is three requests every ten seconds. Viewer numbers never
+        reach the endpoint.
+      </p>
+    </div>
+    <div class="note">
+      <h3>Ten seconds is the right cadence</h3>
+      <p>
+        A ball takes about forty seconds and the feed behind the probability
+        measures p50 133s stale. Polling faster shows the same number more often.
+      </p>
+    </div>
+    <div class="note">
+      <h3>It admits when it is early</h3>
+      <p>
+        Four overs into an innings, too little has happened for the number to
+        mean much. The API flags it and the overlay says so, rather than showing
+        a confident-looking figure built on nothing.
+      </p>
+    </div>
+    <div class="note">
+      <h3>A failed call holds the last frame</h3>
+      <p>
+        A dropped request is logged and otherwise ignored. The graphic never
+        blanks and never flashes a zero mid-match.
+      </p>
+    </div>
+    <div class="note">
+      <h3>Honest limits</h3>
+      <p>
+        T20 and T20I only; the published accuracy covers nothing else. Single
+        instance, no SLA on self-serve. Analytics and media use &mdash; not
+        betting advice.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    Composition script, widget names and setup guide ship alongside this page.
+    Get a key at <a href="https://www.cricintelligence.com/api">cricintelligence.com/api</a>
+    &middot; built by <a href="https://www.cricintelligence.com">CricIntelligence</a>.
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var API = "https://cricintel-backend-production.up.railway.app";
+  var REFRESH_MS = 10000;
+  var timer = null, lastGood = null;
+
+  function $(id) { return document.getElementById(id); }
+  function pct(x) { return Math.round((Number(x) || 0) * 1000) / 10; }
+  function title(s) {
+    s = String(s || "");
+    return s ? s.charAt(0) + s.slice(1).toLowerCase().replace(/_/g, " ") : "";
+  }
+
+  function render(d) {
+    var wp = (d && d.win_probability) || {};
+    var t = (d && d.teams) || {};
+    var home = pct(wp.home), away = pct(wp.away);
+    $("homeTeam").textContent = t.home || "Home";
+    $("awayTeam").textContent = t.away || "Away";
+    $("homeProb").textContent = home + "%";
+    $("awayProb").textContent = away + "%";
+    $("homeBar").style.width = Math.max(0, Math.min(100, home)) + "%";
+    $("venue").textContent = d.venue || "";
+    var conf = $("confidence");
+    if (wp.low_confidence) {
+      conf.textContent = "Early — low confidence";
+      conf.classList.add("low");
+    } else {
+      conf.textContent = title(wp.confidence) || "—";
+      conf.classList.remove("low");
+    }
+  }
+
+  function live(on) {
+    $("tally").classList.toggle("sample", !on);
+    $("tallyLabel").textContent = on ? "Live from /v1/predict" : "Sample — not live";
+    $("halt").hidden = !on;
+  }
+
+  function fail(msg) {
+    var s = $("status");
+    s.textContent = msg;
+    s.classList.add("bad");
+  }
+
+  function tick() {
+    var id = $("mid").value.trim(), key = $("key").value.trim();
+    if (!id) { fail("Enter a match ID first."); return; }
+    var h = { "Accept": "application/json" };
+    if (key) h["X-API-Key"] = key;
+    fetch(API + "/v1/predict/" + encodeURIComponent(id), { headers: h })
+      .then(function (r) {
+        if (r.status === 401) throw new Error("Key rejected — check it at cricintelligence.com/api");
+        if (r.status === 404) throw new Error("No match with that ID in the current window.");
+        if (!r.ok) throw new Error("Endpoint returned HTTP " + r.status + ".");
+        return r.json();
+      })
+      .then(function (d) {
+        lastGood = d;
+        $("status").textContent = "Updated " + new Date().toLocaleTimeString() +
+          " · next poll in 10s";
+        $("status").classList.remove("bad");
+        live(true);
+        render(d);
+      })
+      .catch(function (e) {
+        fail(e.message);
+        if (lastGood) render(lastGood);   // hold the last frame
+      });
+  }
+
+  $("go").addEventListener("click", function () {
+    if (timer) clearInterval(timer);
+    tick();
+    timer = setInterval(tick, REFRESH_MS);
+  });
+  $("halt").addEventListener("click", function () {
+    if (timer) clearInterval(timer);
+    timer = null;
+    live(false);
+    $("status").textContent = "Stopped. The overlay is holding its last frame.";
+    $("status").classList.remove("bad");
+  });
+})();
+</script>
+</body>
+</html>
