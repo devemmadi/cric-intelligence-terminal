@@ -1167,6 +1167,36 @@ gambling signal is a reason for their procurement to refuse.
   is listed on any tier — there is no SLA to back one (single Railway instance).
 
 
+## /singular — the partner-facing overlay page (Sep 16, 2026)
+`public/singular.html`, routed by a `vercel.json` rewrite, served at
+**cricintelligence.com/singular**. Built for Singular.live after they offered to
+carry a light version of the win-probability overlay in their app library.
+
+**Why a separate page rather than sending them the site.** The reader is a
+broadcast-graphics engineer, not a cricket fan. The homepage answers "what is
+happening in this match"; he needs "what does this look like on air, and how does
+it plug into my software". One page, one job.
+
+**Why not a claude.ai artifact, which is where it started.** That link needs the
+recipient to sign in, and a claude.ai URL in a business email does not read as
+coming from us. Our own domain needs no login, no sharing step, and gets indexed.
+
+**The logo is the real one, reproduced from `src/components/Logo.jsx`** — the same
+SVG (navy tile, gold bars, the C and three stumps), CRIC in white and INTELLIGENCE
+in gold, both Georgia, on the navy band the site's header uses. The first version
+invented a "CI" monogram and was rightly rejected: on the first page a prospective
+partner sees, an approximation of the mark reads as somebody else's page about us.
+**If the logo component changes, change this page too** — it is a copy, not an
+import, because the page is plain HTML with no build step.
+
+Palette comes from `public/venues.html` (the site's own static pages), not from
+taste: same ground, gold, muted grey, panel and rule colours, same Inter. The one
+deliberate deviation is the overlay panel itself, set in a condensed face because
+broadcast graphics are — that contrast is the point.
+
+The page opens on a worked example and goes live when a match id and key are
+entered, so the first look shows what the product does rather than an empty shell.
+
 ## Static pages shadow their React routes (found Aug 26, 2026)
 `public/` holds real HTML files — `accuracy.html`, `about.html`, `faq.html`,
 `how-it-works.html`, `privacy.html`, `terms.html` — and Vercel serves those
