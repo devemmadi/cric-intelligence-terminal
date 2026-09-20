@@ -1315,3 +1315,35 @@ advertising pages the site no longer has is worse than no block.
 - Loosely coupled code — new features = new component files
 - One file change should not break others
 - Keep PredictionsTab.jsx sections intact — don't restructure existing components
+
+## Betting operators on /predictions/international/* were shown to everyone (Sep 21, 2026)
+
+`AffiliateBanner` has gated itself on `isUkVisitor()` since Jul 2026, and every
+`BetwayBanner` in `PredictionsTab` sits behind `showAffiliates = isUkVisitor()`. But
+`InternationalPredictionPage` was never wired to that gate, so **two betting surfaces on it
+rendered for every visitor**: a section headed "Cricket Betting — UK Licensed Operators"
+with brand tiles for Bet365, Betway, Sky Bet, Paddy Power, William Hill and Ladbrokes, and
+an FAQ answering "Can I bet on X vs Y online?".
+
+**Why it mattered enough to fix the same day.** Most of this site's traffic is India and
+Bangladesh, where promoting betting operators is illegal. The page is also built for
+crawlers - an outside AI review of cricintelligence.com summarised the site as prominently
+advertising William Hill and Betway, which is what a crawler sees. And in the week this was
+found, that page was reachable from cold outreach sent to the ICC, BCCI, Cricket Australia,
+NZC, ECB, CWI and LiveScore. A rights holder landing on "Cricket Betting" above a grid of
+bookmaker brands does not read the rest.
+
+Neither surface was ever an affiliate link - the operator names are plain text tiles with no
+href - but that distinction is invisible to a regulator, a crawler or a board.
+
+**Fix:** `const showBetting = isUkVisitor();` declared before `faqs`, the betting FAQ appended
+via `.concat(showBetting ? [...] : [])` so it leaves the FAQ list entirely outside the UK
+(and therefore leaves the page for crawlers), and the operators section wrapped in
+`{showBetting && (<>...</>)}`. Same helper the rest of the site already uses, so there is one
+rule and one place to change it.
+
+**Still ungated, flagged not fixed:** `/odds` (OddsCalculator's bookmaker dropdown) and
+`/live-odds`. Those are whole routes rather than a block inside a page, so hiding them is a
+different decision - they would 404 or blank for most visitors. Worth a deliberate call.
+
+Verified: `npm run build` clean, bundle +28 B.

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Logo from "./Logo";
 import RGFooter from "./RGFooter";
+import { isUkVisitor } from "./AffiliateBanner";
 
 const NAVY = "#1E2D6B";
 const GOLD = "#C8961E";
@@ -92,13 +93,32 @@ export default function InternationalPredictionPage() {
         setCanonical(`https://www.cricintelligence.com/predictions/international/${slug}`);
     }, [slug]);
 
+    /*
+     * The two betting surfaces on this page are UK-only, for the same reason the
+     * affiliate banners are (see AffiliateBanner.jsx) - but this page had been
+     * missed, so it showed them to everyone.
+     *
+     * That matters more here than it did there. Most of this site's traffic is
+     * India and Bangladesh, where promoting betting operators is illegal, and
+     * this page is built for crawlers, so an outside review of the site
+     * summarised it as prominently advertising William Hill and Betway. It is
+     * also the page a cricket board could land on from our own outreach.
+     *
+     * Nothing here was ever an affiliate link - the operator names are plain
+     * text tiles - but a heading reading "Cricket Betting" above a grid of
+     * bookmaker brands reads as promotion to a regulator, a crawler and a
+     * rights holder alike, and reads that way in markets where it is not legal.
+     */
+    const showBetting = isUkVisitor();
+
     const faqs = [
         { q: `Who will win ${t1.name} vs ${t2.name}?`, a: `Based on head-to-head records across all formats, ${t1.name} have won ${h2h.t1w} matches while ${t2.name} have won ${h2h.t2w}. Our AI model gives ${aiProb > 50 ? t1.name : t2.name} a slight edge based on current team rankings, recent form, and historical performance. Check our live predictions page during the match for a real-time win probability that updates every ball.` },
         { q: `What is the head-to-head record between ${t1.name} and ${t2.name}?`, a: `${t1.name} have won ${h2h.t1w} of ${total} matches against ${t2.name} (${t1pct}% win rate). ${t2.name} have won ${h2h.t2w} matches. This head-to-head record covers all formats of international cricket across multiple decades.` },
         { q: `How does CricIntelligence predict ${t1.short} vs ${t2.short}?`, a: `Our AI model processes 20+ live inputs every 5 seconds: current score, wickets in hand, required run rate, run rate vs venue average, pitch deterioration, weather and dew factor, live batter strike rate, and bowler economy. The model was trained on a decade of ball-by-ball T20 data across 335 tracked venues.` },
         { q: `Where can I watch ${t1.name} vs ${t2.name} in the UK?`, a: `${t1.name} vs ${t2.name} matches are typically broadcast on Sky Sports Cricket in the UK. Some matches may be available on free-to-air TV. Check your TV guide for exact broadcast details.` },
+    ].concat(showBetting ? [
         { q: `Can I bet on ${t1.short} vs ${t2.short} online?`, a: `Yes — cricket betting is fully legal in the UK through UKGC-licensed operators such as Bet365, Betway, Sky Bet, Paddy Power, and William Hill. CricIntelligence predictions are for informational purposes only and do not constitute betting advice. Always gamble responsibly. 18+ only. National Gambling Helpline: 0808 8020 133.` },
-    ];
+    ] : []);
 
     return (
         <div style={{ minHeight: "100vh", background: "#EEF2FF", fontFamily: "Inter, -apple-system, system-ui", color: "#0A0A0A" }}>
@@ -239,6 +259,8 @@ export default function InternationalPredictionPage() {
                     </div>
                 </div>
 
+                {/* Betting operators: UK only. See the showBetting note above. */}
+                {showBetting && (<>
                 {/* Responsible gambling / betting section — UK compliant */}
                 <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14, padding: "20px 24px", marginBottom: 24 }}>
                     <h2 style={{ fontSize: 18, fontWeight: 800, color: NAVY, marginBottom: 10 }}>Cricket Betting — UK Licensed Operators</h2>
@@ -256,6 +278,7 @@ export default function InternationalPredictionPage() {
                         ⚠️ <strong>Responsible gambling:</strong> CricIntelligence predictions are for <strong>informational purposes only</strong> — not betting advice. 18+ only. Gamble responsibly. <a href="https://www.begambleaware.org" target="_blank" rel="noreferrer" style={{ color: "#92400E" }}>BeGambleAware.org</a> · Helpline: <strong>0808 8020 133</strong> (free, 24/7)
                     </div>
                 </div>
+                </>)}
 
                 {/* FAQ */}
                 <h2 style={{ fontSize: 20, fontWeight: 800, color: NAVY, marginBottom: 14 }}>{t1.short} vs {t2.short} — Frequently Asked Questions</h2>
