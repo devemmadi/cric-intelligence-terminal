@@ -255,9 +255,26 @@
     <button id="go" type="button">Go live</button>
     <button id="halt" type="button" class="stop" hidden>Stop</button>
     <p class="status" id="status">
-      The figures above are a worked example. Enter a live match ID and a key to
+      The figures above are a worked example. Pick a match below and paste a key to
       drive the overlay from the real endpoint.
     </p>
+
+    <!--
+      Live match ids, fetched from the public /matches endpoint.
+
+      This exists because the first person outside the company to try this page
+      could not get past it: the Match ID box asked for a number with no way to
+      find one, and the only hint was a placeholder. A demo that assumes you
+      already know an id is a demo for people who do not need it.
+
+      /matches needs no key on purpose, so this list works before anyone has one.
+    -->
+    <div class="field" style="flex:1 1 100%;margin-top:4px">
+      <label>Live right now &mdash; click one to fill the box</label>
+      <div id="livelist" style="display:flex;flex-wrap:wrap;gap:8px;font-size:13px">
+        <span style="color:var(--muted)">Loading current matches&hellip;</span>
+      </div>
+    </div>
   </section>
 
   <section class="notes">
@@ -320,6 +337,47 @@
 </div>
 
 <script>
+  /* Fill the match-id list from the public endpoint (no key required). */
+  (function () {
+    var box = document.getElementById("livelist");
+    if (!box) return;
+    function chip(id, label) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = label;
+      b.style.cssText = "background:#111827;border:1px solid #1F2937;color:#E2E8F0;" +
+                        "border-radius:999px;padding:6px 12px;font:inherit;font-size:12.5px;cursor:pointer";
+      b.onclick = function () {
+        var mid = document.getElementById("mid");
+        if (mid) { mid.value = id; mid.focus(); }
+      };
+      return b;
+    }
+    fetch("https://cricintel-backend-production.up.railway.app/matches")
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var ms = (d && d.matches) || d || [];
+        var live = ms.filter(function (m) { return m.matchStarted && !m.matchEnded; });
+        box.innerHTML = "";
+        if (!live.length) {
+          // Being honest beats an empty box: T20 cricket is not always on.
+          box.innerHTML = '<span style="color:var(--muted)">No match is live at the moment. ' +
+                          'The list fills itself when one starts &mdash; or open ' +
+                          '<a href="https://cricintel-backend-production.up.railway.app/matches" ' +
+                          'style="color:var(--gold)">/matches</a> to see what is scheduled.</span>';
+          return;
+        }
+        live.slice(0, 8).forEach(function (m) {
+          box.appendChild(chip(m.id, m.id + "  ·  " + (m.team1 || "?") + " v " + (m.team2 || "?")));
+        });
+      })
+      .catch(function () {
+        box.innerHTML = '<span style="color:var(--muted)">Could not reach the match list. ' +
+                        'Open <a href="https://cricintel-backend-production.up.railway.app/matches" ' +
+                        'style="color:var(--gold)">/matches</a> directly.</span>';
+      });
+  })();
+
 (function () {
   "use strict";
   var API = "https://cricintel-backend-production.up.railway.app";

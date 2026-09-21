@@ -1347,3 +1347,21 @@ rule and one place to change it.
 different decision - they would 404 or blank for most visitors. Worth a deliberate call.
 
 Verified: `npm run build` clean, bundle +28 B.
+
+## /singular asked for a match ID with no way to find one (Sep 21, 2026)
+
+The page had a Match ID box, a placeholder, and nothing else. It reads fine to whoever
+built it because they know an id. The first person outside the company to try it - an
+engineer at Singular.live, evaluating the overlay with their cricket specialist on the
+ticket - could not get past it, and said so:
+
+> I visited https://www.cricintelligence.com/singular but couldn't figure out how it works.
+> Could you please clarify where I can find the value for the match ID?
+
+**Fix:** the controls now carry a "Live right now" row of clickable chips that fill the box,
+fetched from `/matches` - which needs no key, so the list works before anyone has one. When
+no match is live it says so and links to `/matches` rather than showing an empty row, because
+T20 cricket is not always on and a blank space reads as broken.
+
+**The rule this earns:** any input that expects a value the visitor cannot produce needs a
+way to produce it on the same screen. A placeholder is not that.
