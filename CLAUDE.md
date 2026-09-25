@@ -7,6 +7,40 @@
 - Polling interval changed → update Polling Intervals section
 - New pred field used from backend → document it in relevant component section
 
+## STOP: do not write more landing pages (measured 22 Sep 2026)
+
+This repo holds 90 prerendered SEO pages — league pages, 50 venue pages, Hundred
+matchup pages, international pairings. **They have produced almost nothing, and the
+Search Console numbers are not ambiguous.**
+
+Three months to 22 Sep 2026:
+
+| page | clicks |
+|---|---|
+| **homepage** | **277** |
+| /predictions/ipl-2026 | 5 |
+| /predictions/international/england-vs-pakistan | 3 |
+| /venues/kensington-oval-barbados | 1 |
+| /faq | 1 |
+
+**277 of 282 clicks went to the homepage. The other 89 pages made about 5 between
+them.** Page indexing: **30 indexed, 70 not**, and the biggest single reason is
+**"Discovered - currently not indexed" on 51 URLs**. That is Google saying it found
+the page and chose not to spend crawl on it, which is a site-authority problem —
+nobody links to us — not something another page or a better title fixes.
+
+**The IPL page is the clearest case: 440 impressions, 0 clicks.** Its queries are
+"who will win ipl 2026", "ipl 2026 champions prediction" and similar. Those want a
+tournament winner. **This is a live in-play model; it deliberately does not predict
+tournament winners**, and `scripts/enrich_matchup_pages.py` says so in its own
+docstring. We rank for a question we have chosen not to answer, so the click-through
+is zero and a better title cannot change that. It is a product mismatch, not copy.
+
+**So:** do not add league pages, venue pages, matchup pages, or "international"
+pairings, and do not spend a session tuning their titles or descriptions. If SEO comes
+up again, the lever is inbound links and distribution, not more pages. The full
+working is in the backend repo's CLAUDE.md under 22 Sep 2026.
+
 ## Project
 - **Live URL:** https://www.cricintelligence.com (custom domain → Vercel)
 - **Vercel URL:** https://cric-intelligence-terminal.vercel.app
