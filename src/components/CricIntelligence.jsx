@@ -160,7 +160,16 @@ export default function CricIntelligence() {
                 when the Cricbuzz quota runs out the backend keeps serving the last
                 known matches, so a frozen scoreline otherwise reads as live and
                 simply never moves — which looks like a broken prediction rather
-                than a paused feed. Everything else on the site still works. */}
+                than a paused feed. Everything else on the site still works.
+
+                7 Oct 2026: the wording used to promise the limit "resets shortly".
+                That was true on a paid plan where the quota lasted days. The
+                project is now in zero-cost mode on the free tier, where the
+                allowance covers a few minutes of one match, so the feed is off
+                far more than it is on. A banner that keeps promising a reset that
+                does not come is worse than no banner, so it now states the plain
+                position and points at what genuinely still works. If a paid plan
+                is restored, this wording should go back. */}
             {dataStale && (
                 <div style={{
                     background: "rgba(245,158,11,0.12)",
@@ -168,9 +177,10 @@ export default function CricIntelligence() {
                     color: C.amber, fontSize: 12, lineHeight: 1.5,
                     padding: "9px 16px", textAlign: "center",
                 }}>
-                    <strong>Live scores are paused</strong> — our data feed has hit its monthly
-                    limit and resets shortly. Scores below may be out of date. Ground records and
-                    accuracy pages are unaffected.
+                    <strong>Live scores are paused</strong> — our live match feed is switched
+                    off at the moment, so any scores below may be out of date. Everything built on
+                    our own historical data is unaffected: the ground records, the published
+                    accuracy record, and how the model works.
                 </div>
             )}
 

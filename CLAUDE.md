@@ -41,6 +41,29 @@ pairings, and do not spend a session tuning their titles or descriptions. If SEO
 up again, the lever is inbound links and distribution, not more pages. The full
 working is in the backend repo's CLAUDE.md under 22 Sep 2026.
 
+## ZERO-COST MODE since 7 Oct 2026 — read before changing the paused-feed banner
+
+After a year with no revenue the owner put the project into zero-cost mode. The
+Cricbuzz data plan drops to the free tier, so **the live feed is off far more than it
+is on** — the free allowance covers a few minutes of a single match.
+
+**What changed here:** the `dataStale` banner in `CricIntelligence.jsx` used to say the
+feed "has hit its monthly limit and resets shortly". On a paid plan that was true. On
+the free tier it is not, and **a banner that keeps promising a reset that never comes is
+worse than no banner** — it teaches a visitor the site is unreliable rather than
+honestly parked. It now states the plain position and points at what still works: ground
+records, the published accuracy record, and how the model works. All of those run on our
+own historical data and are unaffected.
+
+**If a paid plan is ever restored, put the old wording back** — the note sits in the
+comment above the banner.
+
+**Known gap, deliberately not fixed:** the page titles and hero copy still advertise
+"live win probability updated every ball". That is a larger rewrite across every
+prerendered page, and it is not worth doing for a parked project. If the project stays
+parked for a long time, revisit it; the banner is what a visitor actually sees when the
+feed is off.
+
 ## Project
 - **Live URL:** https://www.cricintelligence.com (custom domain → Vercel)
 - **Vercel URL:** https://cric-intelligence-terminal.vercel.app
