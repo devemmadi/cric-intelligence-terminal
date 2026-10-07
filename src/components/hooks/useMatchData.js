@@ -30,6 +30,12 @@ export default function useMatchData() {
     const predRequestIdRef = useRef(0);
     // Counts consecutive empty-but-healthy responses (quota fine, just no matches)
     const emptyHealthyCountRef = useRef(0);
+    // Consecutive failed /matches fetches. Needed because isFirstLoad was only
+    // ever cleared on SUCCESS, so if the backend is unreachable a first-time
+    // visitor (no cache) sat on the loading screen forever - the site reading as
+    // broken rather than as having nothing live. From Oct 2026 the backend may be
+    // stopped entirely to run at zero cost, which makes that the normal case.
+    const failCountRef = useRef(0);
 
     // ── PREDICTION — define first so selectMatch can call it ─────────────────
     const fetchPred = useCallback(async (matchId, t1 = "", t2 = "") => {
@@ -127,7 +133,19 @@ export default function useMatchData() {
         if (document.hidden && !force) return;
         try {
             const data = await fetch(`${API_BASE}/matches`).then(r => r.ok ? r.json() : null).catch(() => null);
-            if (!data) return;
+            if (!data) {
+                // Two strikes rather than one: a single blip on a flaky connection
+                // should not tear down a working screen. After that, stop pretending
+                // we are still loading and let the evergreen "nothing live" screen
+                // render, which links to the ground-record pages that need no feed.
+                failCountRef.current++;
+                if (failCountRef.current >= 2) {
+                    setIsFirstLoad(false);
+                    setLiveStatus("offline");
+                }
+                return;
+            }
+            failCountRef.current = 0;
             const list = Array.isArray(data) ? data : data.matches || data.data || [];
             const quotaExhausted = !Array.isArray(data) && data?.quotaExhausted;
             // Set regardless of whether the list is empty. When quota runs out

@@ -192,11 +192,25 @@ export default function AccuracyDashboard() {
         el.setAttribute("href", url);
     }, []);
 
+    // The published record is a FIXED historical measurement - trained to 2024,
+    // scored on 2,546 unseen 2025-26 matches - so it does not change unless a new
+    // holdout is published. From Oct 2026 the backend may be stopped entirely
+    // (zero-cost mode), and a page whose whole job is to evidence the accuracy
+    // claim must not fail when it is. public/static-data/backtest-results.json is
+    // a snapshot taken from the live endpoint on 7 Oct 2026; the backend is still
+    // preferred when it answers, so a future holdout run shows through without
+    // touching this file.
     useEffect(() => {
+        let alive = true;
+        const useIt = d => { if (!alive) return; setData(d); setLoading(false); };
         fetch(`${API}/backtest-results`)
-            .then(r => r.json())
-            .then(d => { setData(d); setLoading(false); })
-            .catch(e => { setError("Could not load accuracy data."); setLoading(false); });
+            .then(r => r.ok ? r.json() : Promise.reject(new Error("bad status")))
+            .then(useIt)
+            .catch(() => fetch("/static-data/backtest-results.json")
+                .then(r => r.json())
+                .then(useIt)
+                .catch(() => { if (alive) { setError("Could not load accuracy data."); setLoading(false); } }));
+        return () => { alive = false; };
     }, []);
 
     const wp      = data?.win_probability || {};

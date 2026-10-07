@@ -41,6 +41,35 @@ pairings, and do not spend a session tuning their titles or descriptions. If SEO
 up again, the lever is inbound links and distribution, not more pages. The full
 working is in the backend repo's CLAUDE.md under 22 Sep 2026.
 
+### The site must survive with NO backend at all (7 Oct 2026)
+
+Zero-cost mode means the Railway backend may be stopped entirely. Vercel serves the
+**104 prerendered pages** for free and they need no feed — but three things did need
+one, and two of them failed badly:
+
+**1. `isFirstLoad` was only ever cleared on a SUCCESSFUL fetch.** `fetchMatches` returns
+early when the request fails, so with the backend unreachable a first-time visitor (no
+`ci_matches_cache`) sat on the loading screen **forever**. The site would read as broken
+rather than as having nothing live — the exact complaint a real visitor made in Aug
+2026. Now two consecutive failures clear it and set `liveStatus: "offline"`, which lets
+the evergreen "nothing live" screen render with its links to the ground-record pages.
+Two strikes, not one, so a single blip on a flaky connection does not tear down a
+working screen.
+
+**2. The accuracy pages fetched the record from the backend and showed an error without
+it.** `/accuracy` and `/api` exist to let someone check the 81.5% claim; a page whose
+whole job is to evidence a claim must not fail when the backend is off.
+`public/static-data/backtest-results.json` and `v1-accuracy.json` are snapshots taken
+from the live endpoints on 7 Oct 2026. **The backend is still preferred when it answers**,
+so a future holdout run shows through without touching those files.
+
+**Why a snapshot is honest here:** the published record is a fixed historical measurement
+— trained to 2024, scored on 2,546 unseen 2025-26 matches — not a live figure. It does
+not change unless a new holdout is published and republished.
+
+**If a new holdout is ever published, re-take both snapshots** or the pages will quietly
+serve the old numbers whenever the backend is down.
+
 ## ZERO-COST MODE since 7 Oct 2026 — read before changing the paused-feed banner
 
 After a year with no revenue the owner put the project into zero-cost mode. The

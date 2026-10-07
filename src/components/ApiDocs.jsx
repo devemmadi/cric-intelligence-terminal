@@ -144,10 +144,16 @@ export default function ApiDocs() {
 
     useEffect(() => {
         let alive = true;
+        // Same reasoning as AccuracyDashboard: the record is fixed, and the page
+        // exists to let a prospect check it before paying. Falls back to the
+        // snapshot in public/static-data when the backend is not running.
         fetch(API_BASE + "/v1/accuracy")
-            .then(r => r.ok ? r.json() : null)
+            .then(r => r.ok ? r.json() : Promise.reject(new Error("bad status")))
             .then(d => { if (alive && d && !d.error) setProof(d); })
-            .catch(() => {});
+            .catch(() => fetch("/static-data/v1-accuracy.json")
+                .then(r => r.json())
+                .then(d => { if (alive && d && !d.error) setProof(d); })
+                .catch(() => {}));
         return () => { alive = false; };
     }, []);
 
