@@ -458,6 +458,10 @@
       "destination": "/venues/the-rose-bowl-southampton.html"
     },
     {
+      "source": "/static-data/:file",
+      "destination": "/static-data/:file"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

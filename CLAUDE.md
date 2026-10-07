@@ -67,6 +67,17 @@ so a future holdout run shows through without touching those files.
 — trained to 2024, scored on 2,546 unseen 2025-26 matches — not a live figure. It does
 not change unless a new holdout is published and republished.
 
+**3. The snapshots were served as HTML, not JSON, and the fallback silently failed.**
+`vercel.json` ends with a catch-all `/(.*)` -> `/index.html` for SPA routing, which
+swallowed `/static-data/*.json` too: the request answered **HTTP 200 with the app's HTML**,
+`r.json()` threw, and the fallback landed in its own catch. It would have looked fine in
+code review and been broken in production. A passthrough rewrite now sits immediately
+before the catch-all.
+
+**Rule: anything added under `public/` that is fetched rather than navigated to needs its
+own rewrite before the catch-all**, and the check is the response BODY, not the status
+code — the catch-all returns 200 for everything.
+
 **If a new holdout is ever published, re-take both snapshots** or the pages will quietly
 serve the old numbers whenever the backend is down.
 
