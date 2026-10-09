@@ -1850,7 +1850,7 @@ function MatchesSidebar({ liveMatches, selectedMatch, onMatchSelect, liveStatus,
 }
 
 // ─── Main export ──────────────────────────────────────────────────────────────
-export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSelect, pred, liveStatus, isFirstLoad, isPredLoading }) {
+export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSelect, pred, liveStatus, isFirstLoad, isPredLoading, feedPaused }) {
     const [activeOver, setActiveOver] = useState(0);
     const [activeView, setActiveView] = useState("prediction"); // "prediction" | "liveengine" | "scoreboard"
     const [secsSinceUpdate, setSecsSinceUpdate] = useState(0);
@@ -2080,7 +2080,12 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                             <span style={{ width: 7, height: 7, borderRadius: "50%", background: "#64748b", display: "inline-block", flexShrink: 0 }} />
                             <span style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", fontWeight: 500 }}>No match live right now</span>
                             <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>·</span>
-                            <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>IPL: {t1} &amp; {t2} {tz}</span>
+                            {/* A hardcoded IPL start-time hint, correct only during the IPL
+                                season (Mar-May). Shown year-round it is just wrong, and
+                                wrong detail beside a paused-feed banner reads as neglect. */}
+                            {!feedPaused && (
+                                <span style={{ fontSize: 12, color: "rgba(255,255,255,0.35)" }}>IPL: {t1} &amp; {t2} {tz}</span>
+                            )}
                             {nextMatch && (
                                 <>
                                     <span style={{ fontSize: 12, color: "rgba(255,255,255,0.2)" }}>·</span>
@@ -2100,11 +2105,19 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                     <div className="vs-row" style={{ background: "rgba(255,255,255,0.03)", borderBottom: `1px solid ${C.border}`, padding: "6px 20px", display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                         <span style={{ fontSize: 11, color: "#10B981", fontWeight: 700 }}>66%+ in death overs</span>
                         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
-                        <span style={{ fontSize: 11, color: C.muted }}>Vitality Blast 2026 tracked live</span>
-                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
-                        <span style={{ fontSize: 11, fontWeight: 700, color: secsSinceUpdate <= 5 ? C.green : secsSinceUpdate <= 15 ? C.amber : C.muted }}>
-                            🔄 Updated {secsSinceUpdate}s ago
+                        <span style={{ fontSize: 11, color: C.muted }}>
+                            {feedPaused ? "Live feed paused" : "Vitality Blast 2026 tracked live"}
                         </span>
+                        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.15)" }}>·</span>
+                        {/* secsSinceUpdate counts since our last POLL, not since the data
+                            actually moved. With the feed off that reads "Updated 7s ago"
+                            directly beside a banner saying live scores are paused, which
+                            is the site contradicting itself. Hidden while paused. */}
+                        {!feedPaused && (
+                            <span style={{ fontSize: 11, fontWeight: 700, color: secsSinceUpdate <= 5 ? C.green : secsSinceUpdate <= 15 ? C.amber : C.muted }}>
+                                🔄 Updated {secsSinceUpdate}s ago
+                            </span>
+                        )}
                         {/* Alert bell */}
                         <button onClick={enableAlerts} disabled={pushStatus === "on" || pushStatus === "loading"}
                             style={{ marginLeft: 4, background: pushStatus === "on" ? "rgba(16,185,129,0.15)" : "rgba(255,255,255,0.06)", border: `1px solid ${pushStatus === "on" ? "rgba(16,185,129,0.4)" : C.border}`, borderRadius: 20, padding: "2px 10px", cursor: pushStatus === "on" ? "default" : "pointer", display: "flex", alignItems: "center", gap: 4 }}>
@@ -2133,14 +2146,16 @@ export default function PredictionsTab({ liveMatches, selectedMatch, onMatchSele
                                     position: "relative",
                                 }}>
                                 ⚡ Live Engine
-                                <span style={{
-                                    position: "absolute", top: -5, right: -5,
-                                    background: "#EF4444",
-                                    color: "#fff", fontSize: 8, fontWeight: 800,
-                                    padding: "1px 4px", borderRadius: 6,
-                                    animation: "pulse 1.5s infinite",
-                                    letterSpacing: 0.5,
-                                }}>LIVE</span>
+                                {!feedPaused && (
+                                    <span style={{
+                                        position: "absolute", top: -5, right: -5,
+                                        background: "#EF4444",
+                                        color: "#fff", fontSize: 8, fontWeight: 800,
+                                        padding: "1px 4px", borderRadius: 6,
+                                        animation: "pulse 1.5s infinite",
+                                        letterSpacing: 0.5,
+                                    }}>LIVE</span>
+                                )}
                             </button>
                             <button className={`tab-btn${activeView === "scoreboard" ? " on" : ""}`}
                                 onClick={() => setActiveView("scoreboard")}

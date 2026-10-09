@@ -98,11 +98,24 @@ own historical data and are unaffected.
 **If a paid plan is ever restored, put the old wording back** — the note sits in the
 comment above the banner.
 
-**Known gap, deliberately not fixed:** the page titles and hero copy still advertise
-"live win probability updated every ball". That is a larger rewrite across every
-prerendered page, and it is not worth doing for a parked project. If the project stays
-parked for a long time, revisit it; the banner is what a visitor actually sees when the
-feed is off.
+**The banner alone was not enough — the UI around it kept claiming live (9 Oct).**
+With the feed off, the header still read **"Updated 7s ago"**, **"Vitality Blast 2026
+tracked live"**, a pulsing red **LIVE** badge, and a hardcoded **"IPL: 11:00 AM & 3:00 PM
+BST"**. All of that sat directly beside a banner saying live scores are paused, so the
+site contradicted itself in one glance — worse than either message alone.
+
+`dataStale` already existed but was never passed below `CricIntelligence.jsx`. It now
+reaches `PredictionsTab` as `feedPaused`, and while paused:
+- "Vitality Blast 2026 tracked live" becomes "Live feed paused"
+- "Updated Ns ago" is hidden — it counts since our last POLL, not since the data moved,
+  so it was never measuring what it claimed
+- the red LIVE badge is hidden
+- the IPL start-time hint is hidden; it is only correct Mar-May and wrong the rest of the
+  year regardless of the feed
+
+**Still not fixed, and this one is a real rewrite:** page titles and hero copy across
+every prerendered page still advertise "live win probability updated every ball". Not
+worth doing for a parked project, but if it stays parked a long time, revisit it.
 
 ## Project
 - **Live URL:** https://www.cricintelligence.com (custom domain → Vercel)

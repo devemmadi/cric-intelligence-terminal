@@ -223,6 +223,7 @@ export default function CricIntelligence() {
                         liveStatus={liveStatus}
                         isFirstLoad={isFirstLoad}
                         isPredLoading={isPredLoading}
+                        feedPaused={dataStale}
                     />
                 </ErrorBoundary>
             )}
